@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": 100
+}
