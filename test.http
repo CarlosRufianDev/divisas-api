@@ -8,6 +8,47 @@ Content-Type: application/json
   "amount": 100
 }
 
+### ❌ amount negativo
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": -50
+}
+
+### ❌ código de moneda inválido
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+
+{
+  "from": "US",
+  "to": "EUR",
+  "amount": 100
+}
+
+### ❌ tipo de dato incorrecto
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": "cien"
+}
+
+### ❌ tipo de dato incorrecto (amount como string)
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": "cien"
+}
+
+
 ### 📜 HISTORIAL GENERAL
 GET http://localhost:3000/api/historial
 
@@ -22,5 +63,9 @@ GET http://localhost:3000/api/historial?minAmount=50
 ### Entre fechas (ajusta si es necesario)
 GET http://localhost:3000/api/historial?startDate=2025-07-01&endDate=2025-07-04
 
-### Historial con paginación
+### Historial paginado
 GET http://localhost:3000/api/historial?page=1&limit=5
+
+### Borrar todo el historial
+DELETE http://localhost:3000/api/historial
+
