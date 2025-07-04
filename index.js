@@ -13,7 +13,8 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.use('/api/convert', convertRoutes);
+app.use('/api', convertRoutes);
+
 
 // Conexión a MongoDB y arranque del servidor
 mongoose.connect(process.env.MONGODB_URI)

@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { convertCurrency } = require('../controllers/convertController');
+const { convertCurrency, getHistory } = require('../controllers/convertController');
 
-router.post('/', convertCurrency);
+// POST para convertir
+router.post('/convert', convertCurrency);
+
+// GET para historial
+router.get('/historial', getHistory);
 
 module.exports = router;
+

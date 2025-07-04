@@ -1,3 +1,4 @@
+### 🪙 CONVERTIR MONEDAS
 POST http://localhost:3000/api/convert
 Content-Type: application/json
 
@@ -6,3 +7,20 @@ Content-Type: application/json
   "to": "EUR",
   "amount": 100
 }
+
+### 📜 HISTORIAL GENERAL
+GET http://localhost:3000/api/historial
+
+### 📌 FILTROS DE HISTORIAL
+
+### Solo USD → EUR
+GET http://localhost:3000/api/historial?from=USD&to=EUR
+
+### Conversiones de al menos 50
+GET http://localhost:3000/api/historial?minAmount=50
+
+### Entre fechas (ajusta si es necesario)
+GET http://localhost:3000/api/historial?startDate=2025-07-01&endDate=2025-07-04
+
+### Historial con paginación
+GET http://localhost:3000/api/historial?page=1&limit=5

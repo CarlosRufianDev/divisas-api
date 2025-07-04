@@ -1,4 +1,7 @@
 const axios = require('axios');
+const Conversion = require('../models/Conversion');
+const buildFilters = require('../utils/buildFilters');
+
 
 const convertCurrency = async (req, res) => {
   const { from, to, amount } = req.body;
@@ -12,14 +15,22 @@ const convertCurrency = async (req, res) => {
     console.log('URL solicitada:', apiUrl);
     const response = await axios.get(apiUrl);
 
-    // Frankfurter responde con rates: { "EUR": valor }
     if (!response.data.rates || response.data.rates[to] === undefined) {
       console.log('Respuesta inesperada de la API:', response.data);
       return res.status(400).json({ error: 'No se encontró la tasa de cambio para la moneda solicitada.' });
     }
 
-    const rate = response.data.rates[to] / amount; // Frankfurter devuelve el monto convertido, no el rate directo
+    const rate = response.data.rates[to] / amount;
     const result = response.data.rates[to];
+
+    // Guardar en MongoDB antes de enviar la respuesta
+    await Conversion.create({
+      from,
+      to,
+      amount,
+      rate,
+      result
+    });
 
     res.json({
       from,
@@ -28,12 +39,43 @@ const convertCurrency = async (req, res) => {
       rate,
       result: result.toFixed(2)
     });
-
-    // Aquí podrías guardar en MongoDB el historial
   } catch (error) {
     console.error('Error al convertir:', error.message);
     res.status(500).json({ error: 'Error al obtener el tipo de cambio' });
   }
 };
 
-module.exports = { convertCurrency };
+const getHistory = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+
+    if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+      return res.status(400).json({ error: 'Parámetros de paginación inválidos' });
+    }
+
+    const filters = buildFilters(req.query);
+    const total = await Conversion.countDocuments(filters);
+    const conversions = await Conversion.find(filters)
+      .sort({ createdAt: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    res.json({
+      total,
+      page: pageNum,
+      pages: Math.ceil(total / limitNum),
+      results: conversions
+    });
+  } catch (error) {
+    console.error('Error al filtrar historial:', error.message);
+    res.status(500).json({ error: 'Error al filtrar el historial' });
+  }
+};
+
+
+
+module.exports = { convertCurrency, getHistory };
+
