@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "from": "USD",
   "to": "EUR",
-  "amount": 100
+  "amount": 400
 }
 
 ### ❌ amount negativo
@@ -68,4 +68,7 @@ GET http://localhost:3000/api/historial?page=1&limit=5
 
 ### Borrar todo el historial
 DELETE http://localhost:3000/api/historial
+
+### Borrar una conversión por ID (ajusta el ID real)
+DELETE http://localhost:3000/api/historial/<ID>
 

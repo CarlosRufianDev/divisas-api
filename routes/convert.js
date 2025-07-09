@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { convertCurrency, getHistory, deleteAllHistory } = require('../controllers/convertController');
+const { convertCurrency, getHistory, deleteAllHistory, deleteById } = require('../controllers/convertController');
 const validateConversion = require('../validators/convertValidator');
 const { validationResult } = require('express-validator');
 
@@ -21,6 +21,10 @@ router.get('/historial', getHistory);
 
 // DELETE para borrar todo el historial
 router.delete('/historial', deleteAllHistory);
+
+// DELETE una conversión por ID
+router.delete('/historial/:id', deleteById);
+
 
 module.exports = router;
 // Este archivo define las rutas para la conversión de divisas y el historial de conversiones.

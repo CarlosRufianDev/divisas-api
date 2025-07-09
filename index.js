@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const authRoutes = require('./routes/auth');
 
 const convertRoutes = require('./routes/convert');
 
@@ -14,6 +15,10 @@ app.use(express.json());
 
 // Rutas
 app.use('/api', convertRoutes);
+
+// Rutas de autenticación
+// Aquí se manejan las rutas de autenticación para el registro y login de usuarios.
+app.use('/api/auth', authRoutes);
 
 
 // Conexión a MongoDB y arranque del servidor

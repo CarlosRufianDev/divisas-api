@@ -56,10 +56,15 @@ const convertCurrency = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el tipo de cambio' });
   }
 };
+// Este controlador maneja la conversión de moneda.
+// Valida los parámetros de entrada, realiza la conversión utilizando una API externa y guarda el resultado en la base de datos.
 
 
 const getHistory = async (req, res) => {
   try {
+    // Construir filtros a partir de la query
+    // Utiliza la función buildFilters para crear un objeto de filtros basado en los parámetros de la query.
+    // Esto permite filtrar las conversiones por moneda, fecha, etc.
     const filters = buildFilters(req.query);
 
     // Extraer page y limit de la query, con valores por defecto
@@ -75,12 +80,14 @@ const getHistory = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-
+    
+      
     res.json({
       total,
       page,
       pages: Math.ceil(total / limit),
       results: conversions
+      
     });
   } catch (error) {
     console.error('Error al obtener historial paginado:', error.message);
@@ -90,6 +97,8 @@ const getHistory = async (req, res) => {
 // Este controlador maneja la conversión de moneda y el historial de conversiones.
 // Utiliza axios para hacer peticiones a una API externa y mongoose para interactuar con la base de datos.
 // El método convertCurrency valida los parámetros de entrada, realiza la conversión y guarda el resultado
+
+
 
 const deleteAllHistory = async (req, res) => {
   try {
@@ -103,7 +112,27 @@ const deleteAllHistory = async (req, res) => {
 // Este controlador maneja la eliminación del historial de conversiones.
 
 
-module.exports = { convertCurrency, getHistory, deleteAllHistory };
+
+const deleteById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await Conversion.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Conversión no encontrada' });
+    }
+
+    res.json({ message: 'Conversión eliminada correctamente', deleted });
+  } catch (error) {
+    console.error('Error al eliminar por ID:', error.message);
+    res.status(500).json({ error: 'Error al eliminar la conversión' });
+  }
+};
+// Este controlador maneja la eliminación de una conversión específica por ID.
+
+
+module.exports = { convertCurrency, getHistory, deleteAllHistory, deleteById };
 // Exporta los métodos convertCurrency, getHistory y deleteAllHistory para ser utilizados en las rutas.
 // Estos métodos permiten convertir monedas, obtener el historial de conversiones y eliminar todo el historial respectivamente
 
