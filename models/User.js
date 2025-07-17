@@ -1,20 +1,33 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const User = require('../models/User');
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
     unique: true,
-    lowercase: true
+    lowercase: true,
+    trim: true
   },
   password: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   }
 }, { timestamps: true });
 
+// Encriptar la contraseña antes de guardar
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next(); // Solo si ha cambiado
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+
 module.exports = mongoose.model('User', userSchema);
-// Este codigo define el modelo de usuario para la base de datos MongoDB.
-// Utiliza Mongoose para definir un esquema con campos de email y contraseña.Siendo el email único y en minúsculas.
-// El modelo se exporta para ser utilizado en otras partes de la aplicación, como en los controladores de autenticación.
-// El esquema también incluye timestamps para registrar la fecha de creación y actualización del documento.

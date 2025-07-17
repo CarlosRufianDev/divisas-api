@@ -1,8 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { convertCurrency, getHistory, deleteAllHistory, deleteById } = require('../controllers/convertController');
+const {
+  convertCurrency,
+  getHistory,
+  deleteAllHistory,
+  deleteById,
+  deleteUserHistory
+} = require('../controllers/convertController');
 const validateConversion = require('../validators/convertValidator');
 const { validationResult } = require('express-validator');
+const requireAuth = require('../middleware/authMiddleware');
+const isAdmin = require('../middleware/isAdmin'); // ✅ Importado para uso de admin
 
 // Middleware para manejar errores de validación
 const handleValidation = (req, res, next) => {
@@ -13,20 +21,19 @@ const handleValidation = (req, res, next) => {
   next();
 };
 
-// POST para convertir, ahora con validación
+// POST para convertir divisas (autenticado opcionalmente)
 router.post('/convert', validateConversion, handleValidation, convertCurrency);
 
-// GET para historial
-router.get('/historial', getHistory);
+// GET historial del usuario autenticado
+router.get('/historial', requireAuth, getHistory);
 
-// DELETE para borrar todo el historial
-router.delete('/historial', deleteAllHistory);
+// DELETE todo el historial del usuario autenticado
+router.delete('/historial', requireAuth, deleteAllHistory);
 
-// DELETE una conversión por ID
-router.delete('/historial/:id', deleteById);
+// DELETE una conversión específica por ID (usuario autenticado)
+router.delete('/historial/entry/:id', requireAuth, deleteById);
 
+// DELETE historial completo de un usuario específico (solo admin)
+router.delete('/historial/user/:userId', requireAuth, isAdmin, deleteUserHistory);
 
 module.exports = router;
-// Este archivo define las rutas para la conversión de divisas y el historial de conversiones.
-// Utiliza un controlador para manejar la lógica de negocio y un validador para validar las solicitudes de conversión.
-// También incluye un middleware para manejar errores de validación y devolver respuestas adecuadas al cliente. 

@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./cron/cleanupJob'); // Ejecuta la tarea programada
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');

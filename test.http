@@ -1,16 +1,82 @@
-### 🪙 CONVERTIR MONEDAS
+//token de usuario (ajusta según tu entorno)
+// Puedes obtener el token de administrador o usuario después de hacer login
+// Reemplaza este valor con el token obtenido al hacer login para hacer pruebas
+// de las rutas que requieren autenticación
+// Ejemplo de token de usuario autenticado
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODc5NDIyOTM3ZDg1ZGFlYjBmOWM1ZTgiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTI3Nzg2OTEsImV4cCI6MTc1Mjc4NTg5MX0.6bcqFiwFuRRP0fgcTmiHjLE-yHsC5eJl403TbyvZsEg
+//el id de pruebausuario es 68793f5188a858d86643a797
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODc5M2Y1MTg4YTg1OGQ4NjY0M2E3OTciLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1Mjc4MDUwNywiZXhwIjoxNzUyNzg3NzA3fQ.GIJbVfuib9Rn5dSZ9PKm85rOEY_Vi41lnYl0tnKYPB4
+############################################################
+### 🟢 AUTENTICACIÓN Y USUARIOS
+############################################################
+
+### Registro de administrador (solo una vez)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "password": "Administrador123",
+  "role": "admin"
+}
+### Login de administrador  (ajusta la contraseña)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "password": "Administrador123"
+}
+
+### Registro de usuario
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "Pruebausuario123"
+}
+
+### Login de usuario
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "Pruebausuario123"
+}
+
+### Borrar usuario por email (solo admin)
+DELETE http://localhost:3000/api/auth/delete
+Content-Type: application/json
+Authorization: Bearer {{token}}
+{
+  "email": "pruebausuario@email.com"
+}
+
+### Borrar mi propia cuenta (usuario autenticado)
+DELETE http://localhost:3000/api/auth/me
+Authorization: Bearer {{token}}
+
+############################################################
+### 💱 CONVERSIÓN DE MONEDAS
+############################################################
+
+### Conversión válida (autenticado)
 POST http://localhost:3000/api/convert
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "from": "USD",
   "to": "EUR",
-  "amount": 400
+  "amount": 3555
 }
 
-### ❌ amount negativo
+### ❌ amount negativo (debe dar 400)
 POST http://localhost:3000/api/convert
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "from": "USD",
@@ -18,9 +84,10 @@ Content-Type: application/json
   "amount": -50
 }
 
-### ❌ código de moneda inválido
+### ❌ código de moneda inválido (debe dar 400)
 POST http://localhost:3000/api/convert
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "from": "US",
@@ -28,9 +95,10 @@ Content-Type: application/json
   "amount": 100
 }
 
-### ❌ tipo de dato incorrecto
+### ❌ tipo de dato incorrecto (debe dar 400)
 POST http://localhost:3000/api/convert
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "from": "USD",
@@ -41,6 +109,7 @@ Content-Type: application/json
 ### ❌ tipo de dato incorrecto (amount como string)
 POST http://localhost:3000/api/convert
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "from": "USD",
@@ -48,27 +117,122 @@ Content-Type: application/json
   "amount": "cien"
 }
 
+############################################################
+### 📜 HISTORIAL Y FILTROS
+############################################################
 
-### 📜 HISTORIAL GENERAL
+### Historial del usuario autenticado (todos)
 GET http://localhost:3000/api/historial
-
-### 📌 FILTROS DE HISTORIAL
+Authorization: Bearer {{token}}
 
 ### Solo USD → EUR
 GET http://localhost:3000/api/historial?from=USD&to=EUR
+Authorization: Bearer {{token}}
 
 ### Conversiones de al menos 50
 GET http://localhost:3000/api/historial?minAmount=50
+Authorization: Bearer {{token}}
+
+### Conversiones de máximo 100
+GET http://localhost:3000/api/historial?maxAmount=100
+Authorization: Bearer {{token}}
 
 ### Entre fechas (ajusta si es necesario)
 GET http://localhost:3000/api/historial?startDate=2025-07-01&endDate=2025-07-04
+Authorization: Bearer {{token}}
 
-### Historial paginado
+### Historial paginado (primera página, 5 resultados)
 GET http://localhost:3000/api/historial?page=1&limit=5
+Authorization: Bearer {{token}}
+
+### Historial paginado (segunda página, 5 resultados)
+GET http://localhost:3000/api/historial?page=2&limit=5
+Authorization: Bearer {{token}}
+
+############################################################
+### 🔎 FILTROS AVANZADOS DE HISTORIAL
+############################################################
+
+### USD → EUR y monto mínimo 100
+GET http://localhost:3000/api/historial?from=USD&to=EUR&minAmount=100
+Authorization: Bearer {{token}}
+
+### EUR → USD, monto entre 50 y 200, y en fechas específicas
+GET http://localhost:3000/api/historial?from=EUR&to=USD&minAmount=50&maxAmount=200&startDate=2025-07-01&endDate=2025-07-31
+Authorization: Bearer {{token}}
+
+### Historial vacío (con filtro que no existe)
+GET http://localhost:3000/api/historial?from=ZZZ
+Authorization: Bearer {{token}}
+
+### Historial paginado y filtrado (USD → EUR, página 2, 3 resultados)
+GET http://localhost:3000/api/historial?from=USD&to=EUR&page=2&limit=3
+Authorization: Bearer {{token}}
+
+############################################################
+### 🗑️ BORRADO DE HISTORIAL
+############################################################
 
 ### Borrar todo el historial
 DELETE http://localhost:3000/api/historial
+Authorization: Bearer {{token}}
 
 ### Borrar una conversión por ID (ajusta el ID real)
 DELETE http://localhost:3000/api/historial/<ID>
+Authorization: Bearer {{token}}
+
+### 🗑️ Eliminar historial de un usuario (solo admin)
+### Ajusta <ID_DEL_USUARIO> con el ID real del usuario
+### Puedes obtener el ID del usuario desde la base de datos o desde el endpoint de usuarios
+DELETE http://localhost:3000/api/historial/user/68793f5188a858d86643a797
+Authorization: Bearer {{adminToken}}
+
+
+############################################################
+### 🚫 TESTS DE ERRORES Y ACCESO NO AUTORIZADO
+############################################################
+
+### ❌ Registro con email ya existente (debe dar 409)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "prueba@email.com",
+  "password": "123456"
+}
+
+### ❌ Registro con email inválido (debe dar 400)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "noesunemail",
+  "password": "123"
+}
+
+### ❌ Login con contraseña incorrecta (debe dar 401)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@email.com",
+  "password": "contraseña_incorrecta"
+}
+
+### ❌ Acceso a historial sin token (debe dar 401)
+GET http://localhost:3000/api/historial
+
+### ❌ Borrar historial sin token (debe dar 401)
+DELETE http://localhost:3000/api/historial
+
+### ❌ Filtro de fechas mal formateadas (debe dar 400 o ignorar filtro)
+GET http://localhost:3000/api/historial?startDate=fecha_invalida&endDate=2025-07-04
+Authorization: Bearer {{token}}
+
+### ❌ Filtro de monto no numérico (debe dar 400 o ignorar filtro)
+GET http://localhost:3000/api/historial?minAmount=abc
+Authorization: Bearer {{token}}
+
+
+
 

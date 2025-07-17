@@ -1,8 +1,12 @@
 const axios = require('axios');
 const Conversion = require('../models/Conversion');
+const jwt = require('jsonwebtoken');
 const buildFilters = require('../utils/buildFilters');
 
 
+// Convertir moneda
+// Requiere: from, to, amount
+// Respuesta: { from, to, amount, rate, result, date, user (si está autenticado), id }
 const convertCurrency = async (req, res) => {
   const { from, to, amount } = req.body;
 
@@ -36,12 +40,30 @@ const convertCurrency = async (req, res) => {
     const rate = response.data.rates[to] / amount;
     const result = response.data.rates[to];
 
-    await Conversion.create({
+    // ✅ Intenta verificar el token (si se incluye)
+    let userId = null;
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        userId = decoded.userId;
+      } catch (err) {
+        console.warn('Token inválido o expirado:', err.message);
+        // No interrumpimos la conversión, se permite sin login
+      }
+    }
+
+    // 💾 Guardar la conversión en la BD (con o sin usuario)
+    const newConversion = await Conversion.create({
       from,
       to,
       amount,
       rate,
-      result
+      result,
+      user: userId || undefined,
+      date: response.data.date
     });
 
     res.json({
@@ -49,90 +71,130 @@ const convertCurrency = async (req, res) => {
       to,
       amount,
       rate,
-      result: result.toFixed(2)
+      result: result.toFixed(2),
+      date: response.data.date,
+      user: userId || null,
+      id: newConversion._id
     });
+
   } catch (error) {
     console.error('Error al convertir:', error.message);
     res.status(500).json({ error: 'Error al obtener el tipo de cambio' });
   }
 };
-// Este controlador maneja la conversión de moneda.
-// Valida los parámetros de entrada, realiza la conversión utilizando una API externa y guarda el resultado en la base de datos.
 
-
+// Obtener el historial de conversiones
+// Permite filtrar por moneda, usuario y fecha
+// Paginación: ?page=1&limit=10
+// Ejemplo de filtros: ?from=USD&to=EUR&user=123&startDate=2023-01-01&endDate=2023-12-31
 const getHistory = async (req, res) => {
   try {
-    // Construir filtros a partir de la query
-    // Utiliza la función buildFilters para crear un objeto de filtros basado en los parámetros de la query.
-    // Esto permite filtrar las conversiones por moneda, fecha, etc.
-    const filters = buildFilters(req.query);
+    const userId = req.user.userId;
+    const filters = buildFilters(req.query, userId);
 
-    // Extraer page y limit de la query, con valores por defecto
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Contar total de resultados con los filtros aplicados
-    const total = await Conversion.countDocuments(filters);
+    const [conversions, total] = await Promise.all([
+      Conversion.find(filters).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Conversion.countDocuments(filters)
+    ]);
 
-    // Buscar resultados con filtros, orden y paginación
-    const conversions = await Conversion.find(filters)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-    
-      
     res.json({
-      total,
       page,
-      pages: Math.ceil(total / limit),
+      limit,
+      total,
+      count: conversions.length,
       results: conversions
-      
     });
   } catch (error) {
-    console.error('Error al obtener historial paginado:', error.message);
-    res.status(500).json({ error: 'Error al obtener historial paginado' });
+    console.error('Error al obtener historial:', error.message);
+    res.status(500).json({ error: 'Error al obtener historial' });
   }
 };
-// Este controlador maneja la conversión de moneda y el historial de conversiones.
-// Utiliza axios para hacer peticiones a una API externa y mongoose para interactuar con la base de datos.
-// El método convertCurrency valida los parámetros de entrada, realiza la conversión y guarda el resultado
 
-
-
-const deleteAllHistory = async (req, res) => {
-  try {
-    const result = await Conversion.deleteMany({});
-    res.json({ message: 'Historial eliminado correctamente', deletedCount: result.deletedCount });
-  } catch (error) {
-    console.error('Error al borrar historial:', error.message);
-    res.status(500).json({ error: 'Error al borrar historial de conversiones' });
-  }
-};
-// Este controlador maneja la eliminación del historial de conversiones.
-
-
-
+// Eliminar una conversión por ID
+// Solo el usuario que la creó puede eliminarla
 const deleteById = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const deleted = await Conversion.findByIdAndDelete(id);
+    const userId = req.user.userId;
+    const conversionId = req.params.id;
 
-    if (!deleted) {
+    const conversion = await Conversion.findById(conversionId);
+
+    if (!conversion) {
       return res.status(404).json({ error: 'Conversión no encontrada' });
     }
 
-    res.json({ message: 'Conversión eliminada correctamente', deleted });
+    // Solo puede eliminar su propia conversión
+    if (!conversion.user || conversion.user.toString() !== userId) {
+      return res.status(403).json({ error: 'No autorizado para eliminar esta conversión' });
+    }
+
+    await Conversion.findByIdAndDelete(conversionId);
+
+    res.json({ message: 'Conversión eliminada correctamente' });
+
   } catch (error) {
-    console.error('Error al eliminar por ID:', error.message);
-    res.status(500).json({ error: 'Error al eliminar la conversión' });
+    console.error('Error al eliminar conversión:', error.message);
+    res.status(500).json({ error: 'Error al eliminar conversión' });
   }
 };
-// Este controlador maneja la eliminación de una conversión específica por ID.
+
+// Eliminar todo el historial del usuario autenticado
+// Solo el usuario autenticado puede eliminar su historial
+// No se permite eliminar el historial de otros usuarios
+const deleteAllHistory = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const result = await Conversion.deleteMany({ user: userId });
+
+    res.json({
+      message: 'Historial eliminado correctamente',
+      deletedCount: result.deletedCount
+    });
+
+  } catch (error) {
+    console.error('Error al eliminar historial:', error.message);
+    res.status(500).json({ error: 'Error al eliminar historial' });
+  }
+};
 
 
-module.exports = { convertCurrency, getHistory, deleteAllHistory, deleteById };
-// Exporta los métodos convertCurrency, getHistory y deleteAllHistory para ser utilizados en las rutas.
-// Estos métodos permiten convertir monedas, obtener el historial de conversiones y eliminar todo el historial respectivamente
+// Eliminar el historial de un usuario específico por userId
+// Solo un administrador o el propio usuario pueden hacerlo
+// Requiere: userId en la URL
+const deleteUserHistory = async (req, res) => {
+  const userIdToDelete = req.params.userId;
+
+  if (!userIdToDelete) {
+    return res.status(400).json({ error: 'Falta el userId en la URL' });
+  }
+
+  try {
+    const result = await Conversion.deleteMany({ user: userIdToDelete });
+
+    res.json({
+      message: `Historial del usuario ${userIdToDelete} eliminado correctamente`,
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.error('Error al borrar historial del usuario:', error.message);
+    res.status(500).json({ error: 'Error al borrar historial del usuario' });
+  }
+};
+
+
+// Exportar las funciones del controlador
+module.exports = {
+  convertCurrency,
+  getHistory,
+  deleteById,
+  deleteAllHistory,
+  deleteUserHistory
+  
+};
+
 
