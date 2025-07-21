@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Conversion = require('../models/Conversion');
 const conversionSchema = new mongoose.Schema({
   from: String,
   to: String,

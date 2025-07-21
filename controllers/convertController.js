@@ -186,6 +186,24 @@ const deleteUserHistory = async (req, res) => {
   }
 };
 
+// Eliminar conversiones antiguas (más de 60 días)
+// Solo accesible por un administrador
+const deleteOldConversions = async (req, res) => {
+  const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000); // hace 60 días
+
+  try {
+    const result = await Conversion.deleteMany({ createdAt: { $lt: sixtyDaysAgo } });
+
+    res.json({
+      message: 'Registros antiguos eliminados correctamente',
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.error('Error al eliminar registros antiguos:', error.message);
+    res.status(500).json({ error: 'Error al eliminar registros antiguos' });
+  }
+};
+
 
 // Exportar las funciones del controlador
 module.exports = {
@@ -193,8 +211,8 @@ module.exports = {
   getHistory,
   deleteById,
   deleteAllHistory,
-  deleteUserHistory
-  
+  deleteUserHistory,
+  deleteOldConversions
 };
 
 

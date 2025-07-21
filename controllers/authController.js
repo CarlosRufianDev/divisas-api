@@ -12,7 +12,7 @@ const register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password } = req.body;
+  const { email, password, role, name } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -20,10 +20,12 @@ const register = async (req, res) => {
       return res.status(409).json({ error: 'El usuario ya existe' });
     }
 
-    const user = await User.create({
-      email,
-      password 
-    });
+    // Hashea la contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crea el nuevo usuario
+    const user = new User({ email, password: hashedPassword, role, name }); // añade name
+    await user.save();
 
     res.status(201).json({ message: 'Usuario registrado correctamente', userId: user._id });
   } catch (error) {

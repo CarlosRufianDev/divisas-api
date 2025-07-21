@@ -5,7 +5,8 @@ const {
   getHistory,
   deleteAllHistory,
   deleteById,
-  deleteUserHistory
+  deleteUserHistory,
+  deleteOldConversions
 } = require('../controllers/convertController');
 const validateConversion = require('../validators/convertValidator');
 const { validationResult } = require('express-validator');
@@ -35,5 +36,8 @@ router.delete('/historial/entry/:id', requireAuth, deleteById);
 
 // DELETE historial completo de un usuario específico (solo admin)
 router.delete('/historial/user/:userId', requireAuth, isAdmin, deleteUserHistory);
+
+//
+router.get('/clean-old', requireAuth, isAdmin, deleteOldConversions);
 
 module.exports = router;
