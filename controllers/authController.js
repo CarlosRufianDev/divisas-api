@@ -12,7 +12,8 @@ const register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password, role, name } = req.body;
+  const email = req.body.email;
+  const { password, role, name } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -20,11 +21,8 @@ const register = async (req, res) => {
       return res.status(409).json({ error: 'El usuario ya existe' });
     }
 
-    // Hashea la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crea el nuevo usuario
-    const user = new User({ email, password: hashedPassword, role, name }); // añade name
+    // NO hagas hash aquí, pásala tal cual
+    const user = new User({ email, password, role, name });
     await user.save();
 
     res.status(201).json({ message: 'Usuario registrado correctamente', userId: user._id });
@@ -36,15 +34,21 @@ const register = async (req, res) => {
 
 // Login
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body.email;
+  const { password } = req.body;
+  console.log('Login email:', email);
+  console.log('Login password:', password);
 
   try {
     const user = await User.findOne({ email });
+    console.log('Usuario encontrado:', user); // <-- Agrega este log
+
     if (!user) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
-    // Compara la contraseña ingresada con el hash guardado
     const match = await bcrypt.compare(password, user.password);
+    console.log('¿Contraseña coincide?', match); // <-- Y este log
+
     if (!match) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }

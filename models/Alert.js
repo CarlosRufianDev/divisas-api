@@ -6,6 +6,7 @@ const alertSchema = new mongoose.Schema({
   to: { type: String, required: true },
   intervalDays: { type: Number, default: 1 },
   lastSent: { type: Date, default: null },
-  email: { type: String, required: true }
+  email: { type: String, required: true },
+  hour: { type: Number, default: 8, min: 0, max: 23 } // <-- NUEVO CAMPO
 });
 module.exports = mongoose.model('Alert', alertSchema);

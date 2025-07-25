@@ -14,8 +14,12 @@ const transporter = nodemailer.createTransport({
 });
 
 // Cron: cada día a las 8am
-cron.schedule('0 8 * * *', async () => {
-  const alerts = await Alert.find({}).populate('user');
+cron.schedule('0 * * * *', async () => {
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  // Busca solo alertas para esta hora
+  const alerts = await Alert.find({ hour: currentHour }).populate('user');
   for (const alert of alerts) {
     // Solo si toca enviar (por intervalo)
     const now = new Date();
@@ -52,6 +56,11 @@ cron.schedule('0 8 * * *', async () => {
             html: `<h2>Hola${alert.user && alert.user.name ? `, ${alert.user.name}` : ''} 👋</h2>
                    <p>La variación de ${alert.from} a ${alert.to} en los últimos ${alert.intervalDays} días es de ${percent}% (${ratePast} → ${rateToday})</p>`
           });
+
+          // LOG de envío
+          console.log(
+            `[${new Date().toISOString()}] Alerta enviada a ${alert.email} (${alert.from}/${alert.to} - hora ${alert.hour})`
+          );
 
           // Actualiza lastSent
           alert.lastSent = now;

@@ -9,7 +9,10 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const convertRoutes = require('./routes/convert');
 const alertRoutes = require('./routes/Alert'); 
+const monedasRoutes = require('./routes/monedas');
+const dashboardRoutes = require('./routes/dashboard');
 const Conversion = require('./models/Conversion'); 
+const calculatorRoutes = require('./routes/calculator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +25,9 @@ app.use(express.json());
 app.use('/api', convertRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/alerts', alertRoutes); // Añade esta línea
+app.use('/api/monedas', monedasRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/calculator', calculatorRoutes);
 
 // Conexión a MongoDB y arranque del servidor
 mongoose.connect(process.env.MONGODB_URI)

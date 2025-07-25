@@ -3,7 +3,7 @@
 // ==============================
 // Copia aquí los tokens tras hacer login para pruebas autenticadas
 @adminToken = PON_AQUI_EL_TOKEN_DEL_ADMIN
-@userToken = PON_AQUI_EL_TOKEN_DEL_USUARIO_PRUEBA
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODgyYjJkMjYwNWYxMzhiZDM1YzgxOTgiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTMzOTk1MzMsImV4cCI6MTc1MzQwNjczM30.4sE9ok0o3lwrjke41JTOIMuDzYWbsgUF8FbpCCsNR84
 @realToken = PON_AQUI_EL_TOKEN_DEL_USUARIO_REAL
 
 ############################################################
@@ -16,7 +16,7 @@ Content-Type: application/json
 
 {
   "email": "admin@email.com",
-  "password": "Administrador123",
+  "password": "Prueba123",
   "role": "admin",
   "name": "Admin Test"
 }
@@ -27,7 +27,7 @@ Content-Type: application/json
 
 {
   "email": "admin@email.com",
-  "password": "Administrador123"
+  "password": "Prueba123"
 }
 
 ### Registro de usuario de pruebas
@@ -200,11 +200,16 @@ Authorization: Bearer {{userToken}}
 {
   "from": "USD",
   "to": "EUR",
-  "intervalDays": 2
+  "intervalDays": 1,
+  "hour": 15
 }
 
 ### Obtener alertas (usuario autenticado)
 GET http://localhost:3000/api/alerts
+Authorization: Bearer {{userToken}}
+
+### Obtener alertas filtradas (USD y hora 15)
+GET http://localhost:3000/api/alerts?from=USD&hour=15
 Authorization: Bearer {{userToken}}
 
 ### ❌ Crear alerta con datos inválidos (debe dar 400)
@@ -227,6 +232,25 @@ Authorization: Bearer {{userToken}}
   "from": "USD",
   "to": "USD",
   "intervalDays": 1
+}
+
+### ❌ Eliminar alerta sin token (debe dar 401)
+DELETE http://localhost:3000/api/alerts/<ID_DE_LA_ALERTA>
+
+### Eliminar alerta por ID (usuario autenticado)
+DELETE http://localhost:3000/api/alerts/<ID_DE_LA_ALERTA>
+Authorization: Bearer {{userToken}}
+
+### Actualizar alerta por ID (usuario autenticado)
+PUT http://localhost:3000/api/alerts/<ID_DE_LA_ALERTA>
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "intervalDays": 2,
+  "hour": 10
 }
 
 ############################################################
@@ -273,6 +297,185 @@ GET http://localhost:3000/api/alerts
 ### ❌ Borrar alerta sin token (debe dar 401)
 DELETE http://localhost:3000/api/alerts
 
+############################################################
+### 🌍 MONEDAS Y CAMBIOS
+############################################################
 
+### Listado de monedas soportadas
+GET http://localhost:3000/api/monedas
 
+### Último cambio de un par de monedas
+GET http://localhost:3000/api/monedas/ultimo?from=EUR&to=USD
 
+############################################################
+### 📊 DASHBOARD / RESUMEN DEL USUARIO
+############################################################
+
+### Obtener dashboard/resumen del usuario autenticado
+GET http://localhost:3000/api/dashboard
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 🧮 CALCULADORA AVANZADA
+############################################################
+
+### Conversiones múltiples (1000 USD a varias monedas)
+POST http://localhost:3000/api/calculator/multiple
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "amount": 1000,
+  "currencies": ["EUR", "GBP", "JPY", "CHF"]
+}
+
+### ❌ Test con datos inválidos (debe dar 400)
+POST http://localhost:3000/api/calculator/multiple
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "amount": -100,
+  "currencies": ["EUR", "GBP"]
+}
+
+### ❌ Test sin currencies (debe dar 400)
+POST http://localhost:3000/api/calculator/multiple
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "amount": 1000
+}
+
+### Calculadora inversa - "¿Cuántos USD necesito para obtener 500 EUR?"
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "targetAmount": 500
+}
+
+### Calculadora inversa - "¿Cuántos EUR necesito para obtener 100,000 JPY?"
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "EUR",
+  "to": "JPY",
+  "targetAmount": 100000
+}
+
+### ❌ Test calculadora inversa con targetAmount negativo (debe dar 400)
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "targetAmount": -500
+}
+
+### ❌ Test calculadora inversa con monedas iguales (debe dar 400)
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "USD",
+  "targetAmount": 500
+}
+
+### Comparador de pares - Comparar varios pares a la vez
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": [
+    { "from": "USD", "to": "EUR" },
+    { "from": "USD", "to": "GBP" },
+    { "from": "USD", "to": "JPY" },
+    { "from": "EUR", "to": "GBP" }
+  ]
+}
+
+### Comparador de pares - Solo dos pares
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": [
+    { "from": "EUR", "to": "USD" },
+    { "from": "GBP", "to": "USD" }
+  ]
+}
+
+### ❌ Test comparador sin pares (debe dar 400)
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": []
+}
+
+### ❌ Test comparador con par inválido (debe dar 400)
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": [
+    { "from": "USD", "to": "USD" }
+  ]
+}
+
+### Histórico de tasas - Consultar tipo de cambio en fecha específica
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "date": "2025-01-15"
+}
+
+### Histórico de tasas - Otra fecha
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "GBP",
+  "to": "JPY",
+  "date": "2025-01-01"
+}
+
+### ❌ Test histórico con fecha futura (debe dar 400)
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "date": "2025-12-31"
+}
+
+### ❌ Test histórico con formato de fecha incorrecto (debe dar 400)
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "date": "15/01/2025"
+}
+
+### ❌ Test histórico con monedas iguales (debe dar 400)
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "USD",
+  "date": "2025-01-15"
+}
