@@ -1,0 +1,13 @@
+<div>
+  <h1>Dashboard de Divisas</h1>
+  
+  <button (click)="probarConversion()">
+    Convertir 100 USD a EUR
+  </button>
+  
+  <div *ngIf="resultado">
+    <h3>Resultado:</h3>
+    <p>Cantidad convertida: {{ resultado.result }}</p>
+    <p>Tasa de cambio: {{ resultado.rate }}</p>
+  </div>
+</div>

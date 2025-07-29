@@ -1,0 +1,825 @@
+// ==============================
+// TOKENS DE USUARIO Y ADMIN
+// ==============================
+// Copia aquí los tokens tras hacer login para pruebas autenticadas
+@adminToken = PON_AQUI_EL_TOKEN_DEL_ADMIN
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODgyYjJkMjYwNWYxMzhiZDM1YzgxOTgiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTM4MDE5NjIsImV4cCI6MTc1MzgwOTE2Mn0.dCtVoNu0ZAdh8JUzmAEkLt27kNN3_I1oPuPjtXDOUkk
+@realToken = PON_AQUI_EL_TOKEN_DEL_USUARIO_REAL
+
+############################################################
+### 🟢 AUTENTICACIÓN Y USUARIOS
+############################################################
+
+### Registro de administrador (solo una vez)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "password": "Prueba123",
+  "role": "admin",
+  "name": "Admin Test"
+}
+
+### Login de administrador
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "password": "Prueba123"
+}
+
+### Registro de usuario de pruebas
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "Pruebausuario123",
+  "name": "Usuario Prueba"
+}
+
+### Login de usuario de pruebas
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "Pruebausuario123"
+}
+
+### Registro de usuario real (para email)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "█REDACTED_EMAIL█",
+  "password": "TuPasswordSegura123",
+  "name": "Carlos Rufián"
+}
+
+### Login de usuario real
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "█REDACTED_EMAIL█",
+  "password": "TuPasswordSegura123"
+}
+
+### Borrar usuario de pruebas (solo admin)
+DELETE http://localhost:3000/api/auth/delete
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "email": "pruebausuario@email.com"
+}
+
+### Borrar mi propia cuenta (usuario autenticado)
+DELETE http://localhost:3000/api/auth/me
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 💱 CONVERSIÓN DE MONEDAS
+############################################################
+
+### Conversión válida (usuario real)
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+Authorization: Bearer {{realToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": 3555
+}
+
+### ❌ amount negativo (debe dar 400)
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": -50
+}
+
+### ❌ código de moneda inválido (debe dar 400)
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "US",
+  "to": "EUR",
+  "amount": 100
+}
+
+### ❌ tipo de dato incorrecto (debe dar 400)
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": "cien"
+}
+
+############################################################
+### 📜 HISTORIAL Y FILTROS
+############################################################
+
+### Historial del usuario autenticado (todos)
+GET http://localhost:3000/api/historial
+Authorization: Bearer {{userToken}}
+
+### Solo USD → EUR
+GET http://localhost:3000/api/historial?from=USD&to=EUR
+Authorization: Bearer {{userToken}}
+
+### Conversiones de al menos 50
+GET http://localhost:3000/api/historial?minAmount=50
+Authorization: Bearer {{userToken}}
+
+### Conversiones de máximo 100
+GET http://localhost:3000/api/historial?maxAmount=100
+Authorization: Bearer {{userToken}}
+
+### Entre fechas
+GET http://localhost:3000/api/historial?startDate=2025-07-01&endDate=2025-07-04
+Authorization: Bearer {{userToken}}
+
+### Historial paginado (primera página, 5 resultados)
+GET http://localhost:3000/api/historial?page=1&limit=5
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 🗑️ BORRADO DE HISTORIAL
+############################################################
+
+### Borrar todo el historial (usuario autenticado)
+DELETE http://localhost:3000/api/historial
+Authorization: Bearer {{userToken}}
+
+### Borrar una conversión por ID (ajusta el ID real)
+DELETE http://localhost:3000/api/historial/<ID>
+Authorization: Bearer {{userToken}}
+
+### Eliminar historial de un usuario (solo admin)
+DELETE http://localhost:3000/api/historial/user/<ID_DEL_USUARIO>
+Authorization: Bearer {{adminToken}}
+
+### Limpieza de historial antiguo (solo admin)
+GET http://localhost:3000/api/clean-old
+Authorization: Bearer {{adminToken}}
+
+############################################################
+### 🔔 ALERTAS DE VARIACIÓN
+############################################################
+
+### Crear alerta (usuario real, para recibir email)
+POST http://localhost:3000/api/alerts
+Content-Type: application/json
+Authorization: Bearer {{realToken}}
+
+{
+  "from": "EUR",
+  "to": "USD",
+  "intervalDays": 1
+}
+
+### Crear alerta (usuario de pruebas)
+POST http://localhost:3000/api/alerts
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "intervalDays": 1,
+  "hour": 15
+}
+
+### Obtener alertas (usuario autenticado)
+GET http://localhost:3000/api/alerts
+Authorization: Bearer {{userToken}}
+
+### Obtener alertas filtradas (USD y hora 15)
+GET http://localhost:3000/api/alerts?from=USD&hour=15
+Authorization: Bearer {{userToken}}
+
+### ❌ Crear alerta con datos inválidos (debe dar 400)
+POST http://localhost:3000/api/alerts
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "INVALID",
+  "to": "USD",
+  "intervalDays": "uno"
+}
+
+### ❌ Crear alerta con moneda de destino igual a la de origen (debe dar 400)
+POST http://localhost:3000/api/alerts
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "USD",
+  "intervalDays": 1
+}
+
+### ❌ Eliminar alerta sin token (debe dar 401)
+DELETE http://localhost:3000/api/alerts/<ID_DE_LA_ALERTA>
+
+### Eliminar alerta por ID (usuario autenticado)
+DELETE http://localhost:3000/api/alerts/<ID_DE_LA_ALERTA>
+Authorization: Bearer {{userToken}}
+
+### Actualizar alerta por ID (usuario autenticado)
+PUT http://localhost:3000/api/alerts/<ID_DE_LA_ALERTA>
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "intervalDays": 2,
+  "hour": 10
+}
+
+############################################################
+### 🔔 ALERTAS MEJORADAS
+############################################################
+
+### Crear alerta por porcentaje - "Avísame si USD/EUR sube +2%"
+POST http://localhost:3000/api/alerts/percentage
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "email": "pruebausuario@email.com",
+  "percentageThreshold": 2,
+  "percentageDirection": "up"
+}
+
+### Crear alerta por porcentaje - "Avísame si GBP/USD baja -3%"
+POST http://localhost:3000/api/alerts/percentage
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "GBP",
+  "to": "USD",
+  "email": "pruebausuario@email.com",
+  "percentageThreshold": 3,
+  "percentageDirection": "down"
+}
+
+### Crear alerta por porcentaje - "Avísame si EUR/JPY cambia ±5% en cualquier dirección"
+POST http://localhost:3000/api/alerts/percentage
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "EUR",
+  "to": "JPY",
+  "email": "pruebausuario@email.com",
+  "percentageThreshold": 5,
+  "percentageDirection": "both"
+}
+
+### ❌ Test alerta porcentaje con valor inválido (debe dar 400)
+POST http://localhost:3000/api/alerts/percentage
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "email": "pruebausuario@email.com",
+  "percentageThreshold": 100
+}
+
+############################################################
+### 🚫 TESTS DE ERRORES Y ACCESO NO AUTORIZADO
+############################################################
+
+### ❌ Registro con email ya existente (debe dar 409)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "Pruebausuario123",
+  "name": "Usuario Prueba"
+}
+
+### ❌ Registro con email inválido (debe dar 400)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "noesunemail",
+  "password": "123"
+}
+
+### ❌ Login con contraseña incorrecta (debe dar 401)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "contraseña_incorrecta"
+}
+
+### ❌ Acceso a historial sin token (debe dar 401)
+GET http://localhost:3000/api/historial
+
+### ❌ Borrar historial sin token (debe dar 401)
+DELETE http://localhost:3000/api/historial
+
+### ❌ Acceso a alertas sin token (debe dar 401)
+GET http://localhost:3000/api/alerts
+
+### ❌ Borrar alerta sin token (debe dar 401)
+DELETE http://localhost:3000/api/alerts
+
+############################################################
+### 🌍 MONEDAS Y CAMBIOS
+############################################################
+
+### Listado de monedas soportadas
+GET http://localhost:3000/api/monedas
+
+### Último cambio de un par de monedas
+GET http://localhost:3000/api/monedas/ultimo?from=EUR&to=USD
+
+############################################################
+### 📊 DASHBOARD / RESUMEN DEL USUARIO
+############################################################
+
+### Obtener dashboard/resumen del usuario autenticado
+GET http://localhost:3000/api/dashboard
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 📊 DASHBOARD MEJORADO
+############################################################
+
+### Obtener dashboard completo (con pares y monedas favoritas)
+GET http://localhost:3000/api/dashboard
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 🧮 CALCULADORA AVANZADA
+############################################################
+
+### Conversiones múltiples (1000 USD a varias monedas)
+POST http://localhost:3000/api/calculator/multiple
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "amount": 1000,
+  "currencies": ["EUR", "GBP", "JPY", "CHF"]
+}
+
+### ❌ Test con datos inválidos (debe dar 400)
+POST http://localhost:3000/api/calculator/multiple
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "amount": -100,
+  "currencies": ["EUR", "GBP"]
+}
+
+### ❌ Test sin currencies (debe dar 400)
+POST http://localhost:3000/api/calculator/multiple
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "amount": 1000
+}
+
+### Calculadora inversa - "¿Cuántos USD necesito para obtener 500 EUR?"
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "targetAmount": 500
+}
+
+### Calculadora inversa - "¿Cuántos EUR necesito para obtener 100,000 JPY?"
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "EUR",
+  "to": "JPY",
+  "targetAmount": 100000
+}
+
+### ❌ Test calculadora inversa con targetAmount negativo (debe dar 400)
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "targetAmount": -500
+}
+
+### ❌ Test calculadora inversa con monedas iguales (debe dar 400)
+POST http://localhost:3000/api/calculator/reverse
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "USD",
+  "targetAmount": 500
+}
+
+### Comparador de pares - Comparar varios pares a la vez
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": [
+    { "from": "USD", "to": "EUR" },
+    { "from": "USD", "to": "GBP" },
+    { "from": "USD", "to": "JPY" },
+    { "from": "EUR", "to": "GBP" }
+  ]
+}
+
+### Comparador de pares - Solo dos pares
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": [
+    { "from": "EUR", "to": "USD" },
+    { "from": "GBP", "to": "USD" }
+  ]
+}
+
+### ❌ Test comparador sin pares (debe dar 400)
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": []
+}
+
+### ❌ Test comparador con par inválido (debe dar 400)
+POST http://localhost:3000/api/calculator/compare
+Content-Type: application/json
+
+{
+  "pairs": [
+    { "from": "USD", "to": "USD" }
+  ]
+}
+
+### Histórico de tasas - Consultar tipo de cambio en fecha específica
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "date": "2025-01-15"
+}
+
+### Histórico de tasas - Otra fecha
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "GBP",
+  "to": "JPY",
+  "date": "2025-01-01"
+}
+
+### ❌ Test histórico con fecha futura (debe dar 400)
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "date": "2025-12-31"
+}
+
+### ❌ Test histórico con formato de fecha incorrecto (debe dar 400)
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "date": "15/01/2025"
+}
+
+### ❌ Test histórico con monedas iguales (debe dar 400)
+POST http://localhost:3000/api/calculator/historical
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "USD",
+  "date": "2025-01-15"
+}
+
+### Crear alerta por precio objetivo - "Avísame cuando USD/EUR llegue a 0.90"
+POST http://localhost:3000/api/alerts/target
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "email": "pruebausuario@email.com",
+  "targetRate": 0.90,
+  "targetDirection": "exact"
+}
+
+### Crear alerta por precio objetivo - "Avísame cuando GBP/USD suba por encima de 1.30"
+POST http://localhost:3000/api/alerts/target
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "GBP",
+  "to": "USD",
+  "email": "pruebausuario@email.com",
+  "targetRate": 1.30,
+  "targetDirection": "above"
+}
+
+### Crear alerta por precio objetivo - "Avísame cuando EUR/JPY baje por debajo de 150"
+POST http://localhost:3000/api/alerts/target
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "EUR",
+  "to": "JPY",
+  "email": "pruebausuario@email.com",
+  "targetRate": 150,
+  "targetDirection": "below"
+}
+
+### ❌ Test alerta objetivo con precio inválido (debe dar 400)
+POST http://localhost:3000/api/alerts/target
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "email": "pruebausuario@email.com",
+  "targetRate": -5
+}
+
+############################################################
+### 💖 FAVORITOS DE PARES
+############################################################
+
+### Añadir EUR/USD a favoritos
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "EUR",
+  "to": "USD",
+  "nickname": "Mi par principal"
+}
+
+### Añadir GBP/JPY a favoritos sin nickname
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "GBP",
+  "to": "JPY"
+}
+
+### Añadir CHF/CAD a favoritos
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "CHF",
+  "to": "CAD",
+  "nickname": "Para viajes"
+}
+
+### ❌ Intentar añadir un par duplicado (debe dar 409)
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "EUR",
+  "to": "USD",
+  "nickname": "Duplicado"
+}
+
+### ❌ Intentar añadir par inválido (debe dar 400)
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "XXX",
+  "to": "YYY"
+}
+
+### ❌ Intentar añadir mismo origen y destino (debe dar 400)
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "USD"
+}
+
+### Listar todos los favoritos del usuario
+GET http://localhost:3000/api/favorites
+Authorization: Bearer {{userToken}}
+
+### Actualizar nickname de un favorito (reemplaza <ID_DEL_FAVORITO>)
+PUT http://localhost:3000/api/favorites/6888b5cb6cb657b829bfb295
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "nickname": "Mi par favorito actualizado"
+}
+
+### Eliminar un favorito (reemplaza <ID_DEL_FAVORITO>)
+DELETE http://localhost:3000/api/favorites/6888b60f6cb657b829bfb299
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 💰 MONEDAS FAVORITAS
+############################################################
+
+### Añadir EUR a monedas favoritas (predeterminada)
+POST http://localhost:3000/api/favorite-currencies
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "currency": "EUR",
+  "nickname": "Mi moneda principal",
+  "priority": 1,
+  "isDefault": true
+}
+
+### Añadir USD a monedas favoritas
+POST http://localhost:3000/api/favorite-currencies
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "currency": "USD",
+  "nickname": "Dólar americano",
+  "priority": 2
+}
+
+### Añadir GBP a monedas favoritas
+POST http://localhost:3000/api/favorite-currencies
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "currency": "GBP",
+  "nickname": "Libra esterlina",
+  "priority": 3
+}
+
+### ❌ Intentar añadir moneda duplicada (debe dar 409)
+POST http://localhost:3000/api/favorite-currencies
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "currency": "EUR",
+  "nickname": "Euro duplicado"
+}
+
+### ❌ Intentar añadir moneda inválida (debe dar 400)
+POST http://localhost:3000/api/favorite-currencies
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "currency": "XXX"
+}
+
+### Listar monedas favoritas con tipos de cambio (base EUR)
+GET http://localhost:3000/api/favorite-currencies
+Authorization: Bearer {{userToken}}
+
+### Listar monedas favoritas con tipos de cambio (base USD)
+GET http://localhost:3000/api/favorite-currencies?base=USD
+Authorization: Bearer {{userToken}}
+
+### Obtener lista simplificada para dropdown
+GET http://localhost:3000/api/favorite-currencies/dropdown
+Authorization: Bearer {{userToken}}
+
+### Actualizar moneda favorita (reemplaza <ID_DE_LA_MONEDA>)
+PUT http://localhost:3000/api/favorite-currencies/6888bb23b4b36f3acf5f4efb
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "nickname": "Euro actualizado",
+  "priority": 1,
+  "isDefault": true
+}
+
+### Eliminar moneda favorita (reemplaza <ID_DE_LA_MONEDA>)
+DELETE http://localhost:3000/api/favorite-currencies/6888bb23b4b36f3acf5f4efb
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 📋 LOGS DE ACTIVIDAD
+############################################################
+
+### Obtener logs de actividad del usuario (últimos 30 días)
+GET http://localhost:3000/api/activity-logs
+Authorization: Bearer {{userToken}}
+
+### Obtener logs filtrados por acción (solo conversiones)
+GET http://localhost:3000/api/activity-logs?action=CONVERSION_SINGLE&days=7&limit=20
+Authorization: Bearer {{userToken}}
+
+### Obtener logs con paginación (página 2)
+GET http://localhost:3000/api/activity-logs?page=2&limit=10
+Authorization: Bearer {{userToken}}
+
+### Obtener estadísticas de actividad (últimos 30 días)
+GET http://localhost:3000/api/activity-logs/stats
+Authorization: Bearer {{userToken}}
+
+### Obtener estadísticas de actividad (últimos 7 días)
+GET http://localhost:3000/api/activity-logs/stats?days=7
+Authorization: Bearer {{userToken}}
+
+### Obtener acciones disponibles para filtros
+GET http://localhost:3000/api/activity-logs/actions
+Authorization: Bearer {{userToken}}
+
+############################################################
+### 🧪 GENERAR ACTIVIDAD PARA TESTING
+############################################################
+
+### Realizar una conversión (para generar log CONVERSION_SINGLE)
+POST http://localhost:3000/api/convert
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "amount": 100
+}
+
+### Ver dashboard (para generar log DASHBOARD_VIEW)
+GET http://localhost:3000/api/dashboard
+Authorization: Bearer {{userToken}}
+
+### Añadir par favorito (para generar log FAVORITE_PAIR_ADD)
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "from": "CHF",
+  "to": "SEK",
+  "nickname": "Par para testing logs"
+}
+
+### Verificar logs después de la conversión
+GET http://localhost:3000/api/activity-logs?days=1&limit=10
+Authorization: Bearer {{userToken}}
