@@ -1,6 +1,8 @@
-const axios = require('axios');
-const Conversion = require('../models/Conversion');
 const Alert = require('../models/Alert');
+const Conversion = require('../models/Conversion');
+const Favorite = require('../models/Favorite');
+const FavoriteCurrency = require('../models/FavoriteCurrency'); // ← AÑADIR ESTA LÍNEA
+const axios = require('axios');
 
 // Lista de monedas soportadas (puedes ampliarla si Frankfurter añade más)
 const supportedCurrencies = [
@@ -115,19 +117,95 @@ const getDashboard = async (req, res) => {
   try {
     const userId = req.user.userId;
 
+    // Datos existentes
     const totalConversions = await Conversion.countDocuments({ user: userId });
     const lastConversions = await Conversion.find({ user: userId }).sort({ createdAt: -1 }).limit(3);
     const totalAlerts = await Alert.countDocuments({ user: userId });
     const nextAlerts = await Alert.find({ user: userId }).sort({ hour: 1 }).limit(3);
+    const favorites = await Favorite.find({ user: userId }).limit(5);
+
+    // NUEVA FUNCIONALIDAD: Monedas favoritas
+    const favoriteCurrencies = await FavoriteCurrency.find({ user: userId })
+      .sort({ priority: 1, currency: 1 })
+      .limit(5);
+
+    // Obtener tipos de cambio para pares favoritos (existente)
+    const favoritesWithRates = await Promise.all(
+      favorites.map(async (favorite) => {
+        try {
+          const response = await axios.get(`https://api.frankfurter.app/latest?from=${favorite.from}&to=${favorite.to}`);
+          return {
+            pair: `${favorite.from}/${favorite.to}`,
+            nickname: favorite.nickname,
+            rate: response.data.rates[favorite.to]
+          };
+        } catch (error) {
+          return {
+            pair: `${favorite.from}/${favorite.to}`,
+            nickname: favorite.nickname,
+            rate: 'Error'
+          };
+        }
+      })
+    );
+
+    // NUEVA FUNCIONALIDAD: Obtener tipos de cambio para monedas favoritas vs EUR
+    const favoriteCurrenciesWithRates = await Promise.all(
+      favoriteCurrencies.map(async (favCurrency) => {
+        try {
+          if (favCurrency.currency === 'EUR') {
+            // Si es EUR, mostrar vs USD
+            const response = await axios.get(`https://api.frankfurter.app/latest?from=EUR&to=USD`);
+            return {
+              currency: favCurrency.currency,
+              nickname: favCurrency.nickname,
+              isDefault: favCurrency.isDefault,
+              rate: response.data.rates.USD,
+              pair: 'EUR/USD'
+            };
+          } else {
+            // Para otras monedas, mostrar vs EUR
+            const response = await axios.get(`https://api.frankfurter.app/latest?from=EUR&to=${favCurrency.currency}`);
+            return {
+              currency: favCurrency.currency,
+              nickname: favCurrency.nickname,
+              isDefault: favCurrency.isDefault,
+              rate: response.data.rates[favCurrency.currency],
+              pair: `EUR/${favCurrency.currency}`
+            };
+          }
+        } catch (error) {
+          return {
+            currency: favCurrency.currency,
+            nickname: favCurrency.nickname,
+            isDefault: favCurrency.isDefault,
+            rate: 'Error',
+            pair: `EUR/${favCurrency.currency}`
+          };
+        }
+      })
+    );
 
     const marketTrends = await getMarketTrends();
 
+    // Respuesta actualizada con monedas favoritas
     res.json({
       totalConversions,
       lastConversions,
       totalAlerts,
       nextAlerts,
-      marketTrends
+      marketTrends,
+      favoritos: {
+        pares: {
+          total: favorites.length,
+          lista: favoritesWithRates
+        },
+        // NUEVA SECCIÓN: Monedas favoritas
+        monedas: {
+          total: favoriteCurrencies.length,
+          lista: favoriteCurrenciesWithRates
+        }
+      }
     });
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener el dashboard' });

@@ -1,18 +1,22 @@
 require('dotenv').config();
-require('./cron/cleanupJob'); // Cron diario a las 2:00 AM
+require('./cron/cleanupJob');
 require('./cron/alertJob');
 
+// Importar dependencias y módulos necesarios
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const convertRoutes = require('./routes/convert');
-const alertRoutes = require('./routes/Alert'); 
+const alertRoutes = require('./routes/alert'); 
 const monedasRoutes = require('./routes/monedas');
 const dashboardRoutes = require('./routes/dashboard');
 const Conversion = require('./models/Conversion'); 
 const calculatorRoutes = require('./routes/calculator');
+const favoritesRoutes = require('./routes/favorites');
+const favoriteCurrenciesRoutes = require('./routes/favoriteCurrencies');
+const activityLogsRoutes = require('./routes/activityLogs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,10 +28,13 @@ app.use(express.json());
 // Rutas
 app.use('/api', convertRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/alerts', alertRoutes); // Añade esta línea
+app.use('/api/alerts', alertRoutes); 
 app.use('/api/monedas', monedasRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/calculator', calculatorRoutes);
+app.use('/api/favorites', favoritesRoutes);
+app.use('/api/favorite-currencies', favoriteCurrenciesRoutes);
+app.use('/api/activity-logs', activityLogsRoutes); 
 
 // Conexión a MongoDB y arranque del servidor
 mongoose.connect(process.env.MONGODB_URI)

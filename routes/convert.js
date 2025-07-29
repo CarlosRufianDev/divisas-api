@@ -12,6 +12,7 @@ const validateConversion = require('../validators/convertValidator');
 const { validationResult } = require('express-validator');
 const requireAuth = require('../middleware/authMiddleware');
 const isAdmin = require('../middleware/isAdmin'); // ✅ Importado para uso de admin
+const { logConversion } = require('../middleware/activityLogger'); // ← Añadir esta línea
 
 // Middleware para manejar errores de validación
 const handleValidation = (req, res, next) => {
@@ -23,7 +24,7 @@ const handleValidation = (req, res, next) => {
 };
 
 // POST para convertir divisas (autenticado opcionalmente)
-router.post('/convert', validateConversion, handleValidation, convertCurrency);
+router.post('/convert', requireAuth, validateConversion, handleValidation, logConversion, convertCurrency);
 
 // GET historial del usuario autenticado
 router.get('/historial', requireAuth, getHistory);

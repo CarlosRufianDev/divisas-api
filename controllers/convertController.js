@@ -2,6 +2,7 @@ const axios = require('axios');
 const Conversion = require('../models/Conversion');
 const jwt = require('jsonwebtoken');
 const buildFilters = require('../utils/buildFilters');
+const ActivityLog = require('../models/ActivityLog'); // ← Añadir esta línea
 
 
 // Convertir moneda
@@ -76,6 +77,33 @@ const convertCurrency = async (req, res) => {
       user: userId || null,
       id: newConversion._id
     });
+
+    // LOGGING MANUAL (temporal)
+    if (req.user && req.user.userId) {
+      try {
+        await ActivityLog.createLog(
+          req.user.userId,
+          'CONVERSION_SINGLE',
+          {
+            from: from,
+            to: to,
+            amount: parseFloat(amount),
+            result: convertedAmount,
+            ipAddress: req.ip || req.connection.remoteAddress,
+            userAgent: req.get('User-Agent')
+          },
+          {
+            endpoint: req.originalUrl,
+            httpMethod: req.method,
+            statusCode: 200,
+            apiVersion: '1.0'
+          }
+        );
+        console.log('✅ Log creado exitosamente');
+      } catch (logError) {
+        console.error('❌ Error creando log:', logError.message);
+      }
+    }
 
   } catch (error) {
     console.error('Error al convertir:', error.message);
