@@ -1,1 +1,59 @@
-<router-outlet></router-outlet>
+<div class="app-container">
+  <!-- Navbar Principal -->
+  <mat-toolbar color="primary" class="app-navbar">
+    <mat-icon>account_balance</mat-icon>
+    <span class="app-title">DivisasPro</span>
+    
+    <span class="spacer"></span>
+    
+    <!-- Menú de Navegación -->
+    <nav class="nav-menu">
+      <a mat-button routerLink="/dashboard" routerLinkActive="active">
+        <mat-icon>dashboard</mat-icon>
+        Dashboard
+      </a>
+      
+      <a mat-button routerLink="/historial" routerLinkActive="active">
+        <mat-icon>history</mat-icon>
+        Historial
+      </a>
+      
+      <a mat-button routerLink="/favoritos" routerLinkActive="active">
+        <mat-icon>star</mat-icon>
+        Favoritos
+      </a>
+      
+      <a mat-button routerLink="/alertas" routerLinkActive="active">
+        <mat-icon>notifications</mat-icon>
+        Alertas
+      </a>
+    </nav>
+    
+    <!-- Botón Usuario -->
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    
+    <!-- Menú Usuario -->
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon>
+        <span>Perfil</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Configuración</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <!-- Contenido Principal -->
+  <main class="app-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,138 @@
+/* filepath: c:\PROYECTOS\divisas-api\frontend\src\app\app.scss */
+
+// Variables globales
+:root {
+  --primary-color: #1976d2;
+  --accent-color: #ff4081;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --background-color: #fafafa;
+  --card-background: #ffffff;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --border-color: #e0e0e0;
+}
+
+// Layout principal
+.app-container {
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+// Navbar mejorada
+.app-navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  
+  .navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  
+  .app-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      
+      &.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-weight: 500;
+      }
+      
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+  
+  .user-menu-button {
+    color: white;
+    
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// Contenido principal
+.app-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  min-height: calc(100vh - 64px);
+}
+
+// Utilidades globales
+.text-center { text-align: center; }
+.text-success { color: var(--success-color); }
+.text-error { color: var(--error-color); }
+.text-warning { color: var(--warning-color); }
+
+.trending-up { color: var(--success-color); }
+.trending-down { color: var(--error-color); }
+
+// Animaciones globales
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .app-navbar {
+    .nav-links {
+      .nav-link span {
+        display: none;
+      }
+    }
+  }
+  
+  .app-content {
+    padding: 16px 8px;
+  }
+}

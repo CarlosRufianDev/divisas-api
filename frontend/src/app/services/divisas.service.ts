@@ -15,4 +15,14 @@ export class DivisasService {
     const body = { amount, from, to };
     return this.http.post(`${this.apiUrl}/convert`, body);
   }
+
+  //  Obtener tipos de cambio múltiples
+  obtenerTiposCambio(baseCurrency: string = 'USD'): Observable<any> {
+    return this.http.get(`${this.apiUrl}/rates/${baseCurrency}`);
+  }
+
+  //  Obtener lista de divisas disponibles
+  obtenerDivisasDisponibles(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/currencies`);
+  }
 }

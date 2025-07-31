@@ -1,0 +1,170 @@
+<div class="favoritos-container">
+  <!-- Header Principal -->
+  <div class="favoritos-header">
+    <h1>⭐ Tu Centro de Control de Divisas</h1>
+    <p class="subtitle">Gestiona y monitorea tus pares favoritos en tiempo real</p>
+  </div>
+
+  <!-- SECCIÓN 1: FAVORITOS ACTIVOS -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>star</mat-icon>
+        Pares Favoritos (3)
+      </mat-card-title>
+      <button mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="favoritos-grid">
+        <!-- Favorito 1 -->
+        <div class="favorito-item trending-up">
+          <div class="par-info">
+            <span class="par-name">EUR/USD</span>
+            <span class="par-rate">1.1520</span>
+          </div>
+          <div class="par-change positive">
+            <mat-icon>trending_up</mat-icon>
+            +0.12%
+          </div>
+          <button mat-icon-button class="remove-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Favorito 2 -->
+        <div class="favorito-item trending-down">
+          <div class="par-info">
+            <span class="par-name">GBP/USD</span>
+            <span class="par-rate">1.2845</span>
+          </div>
+          <div class="par-change negative">
+            <mat-icon>trending_down</mat-icon>
+            -0.08%
+          </div>
+          <button mat-icon-button class="remove-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Favorito 3 -->
+        <div class="favorito-item trending-up">
+          <div class="par-info">
+            <span class="par-name">USD/JPY</span>
+            <span class="par-rate">149.82</span>
+          </div>
+          <div class="par-change positive">
+            <mat-icon>trending_up</mat-icon>
+            +0.05%
+          </div>
+          <button mat-icon-button class="remove-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- SECCIÓN 2: CONVERSIÓN RÁPIDA -->
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>swap_horiz</mat-icon>
+        Conversión Rápida entre Favoritos
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="conversion-panel">
+        <mat-form-field class="amount-field">
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" value="1000" placeholder="0">
+          <span matPrefix>💰 </span>
+        </mat-form-field>
+
+        <mat-form-field class="currency-field">
+          <mat-label>De</mat-label>
+          <mat-select value="EUR">
+            <mat-option value="EUR">EUR - Euro</mat-option>
+            <mat-option value="GBP">GBP - Libra</mat-option>
+            <mat-option value="USD">USD - Dólar</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-icon-button class="swap-btn" color="primary">
+          <mat-icon>swap_horiz</mat-icon>
+        </button>
+
+        <mat-form-field class="currency-field">
+          <mat-label>A</mat-label>
+          <mat-select value="USD">
+            <mat-option value="EUR">EUR - Euro</mat-option>
+            <mat-option value="GBP">GBP - Libra</mat-option>
+            <mat-option value="USD">USD - Dólar</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="result-panel">
+          <span class="result-label">Resultado:</span>
+          <span class="result-value">1,152.00 USD</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- SECCIÓN 3: RESUMEN DEL DÍA -->
+  <div class="summary-row">
+    <!-- Mejores Performers -->
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="trending-up-icon">trending_up</mat-icon>
+          Mejor Performer
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="performer-info">
+          <span class="performer-pair">EUR/USD</span>
+          <span class="performer-change positive">+0.12%</span>
+        </div>
+        <p class="performer-description">Tu favorito con mejor rendimiento hoy</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Peores Performers -->
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="trending-down-icon">trending_down</mat-icon>
+          Necesita Atención
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="performer-info">
+          <span class="performer-pair">GBP/USD</span>
+          <span class="performer-change negative">-0.08%</span>
+        </div>
+        <p class="performer-description">Revisa las tendencias de este par</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Alertas Activas -->
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="alert-icon">notifications_active</mat-icon>
+          Alertas Activas
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="alert-info">
+          <span class="alert-count">2</span>
+          <span class="alert-label">configuradas</span>
+        </div>
+        <p class="alert-description">EUR/USD > 1.20, GBP/USD < 1.25</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

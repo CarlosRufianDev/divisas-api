@@ -1,13 +1,214 @@
-<div>
-  <h1>Dashboard de Divisas</h1>
-  
-  <button (click)="probarConversion()">
-    Convertir 100 USD a EUR
-  </button>
-  
-  <div *ngIf="resultado">
-    <h3>Resultado:</h3>
-    <p>Cantidad convertida: {{ resultado.result }}</p>
-    <p>Tasa de cambio: {{ resultado.rate }}</p>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>💰 DivisasPro</h1>
+    <p class="subtitle">Conversión de divisas en tiempo real</p>
+  </div>
+
+  <!-- Header/Toolbar -->
+  <mat-toolbar color="primary">
+    <mat-icon>currency_exchange</mat-icon>
+    <span class="spacer">Dashboard de Divisas</span>
+    <mat-icon>account_balance</mat-icon>
+  </mat-toolbar>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    
+    <!-- Conversor Card -->
+    <mat-card class="converter-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>swap_horiz</mat-icon>
+          Conversor de Divisas
+        </mat-card-title>
+        <mat-card-subtitle>Conversión en tiempo real</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Formulario de Conversión -->
+        <div class="conversion-form">
+          
+          <!-- Campo Cantidad -->
+          <mat-form-field appearance="outline" class="amount-field">
+            <mat-label>Cantidad</mat-label>
+            <input matInput 
+                   type="number" 
+                   [formControl]="cantidad"
+                   placeholder="Ej: 100">
+            <mat-icon matSuffix>attach_money</mat-icon>
+          </mat-form-field>
+
+          <!-- Fila de Divisas -->
+          <div class="currency-row">
+            <!-- Moneda Origen -->
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>De</mat-label>
+              <mat-select [formControl]="monedaOrigen">
+                <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
+                  {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Botón Intercambiar -->
+            <button mat-icon-button 
+                    color="primary" 
+                    (click)="intercambiarDivisas()"
+                    class="swap-button"
+                    matTooltip="Intercambiar divisas">
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+
+            <!-- Moneda Destino -->
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>A</mat-label>
+              <mat-select [formControl]="monedaDestino">
+                <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
+                  {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Botón Convertir -->
+          <button mat-raised-button 
+                  color="primary" 
+                  (click)="convertirDivisas()"
+                  [disabled]="cargando"
+                  class="convert-button">
+            <mat-icon *ngIf="!cargando">currency_exchange</mat-icon>
+            <mat-progress-spinner *ngIf="cargando" 
+                                  diameter="20" 
+                                  mode="indeterminate">
+            </mat-progress-spinner>
+            {{ cargando ? 'Convirtiendo...' : 'Convertir' }}
+          </button>
+
+        </div>
+
+        <!-- Resultado -->
+        <div *ngIf="resultado" class="result-container">
+          <mat-divider></mat-divider>
+          <div class="result-content">
+            <h3>
+              <mat-icon>check_circle</mat-icon>
+              Resultado de Conversión
+            </h3>
+            <div class="result-values">
+              <mat-chip-set>
+                <mat-chip color="accent" selected>
+                  <mat-icon>attach_money</mat-icon>
+                  {{ resultado.result }} {{ monedaDestino.value }}
+                </mat-chip>
+                <mat-chip matTooltip="Tipo de cambio actual">
+                  <mat-icon>trending_up</mat-icon>
+                  1 {{ monedaOrigen.value }} = {{ resultado.rate }} {{ monedaDestino.value }}
+                </mat-chip>
+              </mat-chip-set>
+              
+              <!-- Explicación del valor relativo -->
+              <div class="rate-explanation">
+                <mat-icon>info</mat-icon>
+                <span *ngIf="resultado.rate > 1" class="explanation-text">
+                  El <strong>{{ monedaOrigen.value }}</strong> vale más que el <strong>{{ monedaDestino.value }}</strong>
+                  <br><small>Por cada {{ monedaOrigen.value }} obtienes {{ resultado.rate }} {{ monedaDestino.value }}</small>
+                </span>
+                <span *ngIf="resultado.rate < 1" class="explanation-text">
+                  El <strong>{{ monedaDestino.value }}</strong> vale más que el <strong>{{ monedaOrigen.value }}</strong>
+                  <br><small>Necesitas {{ (1/resultado.rate).toFixed(4) }} {{ monedaOrigen.value }} para obtener 1 {{ monedaDestino.value }}</small>
+                </span>
+                <span *ngIf="resultado.rate == 1" class="explanation-text">
+                  Ambas divisas tienen el <strong>mismo valor</strong>
+                  <br><small>1 {{ monedaOrigen.value }} = 1 {{ monedaDestino.value }}</small>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- NUEVA TABLA DE TIPOS DE CAMBIO -->
+    <mat-card class="rates-table-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>table_chart</mat-icon>
+          Tipos de Cambio
+        </mat-card-title>
+        <mat-card-subtitle>
+          Actualizado: {{ ultimaActualizacion }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Selector de Moneda Base -->
+        <div class="base-currency-selector">
+          <mat-form-field appearance="outline">
+            <mat-label>Moneda Base</mat-label>
+            <mat-select [formControl]="monedaBase" (selectionChange)="cambiarMonedaBase()">
+              <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
+                {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Tabla de Tipos de Cambio -->
+        <div class="table-container">
+          <table mat-table [dataSource]="tiposCambio" class="rates-table">
+            
+            <!-- Columna Divisa -->
+            <ng-container matColumnDef="currency">
+              <th mat-header-cell *matHeaderCellDef>Divisa</th>
+              <td mat-cell *matCellDef="let rate">
+                <div class="currency-cell">
+                  <span class="flag">{{ rate.flag }}</span>
+                  <div class="currency-info">
+                    <strong>{{ rate.code }}</strong>
+                    <small>{{ rate.name }}</small>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Columna Tipo de Cambio -->
+            <ng-container matColumnDef="rate">
+              <th mat-header-cell *matHeaderCellDef>Tipo de Cambio</th>
+              <td mat-cell *matCellDef="let rate">
+                <div class="rate-cell">
+                  <strong>{{ rate.rate | number:'1.2-4' }}</strong>
+                  <small>1 {{ rate.base }} = {{ rate.rate | number:'1.2-4' }} {{ rate.code }}</small>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Columna Acciones -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let rate">
+                <button mat-icon-button 
+                        color="primary"
+                        (click)="usarEnConversor(rate.code)"
+                        matTooltip="Usar en conversor">
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['currency', 'rate', 'actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['currency', 'rate', 'actions']"></tr>
+          </table>
+
+          <!-- Loading Spinner -->
+          <div *ngIf="cargandoTabla" class="loading-container">
+            <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+            <p>Cargando tipos de cambio...</p>
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
   </div>
 </div>
