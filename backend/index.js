@@ -17,6 +17,7 @@ const calculatorRoutes = require('./routes/calculator');
 const favoritesRoutes = require('./routes/favorites');
 const favoriteCurrenciesRoutes = require('./routes/favoriteCurrencies');
 const activityLogsRoutes = require('./routes/activityLogs');
+const exchangeController = require('./controllers/exchangeController'); // ✅ AÑADIR
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +36,7 @@ app.use('/api/calculator', calculatorRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/favorite-currencies', favoriteCurrenciesRoutes);
 app.use('/api/activity-logs', activityLogsRoutes); 
+app.get('/api/exchange/rates', exchangeController.getExchangeRates); // ✅ AÑADIR esta ruta
 
 // Conexión a MongoDB y arranque del servidor
 mongoose.connect(process.env.MONGODB_URI)

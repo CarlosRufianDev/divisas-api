@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const buildFilters = require('../utils/buildFilters');
 const ActivityLog = require('../models/ActivityLog'); // ← Añadir esta línea
 
+// URL de la API de Frankfurter
+const API_URL = process.env.API_URL || 'https://api.frankfurter.app/latest';
 
 // Convertir moneda
 // Requiere: from, to, amount
@@ -29,7 +31,7 @@ const convertCurrency = async (req, res) => {
   }
 
   try {
-    const apiUrl = `${process.env.API_URL}?amount=${amount}&from=${from}&to=${to}`;
+    const apiUrl = `${API_URL}?amount=${amount}&from=${from}&to=${to}`;
     console.log('URL solicitada:', apiUrl);
     const response = await axios.get(apiUrl);
 

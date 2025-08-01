@@ -6,50 +6,75 @@
     
     <span class="spacer"></span>
     
-    <!-- Menú de Navegación -->
+    <!-- Dashboard siempre visible -->
     <nav class="nav-menu">
       <a mat-button routerLink="/dashboard" routerLinkActive="active">
         <mat-icon>dashboard</mat-icon>
         Dashboard
       </a>
       
-      <a mat-button routerLink="/historial" routerLinkActive="active">
-        <mat-icon>history</mat-icon>
-        Historial
-      </a>
-      
-      <a mat-button routerLink="/favoritos" routerLinkActive="active">
-        <mat-icon>star</mat-icon>
-        Favoritos
-      </a>
-      
-      <a mat-button routerLink="/alertas" routerLinkActive="active">
-        <mat-icon>notifications</mat-icon>
-        Alertas
-      </a>
+      <!-- Menú solo para usuarios autenticados -->
+      <ng-container *ngIf="currentUser">
+        <a mat-button routerLink="/historial" routerLinkActive="active">
+          <mat-icon>history</mat-icon>
+          Historial
+        </a>
+        
+        <a mat-button routerLink="/favoritos" routerLinkActive="active">
+          <mat-icon>star</mat-icon>
+          Favoritos
+        </a>
+        
+        <a mat-button routerLink="/alertas" routerLinkActive="active">
+          <mat-icon>notifications</mat-icon>
+          Alertas
+        </a>
+      </ng-container>
     </nav>
     
-    <!-- Botón Usuario -->
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-      <mat-icon>account_circle</mat-icon>
-    </button>
+    <!-- Usuario Autenticado -->
+    <div class="user-section" *ngIf="currentUser; else loginSection">
+      <span class="welcome">¡Hola {{currentUser.name}}!</span>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      
+      <!-- Menú Usuario -->
+      <mat-menu #userMenu="matMenu">
+        <div class="user-info">
+          <div class="user-name">{{currentUser.name}}</div>
+          <div class="user-email">{{currentUser.email}}</div>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item>
+          <mat-icon>person</mat-icon>
+          <span>Perfil</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>settings</mat-icon>
+          <span>Configuración</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar Sesión</span>
+        </button>
+      </mat-menu>
+    </div>
     
-    <!-- Menú Usuario -->
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item>
-        <mat-icon>person</mat-icon>
-        <span>Perfil</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>settings</mat-icon>
-        <span>Configuración</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item>
-        <mat-icon>logout</mat-icon>
-        <span>Cerrar Sesión</span>
-      </button>
-    </mat-menu>
+    <!-- Botones Login/Register -->
+    <ng-template #loginSection>
+      <div class="auth-buttons">
+        <button mat-button routerLink="/login">
+          <mat-icon>login</mat-icon>
+          Iniciar Sesión
+        </button>
+        <button mat-raised-button color="accent" routerLink="/register">
+          <mat-icon>person_add</mat-icon>
+          Registrarse
+        </button>
+      </div>
+    </ng-template>
   </mat-toolbar>
 
   <!-- Contenido Principal -->

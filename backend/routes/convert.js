@@ -47,13 +47,17 @@ router.get('/rates/:baseCurrency', async (req, res) => {
     const { baseCurrency } = req.params;
     
     // Validar que la moneda base sea válida
-    const validCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY'];
+    const validCurrencies = [
+      'USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 
+      'MXN', 'BRL', 'KRW', 'INR', 'SEK', 'NOK',
+      'HKD', 'SGD', 'NZD', 'ZAR', 'TRY', 'PLN'
+    ]; // ✅ Ahora 20 divisas
     if (!validCurrencies.includes(baseCurrency.toUpperCase())) {
       return res.status(400).json({ error: 'Moneda base no válida' });
     }
 
-    // Llamar a la API externa para obtener todos los tipos de cambio
-    const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency.toUpperCase()}`);
+    // ✅ CAMBIAR A FRANKFURTER (igual que en convertController.js)
+    const response = await fetch(`https://api.frankfurter.app/latest?from=${baseCurrency.toUpperCase()}`);
     
     if (!response.ok) {
       throw new Error('Error al obtener tipos de cambio');
@@ -88,11 +92,23 @@ router.get('/currencies', (req, res) => {
     { code: 'EUR', name: 'Euro', flag: '🇪🇺', symbol: '€' },
     { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧', symbol: '£' },
     { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵', symbol: '¥' },
+    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭', symbol: 'CHF' },
     { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦', symbol: 'C$' },
     { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺', symbol: 'A$' },
-    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭', symbol: 'CHF' },
-    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳', symbol: '¥' }
-  ];
+    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳', symbol: '¥' },
+    { code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽', symbol: '$' },
+    { code: 'BRL', name: 'Real Brasileño', flag: '🇧🇷', symbol: 'R$' },
+    { code: 'KRW', name: 'Won Surcoreano', flag: '🇰🇷', symbol: '₩' },
+    { code: 'INR', name: 'Rupia India', flag: '🇮🇳', symbol: '₹' },
+    { code: 'SEK', name: 'Corona Sueca', flag: '🇸🇪', symbol: 'kr' },
+    { code: 'NOK', name: 'Corona Noruega', flag: '🇳🇴', symbol: 'kr' },
+    { code: 'HKD', name: 'Dólar de Hong Kong', flag: '🇭🇰', symbol: 'HK$' },
+    { code: 'SGD', name: 'Dólar de Singapur', flag: '🇸🇬', symbol: 'S$' },
+    { code: 'NZD', name: 'Dólar Neozelandés', flag: '🇳🇿', symbol: 'NZ$' },
+    { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦', symbol: 'R' },
+    { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷', symbol: '₺' },
+    { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱', symbol: 'zł' }
+  ]; // ✅ Ahora 20 divisas con símbolos
 
   res.json({
     success: true,

@@ -3,8 +3,8 @@
 // ==============================
 // Copia aquí los tokens tras hacer login para pruebas autenticadas
 @adminToken = PON_AQUI_EL_TOKEN_DEL_ADMIN
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODgyYjJkMjYwNWYxMzhiZDM1YzgxOTgiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTM4MDE5NjIsImV4cCI6MTc1MzgwOTE2Mn0.dCtVoNu0ZAdh8JUzmAEkLt27kNN3_I1oPuPjtXDOUkk
-@realToken = PON_AQUI_EL_TOKEN_DEL_USUARIO_REAL
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODgyYjJkMjYwNWYxMzhiZDM1YzgxOTgiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTQwMDk3MDAsImV4cCI6MTc1NDAxNjkwMH0.5U0xcGu7NJB-ZtXbADsqyBM_TB-VWP3UJJVzJfeILsg
+@realToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiZTg5YTBkYjliZDA4OTZiYzZkNzAiLCJlbWFpbCI6ImNhcmxvc3J1ZmlhbmRldkBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc1Mzk5OTUxOSwiZXhwIjoxNzU0MDA2NzE5fQ._WOMca4tQabN9k_c2puCR7IXl3QVLpE5eXAxJ2_GLqk
 
 ############################################################
 ### 🟢 AUTENTICACIÓN Y USUARIOS

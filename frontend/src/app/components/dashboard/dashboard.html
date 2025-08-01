@@ -41,11 +41,11 @@
           <!-- Fila de Divisas -->
           <div class="currency-row">
             <!-- Moneda Origen -->
-            <mat-form-field appearance="outline" class="currency-field">
+            <mat-form-field appearance="outline">
               <mat-label>De</mat-label>
-              <mat-select [formControl]="monedaOrigen">
-                <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
-                  {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
+              <mat-select [formControl]="monedaOrigen" (selectionChange)="onMonedaOrigenChange()">
+                <mat-option *ngFor="let divisa of getDivisasOrigen()" [value]="divisa.code">
+                  {{divisa.flag}} {{divisa.code}} - {{divisa.name}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -60,11 +60,11 @@
             </button>
 
             <!-- Moneda Destino -->
-            <mat-form-field appearance="outline" class="currency-field">
+            <mat-form-field appearance="outline">
               <mat-label>A</mat-label>
-              <mat-select [formControl]="monedaDestino">
-                <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
-                  {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
+              <mat-select [formControl]="monedaDestino" (selectionChange)="onMonedaDestinoChange()">
+                <mat-option *ngFor="let divisa of getDivisasDestino()" [value]="divisa.code">
+                  {{divisa.flag}} {{divisa.code}} - {{divisa.name}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -73,15 +73,9 @@
           <!-- Botón Convertir -->
           <button mat-raised-button 
                   color="primary" 
-                  (click)="convertirDivisas()"
-                  [disabled]="cargando"
-                  class="convert-button">
-            <mat-icon *ngIf="!cargando">currency_exchange</mat-icon>
-            <mat-progress-spinner *ngIf="cargando" 
-                                  diameter="20" 
-                                  mode="indeterminate">
-            </mat-progress-spinner>
-            {{ cargando ? 'Convirtiendo...' : 'Convertir' }}
+                  (click)="convert()">
+            <mat-icon>currency_exchange</mat-icon>
+            Convertir
           </button>
 
         </div>
