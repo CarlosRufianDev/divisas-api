@@ -29,22 +29,19 @@ export interface ConversionResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DivisasService {
   private apiUrl = environment.apiUrl;
   private frankfurterUrl = environment.frankfurterApiUrl;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getAuthToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` })
+      ...(token && { Authorization: `Bearer ${token}` }),
     });
   }
 
@@ -52,8 +49,8 @@ export class DivisasService {
   convertCurrency(request: ConversionRequest): Observable<ConversionResponse> {
     const headers = this.getAuthHeaders();
     return this.http.post<ConversionResponse>(
-      `${this.apiUrl}/convert`,  // ✅ CORRECTO: /api/convert
-      request, 
+      `${this.apiUrl}/convert`, // ✅ CORRECTO: /api/convert
+      request,
       { headers }
     );
   }
@@ -61,19 +58,23 @@ export class DivisasService {
   // CORREGIR: usar endpoint real sin /convert/
   getExchangeRates(baseCurrency: string = 'USD'): Observable<any> {
     return this.http.get(
-      `${this.apiUrl}/rates/${baseCurrency}`  // ✅ CORRECTO: /api/rates/USD
+      `${this.apiUrl}/rates/${baseCurrency}` // ✅ CORRECTO: /api/rates/USD
     );
   }
 
   // CORREGIR: usar endpoint real sin /convert/
-  getCurrencies(): Observable<{success: boolean, currencies: Currency[], total: number}> {
-    return this.http.get<any>(`${this.apiUrl}/currencies`);  // ✅ CORRECTO: /api/currencies
+  getCurrencies(): Observable<{
+    success: boolean;
+    currencies: Currency[];
+    total: number;
+  }> {
+    return this.http.get<any>(`${this.apiUrl}/currencies`); // ✅ CORRECTO: /api/currencies
   }
 
   // CORREGIR: usar endpoint real sin /convert/
   getConversionHistory(): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(`${this.apiUrl}/historial`, { headers });  // ✅ CORRECTO: /api/historial
+    return this.http.get(`${this.apiUrl}/historial`, { headers }); // ✅ CORRECTO: /api/historial
   }
 
   // Mantener fallbacks a Frankfurter
@@ -81,9 +82,22 @@ export class DivisasService {
     return this.http.get(`${this.frankfurterUrl}/latest?from=${base}`);
   }
 
-  convertWithFrankfurter(from: string, to: string, amount: number): Observable<any> {
+  convertWithFrankfurter(
+    from: string,
+    to: string,
+    amount: number
+  ): Observable<any> {
     return this.http.get(
       `${this.frankfurterUrl}/latest?amount=${amount}&from=${from}&to=${to}`
     );
+  }
+
+  // Nuevos métodos añadidos
+  getUserStats(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/dashboard/stats`);
+  }
+
+  getFavoriteTrends(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/dashboard/trends`);
   }
 }

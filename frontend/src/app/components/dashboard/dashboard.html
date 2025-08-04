@@ -1,208 +1,535 @@
 <div class="dashboard-container">
+  <!-- Header Compacto -->
   <div class="dashboard-header">
     <h1>💰 DivisasPro</h1>
     <p class="subtitle">Conversión de divisas en tiempo real</p>
   </div>
 
-  <!-- Header/Toolbar -->
-  <mat-toolbar color="primary">
-    <mat-icon>currency_exchange</mat-icon>
-    <span class="spacer">Dashboard de Divisas</span>
-    <mat-icon>account_balance</mat-icon>
-  </mat-toolbar>
-
-  <!-- Main Content -->
   <div class="content-wrapper">
     
-    <!-- Conversor Card -->
-    <mat-card class="converter-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>swap_horiz</mat-icon>
-          Conversor de Divisas
-        </mat-card-title>
-        <mat-card-subtitle>Conversión en tiempo real</mat-card-subtitle>
-      </mat-card-header>
+    <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas) -->
+    <div class="converter-section">
+      <!-- Conversor (Izquierda) -->
+      <mat-card class="converter-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>swap_horiz</mat-icon>
+            Conversor
+          </mat-card-title>
+        </mat-card-header>
 
-      <mat-card-content>
-        <!-- Formulario de Conversión -->
-        <div class="conversion-form">
-          
-          <!-- Campo Cantidad -->
-          <mat-form-field appearance="outline" class="amount-field">
-            <mat-label>Cantidad</mat-label>
-            <input matInput 
-                   type="number" 
-                   [formControl]="cantidad"
-                   placeholder="Ej: 100">
-            <mat-icon matSuffix>attach_money</mat-icon>
-          </mat-form-field>
-
-          <!-- Fila de Divisas -->
-          <div class="currency-row">
-            <!-- Moneda Origen -->
-            <mat-form-field appearance="outline">
-              <mat-label>De</mat-label>
-              <mat-select [formControl]="monedaOrigen" (selectionChange)="onMonedaOrigenChange()">
-                <mat-option *ngFor="let divisa of getDivisasOrigen()" [value]="divisa.code">
-                  {{divisa.flag}} {{divisa.code}} - {{divisa.name}}
-                </mat-option>
-              </mat-select>
+        <mat-card-content>
+          <div class="conversion-form-compact">
+            
+            <!-- Cantidad (Más estrecha) -->
+            <mat-form-field appearance="outline" class="amount-field-compact">
+              <mat-label>Cantidad</mat-label>
+              <input matInput 
+                     type="number" 
+                     [formControl]="cantidad"
+                     placeholder="100">
             </mat-form-field>
 
-            <!-- Botón Intercambiar -->
-            <button mat-icon-button 
+            <!-- Fila de Divisas -->
+            <div class="currency-row-compact">
+              <mat-form-field appearance="outline" class="currency-field">
+                <mat-label>De</mat-label>
+                <mat-select [formControl]="monedaOrigen" (selectionChange)="onMonedaOrigenChange()">
+                  <mat-option *ngFor="let divisa of getDivisasOrigen()" [value]="divisa.code">
+                    {{divisa.flag}} {{divisa.code}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-icon-button 
+                      color="primary" 
+                      (click)="intercambiarDivisas()"
+                      class="swap-button-compact">
+                <mat-icon>swap_horiz</mat-icon>
+              </button>
+
+              <mat-form-field appearance="outline" class="currency-field">
+                <mat-label>A</mat-label>
+                <mat-select [formControl]="monedaDestino" (selectionChange)="onMonedaDestinoChange()">
+                  <mat-option *ngFor="let divisa of getDivisasDestino()" [value]="divisa.code">
+                    {{divisa.flag}} {{divisa.code}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Botón Convertir -->
+            <button mat-raised-button 
                     color="primary" 
-                    (click)="intercambiarDivisas()"
-                    class="swap-button"
-                    matTooltip="Intercambiar divisas">
-              <mat-icon>swap_horiz</mat-icon>
+                    (click)="convert()"
+                    class="convert-button-compact">
+              <mat-icon>currency_exchange</mat-icon>
+              Convertir
             </button>
 
-            <!-- Moneda Destino -->
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Resultado (Derecha) - MEJORADA -->
+      <mat-card class="result-card-improved" *ngIf="resultado">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon color="primary">currency_exchange</mat-icon>
+            Resultado de Conversión
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="result-display-improved">
+            
+            <!-- Resultado Principal - SIN SUPERPOSICIÓN -->
+            <div class="result-main-improved">
+              <div class="conversion-summary">
+                <span class="from-amount">{{ cantidad.value | number:'1.0-2' }} {{ monedaOrigen.value }}</span>
+                <mat-icon class="equals-icon">trending_flat</mat-icon>
+              </div>
+              
+              <div class="result-amount-improved">
+                <div class="amount-display">
+                  <span class="amount-number-big">{{ resultado.result | number:'1.2-4' }}</span>
+                </div>
+                <div class="currency-display">
+                  <span class="currency-code-large">{{ monedaDestino.value }}</span>
+                  <span class="currency-name-small">{{ getCurrencyFullName(monedaDestino.value!) }}</span>
+                </div>
+              </div>
+
+              <!-- Tasa de Cambio Prominente -->
+              <div class="exchange-rate-display">
+                <div class="rate-box">
+                  <mat-icon>info</mat-icon>
+                  <span class="rate-text">1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.4-4' }} {{ monedaDestino.value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats en Grid 2x2 -->
+            <div class="result-stats-grid">
+              <div class="stat-box">
+                <mat-icon class="stat-icon">calendar_today</mat-icon>
+                <div class="stat-content">
+                  <span class="stat-label">Fecha</span>
+                  <span class="stat-value">{{ formatDate(resultado.date) }}</span>
+                </div>
+              </div>
+
+              <div class="stat-box">
+                <mat-icon class="stat-icon trending" [ngClass]="{
+                  'trending-up': resultado.rate > 1,
+                  'trending-down': resultado.rate < 1,
+                  'trending-flat': resultado.rate === 1
+                }">
+                  {{ resultado.rate > 1 ? 'trending_up' : resultado.rate < 1 ? 'trending_down' : 'trending_flat' }}
+                </mat-icon>
+                <div class="stat-content">
+                  <span class="stat-label">Fuerza</span>
+                  <span class="stat-value" [ngClass]="{
+                    'trend-strong': resultado.rate > 1,
+                    'trend-weak': resultado.rate < 1,
+                    'trend-equal': resultado.rate === 1
+                  }">
+                    {{ resultado.rate > 1 ? 'Fuerte' : resultado.rate < 1 ? 'Débil' : 'Equilibrado' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="stat-box">
+                <mat-icon class="stat-icon">swap_horiz</mat-icon>
+                <div class="stat-content">
+                  <span class="stat-label">Inverso</span>
+                  <span class="stat-value">1 {{ monedaDestino.value }} = {{ (1/resultado.rate) | number:'1.4-4' }} {{ monedaOrigen.value }}</span>
+                </div>
+              </div>
+
+              <div class="stat-box">
+                <mat-icon class="stat-icon">insights</mat-icon>
+                <div class="stat-content">
+                  <span class="stat-label">Volatilidad</span>
+                  <span class="stat-value">{{ getVolatilityLevel(resultado.rate) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones Mejoradas -->
+            <div class="result-actions-improved">
+              <button mat-raised-button color="primary" (click)="intercambiarDivisas()">
+                <mat-icon>swap_vert</mat-icon>
+                Invertir Divisas
+              </button>
+              
+              <button mat-stroked-button color="accent" (click)="copiarResultado()">
+                <mat-icon>content_copy</mat-icon>
+                Copiar
+              </button>
+              
+              <button mat-stroked-button color="warn" (click)="compartirResultado()">
+                <mat-icon>share</mat-icon>
+                Compartir
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- SECCIÓN 2: ANALYTICS (4 cards horizontales) -->
+    <mat-card class="analytics-compact" *ngIf="userStats">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>analytics</mat-icon>
+          Tus Estadísticas
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="stats-grid-horizontal">
+          <!-- Total Conversiones -->
+          <div class="stat-card-compact conversions">
+            <mat-icon>swap_horiz</mat-icon>
+            <div class="stat-info">
+              <span class="stat-number">{{ userStats.totalConversions }}</span>
+              <span class="stat-label">Conversiones</span>
+              <span class="stat-trend positive" *ngIf="userStats.weeklyTrend.includes('+')">{{ userStats.weeklyTrend }}</span>
+            </div>
+          </div>
+
+          <!-- Volumen Total -->
+          <div class="stat-card-compact volume">
+            <mat-icon>attach_money</mat-icon>
+            <div class="stat-info">
+              <span class="stat-number">{{ formatVolume(userStats.totalVolume) }}</span>
+              <span class="stat-label">Volumen</span>
+            </div>
+          </div>
+
+          <!-- Par Favorito -->
+          <div class="stat-card-compact pair">
+            <mat-icon>favorite</mat-icon>
+            <div class="stat-info">
+              <span class="stat-number">{{ userStats.topPair }}</span>
+              <span class="stat-label">Top Par</span>
+            </div>
+          </div>
+
+          <!-- Total Alertas -->
+          <div class="stat-card-compact alerts">
+            <mat-icon>notifications</mat-icon>
+            <div class="stat-info">
+              <span class="stat-number">{{ userStats.totalAlerts }}</span>
+              <span class="stat-label">Alertas</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- SECCIÓN 3: TENDENCIAS FAVORITOS (Compacta) -->
+    <mat-card class="trends-compact" *ngIf="favoriteTrends && favoriteTrends.trends && favoriteTrends.trends.length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>trending_up</mat-icon>
+          Tendencias (7 días)
+        </mat-card-title>
+        <mat-card-subtitle>Tus pares favoritos</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="trends-horizontal">
+          <div class="trend-item-compact" *ngFor="let trend of favoriteTrends.trends">
+            <div class="trend-pair-compact">
+              <span class="pair-name">{{ trend.pair }}</span>
+              <span class="current-rate">{{ trend.currentRate }}</span>
+            </div>
+            
+            <div class="trend-change-compact" [ngClass]="{
+              'trend-up': trend.trend === 'up',
+              'trend-down': trend.trend === 'down',
+              'trend-stable': trend.trend === 'stable'
+            }">
+              <mat-icon *ngIf="trend.trend === 'up'">trending_up</mat-icon>
+              <mat-icon *ngIf="trend.trend === 'down'">trending_down</mat-icon>
+              <mat-icon *ngIf="trend.trend === 'stable'">trending_flat</mat-icon>
+              {{ trend.change }}
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- SECCIÓN 4: TIPOS DE CAMBIO MEJORADA -->
+    <mat-card class="rates-section-improved">
+      <mat-card-header>
+        <div class="rates-header">
+          <div class="rates-title">
+            <mat-card-title>
+              <mat-icon>trending_up</mat-icon>
+              Mercado de Divisas
+            </mat-card-title>
+            <mat-card-subtitle>
+              Base: {{ monedaBase.value }} • Actualizado {{ ultimaActualizacion }}
+            </mat-card-subtitle>
+          </div>
+          
+          <!-- Selector de Moneda Base -->
+          <div class="base-currency-selector">
             <mat-form-field appearance="outline">
-              <mat-label>A</mat-label>
-              <mat-select [formControl]="monedaDestino" (selectionChange)="onMonedaDestinoChange()">
-                <mat-option *ngFor="let divisa of getDivisasDestino()" [value]="divisa.code">
-                  {{divisa.flag}} {{divisa.code}} - {{divisa.name}}
+              <mat-label>Moneda Base</mat-label>
+              <mat-select [formControl]="monedaBase" (selectionChange)="cambiarMonedaBase()">
+                <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
+                  {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
+        </div>
+      </mat-card-header>
 
-          <!-- Botón Convertir -->
-          <button mat-raised-button 
-                  color="primary" 
-                  (click)="convert()">
-            <mat-icon>currency_exchange</mat-icon>
-            Convertir
-          </button>
-
+      <mat-card-content>
+        <!-- Loading -->
+        <div class="loading-rates" *ngIf="cargandoTabla">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Cargando tipos de cambio...</p>
         </div>
 
-        <!-- Resultado -->
-        <div *ngIf="resultado" class="result-container">
-          <mat-divider></mat-divider>
-          <div class="result-content">
-            <h3>
-              <mat-icon>check_circle</mat-icon>
-              Resultado de Conversión
-            </h3>
-            <div class="result-values">
-              <mat-chip-set>
-                <mat-chip color="accent" selected>
-                  <mat-icon>attach_money</mat-icon>
-                  {{ resultado.result }} {{ monedaDestino.value }}
-                </mat-chip>
-                <mat-chip matTooltip="Tipo de cambio actual">
-                  <mat-icon>trending_up</mat-icon>
-                  1 {{ monedaOrigen.value }} = {{ resultado.rate }} {{ monedaDestino.value }}
-                </mat-chip>
-              </mat-chip-set>
+        <!-- Grid de Cards de Divisas -->
+        <div class="rates-grid" *ngIf="!cargandoTabla && tiposCambio.length > 0">
+          <div class="rate-card" 
+               *ngFor="let rate of tiposCambio" 
+               [ngClass]="{
+                 'trending-up': getRandomTrend(rate.code) > 0,
+                 'trending-down': getRandomTrend(rate.code) < 0,
+                 'trending-stable': getRandomTrend(rate.code) === 0
+               }">
+            
+            <!-- Header de la Card -->
+            <div class="rate-header">
+              <div class="currency-info">
+                <span class="flag">{{ rate.flag }}</span>
+                <div class="currency-details">
+                  <strong class="currency-code">{{ rate.code }}</strong>
+                  <small class="currency-name">{{ rate.name }}</small>
+                </div>
+              </div>
               
-              <!-- Explicación del valor relativo -->
-              <div class="rate-explanation">
+              <!-- Indicador de Tendencia -->
+              <div class="trend-indicator" [ngClass]="{
+                'trend-up': getRandomTrend(rate.code) > 0,
+                'trend-down': getRandomTrend(rate.code) < 0,
+                'trend-stable': getRandomTrend(rate.code) === 0
+              }">
+                <mat-icon *ngIf="getRandomTrend(rate.code) > 0">trending_up</mat-icon>
+                <mat-icon *ngIf="getRandomTrend(rate.code) < 0">trending_down</mat-icon>
+                <mat-icon *ngIf="getRandomTrend(rate.code) === 0">trending_flat</mat-icon>
+              </div>
+            </div>
+
+            <!-- Tasa Principal -->
+            <div class="rate-main">
+              <span class="rate-value">{{ rate.rate | number:'1.2-6' }}</span>
+              <span class="rate-label">{{ monedaBase.value }}/{{ rate.code }}</span>
+            </div>
+
+            <!-- Cambio y Porcentaje -->
+            <div class="rate-change">
+              <span class="change-percent" [ngClass]="{
+                'positive': getRandomTrend(rate.code) > 0,
+                'negative': getRandomTrend(rate.code) < 0,
+                'neutral': getRandomTrend(rate.code) === 0
+              }">
+                {{ getRandomTrend(rate.code) > 0 ? '+' : '' }}{{ getRandomChangePercent(rate.code) }}%
+              </span>
+              <small class="change-label">vs ayer</small>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="rate-extra">
+              <div class="rate-stat">
+                <mat-icon>swap_horiz</mat-icon>
+                <span>1 {{ rate.code }} = {{ (1/rate.rate) | number:'1.2-6' }} {{ monedaBase.value }}</span>
+              </div>
+            </div>
+
+            <!-- Acciones - Botón Único -->
+            <div class="rate-actions-single">
+              <button mat-raised-button 
+                      color="primary" 
+                      (click)="convertirA(rate.code)"
+                      class="convert-to-button">
+                <mat-icon>currency_exchange</mat-icon>
+                Convertir a {{ rate.code }}
+              </button>
+              
+              <button mat-icon-button 
+                      color="accent"
+                      (click)="verDetalle(rate.code)"
+                      matTooltip="Ver detalles">
                 <mat-icon>info</mat-icon>
-                <span *ngIf="resultado.rate > 1" class="explanation-text">
-                  El <strong>{{ monedaOrigen.value }}</strong> vale más que el <strong>{{ monedaDestino.value }}</strong>
-                  <br><small>Por cada {{ monedaOrigen.value }} obtienes {{ resultado.rate }} {{ monedaDestino.value }}</small>
+              </button> 
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado Vacío -->
+        <div class="empty-rates" *ngIf="!cargandoTabla && tiposCambio.length === 0">
+          <mat-icon>error_outline</mat-icon>
+          <h3>No se pudieron cargar los tipos de cambio</h3>
+          <p>Verifica tu conexión e inténtalo de nuevo</p>
+          <button mat-raised-button color="primary" (click)="cargarTiposCambio()">
+            <mat-icon>refresh</mat-icon>
+            Reintentar
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+  <!-- MODAL PARA DETALLES DE DIVISA -->
+  <div class="currency-detail-modal" *ngIf="showCurrencyDetail" (click)="closeCurrencyModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      
+      <!-- Header del Modal -->
+      <div class="modal-header">
+        <div class="currency-header">
+          <span class="currency-flag-large">{{ selectedCurrency?.flag }}</span>
+          <div class="currency-title">
+            <h2>{{ selectedCurrency?.name }}</h2>
+            <span class="currency-code-subtitle">{{ selectedCurrency?.code }}</span>
+          </div>
+        </div>
+        
+        <button mat-icon-button (click)="closeCurrencyModal()" class="close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Contenido del Modal -->
+      <div class="modal-body">
+        
+        <!-- Información Principal -->
+        <div class="currency-main-info">
+          <div class="info-card primary">
+            <mat-icon>trending_up</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Tasa Actual</span>
+              <span class="info-value">{{ selectedRate?.rate | number:'1.4-6' }}</span>
+              <span class="info-description">1 {{ monedaBase.value }} = {{ selectedRate?.rate | number:'1.4-6' }} {{ selectedCurrency?.code }}</span>
+            </div>
+          </div>
+
+          <div class="info-card secondary">
+            <mat-icon>swap_horiz</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Tasa Inversa</span>
+              <span class="info-value">{{ getInverseRate() | number:'1.4-6' }}</span>
+              <span class="info-description">1 {{ selectedCurrency?.code }} = {{ getInverseRate() | number:'1.4-6' }} {{ monedaBase.value }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Análisis y Tendencia -->
+        <div class="currency-analysis">
+          <div class="analysis-card">
+            <div class="analysis-header">
+              <mat-icon [ngClass]="{
+                'trending-up': getTrendDirection() === 'up',
+                'trending-down': getTrendDirection() === 'down',
+                'trending-flat': getTrendDirection() === 'stable'
+              }">
+                {{ getTrendIcon() }}
+              </mat-icon>
+              <h3>Análisis Técnico</h3>
+            </div>
+
+            <div class="trend-info">
+              <div class="trend-item">
+                <span class="trend-label">Tendencia (7 días):</span>
+                <span class="trend-value" [ngClass]="{
+                  'positive': getTrendDirection() === 'up',
+                  'negative': getTrendDirection() === 'down',
+                  'neutral': getTrendDirection() === 'stable'
+                }">
+                  {{ getTrendDirection() === 'up' ? '+' : getTrendDirection() === 'down' ? '' : '' }}{{ getRandomChangePercent(selectedCurrency?.code || '') }}%
                 </span>
-                <span *ngIf="resultado.rate < 1" class="explanation-text">
-                  El <strong>{{ monedaDestino.value }}</strong> vale más que el <strong>{{ monedaOrigen.value }}</strong>
-                  <br><small>Necesitas {{ (1/resultado.rate).toFixed(4) }} {{ monedaOrigen.value }} para obtener 1 {{ monedaDestino.value }}</small>
-                </span>
-                <span *ngIf="resultado.rate == 1" class="explanation-text">
-                  Ambas divisas tienen el <strong>mismo valor</strong>
-                  <br><small>1 {{ monedaOrigen.value }} = 1 {{ monedaDestino.value }}</small>
+              </div>
+
+              <div class="trend-item">
+                <span class="trend-label">Volatilidad:</span>
+                <span class="trend-value">{{ getVolatilityLevel(selectedRate?.rate || 1) }}</span>
+              </div>
+
+              <div class="trend-item">
+                <span class="trend-label">Fuerza:</span>
+                <span class="trend-value" [ngClass]="{
+                  'positive': (selectedRate?.rate || 1) > 1,
+                  'negative': (selectedRate?.rate || 1) < 1,
+                  'neutral': (selectedRate?.rate || 1) === 1
+                }">
+                  {{ (selectedRate?.rate || 1) > 1 ? 'Fuerte vs ' + monedaBase.value : (selectedRate?.rate || 1) < 1 ? 'Débil vs ' + monedaBase.value : 'Equilibrado' }}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-      </mat-card-content>
-    </mat-card>
-
-    <!-- NUEVA TABLA DE TIPOS DE CAMBIO -->
-    <mat-card class="rates-table-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>table_chart</mat-icon>
-          Tipos de Cambio
-        </mat-card-title>
-        <mat-card-subtitle>
-          Actualizado: {{ ultimaActualizacion }}
-        </mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content>
-        <!-- Selector de Moneda Base -->
-        <div class="base-currency-selector">
-          <mat-form-field appearance="outline">
-            <mat-label>Moneda Base</mat-label>
-            <mat-select [formControl]="monedaBase" (selectionChange)="cambiarMonedaBase()">
-              <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
-                {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <!-- Tabla de Tipos de Cambio -->
-        <div class="table-container">
-          <table mat-table [dataSource]="tiposCambio" class="rates-table">
+        <!-- RECOMENDACIÓN DE INVERSIÓN -->
+        <div class="investment-recommendation">
+          <div class="recommendation-card" [ngClass]="{
+            'bullish': getInvestmentRecommendation() === 'COMPRAR',
+            'bearish': getInvestmentRecommendation() === 'VENDER',
+            'neutral': getInvestmentRecommendation() === 'MANTENER'
+          }">
             
-            <!-- Columna Divisa -->
-            <ng-container matColumnDef="currency">
-              <th mat-header-cell *matHeaderCellDef>Divisa</th>
-              <td mat-cell *matCellDef="let rate">
-                <div class="currency-cell">
-                  <span class="flag">{{ rate.flag }}</span>
-                  <div class="currency-info">
-                    <strong>{{ rate.code }}</strong>
-                    <small>{{ rate.name }}</small>
-                  </div>
+            <div class="recommendation-header">
+              <mat-icon>{{ getRecommendationIcon() }}</mat-icon>
+              <h3>Recomendación de Inversión</h3>
+            </div>
+
+            <div class="recommendation-content">
+              <div class="recommendation-action">
+                <span class="action-label">Acción Recomendada:</span>
+                <span class="action-value">{{ getInvestmentRecommendation() }}</span>
+              </div>
+
+              <div class="recommendation-reason">
+                <p><strong>Análisis:</strong> {{ getInvestmentReason() }}</p>
+              </div>
+
+              <div class="recommendation-confidence">
+                <span class="confidence-label">Nivel de Confianza:</span>
+                <div class="confidence-bar">
+                  <div class="confidence-fill" [style.width.%]="getConfidenceLevel()"></div>
                 </div>
-              </td>
-            </ng-container>
-
-            <!-- Columna Tipo de Cambio -->
-            <ng-container matColumnDef="rate">
-              <th mat-header-cell *matHeaderCellDef>Tipo de Cambio</th>
-              <td mat-cell *matCellDef="let rate">
-                <div class="rate-cell">
-                  <strong>{{ rate.rate | number:'1.2-4' }}</strong>
-                  <small>1 {{ rate.base }} = {{ rate.rate | number:'1.2-4' }} {{ rate.code }}</small>
-                </div>
-              </td>
-            </ng-container>
-
-            <!-- Columna Acciones -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Acciones</th>
-              <td mat-cell *matCellDef="let rate">
-                <button mat-icon-button 
-                        color="primary"
-                        (click)="usarEnConversor(rate.code)"
-                        matTooltip="Usar en conversor">
-                  <mat-icon>arrow_forward</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="['currency', 'rate', 'actions']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['currency', 'rate', 'actions']"></tr>
-          </table>
-
-          <!-- Loading Spinner -->
-          <div *ngIf="cargandoTabla" class="loading-container">
-            <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
-            <p>Cargando tipos de cambio...</p>
+                <span class="confidence-value">{{ getConfidenceLevel() }}%</span>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-      </mat-card-content>
-    </mat-card>
-
+      <!-- Acciones del Modal -->
+      <div class="modal-actions">
+        <button mat-raised-button color="primary" (click)="convertirA(selectedCurrency?.code || '')">
+          <mat-icon>currency_exchange</mat-icon>
+          Convertir a {{ selectedCurrency?.code }}
+        </button>
+        
+        <button mat-stroked-button color="accent" (click)="addToFavorites()">
+          <mat-icon>favorite_border</mat-icon>
+          Añadir a Favoritos
+        </button>
+        
+        <button mat-stroked-button (click)="closeCurrencyModal()">
+          <mat-icon>close</mat-icon>
+          Cerrar
+        </button>
+      </div>
+    </div>
   </div>
 </div>

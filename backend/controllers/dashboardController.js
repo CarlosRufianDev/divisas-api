@@ -3,6 +3,7 @@ const Conversion = require('../models/Conversion');
 const Favorite = require('../models/Favorite');
 const FavoriteCurrency = require('../models/FavoriteCurrency'); // ← AÑADIR ESTA LÍNEA
 const axios = require('axios');
+const mongoose = require('mongoose');
 
 // Lista de monedas soportadas (puedes ampliarla si Frankfurter añade más)
 const supportedCurrencies = [
@@ -212,4 +213,138 @@ const getDashboard = async (req, res) => {
   }
 };
 
-module.exports = { getDashboard };
+// Estadísticas personales del usuario
+const getUserStats = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    console.log('🔍 Getting stats for user:', userId);
+    
+    // Total conversiones
+    const totalConversions = await Conversion.countDocuments({ user: userId });
+    
+    // Volumen total convertido (suma de amounts)
+    const volumeResult = await Conversion.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } }, // ✅ FIX: Añadir 'new'
+      { $group: { _id: null, totalVolume: { $sum: "$amount" } } }
+    ]);
+    const totalVolume = volumeResult[0]?.totalVolume || 0;
+    
+    // Par más utilizado
+    const topPairResult = await Conversion.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } }, // ✅ FIX: Añadir 'new'
+      { $group: { 
+          _id: { from: "$from", to: "$to" }, 
+          count: { $sum: 1 } 
+        }},
+      { $sort: { count: -1 } },
+      { $limit: 1 }
+    ]);
+    const topPair = topPairResult[0] ? `${topPairResult[0]._id.from}→${topPairResult[0]._id.to}` : 'N/A';
+    
+    // Total alertas
+    const totalAlerts = await Alert.countDocuments({ user: userId });
+    
+    // Conversiones esta semana vs semana anterior
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+    
+    const thisWeekConversions = await Conversion.countDocuments({ 
+      user: userId, 
+      createdAt: { $gte: oneWeekAgo } 
+    });
+    
+    const lastWeekConversions = await Conversion.countDocuments({ 
+      user: userId, 
+      createdAt: { $gte: twoWeeksAgo, $lt: oneWeekAgo } 
+    });
+    
+    const weeklyTrend = lastWeekConversions > 0 
+      ? ((thisWeekConversions - lastWeekConversions) / lastWeekConversions * 100).toFixed(1)
+      : thisWeekConversions > 0 ? 100 : 0;
+    
+    const stats = {
+      totalConversions,
+      totalVolume: totalVolume.toFixed(2),
+      topPair,
+      totalAlerts,
+      weeklyTrend: `${weeklyTrend > 0 ? '+' : ''}${weeklyTrend}%`,
+      thisWeekConversions,
+      lastWeekConversions
+    };
+    
+    console.log('✅ User stats calculated:', stats);
+    res.json(stats);
+    
+  } catch (error) {
+    console.error('❌ Error getting user stats:', error);
+    res.status(500).json({ error: 'Error getting user statistics' });
+  }
+};
+
+// Tendencias de pares favoritos
+const getFavoriteTrends = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    // Obtener pares favoritos del usuario
+    const favorites = await Favorite.find({ user: userId }).limit(5);
+    
+    if (favorites.length === 0) {
+      return res.json({ trends: [], message: 'No tienes pares favoritos aún' });
+    }
+    
+    // Para cada par favorito, obtener datos de últimos 7 días
+    const trends = await Promise.all(
+      favorites.map(async (fav) => {
+        try {
+          // Obtener tasa actual
+          const currentResponse = await axios.get(`https://api.frankfurter.app/latest?from=${fav.from}&to=${fav.to}`);
+          const currentRate = currentResponse.data.rates[fav.to];
+          
+          // Obtener tasa hace 7 días
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          const dateString = weekAgo.toISOString().split('T')[0];
+          
+          const pastResponse = await axios.get(`https://api.frankfurter.app/${dateString}?from=${fav.from}&to=${fav.to}`);
+          const pastRate = pastResponse.data.rates[fav.to];
+          
+          const change = ((currentRate - pastRate) / pastRate * 100).toFixed(2);
+          
+          return {
+            pair: `${fav.from}/${fav.to}`,
+            nickname: fav.nickname,
+            currentRate: currentRate.toFixed(4),
+            pastRate: pastRate.toFixed(4),
+            change: `${change > 0 ? '+' : ''}${change}%`,
+            trend: change > 0 ? 'up' : change < 0 ? 'down' : 'stable'
+          };
+        } catch (error) {
+          return {
+            pair: `${fav.from}/${fav.to}`,
+            nickname: fav.nickname,
+            currentRate: 'Error',
+            pastRate: 'Error',
+            change: 'N/A',
+            trend: 'error'
+          };
+        }
+      })
+    );
+    
+    res.json({ trends });
+    
+  } catch (error) {
+    console.error('Error getting favorite trends:', error);
+    res.status(500).json({ error: 'Error getting favorite trends' });
+  }
+};
+
+module.exports = { 
+  getDashboard, 
+  getUserStats,    // ✅ NUEVO
+  getFavoriteTrends // ✅ NUEVO
+};

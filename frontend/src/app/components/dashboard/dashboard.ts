@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -15,7 +15,7 @@ import { MaterialModule } from '../../shared/material.module';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   resultado: any = null;
   cargando = false;
 
@@ -29,6 +29,16 @@ export class Dashboard {
   cargandoTabla = false;
   monedaBase = new FormControl('USD');
   ultimaActualizacion: string = '';
+
+  // AÑADIR propiedades para analytics:
+  userStats: any = null;
+  favoriteTrends: any = null;
+  loadingStats = false;
+
+  // AÑADIR propiedades para el modal:
+  showCurrencyDetail = false;
+  selectedCurrency: any = null;
+  selectedRate: any = null;
 
   // Lista de divisas disponibles
   divisas = [
@@ -58,7 +68,12 @@ export class Dashboard {
     private divisasService: DivisasService,
     private snackBar: MatSnackBar // ✅ AÑADIR
   ) {
+    // this.cargarTiposCambio();
+  }
+
+  ngOnInit() {
     this.cargarTiposCambio();
+    this.cargarAnalytics();
   }
 
   // MÉTODO ACTUALIZADO PARA CARGAR TIPOS DE CAMBIO
@@ -424,5 +439,255 @@ export class Dashboard {
       ZAR: '🇿🇦',
     };
     return flags[code] || '🌍';
+  }
+
+  // NUEVOS MÉTODOS:
+  cargarAnalytics(): void {
+    this.loadingStats = true;
+    console.log('🔍 Cargando analytics...');
+
+    // Cargar estadísticas del usuario
+    this.divisasService.getUserStats().subscribe({
+      next: (stats) => {
+        this.userStats = stats;
+        console.log('✅ User stats loaded:', stats);
+      },
+      error: (error) => console.error('❌ Error loading stats:', error),
+    });
+
+    // Cargar tendencias de favoritos
+    this.divisasService.getFavoriteTrends().subscribe({
+      next: (trends) => {
+        this.favoriteTrends = trends;
+        this.loadingStats = false;
+        console.log('✅ Favorite trends loaded:', trends);
+      },
+      error: (error) => {
+        console.error('❌ Error loading trends:', error);
+        this.loadingStats = false;
+      },
+    });
+  }
+
+  // AÑADIR después de las otras propiedades:
+  formatVolume(volume: string): string {
+    const numericValue = parseFloat(volume);
+
+    if (isNaN(numericValue)) return '0';
+
+    if (numericValue >= 1000000000) {
+      return (numericValue / 1000000000).toFixed(1) + 'B';
+    } else if (numericValue >= 1000000) {
+      return (numericValue / 1000000).toFixed(1) + 'M';
+    } else if (numericValue >= 1000) {
+      return (numericValue / 1000).toFixed(1) + 'K';
+    } else {
+      return numericValue.toString();
+    }
+  }
+
+  copiarResultado(): void {
+    const texto = `${this.cantidad.value} ${this.monedaOrigen.value} = ${this.resultado.result} ${this.monedaDestino.value}`;
+    navigator.clipboard.writeText(texto).then(() => {
+      this.snackBar.open('✅ Resultado copiado al portapapeles', 'Cerrar', {
+        duration: 2000,
+      });
+    });
+  }
+
+  compartirResultado(): void {
+    const texto = `💰 ${this.cantidad.value} ${this.monedaOrigen.value} = ${this.resultado.result} ${this.monedaDestino.value} (DivisasPro)`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Conversión de Divisas',
+        text: texto,
+      });
+    } else {
+      // Fallback: copiar al portapapeles
+      this.copiarResultado();
+    }
+  }
+
+  // Simular tendencias (en futuro podrías obtenerlas de tu API)
+  getRandomTrend(currencyCode: string): number {
+    // Usar el código de moneda como seed para consistencia
+    const seed = currencyCode.charCodeAt(0) + currencyCode.charCodeAt(1);
+    return (seed % 3) - 1; // -1, 0, o 1
+  }
+
+  getRandomChangePercent(currencyCode: string): string {
+    const trend = this.getRandomTrend(currencyCode);
+    const seed = currencyCode.charCodeAt(0) + currencyCode.charCodeAt(2);
+    const percent = ((seed % 500) / 100).toFixed(2); // 0.00 a 4.99
+
+    if (trend === 0) return '0.00';
+    return trend > 0 ? percent : `-${percent}`;
+  }
+
+  convertirA(currencyCode: string): void {
+    this.monedaDestino.setValue(currencyCode);
+
+    // Auto-scroll al conversor
+    document.querySelector('.converter-section')?.scrollIntoView({
+      behavior: 'smooth',
+    });
+
+    // Auto-convertir si hay cantidad
+    if (this.cantidad.value && this.cantidad.value > 0) {
+      setTimeout(() => this.convert(), 500);
+    }
+
+    this.snackBar.open(`🔄 Convirtiendo a ${currencyCode}`, 'Cerrar', {
+      duration: 2000,
+    });
+  }
+
+  convertirDesde(currencyCode: string): void {
+    this.monedaOrigen.setValue(currencyCode);
+
+    // Auto-scroll al conversor
+    document.querySelector('.converter-section')?.scrollIntoView({
+      behavior: 'smooth',
+    });
+
+    this.snackBar.open(`📤 Convirtiendo desde ${currencyCode}`, 'Cerrar', {
+      duration: 2000,
+    });
+  }
+
+  // NUEVO: Ver detalles de una divisa
+  verDetalle(currencyCode: string): void {
+    this.selectedCurrency = this.divisas.find((d) => d.code === currencyCode);
+    this.selectedRate = this.tiposCambio.find((r) => r.code === currencyCode);
+    this.showCurrencyDetail = true;
+
+    // Prevenir scroll del body
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeCurrencyModal(): void {
+    this.showCurrencyDetail = false;
+    this.selectedCurrency = null;
+    this.selectedRate = null;
+
+    // Restaurar scroll del body
+    document.body.style.overflow = 'auto';
+  }
+
+  // MÉTODOS PARA ANÁLISIS DE INVERSIÓN:
+  getTrendDirection(): string {
+    if (!this.selectedCurrency) return 'stable';
+    const trend = this.getRandomTrend(this.selectedCurrency.code);
+    return trend > 0 ? 'up' : trend < 0 ? 'down' : 'stable';
+  }
+
+  getTrendIcon(): string {
+    const direction = this.getTrendDirection();
+    return direction === 'up'
+      ? 'trending_up'
+      : direction === 'down'
+      ? 'trending_down'
+      : 'trending_flat';
+  }
+
+  getInverseRate(): number {
+    return this.selectedRate ? 1 / this.selectedRate.rate : 1;
+  }
+
+  getInvestmentRecommendation(): string {
+    if (!this.selectedRate) return 'MANTENER';
+
+    const trend = this.getTrendDirection();
+    const volatility = this.getVolatilityLevel(this.selectedRate.rate);
+    const rate = this.selectedRate.rate;
+
+    // Lógica de recomendación
+    if (trend === 'up' && rate < 1) return 'COMPRAR';
+    if (trend === 'down' && rate > 1) return 'VENDER';
+    if (trend === 'up' && volatility === 'Baja') return 'COMPRAR';
+    if (trend === 'down' && volatility === 'Alta') return 'VENDER';
+
+    return 'MANTENER';
+  }
+
+  getRecommendationIcon(): string {
+    const recommendation = this.getInvestmentRecommendation();
+    return recommendation === 'COMPRAR'
+      ? 'trending_up'
+      : recommendation === 'VENDER'
+      ? 'trending_down'
+      : 'remove';
+  }
+
+  getInvestmentReason(): string {
+    const recommendation = this.getInvestmentRecommendation();
+    const trend = this.getTrendDirection();
+    const currency = this.selectedCurrency?.code || 'esta divisa';
+
+    const reasons = {
+      COMPRAR: [
+        `${currency} muestra tendencia alcista y potencial de crecimiento`,
+        `La volatilidad baja sugiere un momento estable para invertir en ${currency}`,
+        `${currency} está infravalorado respecto a ${this.monedaBase.value}`,
+      ],
+      VENDER: [
+        `${currency} presenta tendencia bajista y posible depreciación`,
+        `Alta volatilidad indica riesgo en la posición de ${currency}`,
+        `${currency} está sobrevalorado, momento oportuno para vender`,
+      ],
+      MANTENER: [
+        `${currency} mantiene estabilidad, sin señales claras de cambio`,
+        `Tendencia lateral sugiere esperar mejores oportunidades`,
+        `Equilibrio en el mercado de ${currency} vs ${this.monedaBase.value}`,
+      ],
+    };
+
+    const reasonList = reasons[recommendation as keyof typeof reasons];
+    return reasonList[Math.floor(Math.random() * reasonList.length)];
+  }
+
+  getConfidenceLevel(): number {
+    const trend = this.getTrendDirection();
+    const volatility = this.getVolatilityLevel(this.selectedRate?.rate || 1);
+
+    let confidence = 60; // Base
+
+    if (trend !== 'stable') confidence += 20;
+    if (volatility === 'Baja') confidence += 15;
+    if (volatility === 'Alta') confidence -= 10;
+
+    return Math.min(Math.max(confidence, 30), 95);
+  }
+
+  addToFavorites(): void {
+    const currency = this.selectedCurrency?.code;
+    if (currency) {
+      this.snackBar.open(`⭐ ${currency} añadido a favoritos`, 'Cerrar', {
+        duration: 2000,
+      });
+    }
+  }
+
+  // NUEVOS MÉTODOS PARA RESULTADO MEJORADO:
+  getCurrencyFullName(code: string): string {
+    const divisa = this.divisas.find((d) => d.code === code);
+    return divisa ? divisa.name : code;
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'Hoy';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'short',
+    });
+  }
+
+  getVolatilityLevel(rate: number): string {
+    const volatility = Math.abs(rate - 1);
+    if (volatility > 0.5) return 'Alta';
+    if (volatility > 0.1) return 'Media';
+    return 'Baja';
   }
 }
