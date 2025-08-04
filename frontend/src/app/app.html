@@ -29,9 +29,17 @@
           <mat-icon>notifications</mat-icon>
           Alertas
         </a>
+      
+    
+
+            <a mat-button 
+          routerLink="/calculator" 
+          routerLinkActive="active">  <!-- Ya está dentro de *ngIf="currentUser" -->
+          <mat-icon>calculate</mat-icon>
+          Calculadora
+          </a>
       </ng-container>
     </nav>
-    
     <!-- Usuario Autenticado -->
     <div class="user-section" *ngIf="currentUser; else loginSection">
       <span class="welcome">¡Hola {{currentUser.name}}!</span>

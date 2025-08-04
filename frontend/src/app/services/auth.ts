@@ -222,7 +222,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    const token = this.getToken();
+    const token = localStorage.getItem('auth_token');
     return !!token && this.isTokenValid();
   }
 
@@ -231,7 +231,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('auth_token'); // ✅ CAMBIAR 'token' por 'auth_token'
   }
 
   // AÑADIR método mejorado para verificar token:

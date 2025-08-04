@@ -1,133 +1,327 @@
-# 📈 Divisas API
+# 🏦 DivisasPro - Plataforma Profesional de Divisas
 
-API RESTful profesional para gestión de conversiones de divisas, historial de usuario y alertas automáticas de variación de precios, pensada para usuarios de bolsa, criptomonedas y finanzas.
-
----
-
-## 🚀 Características principales
-
-- **Autenticación JWT** con roles (usuario y administrador)
-- **Conversión de divisas** en tiempo real (API Frankfurter)
-- **Historial de conversiones** con filtros avanzados y paginación
-- **Alertas automáticas** por email sobre variación de monedas
-- **Cron jobs** para limpieza automática y envío de alertas
-- **Scripts de mantenimiento** y pruebas manuales
-- **Código modular y seguro**
+> **Aplicación full-stack completa para gestión profesional de divisas con funcionalidades avanzadas de trading, alertas automáticas y análisis en tiempo real.**
 
 ---
 
-## 📂 Estructura del proyecto
+## 🚀 **Características Principales**
+
+### 💱 **Conversor Avanzado**
+
+- **20 divisas globales** soportadas (USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, MXN, BRL, KRW, INR, SEK, NOK, HKD, SGD, NZD, ZAR, TRY, PLN)
+- **Validaciones inteligentes** (previene conversiones EUR→EUR)
+- **Selects inteligentes** (no permite divisas duplicadas)
+- **Tipos de cambio en tiempo real** via Frankfurter API
+- **Tabla interactiva** con 19 pares de divisas actualizados
+
+### 📊 **Historial Profesional**
+
+- **Filtros avanzados** por divisa origen/destino y rangos de cantidad
+- **Filtros inteligentes** que previenen combinaciones inválidas
+- **Paginación configurable** (5, 10, 20, 50 registros)
+- **Gestión completa** (eliminar individual/masivo, repetir conversiones)
+- **Búsqueda en tiempo real** con 11+ resultados totales
+
+### ⭐ **Sistema de Favoritos**
+
+- **Gestión de pares favoritos** con dialog avanzado
+- **Conversión rápida** entre pares favoritos
+- **Auto-actualización** cada 30 segundos
+- **Indicadores visuales** de cambios (↑↓ con colores)
+- **Analytics integrados** (mejores/peores performers)
+
+### 🔔 **Alertas Automáticas**
+
+- **Alertas programadas** (diarias, semanales)
+- **Alertas por porcentaje** de cambio
+- **Alertas por precio objetivo**
+- **Notificaciones por email** automáticas
+- **Cron jobs** para ejecución puntual
+
+### 🔐 **Seguridad Empresarial**
+
+- **Autenticación JWT** con roles (user/admin)
+- **Guards avanzados** para rutas protegidas
+- **Interceptors automáticos** para tokens
+- **Manejo inteligente** de tokens expirados
+- **Logout automático** en errores 401
+
+### 📈 **Calculadora Profesional**
+
+- **Conversión múltiple** (1 divisa → varias)
+- **Conversión inversa** automática
+- **Comparación de pares** en tiempo real
+- **Tipos de cambio históricos** por fecha
+
+### 📋 **Auditoría Completa**
+
+- **Logging automático** de todas las acciones
+- **Categorización de actividades** (auth, conversiones, alertas, favoritos)
+- **Estadísticas de uso** con filtros por periodo
+- **Metadata técnica** completa (IP, User-Agent, endpoints)
+
+---
+
+## 🏗️ **Arquitectura Técnica**
+
+### **Frontend (Angular 20)**
 
 ```
-controllers/      # Lógica de negocio (conversión, alertas, auth)
-cron/             # Tareas programadas (limpieza, alertas)
-middleware/       # Middlewares de autenticación y roles
-models/           # Modelos de datos (User, Conversion, Alert)
-routes/           # Rutas de la API
-scripts/          # Scripts de mantenimiento (ej: borrado manual)
-utils/            # Utilidades (filtros, validadores)
-validators/       # Validaciones de entrada
-test.http         # Pruebas manuales de la API (VS Code)
-.env              # Variables de entorno (no subir a GitHub)
-README.md         # Este archivo
+📱 Standalone Components
+🎨 Angular Material Design System
+⚡ RxJS Reactive Programming
+🔒 Functional Guards & Interceptors
+📊 Real-time Data Updates
+🎯 TypeScript Full Coverage
+```
+
+### **Backend (Node.js + Express)**
+
+```
+🚀 RESTful API Architecture
+🔐 JWT Authentication System
+📊 MongoDB + Mongoose ODM
+📧 Automated Email System (Nodemailer)
+⏰ Cron Jobs for Background Tasks
+🛡️ Input Validation & Sanitization
+```
+
+### **Base de Datos (MongoDB)**
+
+```
+👤 Users (auth + roles)
+💱 Conversions (complete history)
+⭐ Favorites (currency pairs)
+🔔 Alerts (automated notifications)
+📋 ActivityLogs (full auditing)
+🎯 FavoriteCurrencies (preferred currencies)
 ```
 
 ---
 
-## ⚙️ Instalación y configuración
+## ⚙️ **Instalación y Configuración**
 
-1. **Clona el repositorio:**
-   ```sh
-   git clone https://github.com/tuusuario/divisas-api.git
-   cd divisas-api
-   ```
+### **1. Clonar el Repositorio**
 
-2. **Instala las dependencias:**
-   ```sh
-   npm install
-   ```
+```bash
+git clone https://github.com/tuusuario/divisas-api.git
+cd divisas-api
+```
 
-3. **Configura las variables de entorno en `.env`:**
+### **2. Backend Setup**
 
-   ```
-   MONGODB_URI=tu_uri_de_mongodb
-   API_URL=https://api.frankfurter.app/latest
-   JWT_SECRET=█REDACTED_JWT█
-   EMAIL_USER=tu_email@gmail.com
-   EMAIL_PASS=tu_contraseña_de_aplicacion
-   ```
+```bash
+cd backend
+npm install
 
-   > **Nota:** Para `EMAIL_PASS` usa una [contraseña de aplicación de Gmail](https://support.google.com/accounts/answer/185833).
+# Configurar .env
+MONGODB_URI=tu_uri_de_mongodb
+JWT_SECRET=█REDACTED_JWT█
+EMAIL_USER=tu_email@gmail.com
+EMAIL_PASS=tu_contraseña_de_aplicacion
+API_URL=https://api.frankfurter.app/latest
 
-4. **Arranca el servidor:**
-   ```sh
-   npm run dev
-   ```
-   El servidor escuchará en `http://localhost:3000`
+# Iniciar servidor
+npm start
+# Servidor en http://localhost:3000
+```
 
----
+### **3. Frontend Setup**
 
-## 🧪 Pruebas manuales
+```bash
+cd frontend
+npm install
 
-Utiliza el archivo `test.http` (compatible con VS Code y la extensión REST Client) para probar todos los endpoints:
-
-- Registro y login de usuarios y admin
-- Conversión de divisas
-- Consulta y borrado de historial
-- Creación y gestión de alertas
-- Pruebas de errores y acceso no autorizado
+# Iniciar aplicación
+ng serve
+# Aplicación en http://localhost:4200
+```
 
 ---
 
-## 🛠️ Scripts de mantenimiento
+## 🧪 **Testing y Desarrollo**
 
-- **Limpieza automática:**  
-  Borra conversiones antiguas (más de 60 días) cada día a las 2:00 AM (cron job).
-- **Envío de alertas:**  
-  Envía emails diarios a las 8:00 AM con la variación de moneda configurada por el usuario.
-- **Script manual:**  
-  Ejecuta `node scripts/test-borrado-antiguo.js` para borrar conversiones antiguas manualmente (útil para pruebas y mantenimiento).
+### **Endpoints de Prueba**
 
----
+```http
+### Autenticación
+POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/auth/login
 
-## ✉️ Alertas de variación de moneda
+### Conversiones
+POST http://localhost:3000/api/convert
+GET http://localhost:3000/api/historial
 
-- Los usuarios pueden crear alertas para recibir por email la variación de un par de monedas cada X días.
-- El email es profesional, personalizado y muestra el porcentaje de variación y los valores históricos.
-- Puedes personalizar el intervalo de días al crear la alerta.
+### Tipos de Cambio
+GET http://localhost:3000/api/exchange/rates?base=USD
 
----
+### Favoritos
+GET http://localhost:3000/api/favorites
+POST http://localhost:3000/api/favorites
 
-## 🔒 Seguridad y buenas prácticas
+### Alertas
+GET http://localhost:3000/api/alerts
+POST http://localhost:3000/api/alerts/percentage
 
-- Contraseñas encriptadas con bcrypt.
-- JWT para autenticación y autorización.
-- Validación de entradas y roles.
-- Variables sensibles en `.env` (no subir nunca a GitHub).
-- Código modular, comentado y fácil de mantener.
+### Calculadora
+POST http://localhost:3000/api/calculator/multiple
+POST http://localhost:3000/api/calculator/compare
+```
 
----
+### **Scripts de Mantenimiento**
 
-## 📈 Ideal para...
+```bash
+# Limpieza manual de datos antiguos
+node scripts/test-borrado-antiguo.js
 
-- Usuarios de bolsa, criptomonedas y finanzas que necesitan alertas y control de sus conversiones.
-- Desarrolladores que buscan un ejemplo profesional de API Node.js con automatización, autenticación y buenas prácticas.
-
----
-
-## 📑 Créditos y agradecimientos
-
-- [Frankfurter API](https://www.frankfurter.app/) para datos de divisas.
-- [Nodemailer](https://nodemailer.com/) para el envío de emails.
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) para la base de datos en la nube.
+# Los cron jobs se ejecutan automáticamente:
+# - Limpieza diaria: 2:00 AM
+# - Alertas: 8:00 AM
+```
 
 ---
 
-## 📝 Licencia
+## 📊 **Divisas Soportadas (20 Globales)**
 
-MIT
+### **Principales**
+
+```
+🇺🇸 USD - Dólar Estadounidense
+🇪🇺 EUR - Euro
+🇬🇧 GBP - Libra Esterlina
+🇯🇵 JPY - Yen Japonés
+🇨🇭 CHF - Franco Suizo
+🇨🇦 CAD - Dólar Canadiense
+🇦🇺 AUD - Dólar Australiano
+🇨🇳 CNY - Yuan Chino
+```
+
+### **Mercados Emergentes**
+
+```
+🇲🇽 MXN - Peso Mexicano
+🇧🇷 BRL - Real Brasileño
+🇰🇷 KRW - Won Surcoreano
+🇮🇳 INR - Rupia India
+```
+
+### **Regionales**
+
+```
+🇸🇪 SEK - Corona Sueca
+🇳🇴 NOK - Corona Noruega
+🇭🇰 HKD - Dólar de Hong Kong
+🇸🇬 SGD - Dólar de Singapur
+🇳🇿 NZD - Dólar Neozelandés
+🇿🇦 ZAR - Rand Sudafricano
+🇹🇷 TRY - Lira Turca
+🇵🇱 PLN - Zloty Polaco
+```
 
 ---
 
-> **¿Quieres contribuir o sugerir mejoras?**  
-> ¡Abre un issue o pull request!
+## 🎯 **Casos de Uso Profesionales**
+
+### **Para Traders**
+
+- Monitoreo de pares favoritos en tiempo real
+- Alertas automáticas por precio objetivo
+- Historial completo para análisis
+- Calculadora para operaciones múltiples
+
+### **Para Empresas**
+
+- Conversiones masivas para importaciones/exportaciones
+- Alertas de variación para cobertura de riesgos
+- Auditoría completa de operaciones
+- Sistema de roles para equipos
+
+### **Para Viajeros**
+
+- Conversiones rápidas de divisas
+- Favoritos para destinos frecuentes
+- Historial de gastos por país
+- Alertas para mejores tipos de cambio
+
+---
+
+## 🛡️ **Seguridad y Buenas Prácticas**
+
+```
+✅ Contraseñas encriptadas con BCrypt
+✅ JWT con expiración automática
+✅ Validación exhaustiva de inputs
+✅ Rate limiting en endpoints críticos
+✅ Sanitización de datos
+✅ Variables sensibles en .env
+✅ CORS configurado correctamente
+✅ Logging de seguridad automático
+```
+
+---
+
+## 🚀 **Próximas Funcionalidades**
+
+```
+🔄 Gráficos de tendencias históricas
+📈 Dashboard de analytics avanzado
+🌍 Más divisas (criptomonedas)
+📱 App móvil React Native
+🔔 Notificaciones push
+🤖 Bot de Telegram/Discord
+```
+
+---
+
+## 📈 **Performance**
+
+```
+⚡ Frontend: Angular 20 + Standalone Components
+⚡ Backend: Node.js con clustering
+⚡ Base de datos: MongoDB con índices optimizados
+⚡ Cache: Tipos de cambio cacheados (30 segundos)
+⚡ API: Frankfurter (99.9% uptime)
+```
+
+---
+
+## 🤝 **Contribuciones**
+
+```bash
+# Fork del proyecto
+# Crear rama feature
+git checkout -b feature/nueva-funcionalidad
+
+# Commit con formato conventional
+git commit -m "feat: añadir conversión a criptomonedas"
+
+# Push y Pull Request
+git push origin feature/nueva-funcionalidad
+```
+
+---
+
+## 📝 **Licencia**
+
+MIT License - Ver archivo LICENSE para detalles
+
+---
+
+## 🙏 **Créditos**
+
+- **Frankfurter API** - Datos de divisas en tiempo real
+- **Angular Team** - Framework frontend
+- **MongoDB** - Base de datos
+- **Nodemailer** - Sistema de emails
+- **Material Design** - Componentes UI
+
+---
+
+> **🏆 Aplicación desarrollada con fines educativos y profesionales**  
+> **⭐ Si te gusta el proyecto, dale una estrella en GitHub!**
+
+---
+
+**Desarrollado con ❤️ por Carlos Tobias Rufian Salmeron**  
+**📧 Contacto: █REDACTED_EMAIL█**  
+**🌐 Portfolio: tuportfolio.com**

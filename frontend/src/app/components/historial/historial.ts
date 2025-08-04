@@ -447,19 +447,24 @@ export class Historial implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Verificar autenticación
-    if (!this.authService.isAuthenticated()) {
-      console.log('❌ Usuario no autenticado, redirigiendo...');
+    console.log(
+      '🔍 DEBUG - authService.isAuthenticated():',
+      this.authService.isAuthenticated()
+    );
 
-      // ✅ OPCIONAL: Mostrar toast
-      this.snackBar.open(
-        '🔒 Sesión expirada. Inicia sesión nuevamente.',
-        'Cerrar',
-        { duration: 3000 }
-      );
-
-      return;
-    }
+    // ✅ AÑADIR ESTOS LOGS ADICIONALES:
+    console.log(
+      '🔍 Token en localStorage:',
+      localStorage.getItem('auth_token')
+    );
+    console.log(
+      '🔍 authService.isTokenValid():',
+      this.authService.isTokenValid()
+    );
+    console.log(
+      '🔍 authService.getCurrentUser():',
+      this.authService.getCurrentUser()
+    );
 
     this.loadHistory();
   }

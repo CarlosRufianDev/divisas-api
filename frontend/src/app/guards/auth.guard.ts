@@ -27,7 +27,3 @@ export const authGuard: CanActivateFn = (route, state) => {
   console.log('✅ Acceso permitido');
   return true;
 };
-
-// 1. Login normal
-// 2. Esperar 2 horas (o cambiar JWT_SECRET temporalmente)
-// 3. Hacer cualquier request → 401 → Logout automático

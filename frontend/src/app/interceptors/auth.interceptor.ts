@@ -1,60 +1,52 @@
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService, private router: Router) {}
+export const authInterceptorFn: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    console.log('🔍 Interceptor: Procesando request a', req.url);
+  console.log('🔍 Interceptor FUNCIONAL: Procesando request a', req.url);
 
-    // ✅ AÑADIR token automáticamente a todas las requests
-    const token = this.authService.getToken();
-    let authReq = req;
+  // ✅ AÑADIR token automáticamente a todas las requests del API
+  let authReq = req;
 
+  if (req.url.includes('/api/')) {
+    const token = authService.getToken();
     if (token) {
       authReq = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('🔑 Token añadido a la request');
+      console.log('🔑 Token añadido a la request:', req.url);
+      console.log(
+        '🔑 Token (primeros 20 chars):',
+        token.substring(0, 20) + '...'
+      );
+    } else {
+      console.log('⚠️ No hay token disponible para', req.url);
     }
-
-    // ✅ MANEJAR respuestas y errores
-    return next.handle(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.log('❌ Error en request:', error.status, error.message);
-
-        // ✅ Si token expirado (401), logout automático
-        if (error.status === 401) {
-          console.log(
-            '🔒 Token expirado o inválido. Cerrando sesión automáticamente...'
-          );
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }
-
-        // ✅ Si sin autorización (403), mostrar mensaje
-        if (error.status === 403) {
-          console.log('🚫 Acceso denegado');
-        }
-
-        return throwError(() => error);
-      })
-    );
   }
-}
+
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      console.log('❌ Error interceptado:', error.status, error.message);
+      console.log('❌ URL que falló:', error.url);
+
+      if (error.status === 401) {
+        console.log('🔒 Token expirado/inválido. Logout automático...');
+        authService.logout();
+        router.navigate(['/login']);
+      }
+
+      if (error.status === 403) {
+        console.log('🚫 Acceso denegado');
+      }
+
+      return throwError(() => error);
+    })
+  );
+};

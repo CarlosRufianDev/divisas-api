@@ -1,146 +1,285 @@
 <div class="alertas-container">
-  <!-- Header Principal -->
+  <!-- Header con título -->
   <div class="alertas-header">
-    <h1>🔔 Centro de Alertas Inteligentes</h1>
-    <p class="subtitle">Configura y gestiona alertas personalizadas para tus divisas</p>
-  </div>
-
-  <!-- SECCIÓN 1: ALERTAS ACTIVAS -->
-  <mat-card class="section-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>notifications_active</mat-icon>
-        Alertas Activas (2)
-      </mat-card-title>
-      <button mat-raised-button color="primary">
-        <mat-icon>add</mat-icon>
-        Nueva Alerta
-      </button>
-    </mat-card-header>
-    
-    <mat-card-content>
-      <div class="alertas-list">
-        <!-- Alerta 1 -->
-        <div class="alerta-item active">
-          <div class="alerta-info">
-            <span class="alerta-pair">EUR/USD</span>
-            <span class="alerta-condition">Cuando > 1.20</span>
-          </div>
-          <div class="alerta-status">
-            <mat-icon class="status-icon active">radio_button_checked</mat-icon>
-            <span class="status-text">Activa</span>
-          </div>
-          <div class="alerta-actions">
-            <button mat-icon-button>
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button>
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </div>
-
-        <!-- Alerta 2 -->
-        <div class="alerta-item active">
-          <div class="alerta-info">
-            <span class="alerta-pair">GBP/USD</span>
-            <span class="alerta-condition">Cuando < 1.25</span>
-          </div>
-          <div class="alerta-status">
-            <mat-icon class="status-icon active">radio_button_checked</mat-icon>
-            <span class="status-text">Activa</span>
-          </div>
-          <div class="alerta-actions">
-            <button mat-icon-button>
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button>
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
+    <div class="header-content">
+      <div class="header-info">
+        <mat-icon class="header-icon">notifications_active</mat-icon>
+        <div class="header-text">
+          <h1>Gestión de Alertas</h1>
+          <p>Configura notificaciones automáticas por email cuando cambien los tipos de cambio</p>
         </div>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <div class="header-stats" *ngIf="alerts.length > 0">
+        <div class="stat-item">
+          <span class="stat-number">{{ alerts.length }}</span>
+          <span class="stat-label">Alertas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ getActiveAlertsCount() }}</span>
+          <span class="stat-label">Activas</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- SECCIÓN 2: CREAR NUEVA ALERTA -->
-  <mat-card class="section-card">
+  <!-- Formulario para crear nueva alerta -->
+  <mat-card class="create-alert-card">
     <mat-card-header>
       <mat-card-title>
         <mat-icon>add_alert</mat-icon>
-        Configurar Nueva Alerta
+        Nueva Alerta
       </mat-card-title>
+      <mat-card-subtitle>
+        Crea una nueva alerta personalizada
+      </mat-card-subtitle>
     </mat-card-header>
-    
+
     <mat-card-content>
-      <div class="nueva-alerta-form">
-        <mat-form-field class="par-field">
-          <mat-label>Par de Divisas</mat-label>
-          <mat-select>
-            <mat-option value="EUR/USD">EUR/USD - Euro / Dólar</mat-option>
-            <mat-option value="GBP/USD">GBP/USD - Libra / Dólar</mat-option>
-            <mat-option value="USD/JPY">USD/JPY - Dólar / Yen</mat-option>
-            <mat-option value="AUD/USD">AUD/USD - Dólar Australiano</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <form [formGroup]="alertForm" class="alert-form">
+        <!-- Tipo de Alerta -->
+        <div class="form-section">
+          <h3>Tipo de Alerta</h3>
+          <mat-radio-group formControlName="alertType" class="alert-type-group">
+            <mat-radio-button 
+              *ngFor="let type of alertTypes" 
+              [value]="type.value"
+              class="alert-type-option"
+            >
+              <div class="alert-type-content">
+                <mat-icon>{{ type.icon }}</mat-icon>
+                <div class="alert-type-text">
+                  <span class="alert-type-label">{{ type.label }}</span>
+                  <span class="alert-type-description">{{ type.description }}</span>
+                </div>
+              </div>
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
 
-        <mat-form-field class="condition-field">
-          <mat-label>Condición</mat-label>
-          <mat-select>
-            <mat-option value="greater">Mayor que (>)</mat-option>
-            <mat-option value="less">Menor que (<)</mat-option>
-            <mat-option value="equal">Igual a (=)</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <!-- Par de divisas -->
+        <div class="form-section">
+          <h3>Par de Divisas</h3>
+          <div class="currency-row">
+            <!-- Moneda FROM -->
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>Moneda Base</mat-label>
+              <mat-select 
+                formControlName="from"
+                (selectionChange)="onFromCurrencyChange()"
+              >
+                <mat-option 
+                  *ngFor="let currency of availableCurrencies" 
+                  [value]="currency.code"
+                >
+                  <span class="currency-option">
+                    <span class="flag">{{ currency.flag }}</span>
+                    <span class="code">{{ currency.code }}</span>
+                    <span class="name">{{ currency.name }}</span>
+                  </span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
 
-        <mat-form-field class="value-field">
-          <mat-label>Valor</mat-label>
-          <input matInput type="number" step="0.0001" placeholder="1.2000">
-        </mat-form-field>
+            <mat-icon class="arrow-icon">arrow_forward</mat-icon>
 
-        <button mat-raised-button color="primary" class="create-btn">
-          <mat-icon>add_alert</mat-icon>
-          Crear Alerta
-        </button>
-      </div>
+            <!-- Moneda TO -->
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>Moneda Destino</mat-label>
+              <mat-select formControlName="to">
+                <mat-option 
+                  *ngFor="let currency of getFilteredToCurrencies()" 
+                  [value]="currency.code"
+                >
+                  <span class="currency-option">
+                    <span class="flag">{{ currency.flag }}</span>
+                    <span class="code">{{ currency.code }}</span>
+                    <span class="name">{{ currency.name }}</span>
+                  </span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email de notificación</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="tu@email.com">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Configuración específica por tipo -->
+        <div class="form-section" *ngIf="alertForm.get('alertType')?.value === 'scheduled'">
+          <h3>Configuración Programada</h3>
+          <div class="scheduled-config">
+            <mat-form-field appearance="outline">
+              <mat-label>Cada X días</mat-label>
+              <input matInput formControlName="intervalDays" type="number" min="1" max="365">
+              <span matTextSuffix>días</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Hora</mat-label>
+              <input matInput formControlName="hour" type="number" min="0" max="23">
+              <span matTextSuffix>:00</span>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-section" *ngIf="alertForm.get('alertType')?.value === 'percentage'">
+          <h3>Configuración por Porcentaje</h3>
+          <div class="percentage-config">
+            <mat-form-field appearance="outline">
+              <mat-label>Porcentaje umbral</mat-label>
+              <input matInput formControlName="percentageThreshold" type="number" min="0.1" max="50" step="0.1">
+              <span matTextSuffix>%</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Dirección</mat-label>
+              <mat-select formControlName="percentageDirection">
+                <mat-option value="up">Solo subida</mat-option>
+                <mat-option value="down">Solo bajada</mat-option>
+                <mat-option value="both">Ambas direcciones</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-section" *ngIf="alertForm.get('alertType')?.value === 'target'">
+          <h3>Configuración Precio Objetivo</h3>
+          <div class="target-config">
+            <mat-form-field appearance="outline">
+              <mat-label>Precio objetivo</mat-label>
+              <input matInput formControlName="targetRate" type="number" min="0.0001" step="0.0001">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Condición</mat-label>
+              <mat-select formControlName="targetDirection">
+                <mat-option value="above">Mayor que (>)</mat-option>
+                <mat-option value="below">Menor que (<)</mat-option>
+                <mat-option value="exact">Igual a (=)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
     </mat-card-content>
+
+    <mat-card-actions class="form-actions">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="createAlert()"
+        [disabled]="!isFormValid() || saving"
+        class="create-button"
+      >
+        <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+        <mat-icon *ngIf="!saving">add_alert</mat-icon>
+        {{ saving ? 'Creando...' : 'Crear Alerta' }}
+      </button>
+    </mat-card-actions>
   </mat-card>
 
-  <!-- SECCIÓN 3: HISTORIAL DE ALERTAS -->
-  <mat-card class="section-card">
+  <!-- Lista de alertas existentes -->
+  <mat-card class="alerts-list-card" *ngIf="alerts.length > 0">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>history</mat-icon>
-        Historial de Alertas Disparadas
+        <mat-icon>list</mat-icon>
+        Mis Alertas ({{ alerts.length }})
       </mat-card-title>
     </mat-card-header>
-    
-    <mat-card-content>
-      <div class="historial-alertas">
-        <!-- Alerta disparada 1 -->
-        <div class="alerta-disparada">
-          <div class="alerta-info">
-            <span class="alerta-pair">EUR/USD</span>
-            <span class="alerta-message">Alcanzó 1.2001 (objetivo: > 1.20)</span>
-          </div>
-          <div class="alerta-time">
-            <mat-icon>access_time</mat-icon>
-            <span>Hace 2 horas</span>
-          </div>
-        </div>
 
-        <!-- Alerta disparada 2 -->
-        <div class="alerta-disparada">
-          <div class="alerta-info">
-            <span class="alerta-pair">GBP/USD</span>
-            <span class="alerta-message">Cayó a 1.2495 (objetivo: < 1.25)</span>
+    <mat-card-content>
+      <div class="alerts-list">
+        <div 
+          *ngFor="let alert of alerts; trackBy: trackByAlertId" 
+          class="alert-item"
+          [ngClass]="{ 'active': alert.isActive, 'inactive': !alert.isActive }"
+        >
+          <!-- Info de la alerta -->
+          <div class="alert-info">
+            <div class="alert-pair">
+              <span class="currency-badge from">
+                {{ getCurrencyFlag(alert.from) }} {{ alert.from }}
+              </span>
+              <mat-icon class="arrow">arrow_forward</mat-icon>
+              <span class="currency-badge to">
+                {{ getCurrencyFlag(alert.to) }} {{ alert.to }}
+              </span>
+            </div>
+            
+            <div class="alert-details">
+              <div class="alert-type">
+                <mat-icon>{{ getAlertTypeIcon(alert.alertType) }}</mat-icon>
+                <span>{{ getAlertTypeLabel(alert.alertType) }}</span>
+              </div>
+              <div class="alert-description">
+                {{ getAlertDescription(alert) }}
+              </div>
+              <div class="alert-email">
+                <mat-icon>email</mat-icon>
+                <span>{{ alert.email }}</span>
+              </div>
+              <div class="alert-dates" *ngIf="alert.lastSent">
+                <span class="last-sent">
+                  Último envío: {{ alert.lastSent | date:'short' }}
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="alerta-time">
-            <mat-icon>access_time</mat-icon>
-            <span>Ayer 15:30</span>
+
+          <!-- Estado y acciones -->
+          <div class="alert-actions">
+            <div class="alert-status">
+              <mat-slide-toggle 
+                [checked]="alert.isActive"
+                (change)="toggleAlert(alert)"
+                color="primary"
+              >
+                {{ alert.isActive ? 'Activa' : 'Inactiva' }}
+              </mat-slide-toggle>
+            </div>
+
+            <div class="action-buttons">
+              <button 
+                mat-icon-button 
+                (click)="testAlert(alert)"
+                matTooltip="Enviar test"
+                color="accent"
+              >
+                <mat-icon>send</mat-icon>
+              </button>
+              
+              <button 
+                mat-icon-button 
+                (click)="deleteAlert(alert)"
+                matTooltip="Eliminar alerta"
+                color="warn"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </mat-card-content>
   </mat-card>
+
+  <!-- Estado vacío -->
+  <mat-card class="empty-state" *ngIf="alerts.length === 0 && !loading">
+    <mat-card-content>
+      <div class="empty-content">
+        <mat-icon class="empty-icon">notifications_off</mat-icon>
+        <h2>No tienes alertas configuradas</h2>
+        <p>Crea tu primera alerta para recibir notificaciones automáticas cuando cambien los tipos de cambio.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading state -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando alertas...</p>
+  </div>
 </div>

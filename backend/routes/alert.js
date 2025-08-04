@@ -8,7 +8,8 @@ const {
   createTargetAlert, 
   getAlerts, 
   updateAlert,
-  deleteAlert 
+  deleteAlert,
+  sendTestAlert
 } = require('../controllers/alertController');
 
 // ===== RUTAS ORIGINALES (mantener compatibilidad) =====
@@ -50,7 +51,7 @@ router.post('/', requireAuth, async (req, res) => {
 // ===== NUEVAS RUTAS MEJORADAS =====
 
 // Crear alerta programada (nueva versión del controlador)
-router.post('/scheduled', createScheduledAlert);
+router.post('/scheduled', requireAuth, createScheduledAlert);
 
 // Crear alerta por porcentaje
 router.post('/percentage', requireAuth, (req, res, next) => {
@@ -75,9 +76,10 @@ router.get('/', requireAuth, async (req, res) => {
 
   try {
     const alerts = await Alert.find(filter).sort({ hour: 1, createdAt: -1 });
-    // Formatea la respuesta para mostrar todos los campos relevantes
+    
+    // ✅ CORREGIDO: usar _id en lugar de id
     const result = alerts.map(alert => ({
-      id: alert._id,
+      _id: alert._id,     // ✅ CAMBIADO DE 'id' A '_id'
       from: alert.from,
       to: alert.to,
       alertType: alert.alertType || 'scheduled',
@@ -98,8 +100,10 @@ router.get('/', requireAuth, async (req, res) => {
       createdAt: alert.createdAt,
       updatedAt: alert.updatedAt
     }));
+    
     res.json(result);
   } catch (err) {
+    console.error('❌ Error al obtener alertas:', err);
     res.status(500).json({ error: 'No se pudieron obtener las alertas' });
   }
 });
@@ -143,5 +147,8 @@ router.delete('/:id', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Error al borrar la alerta' });
   }
 });
+
+// Enviar test de alerta
+router.post('/:id/test', requireAuth, sendTestAlert);
 
 module.exports = router;
