@@ -38,7 +38,7 @@ import { AuthService, LoginRequest } from '../../services/auth';
           <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="█REDACTED_EMAIL█">
+              <input matInput type="email" formControlName="email" placeholder="carlosrufiandev@gmail.com">
               <mat-icon matSuffix>email</mat-icon>
             </mat-form-field>
 
@@ -112,7 +112,7 @@ export class Login {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      email: ['█REDACTED_EMAIL█', [Validators.required, Validators.email]],
+      email: ['carlosrufiandev@gmail.com', [Validators.required, Validators.email]],
       password: ['TuPasswordSegura123', [Validators.required]]
     });
   }

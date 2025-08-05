@@ -54,7 +54,7 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "█REDACTED_EMAIL█",
+  "email": "carlosrufiandev@gmail.com",
   "password": "TuPasswordSegura123",
   "name": "Carlos Rufián"
 }
@@ -64,7 +64,7 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "█REDACTED_EMAIL█",
+  "email": "carlosrufiandev@gmail.com",
   "password": "TuPasswordSegura123"
 }
 

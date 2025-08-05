@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router'; // ✅ AÑADIR esta línea
+import { AuthService } from '../../services/auth'; // ✅ AÑADIR
 import {
   ConversionRequest,
   ConversionResponse,
@@ -66,14 +68,23 @@ export class Dashboard implements OnInit {
 
   constructor(
     private divisasService: DivisasService,
-    private snackBar: MatSnackBar // ✅ AÑADIR
+    private snackBar: MatSnackBar,
+    private authService: AuthService, // ✅ AÑADIR esta línea
+    private router: Router // ✅ AÑADIR esta línea
   ) {
     // this.cargarTiposCambio();
   }
 
   ngOnInit() {
-    this.cargarTiposCambio();
-    this.cargarAnalytics();
+    this.cargarTiposCambio(); // ✅ Esto siempre se ejecuta (público)
+
+    // ✅ AÑADIR: Solo cargar analytics si está autenticado
+    if (this.authService.isAuthenticated()) {
+      console.log('🔐 Usuario autenticado, cargando analytics...');
+      this.cargarAnalytics();
+    } else {
+      console.log('👤 Usuario no autenticado, mostrando dashboard público');
+    }
   }
 
   // MÉTODO ACTUALIZADO PARA CARGAR TIPOS DE CAMBIO
@@ -622,8 +633,11 @@ export class Dashboard implements OnInit {
 
   getInvestmentReason(): string {
     const recommendation = this.getInvestmentRecommendation();
-    const trend = this.getTrendDirection();
     const currency = this.selectedCurrency?.code || 'esta divisa';
+
+    // ✅ USAR SEED FIJO BASADO EN DIVISA (no Math.random)
+    const seed = currency.charCodeAt(0) + currency.charCodeAt(1);
+    const reasonIndex = seed % 3; // 0, 1, o 2
 
     const reasons = {
       COMPRAR: [
@@ -644,7 +658,7 @@ export class Dashboard implements OnInit {
     };
 
     const reasonList = reasons[recommendation as keyof typeof reasons];
-    return reasonList[Math.floor(Math.random() * reasonList.length)];
+    return reasonList[reasonIndex]; // ✅ SEED FIJO, no random
   }
 
   getConfidenceLevel(): number {
@@ -668,6 +682,21 @@ export class Dashboard implements OnInit {
       });
     }
   }
+  // AÑADIR después del método addToFavorites():
+  goToRegister(): void {
+    this.closeCurrencyModal();
+
+    // ✅ NAVEGAR AL REGISTRO
+    this.router.navigate(['/register']).then(() => {
+      console.log('🔄 Navegando al registro...');
+    });
+
+    // Mostrar mensaje de transición
+    this.snackBar.open('🔄 Redirigiendo al registro...', 'Cerrar', {
+      duration: 2000,
+      panelClass: ['info-snackbar'],
+    });
+  }
 
   // NUEVOS MÉTODOS PARA RESULTADO MEJORADO:
   getCurrencyFullName(code: string): string {
@@ -689,5 +718,10 @@ export class Dashboard implements OnInit {
     if (volatility > 0.5) return 'Alta';
     if (volatility > 0.1) return 'Media';
     return 'Baja';
+  }
+
+  // ✅ HACER AUTHSERVICE ACCESIBLE EN EL TEMPLATE
+  get isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 }

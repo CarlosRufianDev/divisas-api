@@ -179,7 +179,7 @@
     </div>
 
     <!-- SECCIÓN 2: ANALYTICS (4 cards horizontales) -->
-    <mat-card class="analytics-compact" *ngIf="userStats">
+    <mat-card class="analytics-compact" *ngIf="isAuthenticated && userStats">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>analytics</mat-icon>
@@ -230,7 +230,7 @@
     </mat-card>
 
     <!-- SECCIÓN 3: TENDENCIAS FAVORITOS (Compacta) -->
-    <mat-card class="trends-compact" *ngIf="favoriteTrends && favoriteTrends.trends && favoriteTrends.trends.length > 0">
+    <mat-card class="trends-compact" *ngIf="isAuthenticated && favoriteTrends?.trends?.length > 0">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>trending_up</mat-icon>
@@ -520,9 +520,21 @@
           Convertir a {{ selectedCurrency?.code }}
         </button>
         
-        <button mat-stroked-button color="accent" (click)="addToFavorites()">
+        <button mat-stroked-button 
+                color="accent" 
+                (click)="addToFavorites()"
+                *ngIf="isAuthenticated">
           <mat-icon>favorite_border</mat-icon>
           Añadir a Favoritos
+        </button>
+
+        <!-- Mostrar botón de registro si NO está autenticado -->
+        <button mat-stroked-button 
+                color="primary" 
+                (click)="goToRegister()"
+                *ngIf="!isAuthenticated">
+          <mat-icon>person_add</mat-icon>
+          Regístrate para Favoritos
         </button>
         
         <button mat-stroked-button (click)="closeCurrencyModal()">
