@@ -116,7 +116,7 @@ npm install
 
 # Configurar .env
 MONGODB_URI=tu_uri_de_mongodb
-JWT_SECRET=un_secreto_super_seguro
+JWT_SECRET=█REDACTED_JWT█
 EMAIL_USER=tu_email@gmail.com
 EMAIL_PASS=tu_contraseña_de_aplicacion
 API_URL=https://api.frankfurter.app/latest
@@ -323,5 +323,5 @@ MIT License - Ver archivo LICENSE para detalles
 ---
 
 **Desarrollado con ❤️ por Carlos Tobias Rufian Salmeron**  
-**📧 Contacto: carlosrufiandev@gmail.com**  
+**📧 Contacto: █REDACTED_EMAIL█**  
 **🌐 Portfolio: tuportfolio.com**
