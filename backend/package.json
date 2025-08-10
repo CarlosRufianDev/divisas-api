@@ -40,17 +40,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "setupFilesAfterEnv": [
-      "<rootDir>/tests/setupMongo.js"
-    ],
+    "setupFilesAfterEnv": ["<rootDir>/tests/setupMongo.js"],
     "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/*.js",
-      "!node_modules/**",
-      "!coverage/**"
-    ],
-    "testMatch": [
-      "**/*.spec.js"
-    ]
+    "collectCoverageFrom": ["**/*.js","!node_modules/**","!coverage/**"],
+    "testMatch": ["**/*.spec.js"]
   }
 }
