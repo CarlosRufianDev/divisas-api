@@ -10,6 +10,7 @@
     "lint:fix": "eslint . --ext .js --fix",
     "audit": "npm audit --omit=dev",
     "audit:fix": "npm audit fix --omit=dev || echo \"Revisa manualmente vulnerabilidades restantes\"",
+    "test": "echo \"(sin tests aún)\" && exit 0",
     "prepare": "husky"
   },
   "keywords": [],
