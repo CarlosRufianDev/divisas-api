@@ -45,10 +45,10 @@ router.get('/clean-old', requireAuth, isAdmin, deleteOldConversions);
 router.get('/rates/:baseCurrency', async (req, res) => {
   try {
     const { baseCurrency } = req.params;
-    
+
     // Validar que la moneda base sea válida
     const validCurrencies = [
-      'USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 
+      'USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY',
       'MXN', 'BRL', 'KRW', 'INR', 'SEK', 'NOK',
       'HKD', 'SGD', 'NZD', 'ZAR', 'TRY', 'PLN'
     ]; // ✅ Ahora 20 divisas
@@ -58,13 +58,13 @@ router.get('/rates/:baseCurrency', async (req, res) => {
 
     // ✅ CAMBIAR A FRANKFURTER (igual que en convertController.js)
     const response = await fetch(`https://api.frankfurter.app/latest?from=${baseCurrency.toUpperCase()}`);
-    
+
     if (!response.ok) {
       throw new Error('Error al obtener tipos de cambio');
     }
 
     const data = await response.json();
-    
+
     // Filtrar solo las monedas que soportamos
     const supportedRates = {};
     validCurrencies.forEach(currency => {
@@ -112,7 +112,7 @@ router.get('/currencies', (req, res) => {
 
   res.json({
     success: true,
-    currencies: currencies,
+    currencies,
     total: currencies.length
   });
 });

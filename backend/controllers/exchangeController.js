@@ -3,7 +3,7 @@ const axios = require('axios');
 // Lista completa de divisas que quieres soportar
 const supportedCurrencies = [
   // ✅ Solo las que SÍ están disponibles en Frankfurter:
-  'USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 
+  'USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY',
   'MXN', 'BRL', 'KRW', 'INR', 'SEK', 'NOK',
   'HKD', 'SGD', 'NZD', 'ZAR', 'TRY', 'PLN',
   'DKK', 'CZK', 'HUF', 'RON', 'BGN', 'HRK', 'ISK', 'ILS'
@@ -17,9 +17,9 @@ const getExchangeRates = async (req, res) => {
     // ✅ SOLICITAR TODAS LAS DIVISAS (sin filtrar)
     const apiUrl = `https://api.frankfurter.app/latest?from=${base}`;
     console.log('🔗 Solicitando tipos de cambio:', apiUrl);
-    
+
     const response = await axios.get(apiUrl);
-    
+
     if (!response.data || !response.data.rates) {
       return res.status(400).json({ error: 'No se pudieron obtener los tipos de cambio' });
     }
@@ -36,7 +36,7 @@ const getExchangeRates = async (req, res) => {
     res.json({
       base: response.data.base,
       date: response.data.date,
-      rates: allRates  // ✅ Enviar TODAS las divisas, no filtradas
+      rates: allRates // ✅ Enviar TODAS las divisas, no filtradas
     });
 
   } catch (error) {

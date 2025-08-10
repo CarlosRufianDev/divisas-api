@@ -9,34 +9,34 @@ const createScheduledAlert = async (req, res) => {
 
     // Validaciones básicas
     if (!from || !to || !email || !intervalDays || typeof hour === 'undefined') {
-      return res.status(400).json({ 
-        error: 'Faltan campos requeridos: from, to, email, intervalDays, hour' 
+      return res.status(400).json({
+        error: 'Faltan campos requeridos: from, to, email, intervalDays, hour'
       });
     }
 
     // Validar formato de divisas
     if (from.length !== 3 || to.length !== 3) {
-      return res.status(400).json({ 
-        error: 'Las divisas deben tener exactamente 3 caracteres' 
+      return res.status(400).json({
+        error: 'Las divisas deben tener exactamente 3 caracteres'
       });
     }
 
     if (from.toUpperCase() === to.toUpperCase()) {
-      return res.status(400).json({ 
-        error: 'Las divisas de origen y destino no pueden ser iguales' 
+      return res.status(400).json({
+        error: 'Las divisas de origen y destino no pueden ser iguales'
       });
     }
 
     // Validar rangos
     if (intervalDays < 1 || intervalDays > 365) {
-      return res.status(400).json({ 
-        error: 'El intervalo debe estar entre 1 y 365 días' 
+      return res.status(400).json({
+        error: 'El intervalo debe estar entre 1 y 365 días'
       });
     }
 
     if (hour < 0 || hour > 23) {
-      return res.status(400).json({ 
-        error: 'La hora debe estar entre 0 y 23' 
+      return res.status(400).json({
+        error: 'La hora debe estar entre 0 y 23'
       });
     }
 
@@ -52,8 +52,8 @@ const createScheduledAlert = async (req, res) => {
     });
 
     if (existingAlert) {
-      return res.status(400).json({ 
-        error: 'Ya existe una alerta programada idéntica activa' 
+      return res.status(400).json({
+        error: 'Ya existe una alerta programada idéntica activa'
       });
     }
 
@@ -91,16 +91,16 @@ const createScheduledAlert = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error creando alerta programada:', error);
-    
+
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Datos de entrada inválidos',
-        details: error.message 
+        details: error.message
       });
     }
-    
-    res.status(500).json({ 
-      error: 'Error interno del servidor al crear la alerta programada' 
+
+    res.status(500).json({
+      error: 'Error interno del servidor al crear la alerta programada'
     });
   }
 };
@@ -197,9 +197,9 @@ const createTargetAlert = async (req, res) => {
     await newAlert.save();
 
     const directionText = {
-      'above': `cuando llegue por encima de ${targetRate}`,
-      'below': `cuando baje por debajo de ${targetRate}`,
-      'exact': `cuando llegue exactamente a ${targetRate}`
+      above: `cuando llegue por encima de ${targetRate}`,
+      below: `cuando baje por debajo de ${targetRate}`,
+      exact: `cuando llegue exactamente a ${targetRate}`
     };
 
     res.status(201).json({
@@ -296,7 +296,7 @@ const sendTestAlert = async (req, res) => {
 
     // ✅ AÑADIR: ENVIAR EMAIL REAL CON NODEMAILER
     const nodemailer = require('nodemailer');
-    
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -307,9 +307,9 @@ const sendTestAlert = async (req, res) => {
 
     // Crear contenido del email
     const alertTypeText = {
-      'scheduled': `Programada (cada ${alert.intervalDays} días a las ${alert.hour}:00)`,
-      'percentage': `Por porcentaje (±${alert.percentageThreshold}% desde ${alert.baselineRate})`,
-      'target': `Por precio objetivo (${alert.targetDirection} ${alert.targetRate})`
+      scheduled: `Programada (cada ${alert.intervalDays} días a las ${alert.hour}:00)`,
+      percentage: `Por porcentaje (±${alert.percentageThreshold}% desde ${alert.baselineRate})`,
+      target: `Por precio objetivo (${alert.targetDirection} ${alert.targetRate})`
     };
 
     const subject = `🧪 Test de Alerta - ${alert.from}/${alert.to} = ${currentRate}`;
@@ -338,13 +338,13 @@ const sendTestAlert = async (req, res) => {
     const emailResult = await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: alert.email,
-      subject: subject,
-      html: html
+      subject,
+      html
     });
 
     console.log(`✅ EMAIL TEST REAL ENVIADO: ${emailResult.messageId}`);
     console.log(`✅ Gmail Response: ${emailResult.response}`);
-    
+
     // Actualizar lastSent
     alert.lastSent = new Date();
     await alert.save();
@@ -368,9 +368,9 @@ const sendTestAlert = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error enviando test de alerta:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error al enviar el email de prueba',
-      details: error.message 
+      details: error.message
     });
   }
 };

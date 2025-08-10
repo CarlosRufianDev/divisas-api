@@ -16,7 +16,7 @@ const multipleConversion = async (req, res) => {
     // Construir URL para Frankfurter
     const targetCurrencies = currencies.join(',');
     const response = await axios.get(`https://api.frankfurter.app/latest?from=${from}&to=${targetCurrencies}`);
-    
+
     const conversions = [];
     for (const [currency, rate] of Object.entries(response.data.rates)) {
       conversions.push({
@@ -101,12 +101,12 @@ const comparePairs = async (req, res) => {
     }
 
     const comparisons = [];
-    
+
     for (const pair of pairs) {
       try {
         const response = await axios.get(`https://api.frankfurter.app/latest?from=${pair.from}&to=${pair.to}`);
         const rate = response.data.rates[pair.to];
-        
+
         if (rate) {
           comparisons.push({
             from: pair.from,
@@ -186,7 +186,7 @@ const historicalRate = async (req, res) => {
   }
 };
 
-module.exports = { 
+module.exports = {
   multipleConversion,
   reverseConversion,
   comparePairs,

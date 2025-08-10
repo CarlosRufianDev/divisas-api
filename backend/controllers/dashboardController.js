@@ -73,7 +73,7 @@ async function getMarketTrends() {
   }
 
   console.log('🔄 Recalculando market trends...');
-  
+
   // Si no, recalculamos y guardamos en caché
   const variations = await Promise.all(
     pairs.map(pair => getPairVariation(pair.from, pair.to))
@@ -156,7 +156,7 @@ const getDashboard = async (req, res) => {
         try {
           if (favCurrency.currency === 'EUR') {
             // Si es EUR, mostrar vs USD
-            const response = await axios.get(`https://api.frankfurter.app/latest?from=EUR&to=USD`);
+            const response = await axios.get('https://api.frankfurter.app/latest?from=EUR&to=USD');
             return {
               currency: favCurrency.currency,
               nickname: favCurrency.nickname,
@@ -218,53 +218,55 @@ const getUserStats = async (req, res) => {
   try {
     const userId = req.user.userId;
     console.log('🔍 Getting stats for user:', userId);
-    
+
     // Total conversiones
     const totalConversions = await Conversion.countDocuments({ user: userId });
-    
+
     // Volumen total convertido (suma de amounts)
     const volumeResult = await Conversion.aggregate([
       { $match: { user: new mongoose.Types.ObjectId(userId) } }, // ✅ FIX: Añadir 'new'
-      { $group: { _id: null, totalVolume: { $sum: "$amount" } } }
+      { $group: { _id: null, totalVolume: { $sum: '$amount' } } }
     ]);
     const totalVolume = volumeResult[0]?.totalVolume || 0;
-    
+
     // Par más utilizado
     const topPairResult = await Conversion.aggregate([
       { $match: { user: new mongoose.Types.ObjectId(userId) } }, // ✅ FIX: Añadir 'new'
-      { $group: { 
-          _id: { from: "$from", to: "$to" }, 
-          count: { $sum: 1 } 
-        }},
+      {
+        $group: {
+          _id: { from: '$from', to: '$to' },
+          count: { $sum: 1 }
+        }
+      },
       { $sort: { count: -1 } },
       { $limit: 1 }
     ]);
     const topPair = topPairResult[0] ? `${topPairResult[0]._id.from}→${topPairResult[0]._id.to}` : 'N/A';
-    
+
     // Total alertas
     const totalAlerts = await Alert.countDocuments({ user: userId });
-    
+
     // Conversiones esta semana vs semana anterior
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    
+
     const twoWeeksAgo = new Date();
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-    
-    const thisWeekConversions = await Conversion.countDocuments({ 
-      user: userId, 
-      createdAt: { $gte: oneWeekAgo } 
+
+    const thisWeekConversions = await Conversion.countDocuments({
+      user: userId,
+      createdAt: { $gte: oneWeekAgo }
     });
-    
-    const lastWeekConversions = await Conversion.countDocuments({ 
-      user: userId, 
-      createdAt: { $gte: twoWeeksAgo, $lt: oneWeekAgo } 
+
+    const lastWeekConversions = await Conversion.countDocuments({
+      user: userId,
+      createdAt: { $gte: twoWeeksAgo, $lt: oneWeekAgo }
     });
-    
-    const weeklyTrend = lastWeekConversions > 0 
+
+    const weeklyTrend = lastWeekConversions > 0
       ? ((thisWeekConversions - lastWeekConversions) / lastWeekConversions * 100).toFixed(1)
       : thisWeekConversions > 0 ? 100 : 0;
-    
+
     const stats = {
       totalConversions,
       totalVolume: totalVolume.toFixed(2),
@@ -274,10 +276,10 @@ const getUserStats = async (req, res) => {
       thisWeekConversions,
       lastWeekConversions
     };
-    
+
     console.log('✅ User stats calculated:', stats);
     res.json(stats);
-    
+
   } catch (error) {
     console.error('❌ Error getting user stats:', error);
     res.status(500).json({ error: 'Error getting user statistics' });
@@ -288,14 +290,14 @@ const getUserStats = async (req, res) => {
 const getFavoriteTrends = async (req, res) => {
   try {
     const userId = req.user.userId;
-    
+
     // Obtener pares favoritos del usuario
     const favorites = await Favorite.find({ user: userId }).limit(5);
-    
+
     if (favorites.length === 0) {
       return res.json({ trends: [], message: 'No tienes pares favoritos aún' });
     }
-    
+
     // Para cada par favorito, obtener datos de últimos 7 días
     const trends = await Promise.all(
       favorites.map(async (fav) => {
@@ -303,17 +305,17 @@ const getFavoriteTrends = async (req, res) => {
           // Obtener tasa actual
           const currentResponse = await axios.get(`https://api.frankfurter.app/latest?from=${fav.from}&to=${fav.to}`);
           const currentRate = currentResponse.data.rates[fav.to];
-          
+
           // Obtener tasa hace 7 días
           const weekAgo = new Date();
           weekAgo.setDate(weekAgo.getDate() - 7);
           const dateString = weekAgo.toISOString().split('T')[0];
-          
+
           const pastResponse = await axios.get(`https://api.frankfurter.app/${dateString}?from=${fav.from}&to=${fav.to}`);
           const pastRate = pastResponse.data.rates[fav.to];
-          
+
           const change = ((currentRate - pastRate) / pastRate * 100).toFixed(2);
-          
+
           return {
             pair: `${fav.from}/${fav.to}`,
             nickname: fav.nickname,
@@ -334,17 +336,17 @@ const getFavoriteTrends = async (req, res) => {
         }
       })
     );
-    
+
     res.json({ trends });
-    
+
   } catch (error) {
     console.error('Error getting favorite trends:', error);
     res.status(500).json({ error: 'Error getting favorite trends' });
   }
 };
 
-module.exports = { 
-  getDashboard, 
-  getUserStats,    // ✅ NUEVO
+module.exports = {
+  getDashboard,
+  getUserStats, // ✅ NUEVO
   getFavoriteTrends // ✅ NUEVO
 };

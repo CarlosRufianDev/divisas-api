@@ -19,7 +19,7 @@ const addFavoriteCurrency = async (req, res) => {
     // Verificar que la moneda sea válida consultando la API
     try {
       const response = await axios.get(`https://api.frankfurter.app/latest?from=${currency.toUpperCase()}`);
-      
+
       if (!response.data.rates) {
         return res.status(400).json({ error: 'Moneda no válida o no soportada' });
       }
@@ -60,7 +60,7 @@ const getFavoriteCurrencies = async (req, res) => {
   try {
     const userId = req.user.userId;
     const baseCurrency = req.query.base || 'EUR'; // Base para comparar (EUR por defecto)
-    
+
     const favoriteCurrencies = await FavoriteCurrency.find({ user: userId })
       .sort({ priority: 1, createdAt: -1 });
 
@@ -79,11 +79,11 @@ const getFavoriteCurrencies = async (req, res) => {
           // Obtener tipo de cambio vs la moneda base
           const response = await axios.get(`https://api.frankfurter.app/latest?from=${baseCurrency}&to=${favCurrency.currency}`);
           const rateToBase = response.data.rates[favCurrency.currency];
-          
+
           // Obtener tipo de cambio inverso
           const responseInverse = await axios.get(`https://api.frankfurter.app/latest?from=${favCurrency.currency}&to=${baseCurrency}`);
           const rateFromBase = responseInverse.data.rates[baseCurrency];
-          
+
           return {
             id: favCurrency._id,
             currency: favCurrency.currency,
@@ -177,7 +177,7 @@ const updateFavoriteCurrency = async (req, res) => {
 const getFavoriteCurrenciesForDropdown = async (req, res) => {
   try {
     const userId = req.user.userId;
-    
+
     const favoriteCurrencies = await FavoriteCurrency.find({ user: userId })
       .sort({ priority: 1, currency: 1 })
       .select('currency nickname isDefault');

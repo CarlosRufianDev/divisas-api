@@ -9,8 +9,8 @@ if (mongoose.connection.readyState === 0) {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log('✅ Conectado a MongoDB para limpieza automática'))
-  .catch(err => console.error('❌ Error al conectar a MongoDB:', err.message));
+    .then(() => console.log('✅ Conectado a MongoDB para limpieza automática'))
+    .catch(err => console.error('❌ Error al conectar a MongoDB:', err.message));
 }
 
 // 🕑 Esta tarea se ejecuta todos los días a las 2:00 AM

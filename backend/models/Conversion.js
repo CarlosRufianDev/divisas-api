@@ -15,4 +15,3 @@ const conversionSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('Conversion', conversionSchema);
-

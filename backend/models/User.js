@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true, 
+    lowercase: true,
     trim: true
   },
   password: {
@@ -31,6 +31,5 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
-
 
 module.exports = mongoose.model('User', userSchema);

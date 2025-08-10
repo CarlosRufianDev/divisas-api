@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const requireAuth = require('../middleware/authMiddleware');
 const Alert = require('../models/Alert');
-const { 
-  createScheduledAlert, 
-  createPercentageAlert, 
-  createTargetAlert, 
-  getAlerts, 
+const {
+  createScheduledAlert,
+  createPercentageAlert,
+  createTargetAlert,
+  getAlerts,
   updateAlert,
   deleteAlert,
   sendTestAlert
@@ -76,10 +76,10 @@ router.get('/', requireAuth, async (req, res) => {
 
   try {
     const alerts = await Alert.find(filter).sort({ hour: 1, createdAt: -1 });
-    
+
     // ✅ CORREGIDO: usar _id en lugar de id
     const result = alerts.map(alert => ({
-      _id: alert._id,     // ✅ CAMBIADO DE 'id' A '_id'
+      _id: alert._id, // ✅ CAMBIADO DE 'id' A '_id'
       from: alert.from,
       to: alert.to,
       alertType: alert.alertType || 'scheduled',
@@ -100,7 +100,7 @@ router.get('/', requireAuth, async (req, res) => {
       createdAt: alert.createdAt,
       updatedAt: alert.updatedAt
     }));
-    
+
     res.json(result);
   } catch (err) {
     console.error('❌ Error al obtener alertas:', err);
@@ -124,7 +124,7 @@ router.put('/:id', requireAuth, async (req, res) => {
     // Actualizar campos permitidos
     Object.assign(alert, updates);
     await alert.save();
-    
+
     res.json({ message: 'Alerta actualizada', alert });
   } catch (error) {
     res.status(500).json({ error: 'Error al editar la alerta' });

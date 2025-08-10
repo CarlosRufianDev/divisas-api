@@ -4,16 +4,16 @@ const ActivityLog = require('../models/ActivityLog');
 const getActivityLogs = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { 
-      action,           // Filtrar por tipo de acción
-      days = 30,        // Últimos X días (por defecto 30)
-      limit = 50,       // Límite de resultados
-      page = 1          // Página (para paginación)
+    const {
+      action, // Filtrar por tipo de acción
+      days = 30, // Últimos X días (por defecto 30)
+      limit = 50, // Límite de resultados
+      page = 1 // Página (para paginación)
     } = req.query;
 
     // Construir filtros
     const filters = { user: userId };
-    
+
     // Filtro por fecha
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
@@ -80,22 +80,22 @@ const getActivityStats = async (req, res) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
 
-    const totalLogs = await ActivityLog.countDocuments({ 
-      user: userId, 
-      createdAt: { $gte: startDate } 
+    const totalLogs = await ActivityLog.countDocuments({
+      user: userId,
+      createdAt: { $gte: startDate }
     });
 
     // Estadísticas por día (últimos 7 días)
     const dailyStats = await ActivityLog.aggregate([
-      { 
-        $match: { 
-          user: new ActivityLog.base.Types.ObjectId(userId), 
+      {
+        $match: {
+          user: new ActivityLog.base.Types.ObjectId(userId),
           createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
-        } 
+        }
       },
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
           count: { $sum: 1 }
         }
       },
@@ -129,9 +129,9 @@ const getActivityStats = async (req, res) => {
 const getAvailableActions = async (req, res) => {
   try {
     const userId = req.user.userId;
-    
+
     const actions = await ActivityLog.distinct('action', { user: userId });
-    
+
     // Organizar por categorías
     const categorizedActions = {
       authentication: actions.filter(action => ['LOGIN', 'LOGOUT', 'REGISTER'].includes(action)),
@@ -156,41 +156,41 @@ const getAvailableActions = async (req, res) => {
 // Función auxiliar para formatear descripciones legibles
 function formatLogDescription(log) {
   const { action, details } = log;
-  
+
   switch (action) {
     case 'LOGIN':
       return `Inicio de sesión desde ${details.ipAddress || 'IP desconocida'}`;
-    
+
     case 'LOGOUT':
       return 'Cierre de sesión';
-    
+
     case 'CONVERSION_SINGLE':
       return `Conversión: ${details.amount} ${details.from} → ${details.result} ${details.to}`;
-    
+
     case 'CONVERSION_MULTIPLE':
       return `Conversión múltiple desde ${details.from} a ${details.to || 'varias monedas'}`;
-    
+
     case 'ALERT_CREATE_SCHEDULED':
       return `Alerta programada creada: ${details.from}/${details.to}`;
-    
+
     case 'ALERT_CREATE_PERCENTAGE':
       return `Alerta por porcentaje creada: ${details.from}/${details.to}`;
-    
+
     case 'ALERT_CREATE_TARGET':
       return `Alerta por precio objetivo creada: ${details.from}/${details.to} → ${details.targetRate}`;
-    
+
     case 'FAVORITE_PAIR_ADD':
       return `Par añadido a favoritos: ${details.favoritePair}`;
-    
+
     case 'FAVORITE_CURRENCY_ADD':
       return `Moneda añadida a favoritas: ${details.favoriteCurrency}`;
-    
+
     case 'DASHBOARD_VIEW':
       return 'Dashboard consultado';
-    
+
     case 'ERROR_UNAUTHORIZED':
       return `Error de autorización: ${details.error}`;
-    
+
     default:
       return `Acción: ${action}`;
   }

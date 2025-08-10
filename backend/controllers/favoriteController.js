@@ -24,7 +24,7 @@ const addFavorite = async (req, res) => {
     try {
       const response = await axios.get(`https://api.frankfurter.app/latest?from=${from.toUpperCase()}&to=${to.toUpperCase()}`);
       const currentRate = response.data.rates[to.toUpperCase()];
-      
+
       if (!currentRate) {
         return res.status(400).json({ error: 'Par de monedas no soportado por la API' });
       }
@@ -77,7 +77,7 @@ const getFavorites = async (req, res) => {
         try {
           const response = await axios.get(`https://api.frankfurter.app/latest?from=${favorite.from}&to=${favorite.to}`);
           const currentRate = response.data.rates[favorite.to];
-          
+
           return {
             id: favorite._id,
             from: favorite.from,

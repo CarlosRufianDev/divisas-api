@@ -35,10 +35,14 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
     "supertest": "^6.3.4"
   },
   "jest": {
     "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setupMongo.js"
+    ],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "**/*.js",

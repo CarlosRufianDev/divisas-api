@@ -11,12 +11,12 @@ const logActivity = (action, extractDetails = null) => {
     res.send = function(data) {
       // Calcular tiempo de respuesta
       const responseTime = Date.now() - startTime;
-      
+
       // Registrar actividad si el usuario está autenticado
       if (req.user && req.user.userId) {
         const logData = {
           userId: req.user.userId,
-          action: action,
+          action,
           details: {
             ipAddress: req.ip || req.connection.remoteAddress,
             userAgent: req.get('User-Agent'),
@@ -26,7 +26,7 @@ const logActivity = (action, extractDetails = null) => {
             endpoint: req.originalUrl,
             httpMethod: req.method,
             statusCode: res.statusCode,
-            responseTime: responseTime,
+            responseTime,
             apiVersion: '1.0'
           }
         };
@@ -54,7 +54,7 @@ const logActivity = (action, extractDetails = null) => {
 const extractConversionDetails = (req, res, data) => {
   const { from, to, amount } = req.body || req.query;
   let result = null;
-  
+
   try {
     const responseData = typeof data === 'string' ? JSON.parse(data) : data;
     result = responseData.result || responseData.convertedAmount;
@@ -63,48 +63,48 @@ const extractConversionDetails = (req, res, data) => {
   }
 
   return {
-    from: from,
-    to: to,
+    from,
+    to,
     amount: parseFloat(amount),
-    result: result
+    result
   };
 };
 
 const extractAlertDetails = (req, res, data) => {
   const { from, to, alertType, targetRate, percentageThreshold } = req.body;
-  
+
   return {
-    from: from,
-    to: to,
-    alertType: alertType,
-    targetRate: targetRate,
-    percentageThreshold: percentageThreshold
+    from,
+    to,
+    alertType,
+    targetRate,
+    percentageThreshold
   };
 };
 
 const extractFavoriteDetails = (req, res, data) => {
   const { from, to, currency, nickname } = req.body;
-  
+
   const details = {};
-  
+
   if (from && to) {
     details.favoritePair = `${from}/${to}`;
   }
-  
+
   if (currency) {
     details.favoriteCurrency = currency;
   }
-  
+
   if (nickname) {
     details.nickname = nickname;
   }
-  
+
   return details;
 };
 
 const extractErrorDetails = (req, res, data) => {
   let errorMessage = 'Error desconocido';
-  
+
   try {
     const responseData = typeof data === 'string' ? JSON.parse(data) : data;
     errorMessage = responseData.error || responseData.message || 'Error sin mensaje';

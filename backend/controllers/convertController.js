@@ -87,8 +87,8 @@ const convertCurrency = async (req, res) => {
           req.user.userId,
           'CONVERSION_SINGLE',
           {
-            from: from,
-            to: to,
+            from,
+            to,
             amount: parseFloat(amount),
             result: convertedAmount,
             ipAddress: req.ip || req.connection.remoteAddress,
@@ -192,7 +192,6 @@ const deleteAllHistory = async (req, res) => {
   }
 };
 
-
 // Eliminar el historial de un usuario específico por userId
 // Solo un administrador o el propio usuario pueden hacerlo
 // Requiere: userId en la URL
@@ -234,7 +233,6 @@ const deleteOldConversions = async (req, res) => {
   }
 };
 
-
 // Exportar las funciones del controlador
 module.exports = {
   convertCurrency,
@@ -244,5 +242,3 @@ module.exports = {
   deleteUserHistory,
   deleteOldConversions
 };
-
-

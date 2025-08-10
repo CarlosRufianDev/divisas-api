@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const requireAuth = require('../middleware/authMiddleware');
-const { 
-  addFavorite, 
-  getFavorites, 
-  deleteFavorite, 
-  updateFavorite 
+const {
+  addFavorite,
+  getFavorites,
+  deleteFavorite,
+  updateFavorite
 } = require('../controllers/favoriteController');
 
 // Todas las rutas requieren autenticación

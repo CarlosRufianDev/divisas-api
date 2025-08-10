@@ -1,11 +1,11 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 // Controlador de autenticación para registro y login de usuarios
 
-// Registro 
+// Registro
 const register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -57,7 +57,7 @@ const login = async (req, res) => {
       {
         userId: user._id,
         email: user.email,
-        role: user.role 
+        role: user.role
       },
       process.env.JWT_SECRET,
       { expiresIn: '2h' }

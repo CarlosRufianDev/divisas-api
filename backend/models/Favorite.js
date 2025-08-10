@@ -1,37 +1,37 @@
 const mongoose = require('mongoose');
 
 const favoriteSchema = new mongoose.Schema({
-  user: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User', 
-    required: true 
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  from: { 
-    type: String, 
+  from: {
+    type: String,
     required: true,
     uppercase: true,
     minlength: 3,
     maxlength: 3
   },
-  to: { 
-    type: String, 
+  to: {
+    type: String,
     required: true,
     uppercase: true,
     minlength: 3,
     maxlength: 3
   },
-  nickname: { 
-    type: String, 
-    default: '' 
+  nickname: {
+    type: String,
+    default: ''
   }, // Ej: "Mi par principal", "Para viajes", etc.
-  
+
   // Para evitar duplicados del mismo par por usuario
   userPair: {
     type: String,
     unique: true
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
 
 // Crear índice compuesto antes de guardar para evitar duplicados

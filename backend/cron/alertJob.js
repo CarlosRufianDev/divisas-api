@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 // Configura el transportador de correo
-const transporter = nodemailer.createTransport({  // ✅ CORREGIDO: sin 'r'
+const transporter = nodemailer.createTransport({ // ✅ CORREGIDO: sin 'r'
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
@@ -43,9 +43,9 @@ async function sendEmail(to, subject, html) {
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: to,
-      subject: subject,
-      html: html
+      to,
+      subject,
+      html
     });
     console.log(`📧 Email enviado a ${to}: ${subject}`);
     return true;
@@ -61,7 +61,7 @@ async function sendEmail(to, subject, html) {
 async function processScheduledAlerts() {
   const now = new Date();
   const currentHour = now.getHours();
-  
+
   console.log(`⏰ Procesando alertas programadas para las ${currentHour}:00...`);
 
   try {
@@ -74,16 +74,16 @@ async function processScheduledAlerts() {
     console.log(`📋 Encontradas ${alerts.length} alertas programadas para esta hora`);
 
     for (const alert of alerts) {
-      const shouldSend = !alert.lastSent || 
+      const shouldSend = !alert.lastSent ||
         (now - new Date(alert.lastSent)) >= (alert.intervalDays * 24 * 60 * 60 * 1000);
 
       if (shouldSend) {
         const currentRate = await getCurrentRate(alert.from, alert.to);
-        
+
         if (currentRate) {
           const pastDate = new Date(now - alert.intervalDays * 24 * 60 * 60 * 1000);
           const pastRate = await getHistoricalRate(alert.from, alert.to, pastDate);
-          
+
           let changeText = '';
           if (pastRate) {
             const diff = currentRate - pastRate;
@@ -114,7 +114,7 @@ async function processScheduledAlerts() {
           `;
 
           const sent = await sendEmail(alert.email, subject, html);
-          
+
           if (sent) {
             alert.lastSent = now;
             await alert.save();
@@ -130,7 +130,7 @@ async function processScheduledAlerts() {
 
 // Procesar alertas por porcentaje
 async function processPercentageAlerts() {
-  console.log(`📊 Procesando alertas por porcentaje...`);
+  console.log('📊 Procesando alertas por porcentaje...');
 
   try {
     const alerts = await Alert.find({
@@ -142,13 +142,13 @@ async function processPercentageAlerts() {
 
     for (const alert of alerts) {
       const currentRate = await getCurrentRate(alert.from, alert.to);
-      
+
       if (currentRate && alert.baselineRate) {
         const diff = currentRate - alert.baselineRate;
         const percentChange = Math.abs((diff / alert.baselineRate) * 100);
-        
+
         const shouldTrigger = percentChange >= alert.percentageThreshold;
-        const directionMatch = 
+        const directionMatch =
           alert.percentageDirection === 'both' ||
           (alert.percentageDirection === 'up' && diff > 0) ||
           (alert.percentageDirection === 'down' && diff < 0);
@@ -160,7 +160,7 @@ async function processPercentageAlerts() {
         if (shouldTrigger && directionMatch && !recentlySent) {
           const arrow = diff > 0 ? '📈' : '📉';
           const sign = diff > 0 ? '+' : '';
-          
+
           const subject = `🚨 Alerta ${arrow} ${alert.from}/${alert.to} cambió ${sign}${percentChange.toFixed(2)}%`;
           const html = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -182,7 +182,7 @@ async function processPercentageAlerts() {
           `;
 
           const sent = await sendEmail(alert.email, subject, html);
-          
+
           if (sent) {
             alert.lastSent = new Date();
             await alert.save();
@@ -198,7 +198,7 @@ async function processPercentageAlerts() {
 
 // Procesar alertas por precio objetivo
 async function processTargetAlerts() {
-  console.log(`🎯 Procesando alertas por precio objetivo...`);
+  console.log('🎯 Procesando alertas por precio objetivo...');
 
   try {
     const alerts = await Alert.find({
@@ -210,10 +210,10 @@ async function processTargetAlerts() {
 
     for (const alert of alerts) {
       const currentRate = await getCurrentRate(alert.from, alert.to);
-      
+
       if (currentRate && alert.targetRate) {
         let triggered = false;
-        
+
         switch (alert.targetDirection) {
           case 'above':
             triggered = currentRate > alert.targetRate;
@@ -233,9 +233,10 @@ async function processTargetAlerts() {
         const recentlySent = alert.lastSent && new Date(alert.lastSent) > fourHoursAgo;
 
         if (triggered && !recentlySent) {
-          const comparison = alert.targetDirection === 'above' ? 'por encima de' : 
-                           alert.targetDirection === 'below' ? 'por debajo de' : 'cerca de';
-          
+          const comparison = alert.targetDirection === 'above'
+            ? 'por encima de'
+            : alert.targetDirection === 'below' ? 'por debajo de' : 'cerca de';
+
           const subject = `🎯 ¡Objetivo alcanzado! ${alert.from}/${alert.to} está ${comparison} ${alert.targetRate}`;
           const html = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -255,7 +256,7 @@ async function processTargetAlerts() {
           `;
 
           const sent = await sendEmail(alert.email, subject, html);
-          
+
           if (sent) {
             alert.lastSent = new Date();
             // Desactivar alerta objetivo una vez alcanzada
@@ -276,10 +277,10 @@ async function processTargetAlerts() {
 // Job principal - cada hora en punto (0 minutos)
 cron.schedule('0 * * * *', async () => {
   console.log(`\n🔔 [${new Date().toISOString()}] Procesamiento principal de alertas...`);
-  
+
   try {
     await processScheduledAlerts();
-    console.log(`✅ Procesamiento principal completado\n`);
+    console.log('✅ Procesamiento principal completado\n');
   } catch (error) {
     console.error('❌ Error en procesamiento principal:', error);
   }
