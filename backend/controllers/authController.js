@@ -19,8 +19,7 @@ const register = async (req, res) => {
       return res.status(409).json({ error: 'El usuario ya existe' })
     }
 
-    const hashed = await bcrypt.hash(password, 10)
-    const user = new User({ email, password: hashed, role, name: displayName })
+    const user = new User({ email, password, role, name: displayName })
     await user.save()
 
     return res.status(201).json({ message: 'Usuario registrado correctamente', userId: user._id })
@@ -36,11 +35,14 @@ const login = async (req, res) => {
 
   try {
     const user = await User.findOne({ email })
+    console.log('USER FOUND:', user)
+
     if (!user) {
       return res.status(401).json({ error: 'Credenciales inválidas' })
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
+    console.log('PASSWORD MATCH:', isMatch)
 
     if (!isMatch) {
       return res.status(401).json({ error: 'Credenciales inválidas' })

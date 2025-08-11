@@ -1,9 +1,9 @@
 const axios = require('axios')
 jest.mock('axios')
 const request = require('supertest')
-const app = require('../index')
+const app = require('../app') // Cambiado aquí
 
-const user = { email: 'conv@example.com', password: 'Secret123', username: 'convuser' }
+const user = { email: `test${Date.now()}@example.com`, password: 'Secret123', username: 'tester' }
 let token
 
 beforeAll(async () => {

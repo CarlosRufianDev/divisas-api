@@ -69,8 +69,10 @@ module.exports = { app, transporter }
 
 // Arranque sólo fuera de tests
 if (require.main === module) {
-  const PORT = process.env.PORT || 4000;
-  app.listen(PORT, () => console.log('API listening on', PORT));
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor escuchando en puerto ${PORT}`);
+  });
 
   if (process.env.MONGODB_URI) {
     mongoose.connect(process.env.MONGODB_URI)

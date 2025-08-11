@@ -40,8 +40,8 @@ const convertCurrency = async (req, res) => {
       return res.status(400).json({ error: 'No se encontró la tasa de cambio para la moneda solicitada.' });
     }
 
-    const rate = response.data.rates[to] / amount;
-    const result = response.data.rates[to];
+    const rate = response.data.rates[to];
+    const result = amount * rate;
 
     // ✅ Intenta verificar el token (si se incluye)
     let userId = null;
@@ -90,7 +90,7 @@ const convertCurrency = async (req, res) => {
             from,
             to,
             amount: parseFloat(amount),
-            result: convertedAmount,
+            result,
             ipAddress: req.ip || req.connection.remoteAddress,
             userAgent: req.get('User-Agent')
           },

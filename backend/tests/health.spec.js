@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../index');
+const app = require('../app'); // <-- Cambia esto
 
 describe('GET /health', () => {
   it('should return ok', async () => {
