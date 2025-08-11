@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../../environments/environment';
 import { MaterialModule } from '../../shared/material.module';
 
 interface Currency {
@@ -320,7 +321,7 @@ export class AddFavoriteDialogComponent implements OnInit {
   currentRate: number | null = null;
   loadingRate = false;
   saving = false;
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private fb: FormBuilder,

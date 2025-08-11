@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',  
-  frankfurterApiUrl: 'https://api.frankfurter.app'
+  apiUrl: 'http://localhost:4000/api',
+  frankfurterApiUrl: 'https://api.frankfurter.app',
 };

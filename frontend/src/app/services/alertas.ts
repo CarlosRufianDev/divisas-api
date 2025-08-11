@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { AuthService } from './auth';
 
 // ✅ INTERFACES ACTUALIZADAS para tu backend
@@ -60,7 +61,7 @@ export interface CreateTargetAlert {
   providedIn: 'root',
 })
 export class AlertasService {
-  private apiUrl = 'http://localhost:3000/api'; // ✅ TU API URL
+  private apiUrl = environment.apiUrl; // ← Usa la variable de entorno
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

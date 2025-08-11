@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { interval, Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth';
 import { MaterialModule } from '../../shared/material.module';
 import { AddFavoriteDialogComponent } from './add-favorite-dialog.component';
@@ -701,8 +702,8 @@ interface QuickConversion {
   ],
 })
 export class Favoritos implements OnInit, OnDestroy {
+  private apiUrl = environment.apiUrl;
   private destroy$ = new Subject<void>();
-  private apiUrl = 'http://localhost:3000/api';
   private refreshInterval$ = interval(30000); // 30 segundos
 
   loading = false;

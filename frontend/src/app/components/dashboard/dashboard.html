@@ -291,86 +291,83 @@
       </mat-card-header>
 
       <mat-card-content>
-        <!-- Loading -->
-        <div class="loading-rates" *ngIf="cargandoTabla">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p>Cargando tipos de cambio...</p>
-        </div>
-
         <!-- Grid de Cards de Divisas -->
-        <div class="rates-grid" *ngIf="!cargandoTabla && tiposCambio.length > 0">
-          <div class="rate-card" 
-               *ngFor="let rate of tiposCambio" 
+        <div class="rates-grid" *ngIf="tiposCambio.length > 0">
+          <div class="rate-card"
+               *ngFor="let rate of tiposCambio"
                [ngClass]="{
                  'trending-up': getRandomTrend(rate.code) > 0,
                  'trending-down': getRandomTrend(rate.code) < 0,
                  'trending-stable': getRandomTrend(rate.code) === 0
                }">
-            
-            <!-- Header de la Card -->
-            <div class="rate-header">
-              <div class="currency-info">
-                <span class="flag">{{ rate.flag }}</span>
-                <div class="currency-details">
-                  <strong class="currency-code">{{ rate.code }}</strong>
-                  <small class="currency-name">{{ rate.name }}</small>
+            <div class="rate-content" [class.updating]="cargandoTabla">
+              <!-- Header de la Card -->
+              <div class="rate-header">
+                <div class="currency-info">
+                  <span class="flag">{{ rate.flag }}</span>
+                  <div class="currency-details">
+                    <strong class="currency-code">{{ rate.code }}</strong>
+                    <small class="currency-name">{{ rate.name }}</small>
+                  </div>
+                </div>
+                
+                <!-- Indicador de Tendencia -->
+                <div class="trend-indicator" [ngClass]="{
+                  'trend-up': getRandomTrend(rate.code) > 0,
+                  'trend-down': getRandomTrend(rate.code) < 0,
+                  'trend-stable': getRandomTrend(rate.code) === 0
+                }">
+                  <mat-icon *ngIf="getRandomTrend(rate.code) > 0">trending_up</mat-icon>
+                  <mat-icon *ngIf="getRandomTrend(rate.code) < 0">trending_down</mat-icon>
+                  <mat-icon *ngIf="getRandomTrend(rate.code) === 0">trending_flat</mat-icon>
                 </div>
               </div>
-              
-              <!-- Indicador de Tendencia -->
-              <div class="trend-indicator" [ngClass]="{
-                'trend-up': getRandomTrend(rate.code) > 0,
-                'trend-down': getRandomTrend(rate.code) < 0,
-                'trend-stable': getRandomTrend(rate.code) === 0
-              }">
-                <mat-icon *ngIf="getRandomTrend(rate.code) > 0">trending_up</mat-icon>
-                <mat-icon *ngIf="getRandomTrend(rate.code) < 0">trending_down</mat-icon>
-                <mat-icon *ngIf="getRandomTrend(rate.code) === 0">trending_flat</mat-icon>
+
+              <!-- Tasa Principal -->
+              <div class="rate-main">
+                <span class="rate-value" [class.updating]="cargandoTabla">
+                  {{ rate.rate | number:'1.2-6' }}
+                </span>
+                <span class="rate-label">{{ monedaBase.value }}/{{ rate.code }}</span>
               </div>
-            </div>
 
-            <!-- Tasa Principal -->
-            <div class="rate-main">
-              <span class="rate-value">{{ rate.rate | number:'1.2-6' }}</span>
-              <span class="rate-label">{{ monedaBase.value }}/{{ rate.code }}</span>
-            </div>
-
-            <!-- Cambio y Porcentaje -->
-            <div class="rate-change">
-              <span class="change-percent" [ngClass]="{
-                'positive': getRandomTrend(rate.code) > 0,
-                'negative': getRandomTrend(rate.code) < 0,
-                'neutral': getRandomTrend(rate.code) === 0
-              }">
-                {{ getRandomTrend(rate.code) > 0 ? '+' : '' }}{{ getRandomChangePercent(rate.code) }}%
-              </span>
-              <small class="change-label">vs ayer</small>
-            </div>
-
-            <!-- Información Adicional -->
-            <div class="rate-extra">
-              <div class="rate-stat">
-                <mat-icon>swap_horiz</mat-icon>
-                <span>1 {{ rate.code }} = {{ (1/rate.rate) | number:'1.2-6' }} {{ monedaBase.value }}</span>
+              <!-- Cambio y Porcentaje -->
+              <div class="rate-change">
+                <span class="change-percent" [ngClass]="{
+                  'positive': getRandomTrend(rate.code) > 0,
+                  'negative': getRandomTrend(rate.code) < 0,
+                  'neutral': getRandomTrend(rate.code) === 0
+                }">
+                  {{ getRandomTrend(rate.code) > 0 ? '+' : '' }}{{ getRandomChangePercent(rate.code) }}%
+                </span>
+                <small class="change-label">vs ayer</small>
               </div>
-            </div>
 
-            <!-- Acciones - Botón Único -->
-            <div class="rate-actions-single">
-              <button mat-raised-button 
-                      color="primary" 
-                      (click)="convertirA(rate.code)"
-                      class="convert-to-button">
-                <mat-icon>currency_exchange</mat-icon>
-                Convertir a {{ rate.code }}
-              </button>
-              
-              <button mat-icon-button 
-                      color="accent"
-                      (click)="verDetalle(rate.code)"
-                      matTooltip="Ver detalles">
-                <mat-icon>info</mat-icon>
-              </button> 
+              <!-- Información Adicional -->
+              <div class="rate-extra">
+                <div class="rate-stat">
+                  <mat-icon>swap_horiz</mat-icon>
+                  <span>1 {{ rate.code }} = {{ (1/rate.rate) | number:'1.2-6' }} {{ monedaBase.value }}</span>
+                </div>
+              </div>
+
+              <!-- Acciones - Botón Único -->
+              <div class="rate-actions-single">
+                <button mat-raised-button 
+                        color="primary" 
+                        (click)="convertirA(rate.code)"
+                        class="convert-to-button">
+                  <mat-icon>currency_exchange</mat-icon>
+                  Convertir a {{ rate.code }}
+                </button>
+                
+                <button mat-icon-button 
+                        color="accent"
+                        (click)="verDetalle(rate.code)"
+                        matTooltip="Ver detalles">
+                  <mat-icon>info</mat-icon>
+                </button> 
+              </div>
             </div>
           </div>
         </div>
@@ -450,18 +447,25 @@
             <div class="trend-info">
               <div class="trend-item">
                 <span class="trend-label">Tendencia (7 días):</span>
-                <span class="trend-value" [ngClass]="{
-                  'positive': getTrendDirection() === 'up',
-                  'negative': getTrendDirection() === 'down',
-                  'neutral': getTrendDirection() === 'stable'
-                }">
-                  {{ getTrendDirection() === 'up' ? '+' : getTrendDirection() === 'down' ? '' : '' }}{{ getRandomChangePercent(selectedCurrency?.code || '') }}%
+                <span *ngIf="tendenciaReal !== null; else cargandoTendencia">
+                  {{ tendenciaReal | number:'1.2-2' }}%
+                  <mat-icon *ngIf="tendenciaReal > 0" color="primary">trending_up</mat-icon>
+                  <mat-icon *ngIf="tendenciaReal < 0" color="warn">trending_down</mat-icon>
+                  <mat-icon *ngIf="tendenciaReal === 0">trending_flat</mat-icon>
                 </span>
+                <ng-template #cargandoTendencia>
+                  <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+                </ng-template>
               </div>
 
               <div class="trend-item">
                 <span class="trend-label">Volatilidad:</span>
-                <span class="trend-value">{{ getVolatilityLevel(selectedRate?.rate || 1) }}</span>
+                <span *ngIf="volatilidadReal !== null; else cargandoVol">
+                  {{ volatilidadReal | number:'1.4-4' }}
+                </span>
+                <ng-template #cargandoVol>
+                  <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+                </ng-template>
               </div>
 
               <div class="trend-item">
@@ -478,39 +482,29 @@
           </div>
         </div>
 
-        <!-- RECOMENDACIÓN DE INVERSIÓN -->
-        <div class="investment-recommendation">
-          <div class="recommendation-card" [ngClass]="{
-            'bullish': getInvestmentRecommendation() === 'COMPRAR',
-            'bearish': getInvestmentRecommendation() === 'VENDER',
-            'neutral': getInvestmentRecommendation() === 'MANTENER'
-          }">
-            
-            <div class="recommendation-header">
-              <mat-icon>{{ getRecommendationIcon() }}</mat-icon>
-              <h3>Recomendación de Inversión</h3>
-            </div>
-
-            <div class="recommendation-content">
-              <div class="recommendation-action">
-                <span class="action-label">Acción Recomendada:</span>
-                <span class="action-value">{{ getInvestmentRecommendation() }}</span>
-              </div>
-
-              <div class="recommendation-reason">
-                <p><strong>Análisis:</strong> {{ getInvestmentReason() }}</p>
-              </div>
-
-              <div class="recommendation-confidence">
-                <span class="confidence-label">Nivel de Confianza:</span>
-                <div class="confidence-bar">
-                  <div class="confidence-fill" [style.width.%]="getConfidenceLevel()"></div>
-                </div>
-                <span class="confidence-value">{{ getConfidenceLevel() }}%</span>
-              </div>
-            </div>
+    
+        <!-- NUEVA RECOMENDACIÓN (TIP) -->
+        @if (recomendacionReal) {
+        <div class="recommendation-vertical-card">
+          <div class="vertical-icon-area" [ngClass]="recomendacionReal.accion.toLowerCase()">
+            <i class="fa-solid"
+               [ngClass]="{
+                 'fa-cart-shopping': recomendacionReal.accion === 'COMPRAR',
+                 'fa-tag': recomendacionReal.accion === 'VENDER',
+                 'fa-hand': recomendacionReal.accion === 'MANTENER',
+                 'fa-hourglass-half': recomendacionReal.accion === 'ESPERAR'
+               }"
+               style="font-size: 3.5rem; color: #fff;">
+            </i>
+          </div>
+          <div class="vertical-tip-title" [ngClass]="recomendacionReal.accion.toLowerCase()">
+            {{ recomendacionReal.accion }}
+          </div>
+          <div class="vertical-tip-message">
+            {{ recomendacionReal.mensaje }}
           </div>
         </div>
+        }
       </div>
 
       <!-- Acciones del Modal -->

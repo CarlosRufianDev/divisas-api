@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router'; // ✅ AÑADIR esta línea
@@ -13,11 +13,12 @@ import { MaterialModule } from '../../shared/material.module';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
   imports: [CommonModule, MaterialModule, ReactiveFormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
   resultado: any = null;
   cargando = false;
 
@@ -66,6 +67,17 @@ export class Dashboard implements OnInit {
     { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱' },
   ]; // ✅ Ahora 14 divisas (igual que historial)
 
+  private refreshInterval: any;
+
+  // NUEVAS PROPIEDADES PARA TENDENCIA Y VOLATILIDAD REALES
+  tendenciaReal: number | null = null;
+  volatilidadReal: number | null = null;
+  historicoReal: number[] = [];
+
+  // AÑADIDO: propiedad para recomendación real
+  recomendacionReal: { accion: string; color: string; mensaje: string } | null =
+    null;
+
   constructor(
     private divisasService: DivisasService,
     private snackBar: MatSnackBar,
@@ -78,12 +90,23 @@ export class Dashboard implements OnInit {
   ngOnInit() {
     this.cargarTiposCambio(); // ✅ Esto siempre se ejecuta (público)
 
-    // ✅ AÑADIR: Solo cargar analytics si está autenticado
-    if (this.authService.isAuthenticated()) {
-      console.log('🔐 Usuario autenticado, cargando analytics...');
+    // Refrescar cada 5 segundos
+    this.refreshInterval = setInterval(() => {
+      this.cargarTiposCambio();
+    }, 5000);
+
+    // Controlar el estado del selector de moneda base
+    if (this.isAuthenticated) {
+      this.monedaBase.enable();
       this.cargarAnalytics();
     } else {
-      console.log('👤 Usuario no autenticado, mostrando dashboard público');
+      this.monedaBase.disable();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
     }
   }
 
@@ -568,13 +591,37 @@ export class Dashboard implements OnInit {
   }
 
   // NUEVO: Ver detalles de una divisa
-  verDetalle(currencyCode: string): void {
+  async verDetalle(currencyCode: string): Promise<void> {
     this.selectedCurrency = this.divisas.find((d) => d.code === currencyCode);
     this.selectedRate = this.tiposCambio.find((r) => r.code === currencyCode);
     this.showCurrencyDetail = true;
 
     // Prevenir scroll del body
     document.body.style.overflow = 'hidden';
+
+    // --- NUEVO: Cargar histórico real y calcular tendencia/volatilidad ---
+    this.tendenciaReal = null;
+    this.volatilidadReal = null;
+    this.historicoReal = [];
+
+    if (this.selectedRate) {
+      const base = this.selectedRate.base;
+      const destino = this.selectedRate.code;
+      try {
+        const historico = await this.obtenerHistorico(base, destino);
+        this.historicoReal = historico;
+        this.tendenciaReal = this.calcularTendencia(historico);
+        this.volatilidadReal = this.calcularVolatilidad(historico);
+        this.recomendacionReal = this.getInvestmentRecommendation(
+          this.tendenciaReal,
+          this.volatilidadReal
+        );
+      } catch (e) {
+        this.tendenciaReal = null;
+        this.volatilidadReal = null;
+        this.recomendacionReal = null;
+      }
+    }
   }
 
   closeCurrencyModal(): void {
@@ -606,33 +653,53 @@ export class Dashboard implements OnInit {
     return this.selectedRate ? 1 / this.selectedRate.rate : 1;
   }
 
-  getInvestmentRecommendation(): string {
-    if (!this.selectedRate) return 'MANTENER';
-
-    const trend = this.getTrendDirection();
-    const volatility = this.getVolatilityLevel(this.selectedRate.rate);
-    const rate = this.selectedRate.rate;
-
-    // Lógica de recomendación
-    if (trend === 'up' && rate < 1) return 'COMPRAR';
-    if (trend === 'down' && rate > 1) return 'VENDER';
-    if (trend === 'up' && volatility === 'Baja') return 'COMPRAR';
-    if (trend === 'down' && volatility === 'Alta') return 'VENDER';
-
-    return 'MANTENER';
+  getInvestmentRecommendation(
+    tendencia: number,
+    volatilidad: number
+  ): { accion: string; color: string; mensaje: string } {
+    if (tendencia > 0.5 && volatilidad < 0.01) {
+      return {
+        accion: 'COMPRAR',
+        color: 'green',
+        mensaje: 'Tendencia alcista y baja volatilidad.',
+      };
+    }
+    if (tendencia < -0.5 && volatilidad < 0.01) {
+      return {
+        accion: 'VENDER',
+        color: 'red',
+        mensaje: 'Tendencia bajista y baja volatilidad.',
+      };
+    }
+    if (Math.abs(tendencia) < 0.5 && volatilidad < 0.01) {
+      return { accion: 'MANTENER', color: 'gray', mensaje: 'Mercado estable.' };
+    }
+    if (volatilidad >= 0.01) {
+      return {
+        accion: 'ESPERAR',
+        color: 'orange',
+        mensaje: 'Alta volatilidad, prudencia recomendada.',
+      };
+    }
+    return {
+      accion: 'SIN DATOS',
+      color: 'gray',
+      mensaje: 'No hay suficiente información.',
+    };
   }
 
   getRecommendationIcon(): string {
-    const recommendation = this.getInvestmentRecommendation();
-    return recommendation === 'COMPRAR'
+    const recommendation = this.recomendacionReal;
+    if (!recommendation) return 'remove';
+    return recommendation.accion === 'COMPRAR'
       ? 'trending_up'
-      : recommendation === 'VENDER'
+      : recommendation.accion === 'VENDER'
       ? 'trending_down'
       : 'remove';
   }
 
   getInvestmentReason(): string {
-    const recommendation = this.getInvestmentRecommendation();
+    const recommendation = this.recomendacionReal?.accion || 'MANTENER';
     const currency = this.selectedCurrency?.code || 'esta divisa';
 
     // ✅ USAR SEED FIJO BASADO EN DIVISA (no Math.random)
@@ -723,5 +790,38 @@ export class Dashboard implements OnInit {
   // ✅ HACER AUTHSERVICE ACCESIBLE EN EL TEMPLATE
   get isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  async obtenerHistorico(
+    monedaBase: string,
+    monedaDestino: string
+  ): Promise<number[]> {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - 7);
+
+    const url = `https://api.frankfurter.app/${start
+      .toISOString()
+      .slice(0, 10)}..${end
+      .toISOString()
+      .slice(0, 10)}?from=${monedaBase}&to=${monedaDestino}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Extrae los valores de cierre diarios
+    return Object.values(data.rates).map((r: any) => r[monedaDestino]);
+  }
+
+  calcularTendencia(rates: number[]): number {
+    if (rates.length < 2) return 0;
+    const first = rates[0];
+    const last = rates[rates.length - 1];
+    return ((last - first) / first) * 100;
+  }
+
+  calcularVolatilidad(rates: number[]): number {
+    const mean = rates.reduce((a, b) => a + b, 0) / rates.length;
+    const variance = rates.reduce((a, b) => a + Math.pow(b - mean, 2), 0);
+    return Math.sqrt(variance);
   }
 }

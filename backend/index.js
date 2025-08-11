@@ -40,7 +40,32 @@ app.get('/api/exchange/rates', exchangeController.getExchangeRates);
 // Health
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-module.exports = app;
+const needEmail = process.env.DISABLE_EMAIL !== '1' &&
+  process.env.SMTP_HOST &&
+  process.env.SMTP_USER &&
+  process.env.SMTP_PASS
+
+let transporter = null
+if (needEmail) {
+  const nodemailer = require('nodemailer')
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  })
+  transporter.verify()
+    .then(() => console.log('✉ Email listo'))
+    .catch(err => console.error('❌ Error SMTP:', err.message))
+} else {
+  console.log('✉ Email desactivado (DISABLE_EMAIL=1 o faltan credenciales)')
+}
+
+// exporta transporter si otros módulos lo usan
+module.exports = { app, transporter }
 
 // Arranque sólo fuera de tests
 if (require.main === module) {
