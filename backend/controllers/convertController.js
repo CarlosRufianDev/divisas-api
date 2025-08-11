@@ -44,40 +44,41 @@ const convertCurrency = async (req, res) => {
     const result = amount * rate;
 
     // ✅ Intenta verificar el token (si se incluye)
-    let userId = null;
     const authHeader = req.headers.authorization;
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        userId = decoded.userId;
+        jwt.verify(token, process.env.JWT_SECRET);
+        // Ya no necesitas extraer userId aquí, lo tienes en req.user.userId
       } catch (err) {
         console.warn('Token inválido o expirado:', err.message);
         // No interrumpimos la conversión, se permite sin login
       }
     }
 
-    // 💾 Guardar la conversión en la BD (con o sin usuario)
-    const newConversion = await Conversion.create({
-      from,
-      to,
-      amount,
-      rate,
-      result,
-      user: userId || undefined,
-      date: response.data.date
-    });
+    // 💾 Guardar la conversión en la BD (con usuario)
+    let savedConversion = null;
+    if (req.user && req.user.userId) {
+      savedConversion = await Conversion.create({
+        user: req.user.userId,
+        from,
+        to,
+        amount,
+        rate,
+        result,
+        date: new Date()
+      });
+    }
 
     res.json({
       from,
       to,
       amount,
       rate,
-      result: result.toFixed(2),
-      date: response.data.date,
-      user: userId || null,
-      id: newConversion._id
+      result,
+      date: new Date(),
+      conversionId: savedConversion ? savedConversion._id : null
     });
 
     // LOGGING MANUAL (temporal)

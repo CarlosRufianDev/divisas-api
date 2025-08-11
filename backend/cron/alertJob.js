@@ -28,8 +28,9 @@ async function getCurrentRate(from, to) {
 
 // Obtener cotización histórica
 async function getHistoricalRate(from, to, date) {
+  let formattedDate = '';
   try {
-    const formattedDate = date.toISOString().slice(0, 10);
+    formattedDate = date.toISOString().slice(0, 10);
     const response = await axios.get(`https://api.frankfurter.app/${formattedDate}?from=${from}&to=${to}`);
     return response.data.rates[to];
   } catch (error) {
@@ -221,11 +222,12 @@ async function processTargetAlerts() {
           case 'below':
             triggered = currentRate < alert.targetRate;
             break;
-          case 'exact':
+          case 'exact': {
             // Considerar "exacto" si está dentro del 0.1%
             const tolerance = alert.targetRate * 0.001;
             triggered = Math.abs(currentRate - alert.targetRate) <= tolerance;
             break;
+          }
         }
 
         // Solo enviar si no se ha enviado en las últimas 4 horas

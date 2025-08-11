@@ -12,7 +12,8 @@ const validateConversion = require('../validators/convertValidator');
 const { validationResult } = require('express-validator');
 const requireAuth = require('../middleware/authMiddleware');
 const isAdmin = require('../middleware/isAdmin'); // ✅ Importado para uso de admin
-const { logConversion } = require('../middleware/activityLogger'); // ← Añadir esta línea
+const Conversion = require('../models/Conversion');
+const buildFilters = require('../utils/buildFilters');
 
 // Middleware para manejar errores de validación
 const handleValidation = (req, res, next) => {
@@ -115,6 +116,17 @@ router.get('/currencies', (req, res) => {
     currencies,
     total: currencies.length
   });
+});
+
+// Historial de conversiones del usuario autenticado
+router.get('/history', requireAuth, async (req, res) => {
+  try {
+    const filters = buildFilters(req.query, req.user.userId);
+    const history = await Conversion.find(filters).sort({ createdAt: -1 });
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ error: 'No se pudo obtener el historial' });
+  }
 });
 
 module.exports = router;

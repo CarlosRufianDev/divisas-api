@@ -1,5 +1,4 @@
 const ActivityLog = require('../models/ActivityLog');
-const mongoose = require('mongoose');
 
 // Middleware para registrar actividades automáticamente
 const logActivity = (action, extractDetails = null) => {

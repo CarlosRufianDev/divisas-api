@@ -7,9 +7,9 @@ function buildFilters(query, userId) {
   if (minAmount) filters.amount = { ...filters.amount, $gte: Number(minAmount) };
   if (maxAmount) filters.amount = { ...filters.amount, $lte: Number(maxAmount) };
   if (startDate || endDate) {
-    filters.date = {};
-    if (startDate) filters.date.$gte = startDate;
-    if (endDate) filters.date.$lte = endDate;
+    filters.createdAt = {};
+    if (startDate) filters.createdAt.$gte = new Date(startDate);
+    if (endDate) filters.createdAt.$lte = new Date(endDate);
   }
 
   return filters;
