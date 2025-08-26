@@ -78,6 +78,21 @@ export class Dashboard implements OnInit, OnDestroy {
   recomendacionReal: { accion: string; color: string; mensaje: string } | null =
     null;
 
+  // NUEVO: propiedad para RSI
+  rsi: number | null = null;
+  sma: number | null = null;
+
+  // Añade esta propiedad:
+  indicadores: {
+    label: string;
+    valor: string | number;
+    estado: 'ok' | 'warn' | 'bad';
+    descripcion: string;
+  }[] = [];
+
+  // Añade esta nueva propiedad a la clase
+  tendenciasReales: Map<string, number> = new Map();
+
   constructor(
     private divisasService: DivisasService,
     private snackBar: MatSnackBar,
@@ -88,14 +103,13 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.cargarTiposCambio(); // ✅ Esto siempre se ejecuta (público)
+    this.cargarTiposCambio();
 
-    // Refrescar cada 5 segundos
+    // Actualizar una vez al día en lugar de cada 30 segundos
     this.refreshInterval = setInterval(() => {
       this.cargarTiposCambio();
-    }, 5000);
+    }, 24 * 60 * 60 * 1000); // 24 horas
 
-    // Controlar el estado del selector de moneda base
     if (this.isAuthenticated) {
       this.monedaBase.enable();
       this.cargarAnalytics();
@@ -111,23 +125,73 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   // MÉTODO ACTUALIZADO PARA CARGAR TIPOS DE CAMBIO
-  cargarTiposCambio(): void {
+  // Asegurar que cargarTiposCambio() usa datos reales
+  async cargarTiposCambio(): Promise<void> {
     const base = this.monedaBase.value || 'USD';
     this.cargandoTabla = true;
 
-    // Usar método del servicio conectado a tu backend
-    this.divisasService.getExchangeRates(base).subscribe({
-      next: (response: any) => {
-        console.log('✅ Datos del backend:', response);
-        this.procesarTiposCambioBackend(response, base);
-        this.cargandoTabla = false;
-      },
-      error: (error: any) => {
-        console.error('❌ Error con backend, usando Frankfurter:', error);
-        // Fallback a Frankfurter si falla el backend
-        this.cargarTiposCambioFallback(base);
-      },
-    });
+    try {
+      // 1. Obtener tasas actuales
+      const response = await this.divisasService
+        .getLatestRatesFromFrankfurter(base)
+        .toPromise();
+
+      // 2. Para cada divisa, cargar histórico y calcular indicadores
+      this.tiposCambio = [];
+
+      for (const currency of Object.keys(response.rates)) {
+        const divisa = this.divisas.find((d) => d.code === currency);
+        if (divisa) {
+          try {
+            // Obtener histórico real de 30 días
+            const historico = await this.obtenerHistorico(base, currency);
+
+            // Calcular todos los indicadores reales
+            const tendencia = this.calcularTendencia(historico);
+            const volatilidad = this.calcularVolatilidad(historico);
+            const rsi = this.calcularRSI(historico);
+            const sma = this.calcularSMA(historico);
+
+            // Añadir a tiposCambio con todos los indicadores reales
+            this.tiposCambio.push({
+              code: currency,
+              name: divisa.name,
+              flag: divisa.flag,
+              rate: response.rates[currency],
+              base: response.base,
+              tendencia: tendencia,
+              volatilidad: volatilidad,
+              rsi: rsi,
+              sma: sma,
+              cambio: tendencia.toFixed(2),
+            });
+
+            // Guardar tendencia real para usar en la vista
+            this.tendenciasReales.set(currency, tendencia);
+          } catch (error) {
+            console.error(
+              `Error calculando indicadores para ${currency}:`,
+              error
+            );
+          }
+        }
+      }
+
+      // 3. Actualizar timestamp y ordenar
+      this.ultimaActualizacion = new Date().toLocaleString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }); // + ' (Datos: Frankfurter/BCE)';
+      this.tiposCambio.sort((a, b) => a.code.localeCompare(b.code));
+    } catch (error) {
+      console.error('Error cargando tipos de cambio:', error);
+    } finally {
+      this.cargandoTabla = false;
+    }
   }
 
   // PROCESAR datos de tu backend Node.js
@@ -544,19 +608,14 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   // Simular tendencias (en futuro podrías obtenerlas de tu API)
-  getRandomTrend(currencyCode: string): number {
-    // Usar el código de moneda como seed para consistencia
-    const seed = currencyCode.charCodeAt(0) + currencyCode.charCodeAt(1);
-    return (seed % 3) - 1; // -1, 0, o 1
+  getTendenciaReal(currencyCode: string): number {
+    return this.tendenciasReales.get(currencyCode) || 0;
   }
 
-  getRandomChangePercent(currencyCode: string): string {
-    const trend = this.getRandomTrend(currencyCode);
-    const seed = currencyCode.charCodeAt(0) + currencyCode.charCodeAt(2);
-    const percent = ((seed % 500) / 100).toFixed(2); // 0.00 a 4.99
-
-    if (trend === 0) return '0.00';
-    return trend > 0 ? percent : `-${percent}`;
+  getVariacionPorcentual(currencyCode: string): string {
+    const tendencia = this.tendenciasReales.get(currencyCode);
+    if (tendencia === undefined) return '0.00';
+    return tendencia.toFixed(2);
   }
 
   convertirA(currencyCode: string): void {
@@ -592,17 +651,22 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // NUEVO: Ver detalles de una divisa
   async verDetalle(currencyCode: string): Promise<void> {
+    // Verificación de seguridad adicional
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+
+    console.log('Abriendo detalle', currencyCode);
     this.selectedCurrency = this.divisas.find((d) => d.code === currencyCode);
     this.selectedRate = this.tiposCambio.find((r) => r.code === currencyCode);
     this.showCurrencyDetail = true;
 
-    // Prevenir scroll del body
     document.body.style.overflow = 'hidden';
 
-    // --- NUEVO: Cargar histórico real y calcular tendencia/volatilidad ---
     this.tendenciaReal = null;
     this.volatilidadReal = null;
     this.historicoReal = [];
+    this.indicadores = [];
 
     if (this.selectedRate) {
       const base = this.selectedRate.base;
@@ -612,14 +676,77 @@ export class Dashboard implements OnInit, OnDestroy {
         this.historicoReal = historico;
         this.tendenciaReal = this.calcularTendencia(historico);
         this.volatilidadReal = this.calcularVolatilidad(historico);
+        this.rsi = this.calcularRSI(historico);
+        this.sma = this.calcularSMA(historico);
+
+        // Estado para cada indicador
+        this.indicadores = [
+          {
+            label: 'RSI',
+            valor: this.rsi ?? 'N/A',
+            estado:
+              this.rsi !== null && this.rsi < 40
+                ? 'ok'
+                : this.rsi !== null && this.rsi > 60
+                ? 'bad'
+                : 'warn',
+            descripcion: 'Índice de fuerza relativa',
+          },
+          {
+            label: 'Tendencia (%)',
+            valor:
+              this.tendenciaReal !== null
+                ? this.tendenciaReal.toFixed(2)
+                : 'N/A',
+            estado:
+              this.tendenciaReal !== null && this.tendenciaReal > 0.5
+                ? 'ok'
+                : this.tendenciaReal !== null && this.tendenciaReal < -0.5
+                ? 'bad'
+                : 'warn',
+            descripcion: 'Variación porcentual últimos 30 días',
+          },
+          {
+            label: 'SMA',
+            valor: this.sma ?? 'N/A',
+            estado:
+              this.selectedRate &&
+              this.sma !== null &&
+              this.selectedRate.rate > this.sma
+                ? 'ok'
+                : this.selectedRate &&
+                  this.sma !== null &&
+                  this.selectedRate.rate < this.sma
+                ? 'bad'
+                : 'warn',
+            descripcion: 'Media móvil simple (7 días)',
+          },
+          {
+            label: 'Volatilidad',
+            valor:
+              this.volatilidadReal !== null
+                ? this.volatilidadReal.toFixed(4)
+                : 'N/A',
+            estado:
+              this.volatilidadReal !== null && this.volatilidadReal > 0.05
+                ? 'bad'
+                : 'ok',
+            descripcion: 'Desviación estándar últimos 30 días',
+          },
+        ];
+
         this.recomendacionReal = this.getInvestmentRecommendation(
           this.tendenciaReal,
-          this.volatilidadReal
+          this.volatilidadReal,
+          this.rsi,
+          this.sma,
+          this.selectedRate?.rate || 0
         );
       } catch (e) {
         this.tendenciaReal = null;
         this.volatilidadReal = null;
         this.recomendacionReal = null;
+        this.indicadores = [];
       }
     }
   }
@@ -633,10 +760,18 @@ export class Dashboard implements OnInit, OnDestroy {
     document.body.style.overflow = 'auto';
   }
 
+  // NUEVO: Método para cerrar el modal al hacer clic en el fondo
+  onModalBackground(event: MouseEvent) {
+    // Solo cierra si el click es directamente en el fondo, no en el contenido
+    if (event.target === event.currentTarget) {
+      this.closeCurrencyModal();
+    }
+  }
+
   // MÉTODOS PARA ANÁLISIS DE INVERSIÓN:
   getTrendDirection(): string {
     if (!this.selectedCurrency) return 'stable';
-    const trend = this.getRandomTrend(this.selectedCurrency.code);
+    const trend = this.getTendenciaReal(this.selectedCurrency.code);
     return trend > 0 ? 'up' : trend < 0 ? 'down' : 'stable';
   }
 
@@ -655,47 +790,90 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getInvestmentRecommendation(
     tendencia: number,
-    volatilidad: number
-  ): { accion: string; color: string; mensaje: string } {
-    if (tendencia > 0.5 && volatilidad < 0.01) {
-      return {
-        accion: 'COMPRAR',
-        color: 'green',
-        mensaje: 'Tendencia alcista y baja volatilidad.',
-      };
-    }
-    if (tendencia < -0.5 && volatilidad < 0.01) {
-      return {
-        accion: 'VENDER',
-        color: 'red',
-        mensaje: 'Tendencia bajista y baja volatilidad.',
-      };
-    }
-    if (Math.abs(tendencia) < 0.5 && volatilidad < 0.01) {
-      return { accion: 'MANTENER', color: 'gray', mensaje: 'Mercado estable.' };
-    }
-    if (volatilidad >= 0.01) {
+    volatilidad: number,
+    rsi: number,
+    sma: number,
+    rate: number
+  ) {
+    // Log para depuración
+    console.log(
+      'RSI:',
+      rsi,
+      'Tendencia:',
+      tendencia,
+      'SMA:',
+      sma,
+      'Rate:',
+      rate,
+      'Volatilidad:',
+      volatilidad
+    );
+
+    // Si la volatilidad es muy alta, mejor esperar
+    if (volatilidad > 0.05) {
       return {
         accion: 'ESPERAR',
-        color: 'orange',
-        mensaje: 'Alta volatilidad, prudencia recomendada.',
+        color: '#fbc02d',
+        mensaje: 'Alta volatilidad. Espera una mejor oportunidad.',
+      };
+    }
+
+    let score = 0;
+
+    // Señales de compra
+    if (rsi < 40) score += 1; // RSI bajo
+    if (tendencia > 0.5) score += 1; // Tendencia alcista clara
+    if (rate > sma) score += 1; // Precio por encima de la media
+
+    // Señales de venta
+    if (rsi > 60) score -= 1; // RSI alto
+    if (tendencia < -0.5) score -= 1; // Tendencia bajista clara
+    if (rate < sma) score -= 1; // Precio por debajo de la media
+
+    // Decisión basada en el score
+    if (score >= 2) {
+      return {
+        accion: 'COMPRAR',
+        color: '#43a047',
+        mensaje:
+          'Señales técnicas alineadas para compra: RSI bajo, tendencia alcista y precio por encima de la media.',
+      };
+    }
+    if (score <= -2) {
+      return {
+        accion: 'VENDER',
+        color: '#e53935',
+        mensaje:
+          'Señales técnicas alineadas para venta: RSI alto, tendencia bajista y precio por debajo de la media.',
+      };
+    }
+    if (Math.abs(rate - sma) / sma < 0.01) {
+      return {
+        accion: 'MANTENER',
+        color: '#1976d2',
+        mensaje: 'El precio está cerca de la media. Mantén tu posición.',
       };
     }
     return {
-      accion: 'SIN DATOS',
-      color: 'gray',
-      mensaje: 'No hay suficiente información.',
+      accion: 'ESPERAR',
+      color: '#fbc02d',
+      mensaje: 'No hay señales claras. Espera una mejor oportunidad.',
     };
   }
 
-  getRecommendationIcon(): string {
-    const recommendation = this.recomendacionReal;
-    if (!recommendation) return 'remove';
-    return recommendation.accion === 'COMPRAR'
-      ? 'trending_up'
-      : recommendation.accion === 'VENDER'
-      ? 'trending_down'
-      : 'remove';
+  getRecommendationIcon(accion: string | undefined): string {
+    switch ((accion || '').toLowerCase()) {
+      case 'comprar':
+        return 'trending_up';
+      case 'vender':
+        return 'trending_down';
+      case 'mantener':
+        return 'trending_flat';
+      case 'esperar':
+        return 'hourglass_empty';
+      default:
+        return 'help_outline';
+    }
   }
 
   getInvestmentReason(): string {
@@ -729,14 +907,21 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   getConfidenceLevel(): number {
-    const trend = this.getTrendDirection();
-    const volatility = this.getVolatilityLevel(this.selectedRate?.rate || 1);
+    // Usa tendencia y volatilidad reales si están disponibles
+    const tendencia = this.tendenciaReal;
+    const volatilidad = this.volatilidadReal;
 
     let confidence = 60; // Base
 
-    if (trend !== 'stable') confidence += 20;
-    if (volatility === 'Baja') confidence += 15;
-    if (volatility === 'Alta') confidence -= 10;
+    if (tendencia !== null && tendencia !== undefined) {
+      if (tendencia > 0.5) confidence += 20;
+      if (tendencia < -0.5) confidence -= 10;
+    }
+
+    if (volatilidad !== null && volatilidad !== undefined) {
+      if (volatilidad < 0.01) confidence += 15;
+      if (volatilidad > 0.05) confidence -= 10;
+    }
 
     return Math.min(Math.max(confidence, 30), 95);
   }
@@ -798,7 +983,7 @@ export class Dashboard implements OnInit, OnDestroy {
   ): Promise<number[]> {
     const end = new Date();
     const start = new Date();
-    start.setDate(end.getDate() - 7);
+    start.setDate(end.getDate() - 30);
 
     const url = `https://api.frankfurter.app/${start
       .toISOString()
@@ -823,5 +1008,106 @@ export class Dashboard implements OnInit, OnDestroy {
     const mean = rates.reduce((a, b) => a + b, 0) / rates.length;
     const variance = rates.reduce((a, b) => a + Math.pow(b - mean, 2), 0);
     return Math.sqrt(variance);
+  }
+
+  // Calcula RSI (ya lo tienes)
+  calcularRSI(rates: number[], period: number = 14): number {
+    if (rates.length < period + 1) return 50;
+    let gains = 0,
+      losses = 0;
+    for (let i = 1; i <= period; i++) {
+      const diff = rates[i] - rates[i - 1];
+      if (diff > 0) gains += diff;
+      else losses -= diff;
+    }
+    const avgGain = gains / period;
+    const avgLoss = losses / period;
+    if (avgLoss === 0) return 100;
+    const rs = avgGain / avgLoss;
+    return Math.round(100 - 100 / (1 + rs));
+  }
+
+  // Calcula SMA (media móvil simple)
+  calcularSMA(rates: number[], period: number = 7): number {
+    if (rates.length < period) return rates[rates.length - 1] || 0;
+    const slice = rates.slice(-period);
+    const sum = slice.reduce((a, b) => a + b, 0);
+    return +(sum / period).toFixed(4);
+  }
+
+  getRecommendationBreakdown() {
+    return [
+      {
+        label: 'RSI',
+        value: this.rsi ?? '—',
+        descripcion:
+          'Índice de fuerza relativa (14 días). <30: sobreventa, >70: sobrecompra.',
+        positive: this.rsi !== null && this.rsi < 40,
+        negative: this.rsi !== null && this.rsi > 60,
+      },
+      {
+        label: 'Tendencia',
+        value:
+          this.tendenciaReal !== null
+            ? (this.tendenciaReal * 100).toFixed(2) + '%'
+            : '—',
+        descripcion: 'Variación porcentual últimos 30 días.',
+        positive: this.tendenciaReal !== null && this.tendenciaReal > 0.5,
+        negative: this.tendenciaReal !== null && this.tendenciaReal < -0.5,
+      },
+      {
+        label: 'SMA',
+        value: this.sma ?? '—',
+        descripcion: 'Media móvil simple de 7 días.',
+        positive:
+          this.selectedRate &&
+          this.sma !== null &&
+          this.selectedRate.rate > this.sma,
+        negative:
+          this.selectedRate &&
+          this.sma !== null &&
+          this.selectedRate.rate < this.sma,
+      },
+      {
+        label: 'Volatilidad',
+        value:
+          this.volatilidadReal !== null ? this.volatilidadReal.toFixed(4) : '—',
+        descripcion: 'Desviación estándar últimos 30 días.',
+        positive: this.volatilidadReal !== null && this.volatilidadReal < 0.02,
+        negative: this.volatilidadReal !== null && this.volatilidadReal > 0.05,
+      },
+    ];
+  }
+
+  /**
+   * Maneja el acceso a detalles según autenticación
+   */
+  handleDetalles(currencyCode: string): void {
+    if (this.authService.isAuthenticated()) {
+      this.verDetalle(currencyCode);
+    } else {
+      // Redirigir al login con returnUrl
+      this.router.navigate(['/login'], {
+        queryParams: {
+          returnUrl: '/dashboard',
+          currency: currencyCode,
+        },
+      });
+
+      // Mostrar mensaje informativo
+      this.snackBar
+        .open(
+          'Regístrate para acceder al análisis detallado',
+          'Ir a registro',
+          {
+            duration: 5000,
+            panelClass: ['info-snackbar'],
+          }
+        )
+        .onAction()
+        .subscribe(() => {
+          this.router.navigate(['/register']);
+        });
+    }
   }
 }

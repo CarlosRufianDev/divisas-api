@@ -1,5 +1,4 @@
-/* Estilos específicos para Dashboard */
-/* filepath: c:\PROYECTOS\divisas-api\frontend\src\app\components\dashboard\dashboard.scss */
+// estilos para el contenedor principal del dashboard
 
 .dashboard-container {
   animation: fadeIn 0.3s ease-out;
@@ -399,67 +398,27 @@ mat-toolbar {
 
   .trend-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0.75rem;
-    border-radius: 6px;
-    background: #f9f9f9;
-    border-left: 3px solid #ddd;
+    justify-content: space-between;
+    gap: 1rem;
 
-    .trend-pair {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-
-      .pair-name {
-        font-weight: 600;
-        color: #333;
-      }
-
-      .pair-nickname {
-        font-size: 0.8rem;
-        color: #666;
-        font-style: italic;
-      }
+    .trend-label {
+      flex: 1;
     }
 
-    .trend-data {
+    .trend-value-container {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.25rem;
+      align-items: center;
+      gap: 0.5rem;
 
-      .current-rate {
-        font-weight: 600;
-        color: #333;
-      }
-
-      .trend-change {
+      .trend-icons {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
-        font-size: 0.9rem;
-        font-weight: 500;
+      }
 
-        &.trend-up {
-          color: #4caf50;
-          mat-icon { color: #4caf50; }
-        }
-
-        &.trend-down {
-          color: #f44336;
-          mat-icon { color: #f44336; }
-        }
-
-        &.trend-stable {
-          color: #666;
-          mat-icon { color: #666; }
-        }
-
-        &.trend-error {
-          color: #ff9800;
-          mat-icon { color: #ff9800; }
-        }
+      .trend-percentage {
+        min-width: 70px;
+        text-align: right;
       }
     }
   }
@@ -1014,6 +973,7 @@ mat-toolbar {
       }
 
       .rate-extra {
+        display: flex;
         margin-bottom: 1rem;
         padding: 0.75rem;
         background: #f8f9fa;
@@ -1421,135 +1381,6 @@ mat-toolbar {
   }
 }
 
-// SECCIÓN 5: RECOMENDACIONES
-.recommendation-card {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  padding: 1.2rem 1.5rem;
-  border-radius: 14px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  font-size: 1.1rem;
-  background: #f5f5f5;
-  &.comprar {
-    background: #e8f5e9;
-    color: #388e3c;
-  }
-  &.vender {
-    background: #ffebee;
-    color: #d32f2f;
-  }
-  &.mantener {
-    background: #e3f2fd;
-    color: #1976d2;
-  }
-  &.esperar {
-    background: #fffde7;
-    color: #fbc02d;
-  }
-}
-
-.recommendation-icon-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 70px;
-}
-
-.recommendation-icon {
-  font-size: 2.6rem;
-  margin-bottom: 0.3rem;
-  &.comprar { color: #43a047; }
-  &.vender { color: #e53935; }
-  &.mantener { color: #1976d2; }
-  &.esperar { color: #fbc02d; }
-}
-
-.recommendation-badge {
-  font-weight: bold;
-  padding: 0.25em 1.2em;
-  border-radius: 16px;
-  font-size: 1rem;
-  letter-spacing: 1px;
-  background: #fff;
-  color: inherit;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  &.comprar { background: #43a047; color: #fff; }
-  &.vender { background: #e53935; color: #fff; }
-  &.mantener { background: #1976d2; color: #fff; }
-  &.esperar { background: #fbc02d; color: #fff; }
-}
-
-.recommendation-message {
-  font-size: 1rem;
-  opacity: 0.95;
-  flex: 1;
-}
-
-// BANNER DE RECOMENDACIÓN
-.recommendation-banner {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  padding: 1.1rem 1.5rem;
-  border-radius: 12px;
-  margin: 1.5rem 0 0 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  font-size: 1.1rem;
-  background: #f5f5f5;
-  border-left: 6px solid #bdbdbd;
-  min-height: 70px;
-  animation: fadeIn 0.4s;
-
-  &.comprar {
-    background: #e8f5e9;
-    border-left-color: #43a047;
-    .banner-icon { color: #43a047; }
-    .banner-title { color: #388e3c; }
-  }
-  &.vender {
-    background: #ffebee;
-    border-left-color: #e53935;
-    .banner-icon { color: #e53935; }
-    .banner-title { color: #b71c1c; }
-  }
-  &.mantener {
-    background: #e3f2fd;
-    border-left-color: #1976d2;
-    .banner-icon { color: #1976d2; }
-    .banner-title { color: #1976d2; }
-  }
-  &.esperar {
-    background: #fffde7;
-    border-left-color: #fbc02d;
-    .banner-icon { color: #fbc02d; }
-    .banner-title { color: #fbc02d; }
-  }
-}
-
-.banner-icon {
-  font-size: 2.5rem;
-  flex-shrink: 0;
-}
-
-.banner-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.banner-title {
-  font-weight: bold;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-}
-
-.banner-message {
-  font-size: 1rem;
-  opacity: 0.95;
-}
-
 // MODAL PARA DETALLES DE DIVISA
 .currency-detail-modal {
   position: fixed;
@@ -1570,9 +1401,9 @@ mat-toolbar {
     background: white;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 600px;
+    max-width: 900px;      
     width: 100%;
-    max-height: 90vh;
+    max-height: 75vh;      
     overflow-y: auto;
     animation: modalSlideIn 0.3s ease;
 
@@ -1738,69 +1569,10 @@ mat-toolbar {
       }
 
       .investment-recommendation {
-        .recommendation-card {
-          display: flex;
-          align-items: center;
-          padding: 1.2rem 1.5rem;
-          border-radius: 14px;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-          font-size: 1.1rem;
-
-          &.comprar {
-            background: #e8f5e9;
-            color: #388e3c;
-          }
-
-          &.vender {
-            background: #ffebee;
-            color: #d32f2f;
-          }
-
-          &.mantener {
-            background: #fff3e0;
-            color: #e65100;
-          }
-
-          &.esperar {
-            background: #fffde7;
-            color: #fbc02d;
-          }
-        }
-
-        .recommendation-icon {
-          font-size: 2.8rem;
-          margin-right: 1.2rem;
-
-          &.comprar { color: #43a047; }
-          &.vender { color: #e53935; }
-          &.mantener { color: #fbc02d; }
-          &.esperar { color: #fbc02d; }
-        }
 
         .recommendation-content {
           display: flex;
           flex-direction: column;
-        }
-
-        .recommendation-badge {
-          font-weight: bold;
-          margin-bottom: 0.3rem;
-          padding: 0.25em 1.2em;
-          border-radius: 16px;
-          display: inline-block;
-          font-size: 1rem;
-          letter-spacing: 1px;
-
-          &.comprar { background: #43a047; color: #fff; }
-          &.vender { background: #e53935; color: #fff; }
-          &.mantener { background: #fbc02d; color: #fff; }
-          &.esperar { background: #fff176; color: #fbc02d; }
-        }
-
-        .recommendation-message {
-          font-size: 1rem;
-          opacity: 0.95;
         }
       }
     }
@@ -1876,7 +1648,99 @@ mat-toolbar {
   }
 }
 
-.recommendation-tip-card {
+// Indicadores adicionales (RSI, SMA, etc.)
+.indicator-info {
+  margin: 1.2rem 0 1.5rem 0;
+  font-size: 1.05rem;
+  div {
+    margin-bottom: 0.4rem;
+  }
+  .rsi-label.sobreventa { color: #43a047; }
+  .rsi-label.sobrecompra { color: #e53935; }
+  .rsi-label.neutro { color: #888; }
+  .sma-label.sma-up { color: #43a047; }
+  .sma-label.sma-down { color: #e53935; }
+  .sma-label.neutro { color: #888; }
+}
+
+// Explicación de la recomendación
+.recommendation-explanation {
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.97rem;
+  color: #333;
+  b { color: #1976d2; }
+}
+
+// Breakdown visual de señales
+.recommendation-breakdown {
+  margin-top: 1.5rem;
+  padding: 1.2rem 1.5rem;
+  background: #f8f9fa;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+  h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1976d2;
+  }
+
+  .breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+
+    mat-icon {
+      font-size: 1.3rem;
+    }
+
+    .breakdown-label {
+      font-weight: 600;
+      min-width: 90px;
+    }
+    .breakdown-value {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 500;
+      min-width: 60px;
+    }
+    .breakdown-desc {
+      color: #888;
+      font-size: 0.95rem;
+      margin-left: 0.5rem;
+    }
+
+    &.breakdown-positive {
+      background: #e8f5e9;
+      color: #388e3c;
+      mat-icon { color: #43a047; }
+    }
+    &.breakdown-negative {
+      background: #ffebee;
+      color: #d32f2f;
+      mat-icon { color: #e53935; }
+    }
+    &.breakdown-warn {
+      background: #fffde7;
+      color: #b8860b;
+      mat-icon { color: #fbc02d; }
+    }
+  }
+}
+
+.recommendation-horizontal-card {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -1892,9 +1756,13 @@ mat-toolbar {
   &:hover {
     box-shadow: 0 12px 40px rgba(0,0,0,0.18);
   }
+  &.comprar { background: linear-gradient(90deg, #e8f5e9 0%, #b9f6ca 100%); }
+  &.vender { background: linear-gradient(90deg, #ffebee 0%, #ffcdd2 100%); }
+  &.mantener { background: linear-gradient(90deg, #e3f2fd 0%, #bbdefb 100%); }
+  &.esperar { background: linear-gradient(90deg, #fffde7 0%, #fff9c4 100%); }
 }
 
-.tip-icon-area {
+.horizontal-icon-area {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1906,24 +1774,18 @@ mat-toolbar {
   transition: background 0.3s;
   &.comprar { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
   &.vender { background: linear-gradient(135deg, #ff5858 0%, #f09819 100%); }
-  &.mantener { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
-  &.esperar { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+  &.mantener { background: linear-gradient(135deg, #027794 0%, #6dd5ed 100%); }
+  &.esperar { background: linear-gradient(135deg, #ff920c 0%, #ffd200 100%); }
 }
 
-.tip-icon {
-  font-size: 3.2rem;
-  color: #fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.13);
-}
-
-.tip-content {
+.horizontal-tip-content {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   flex: 1;
 }
 
-.tip-title {
+.horizontal-tip-title {
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 1px;
@@ -1935,7 +1797,7 @@ mat-toolbar {
   &.esperar { color: #b8860b; }
 }
 
-.tip-message {
+.horizontal-tip-message {
   font-size: 1.13rem;
   color: #222;
   opacity: 0.97;
@@ -1943,67 +1805,168 @@ mat-toolbar {
   line-height: 1.5;
 }
 
-/* NUEVOS ESTILOS PARA TARJETAS VERTICALES DE RECOMENDACIÓN */
-.recommendation-vertical-card {
+// Añade estos estilos donde tienes los demás del modal
+.analysis-recommendation-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .analysis-column,
+  .recommendation-column {
+    flex: 1;
+    min-width: 0; // Evita desbordamiento
+  }
+
+  // Ajustes para el análisis técnico
+  .currency-analysis {
+    height: 100%;
+    margin: 0;
+  }
+
+  // Ajustes para la recomendación
+  .recommendation-horizontal-card {
+    height: 100%;
+    margin: 0;
+  }
+}
+
+// Estilos para la sección de detalles
+.recommendation-details {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2.2rem 1.5rem 2rem 1.5rem;
-  border-radius: 28px;
-  margin: 2.5rem auto 0 auto;
-  max-width: 380px;
-  background: linear-gradient(160deg, #f5f7fa 0%, #c3cfe2 100%);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
-  min-height: 260px;
+  gap: 1.5rem;
+}
+
+// Media query para móviles
+@media (max-width: 768px) {
+  .analysis-recommendation-wrapper {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.update-info-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: #e3f2fd;
+    border-radius: 8px;
+    margin: 1rem 0;
+
+    mat-icon {
+        color: #1976d2;
+    }
+
+    .update-info-content {
+        display: flex;
+        flex-direction: column;
+
+        .update-timestamp {
+            font-weight: 500;
+            color: #1976d2;
+        }
+
+        .update-note {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+.rate-extra {
+  margin: 1rem 0;
+  
+  .inverse-rate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    
+    mat-icon {
+      color: #2196f3;
+    }
+    
+    span {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+}
+
+.rate-actions-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+
+  .action-button {
+    width: 100%;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Ajusta el padding de la card para mantener todo alineado
+.rate-card {
+  .rate-content {
+    padding: 1.5rem;
+  }
+}
+
+.premium-content-overlay {
   text-align: center;
-  position: relative;
-  overflow: hidden;
-}
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  margin: 1rem 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
 
-.vertical-icon-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  margin-bottom: 1.2rem;
-  background: #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  &.comprar { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-  &.vender { background: linear-gradient(135deg, #ff5858 0%, #f09819 100%); }
-  &.mantener { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
-  &.esperar { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
-}
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #1976d2;
+    margin-bottom: 1rem;
+  }
 
-.vertical-tip-icon {
-  font-size: 3.5rem;
-  color: #fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.13);
-}
+  h3 {
+    color: #1976d2;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 
-.vertical-tip-title {
-  font-size: 2rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 0.7rem;
-  &.comprar { color: #1b8c5a; }
-  &.vender { color: #c0392b; }
-  &.mantener { color: #1976d2; }
-  &.esperar { color: #b8860b; }
-}
+  .premium-features {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem auto;
+    max-width: 280px;
+    text-align: left;
 
-.vertical-tip-message {
-  font-size: 1.18rem;
-  color: #222;
-  opacity: 0.98;
-  font-weight: 500;
-  line-height: 1.6;
-  margin: 0 0.5rem;
-}
+    li {
+      margin: 0.5rem 0;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
 
-.vertical-icon-area i {
-  text-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      &:before {
+        content: '✓';
+        color: #1976d2;
+      }
+    }
+  }
+
+  button {
+    margin-top: 1rem;
+  }
 }
