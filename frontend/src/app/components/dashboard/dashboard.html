@@ -21,64 +21,110 @@
     
     <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas) -->
     <div class="converter-section">
-      <!-- Conversor (Izquierda) -->
-      <mat-card class="converter-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>currency_exchange</mat-icon>
-            Conversor de Divisas
-          </mat-card-title>
-          <mat-card-subtitle>Convierte divisas al instante</mat-card-subtitle>
+      <!-- Conversor (Izquierda) - MEJORADO -->
+      <mat-card class="converter-card-enhanced">
+        <mat-card-header class="converter-header-enhanced">
+          <div class="converter-title-section">
+            <mat-card-title class="converter-title-enhanced">
+              Conversor de Divisas
+            </mat-card-title>
+            <mat-card-subtitle class="converter-subtitle-enhanced">
+              Conversión instantánea con tipos de cambio en tiempo real
+            </mat-card-subtitle>
+          </div>
         </mat-card-header>
         
-        <mat-card-content>
-          <div class="conversion-form-compact">
+        <mat-card-content class="converter-content-enhanced">
+          <div class="conversion-form-enhanced">
             
-            <!-- Cantidad (Más estrecha) -->
-            <mat-form-field appearance="outline" class="amount-field-compact">
-              <mat-label>Cantidad</mat-label>
-              <input matInput 
-                     type="number" 
-                     [formControl]="cantidad"
-                     placeholder="100">
-            </mat-form-field>
-
-            <!-- Fila de Divisas -->
-            <div class="currency-row-compact">
-              <mat-form-field appearance="outline" class="currency-field">
-                <mat-label>De</mat-label>
-                <mat-select [formControl]="monedaOrigen" (selectionChange)="onMonedaOrigenChange()">
-                  <mat-option *ngFor="let divisa of getDivisasOrigen()" [value]="divisa.code">
-                    {{divisa.flag}} {{divisa.code}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <button mat-icon-button 
-                      color="primary" 
-                      (click)="intercambiarDivisas()"
-                      class="swap-button-compact">
-                <mat-icon>swap_horiz</mat-icon>
-              </button>
-
-              <mat-form-field appearance="outline" class="currency-field">
-                <mat-label>A</mat-label>
-                <mat-select [formControl]="monedaDestino" (selectionChange)="onMonedaDestinoChange()">
-                  <mat-option *ngFor="let divisa of getDivisasDestino()" [value]="divisa.code">
-                    {{divisa.flag}} {{divisa.code}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+            <!-- Cantidad (Centrada y prominente) -->
+            <div class="amount-section-enhanced">
+              <label class="amount-label-enhanced">Cantidad a convertir</label>
+              <div class="amount-input-container">
+                <mat-form-field appearance="outline" class="amount-field-enhanced">
+                  <input matInput 
+                         type="number" 
+                         [formControl]="cantidad"
+                         placeholder="0.00"
+                         class="amount-input-enhanced">
+                </mat-form-field>
+              </div>
             </div>
 
-            <!-- Botón Convertir -->
-            <button mat-raised-button 
-                    color="primary" 
-                    (click)="convert()"
-                    class="convert-button-compact">
-              <mat-icon>currency_exchange</mat-icon>
-              Convertir
-            </button>
+            <!-- Fila de Divisas Mejorada -->
+            <div class="currency-selection-enhanced">
+              <div class="currency-card from-currency">
+                <label class="currency-label">Desde</label>
+                <mat-form-field appearance="outline" class="currency-field-enhanced">
+                  <mat-select [formControl]="monedaOrigen" (selectionChange)="onMonedaOrigenChange()">
+                    <mat-option *ngFor="let divisa of getDivisasOrigen()" [value]="divisa.code">
+                      <div class="currency-option">
+                        <span class="currency-flag">{{divisa.flag}}</span>
+                        <span class="currency-code">{{divisa.code}}</span>
+                        <span class="currency-name-option">{{divisa.name}}</span>
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- Botón de intercambio mejorado -->
+              <div class="swap-section">
+                <button mat-fab 
+                        color="primary" 
+                        (click)="intercambiarDivisas()"
+                        class="swap-button-enhanced"
+                        matTooltip="Intercambiar divisas">
+                  <mat-icon>swap_horiz</mat-icon>
+                </button>
+              </div>
+
+              <div class="currency-card to-currency">
+                <label class="currency-label">Hacia</label>
+                <mat-form-field appearance="outline" class="currency-field-enhanced">
+                  <mat-select [formControl]="monedaDestino" (selectionChange)="onMonedaDestinoChange()">
+                    <mat-option *ngFor="let divisa of getDivisasDestino()" [value]="divisa.code">
+                      <div class="currency-option">
+                        <span class="currency-flag">{{divisa.flag}}</span>
+                        <span class="currency-code">{{divisa.code}}</span>
+                        <span class="currency-name-option">{{divisa.name}}</span>
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Botón Convertir Mejorado -->
+            <div class="convert-section-enhanced">
+              <button mat-raised-button 
+                      color="primary" 
+                      (click)="convert()"
+                      class="convert-button-enhanced"
+                      [disabled]="cargando">
+                <div class="button-content">
+                  <mat-icon *ngIf="!cargando">trending_up</mat-icon>
+                  <mat-progress-spinner 
+                    *ngIf="cargando" 
+                    diameter="20" 
+                    mode="indeterminate">
+                  </mat-progress-spinner>
+                  <span>{{ cargando ? 'Convirtiendo...' : 'Convertir Ahora' }}</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- Info adicional -->
+            <div class="conversion-info-enhanced">
+              <div class="info-item">
+                <mat-icon>schedule</mat-icon>
+                <span>Actualizado cada minuto</span>
+              </div>
+              <div class="info-item">
+                <mat-icon>verified</mat-icon>
+                <span>Datos del Banco Central Europeo</span>
+              </div>
+            </div>
 
           </div>
         </mat-card-content>
