@@ -25,19 +25,8 @@ interface FavoritePair {
   pair: string;
   createdAt: string;
   updatedAt: string;
-  change?: number; // Para calcular cambio porcentual
+  change?: number;
   previousRate?: number;
-}
-
-interface FavoriteCurrency {
-  id: string;
-  currency: string;
-  nickname: string;
-  priority: number;
-  isDefault: boolean;
-  rates: { [key: string]: number };
-  createdAt: string;
-  updatedAt: string;
 }
 
 interface QuickConversion {
@@ -303,8 +292,8 @@ interface QuickConversion {
         <!-- Mejor Performer -->
         <mat-card class="summary-card">
           <mat-card-header>
-            <mat-card-title>
-              <mat-icon class="trending-up-icon">trending_up</mat-icon>
+            <mat-card-title class="trending-up-icon">
+              <mat-icon>trending_up</mat-icon>
               Mejor Performer
             </mat-card-title>
           </mat-card-header>
@@ -327,8 +316,8 @@ interface QuickConversion {
         <!-- Peor Performer -->
         <mat-card class="summary-card">
           <mat-card-header>
-            <mat-card-title>
-              <mat-icon class="trending-down-icon">trending_down</mat-icon>
+            <mat-card-title class="trending-down-icon">
+              <mat-icon>trending_down</mat-icon>
               Necesita Atención
             </mat-card-title>
           </mat-card-header>
@@ -353,8 +342,8 @@ interface QuickConversion {
         <!-- Total Favoritos -->
         <mat-card class="summary-card">
           <mat-card-header>
-            <mat-card-title>
-              <mat-icon class="star-icon">star</mat-icon>
+            <mat-card-title class="star-icon">
+              <mat-icon>star</mat-icon>
               Total Favoritos
             </mat-card-title>
           </mat-card-header>
@@ -377,329 +366,7 @@ interface QuickConversion {
       </div>
     </div>
   `,
-  styles: [
-    `
-      .favoritos-container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      .favoritos-header {
-        text-align: center;
-        margin-bottom: 30px;
-        position: relative;
-      }
-
-      .favoritos-header h1 {
-        margin: 0 0 8px 0;
-        color: #333;
-        font-size: 2rem;
-      }
-
-      .subtitle {
-        color: #666;
-        margin: 0 0 16px 0;
-      }
-
-      .refresh-indicator {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(0, 0, 0, 0.05);
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        color: #666;
-      }
-
-      .spinning {
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .section-card {
-        margin-bottom: 24px;
-      }
-
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px;
-        gap: 16px;
-      }
-
-      .empty-favorites {
-        text-align: center;
-        padding: 60px 20px;
-      }
-
-      .empty-icon {
-        font-size: 64px;
-        width: 64px;
-        height: 64px;
-        color: #ddd;
-        margin-bottom: 16px;
-      }
-
-      .favoritos-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 16px;
-      }
-
-      .favorito-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        border-left: 4px solid #ddd;
-      }
-
-      .favorito-item:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-      }
-
-      .favorito-item.trending-up {
-        border-left-color: #4caf50;
-        background: linear-gradient(
-          135deg,
-          rgba(76, 175, 80, 0.05) 0%,
-          rgba(255, 255, 255, 1) 100%
-        );
-      }
-
-      .favorito-item.trending-down {
-        border-left-color: #f44336;
-        background: linear-gradient(
-          135deg,
-          rgba(244, 67, 54, 0.05) 0%,
-          rgba(255, 255, 255, 1) 100%
-        );
-      }
-
-      .favorito-item.trending-neutral {
-        border-left-color: #ff9800;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 152, 0, 0.05) 0%,
-          rgba(255, 255, 255, 1) 100%
-        );
-      }
-
-      .par-info {
-        flex: 1;
-      }
-
-      .par-header {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .par-name {
-        font-weight: 600;
-        font-size: 1.1rem;
-        color: #333;
-      }
-
-      .par-nickname {
-        font-size: 0.8rem;
-        color: #666;
-        font-style: italic;
-      }
-
-      .par-rate {
-        font-size: 1.3rem;
-        font-weight: 500;
-        color: #2196f3;
-        margin-top: 4px;
-      }
-
-      .par-change {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-weight: 500;
-        padding: 4px 8px;
-        border-radius: 12px;
-        margin: 0 8px;
-      }
-
-      .par-change.positive {
-        color: #4caf50;
-        background: rgba(76, 175, 80, 0.1);
-      }
-
-      .par-change.negative {
-        color: #f44336;
-        background: rgba(244, 67, 54, 0.1);
-      }
-
-      .par-change.neutral {
-        color: #ff9800;
-        background: rgba(255, 152, 0, 0.1);
-      }
-
-      .par-actions {
-        display: flex;
-        gap: 4px;
-      }
-
-      .conversion-panel {
-        display: grid;
-        grid-template-columns: 1fr 1fr auto 1fr 2fr;
-        gap: 16px;
-        align-items: start;
-        margin-top: 16px;
-      }
-
-      .amount-field,
-      .currency-field {
-        min-width: 120px;
-      }
-
-      .swap-btn {
-        margin-top: 8px;
-      }
-
-      .result-panel {
-        padding: 16px;
-        background: #f5f5f5;
-        border-radius: 8px;
-        min-height: 80px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .result-loading {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #666;
-      }
-
-      .result-success {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .result-label {
-        font-size: 0.9rem;
-        color: #666;
-      }
-
-      .result-value {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #2196f3;
-      }
-
-      .result-rate {
-        font-size: 0.8rem;
-        color: #666;
-      }
-
-      .result-empty {
-        color: #999;
-        text-align: center;
-        font-style: italic;
-      }
-
-      .summary-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 16px;
-        margin-top: 24px;
-      }
-
-      .summary-card {
-        text-align: center;
-      }
-
-      .trending-up-icon {
-        color: #4caf50;
-      }
-      .trending-down-icon {
-        color: #f44336;
-      }
-      .star-icon {
-        color: #ff9800;
-      }
-
-      .performer-info,
-      .total-info {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-
-      .performer-pair,
-      .total-count {
-        font-size: 1.2rem;
-        font-weight: 600;
-      }
-
-      .performer-change.positive {
-        color: #4caf50;
-      }
-      .performer-change.negative {
-        color: #f44336;
-      }
-
-      .total-count {
-        color: #2196f3;
-        font-size: 2rem;
-      }
-
-      .performer-description,
-      .total-description {
-        color: #666;
-        font-size: 0.9rem;
-        margin: 0;
-      }
-
-      .no-performer {
-        color: #999;
-        font-style: italic;
-      }
-
-      @media (max-width: 768px) {
-        .favoritos-container {
-          padding: 10px;
-        }
-
-        .conversion-panel {
-          grid-template-columns: 1fr;
-          gap: 12px;
-        }
-
-        .favoritos-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .summary-row {
-          grid-template-columns: 1fr;
-        }
-      }
-    `,
-  ],
+  styleUrl: './favoritos.scss', // ✅ USAR ARCHIVO SCSS EXTERNO
 })
 export class Favoritos implements OnInit, OnDestroy {
   private apiUrl = environment.apiUrl;
@@ -734,6 +401,7 @@ export class Favoritos implements OnInit, OnDestroy {
       this.snackBar
         .open('🔐 Inicia sesión para ver tus favoritos', 'Login', {
           duration: 5000,
+          panelClass: ['warning-snackbar'],
         })
         .onAction()
         .subscribe(() => {
@@ -742,6 +410,7 @@ export class Favoritos implements OnInit, OnDestroy {
       return;
     }
 
+    console.log('⭐ Iniciando componente Favoritos');
     this.loadFavorites();
     this.setupAutoRefresh();
     this.setupFormSubscriptions();
@@ -807,6 +476,7 @@ export class Favoritos implements OnInit, OnDestroy {
           if (!silent) {
             this.snackBar.open('❌ Error al cargar los favoritos', 'Cerrar', {
               duration: 3000,
+              panelClass: ['error-snackbar'],
             });
           }
         },
@@ -829,7 +499,10 @@ export class Favoritos implements OnInit, OnDestroy {
       ? '✅ Auto-actualización activada'
       : '⏸️ Auto-actualización pausada';
 
-    this.snackBar.open(message, 'Cerrar', { duration: 2000 });
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
+    });
   }
 
   trackByFavorite(index: number, favorite: FavoritePair): string {
@@ -916,6 +589,15 @@ export class Favoritos implements OnInit, OnDestroy {
     document.querySelector('.conversion-panel')?.scrollIntoView({
       behavior: 'smooth',
     });
+
+    this.snackBar.open(
+      `📊 Usando ${favorite.pair} en conversión rápida`,
+      'Cerrar',
+      {
+        duration: 2000,
+        panelClass: ['success-snackbar'],
+      }
+    );
   }
 
   getBestPerformer(): FavoritePair | null {
@@ -957,6 +639,7 @@ export class Favoritos implements OnInit, OnDestroy {
     // TODO: Implementar dialog para editar nickname
     this.snackBar.open(`🚧 Editar "${favorite.pair}" próximamente`, 'Cerrar', {
       duration: 2000,
+      panelClass: ['warning-snackbar'],
     });
   }
 
@@ -974,13 +657,14 @@ export class Favoritos implements OnInit, OnDestroy {
           this.snackBar.open(
             `✅ ${favorite.pair} eliminado de favoritos`,
             'Cerrar',
-            { duration: 2000 }
+            { duration: 2000, panelClass: ['success-snackbar'] }
           );
         },
         error: (error) => {
           console.error('❌ Error eliminando favorito:', error);
           this.snackBar.open('❌ Error al eliminar el favorito', 'Cerrar', {
             duration: 3000,
+            panelClass: ['error-snackbar'],
           });
         },
       });

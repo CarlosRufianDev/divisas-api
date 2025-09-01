@@ -859,3 +859,7 @@ Content-Type: application/json
   "to": "EUR",
   "days": 30
 }
+
+
+### 3. Testear tendencias rápidas
+GET http://localhost:4000/api/calculator/trending-rates?base=USD&days=7

@@ -1,0 +1,331 @@
+// Estilos unificados para Register - Basado en Dashboard
+
+// Contenedor principal igual que login
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+    pointer-events: none;
+  }
+}
+
+.register-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px; // Más ancho que login por más campos
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+  animation: slideInUp 0.6s ease-out;
+}
+
+// Header del registro
+.register-header {
+  text-align: center;
+  margin-bottom: 30px;
+  
+  .logo {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    display: block;
+    animation: bounce 2s infinite;
+  }
+  
+  .mat-mdc-card-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  
+  .mat-mdc-card-subtitle {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+// Contenido del formulario
+.mat-mdc-card-content {
+  padding: 0;
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; // Menos gap por más campos
+  }
+}
+
+// Form fields mejorados (mismos estilos que login)
+.full-width {
+  width: 100%;
+  
+  .mat-mdc-form-field {
+    width: 100%;
+    
+    .mat-mdc-text-field-wrapper {
+      border-radius: 12px;
+    }
+    
+    .mat-mdc-form-field-subscript-wrapper {
+      margin-top: 8px;
+    }
+  }
+  
+  &.mat-focused {
+    .mat-mdc-form-field-outline-thick {
+      color: #667eea;
+    }
+  }
+}
+
+// Botón de registro (mismo estilo que login)
+.register-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 15px 30px;
+  border-radius: 12px !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  height: 48px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+  }
+}
+
+// Botón secundario (volver al login)
+.secondary-button {
+  background: transparent !important;
+  color: #667eea !important;
+  border: 2px solid #667eea !important;
+  padding: 12px 30px;
+  border-radius: 12px !important;
+  font-weight: 600;
+  margin-top: 10px;
+  height: 44px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #667eea !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+  }
+}
+
+// Iconos
+mat-icon {
+  color: #667eea;
+  transition: color 0.3s ease;
+}
+
+// Estados de error
+.mat-mdc-form-field.mat-form-field-invalid {
+  .mat-mdc-text-field-wrapper {
+    .mat-mdc-form-field-outline-thick {
+      color: #f44336;
+    }
+  }
+}
+
+// Progress indicators
+.progress-container {
+  margin: 15px 0;
+  
+  .progress-bar {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  }
+  
+  .progress-text {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+    margin-top: 5px;
+  }
+}
+
+// Loading spinner
+mat-progress-spinner {
+  margin: 0 auto;
+  
+  circle {
+    stroke: #667eea;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .register-container {
+    padding: 15px;
+  }
+  
+  .register-card {
+    padding: 30px 25px;
+    max-width: 100%;
+    margin: 20px 0;
+  }
+  
+  .register-header {
+    .logo {
+      font-size: 3rem;
+    }
+    
+    .mat-mdc-card-title {
+      font-size: 1.8rem;
+    }
+  }
+  
+  form {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 25px 20px;
+    border-radius: 15px;
+  }
+  
+  .register-header {
+    margin-bottom: 20px;
+    
+    .logo {
+      font-size: 2.5rem;
+    }
+  }
+}
+
+// Animaciones (mismas que login)
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+// Efectos hover para campos
+.mat-mdc-form-field:hover {
+  .mat-mdc-text-field-wrapper {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #667eea;
+    }
+  }
+}
+
+// Estilos para snackbar
+::ng-deep {
+  .success-snackbar {
+    background: #4caf50 !important;
+    color: white !important;
+  }
+  
+  .error-snackbar {
+    background: #f44336 !important;
+    color: white !important;
+  }
+  
+  .warning-snackbar {
+    background: #ff9800 !important;
+    color: white !important;
+  }
+}
+
+// Validación visual de campos
+.field-valid {
+  .mat-mdc-form-field-outline-thick {
+    color: #4caf50 !important;
+  }
+  
+  mat-icon {
+    color: #4caf50 !important;
+  }
+}
+
+.field-invalid {
+  .mat-mdc-form-field-outline-thick {
+    color: #f44336 !important;
+  }
+  
+  mat-icon {
+    color: #f44336 !important;
+  }
+}

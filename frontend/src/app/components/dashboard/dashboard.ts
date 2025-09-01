@@ -105,6 +105,17 @@ export class Dashboard implements OnInit, OnDestroy {
     { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
     { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
     { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱' },
+    { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
+    { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
+    { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
+    { code: 'HUF', name: 'Florín Húngaro', flag: '🇭🇺' },
+    { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
+    { code: 'ILS', name: 'Shekel Israelí', flag: '🇮🇱' },
+    { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
+    { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
+    { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
+    { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
+    { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
   ];
 
   constructor(
@@ -214,8 +225,8 @@ export class Dashboard implements OnInit, OnDestroy {
               trendStatus: rateData.trendStatus,
             };
           })
-          .filter(Boolean)
-          .slice(0, 12); // Limitar para rendimiento
+          .filter(Boolean);
+        // ✅ Sin límite - mostrar todas las disponibles (ordenadas por popularidad)
 
         this.ultimaActualizacion = new Date().toLocaleTimeString();
         console.log(
@@ -372,6 +383,8 @@ export class Dashboard implements OnInit, OnDestroy {
     this.showCurrencyDetail = false;
     this.selectedCurrency = null;
     this.selectedRate = null;
+    this.showPremiumModal = false;
+    this.premiumCurrency = null;
     document.body.style.overflow = 'auto';
   }
 

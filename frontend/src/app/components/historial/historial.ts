@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { MaterialModule } from '../../shared/material.module'; // ✅ USAR MaterialModule
+import { MaterialModule } from '../../shared/material.module';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth';
@@ -19,380 +19,252 @@ import {
   imports: [CommonModule, ReactiveFormsModule, RouterModule, MaterialModule],
   template: `
     <div class="historial-container">
-      <div class="historial-header">
-        <h1><mat-icon>history</mat-icon> Historial de Conversiones</h1>
-        <p>Todas tus conversiones de divisas en un solo lugar</p>
-      </div>
+      <div class="content-wrapper">
+        <div class="historial-header">
+          <h1><mat-icon>history</mat-icon> Historial de Conversiones</h1>
+          <p>Todas tus conversiones de divisas en un solo lugar</p>
+        </div>
 
-      <!-- Filtros -->
-      <mat-card class="filters-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>filter_list</mat-icon>
-            Filtros
-          </mat-card-title>
-          <div class="spacer"></div>
-          <button
-            mat-button
-            color="warn"
-            (click)="clearAllHistory()"
-            [disabled]="loading || conversions.length === 0"
-          >
-            <mat-icon>delete_sweep</mat-icon>
-            Limpiar Todo
-          </button>
-        </mat-card-header>
-
-        <mat-card-content>
-          <form [formGroup]="filtersForm" class="filters-form">
-            <div class="filters-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Divisa origen</mat-label>
-                <mat-select
-                  formControlName="from"
-                  (selectionChange)="onFromFilterChange()"
-                >
-                  <mat-option value="">Todas</mat-option>
-                  <mat-option
-                    *ngFor="let currency of getFilteredFromCurrencies()"
-                    [value]="currency.code"
-                  >
-                    {{ currency.flag }} {{ currency.code }} -
-                    {{ currency.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Divisa destino</mat-label>
-                <mat-select
-                  formControlName="to"
-                  (selectionChange)="onToFilterChange()"
-                >
-                  <mat-option value="">Todas</mat-option>
-                  <mat-option
-                    *ngFor="let currency of getFilteredToCurrencies()"
-                    [value]="currency.code"
-                  >
-                    {{ currency.flag }} {{ currency.code }} -
-                    {{ currency.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Cantidad mínima</mat-label>
-                <input
-                  matInput
-                  type="number"
-                  formControlName="minAmount"
-                  min="0"
-                />
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Cantidad máxima</mat-label>
-                <input
-                  matInput
-                  type="number"
-                  formControlName="maxAmount"
-                  min="0"
-                />
-              </mat-form-field>
-            </div>
-
-            <div class="filters-actions">
-              <button
-                mat-raised-button
-                color="primary"
-                (click)="applyFilters()"
-                [disabled]="loading"
-              >
-                <mat-icon>search</mat-icon>
-                Aplicar Filtros
-              </button>
-              <button mat-button (click)="clearFilters()" [disabled]="loading">
-                <mat-icon>clear</mat-icon>
-                Limpiar Filtros
-              </button>
-            </div>
-          </form>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Loading -->
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner></mat-spinner>
-        <p>Cargando historial...</p>
-      </div>
-
-      <!-- Sin datos -->
-      <mat-card
-        *ngIf="!loading && conversions.length === 0"
-        class="empty-state"
-      >
-        <mat-card-content>
-          <div class="empty-content">
-            <mat-icon class="empty-icon">history</mat-icon>
-            <h2>No hay conversiones</h2>
-            <p>
-              Aún no has realizado ninguna conversión. ¡Empieza a convertir
-              divisas!
-            </p>
-            <button mat-raised-button color="primary" routerLink="/dashboard">
-              <mat-icon>currency_exchange</mat-icon>
-              Ir al Conversor
+        <!-- Filtros -->
+        <mat-card class="filters-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>filter_list</mat-icon>
+              Filtros de Búsqueda
+            </mat-card-title>
+            <div class="spacer"></div>
+            <button
+              mat-button
+              color="warn"
+              (click)="clearAllHistory()"
+              [disabled]="loading || conversions.length === 0"
+            >
+              <mat-icon>delete_sweep</mat-icon>
+              Limpiar Todo
             </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
+          </mat-card-header>
 
-      <!-- Tabla de historial -->
-      <mat-card
-        *ngIf="!loading && conversions.length > 0"
-        class="history-table-card"
-      >
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>list</mat-icon>
-            Conversiones ({{ pagination.total }} total)
-          </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="table-container">
-            <table mat-table [dataSource]="conversions" class="history-table">
-              <!-- Fecha -->
-              <ng-container matColumnDef="date">
-                <th mat-header-cell *matHeaderCellDef>Fecha</th>
-                <td mat-cell *matCellDef="let conversion">
-                  <div class="date-cell">
-                    <span class="date">{{
-                      formatDate(conversion.createdAt)
-                    }}</span>
-                    <span class="time">{{
-                      formatTime(conversion.createdAt)
-                    }}</span>
-                  </div>
-                </td>
-              </ng-container>
-
-              <!-- Conversión -->
-              <ng-container matColumnDef="conversion">
-                <th mat-header-cell *matHeaderCellDef>Conversión</th>
-                <td mat-cell *matCellDef="let conversion">
-                  <div class="conversion-cell">
-                    <span class="conversion-text">
-                      {{ conversion.amount | number : '1.2-2' }}
-                      {{ conversion.from }}
-                      <mat-icon class="arrow-icon">arrow_forward</mat-icon>
-                      {{ conversion.result | number : '1.2-2' }}
-                      {{ conversion.to }}
-                    </span>
-                    <span class="rate"
-                      >Tasa: {{ conversion.rate | number : '1.4-4' }}</span
+          <mat-card-content>
+            <form [formGroup]="filtersForm" class="filters-form">
+              <div class="filters-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Divisa origen</mat-label>
+                  <mat-select
+                    formControlName="from"
+                    (selectionChange)="onFromFilterChange()"
+                  >
+                    <mat-option value="">Todas las divisas</mat-option>
+                    <mat-option
+                      *ngFor="let currency of getFilteredFromCurrencies()"
+                      [value]="currency.code"
                     >
-                  </div>
-                </td>
-              </ng-container>
+                      {{ currency.flag }} {{ currency.code }} -
+                      {{ currency.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>currency_exchange</mat-icon>
+                </mat-form-field>
 
-              <!-- Acciones -->
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let conversion">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="deleteConversion(conversion._id)"
-                    [disabled]="loading"
-                    matTooltip="Eliminar conversión"
+                <mat-form-field appearance="outline">
+                  <mat-label>Divisa destino</mat-label>
+                  <mat-select
+                    formControlName="to"
+                    (selectionChange)="onToFilterChange()"
                   >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                  <button
-                    mat-icon-button
-                    color="primary"
-                    (click)="repeatConversion(conversion)"
-                    matTooltip="Repetir conversión"
-                  >
-                    <mat-icon>refresh</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
+                    <mat-option value="">Todas las divisas</mat-option>
+                    <mat-option
+                      *ngFor="let currency of getFilteredToCurrencies()"
+                      [value]="currency.code"
+                    >
+                      {{ currency.flag }} {{ currency.code }} -
+                      {{ currency.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>currency_exchange</mat-icon>
+                </mat-form-field>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
-          </div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Cantidad mínima</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="minAmount"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                  <mat-icon matSuffix>trending_up</mat-icon>
+                </mat-form-field>
 
-          <!-- Paginación -->
-          <mat-paginator
-            [length]="pagination.total"
-            [pageSize]="pagination.limit"
-            [pageIndex]="pagination.page - 1"
-            [pageSizeOptions]="[5, 10, 20, 50]"
-            (page)="onPageChange($event)"
-            showFirstLastButtons
-          >
-          </mat-paginator>
-        </mat-card-content>
-      </mat-card>
+                <mat-form-field appearance="outline">
+                  <mat-label>Cantidad máxima</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="maxAmount"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                  <mat-icon matSuffix>trending_down</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <div class="filters-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="applyFilters()"
+                  [disabled]="loading"
+                >
+                  <mat-icon>search</mat-icon>
+                  Aplicar Filtros
+                </button>
+                <button
+                  mat-button
+                  (click)="clearFilters()"
+                  [disabled]="loading"
+                >
+                  <mat-icon>clear</mat-icon>
+                  Limpiar Filtros
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Loading -->
+        <div *ngIf="loading" class="loading-container">
+          <mat-spinner diameter="60"></mat-spinner>
+          <p>Cargando historial de conversiones...</p>
+        </div>
+
+        <!-- Sin datos -->
+        <mat-card
+          *ngIf="!loading && conversions.length === 0"
+          class="empty-state"
+        >
+          <mat-card-content>
+            <div class="empty-content">
+              <mat-icon class="empty-icon">history</mat-icon>
+              <h2>No hay conversiones registradas</h2>
+              <p>
+                Aún no has realizado ninguna conversión de divisas.<br />
+                ¡Empieza a convertir para ver tu historial aquí!
+              </p>
+              <button mat-raised-button color="primary" routerLink="/dashboard">
+                <mat-icon>currency_exchange</mat-icon>
+                Ir al Conversor
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Tabla de historial -->
+        <mat-card
+          *ngIf="!loading && conversions.length > 0"
+          class="history-table-card"
+        >
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>list_alt</mat-icon>
+              Historial de Conversiones ({{ pagination.total }} total)
+            </mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="table-container">
+              <table mat-table [dataSource]="conversions" class="history-table">
+                <!-- Fecha -->
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <mat-icon>schedule</mat-icon> Fecha y Hora
+                  </th>
+                  <td mat-cell *matCellDef="let conversion">
+                    <div class="date-cell">
+                      <span class="date">{{
+                        formatDate(conversion.createdAt)
+                      }}</span>
+                      <span class="time">{{
+                        formatTime(conversion.createdAt)
+                      }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Conversión -->
+                <ng-container matColumnDef="conversion">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <mat-icon>swap_horiz</mat-icon> Conversión Realizada
+                  </th>
+                  <td mat-cell *matCellDef="let conversion">
+                    <div class="conversion-cell">
+                      <span class="conversion-text">
+                        {{ conversion.amount | number : '1.2-2' }}
+                        {{ conversion.from }}
+                        <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                        {{ conversion.result | number : '1.2-2' }}
+                        {{ conversion.to }}
+                      </span>
+                      <span class="rate">
+                        Tasa aplicada: {{ conversion.rate | number : '1.4-4' }}
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <mat-icon>settings</mat-icon> Acciones
+                  </th>
+                  <td mat-cell *matCellDef="let conversion">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="repeatConversion(conversion)"
+                      matTooltip="Repetir esta conversión"
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon>refresh</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="deleteConversion(conversion._id)"
+                      [disabled]="loading"
+                      matTooltip="Eliminar conversión"
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                ></tr>
+              </table>
+            </div>
+
+            <!-- Paginación -->
+            <mat-paginator
+              [length]="pagination.total"
+              [pageSize]="pagination.limit"
+              [pageIndex]="pagination.page - 1"
+              [pageSizeOptions]="[5, 10, 20, 50]"
+              (page)="onPageChange($event)"
+              showFirstLastButtons
+            >
+            </mat-paginator>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   `,
-  styles: [
-    `
-      .historial-container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      .historial-header {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .historial-header h1 {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin: 0 0 10px 0;
-        color: #333;
-      }
-
-      .historial-header p {
-        color: #666;
-        margin: 0;
-      }
-
-      .filters-card {
-        margin-bottom: 20px;
-      }
-
-      .filters-form {
-        margin-top: 16px;
-      }
-
-      .filters-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 16px;
-        margin-bottom: 16px;
-      }
-
-      .filters-actions {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-      }
-
-      .spacer {
-        flex: 1 1 auto;
-      }
-
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px;
-        gap: 16px;
-      }
-
-      .empty-state {
-        margin: 20px 0;
-      }
-
-      .empty-content {
-        text-align: center;
-        padding: 40px 20px;
-      }
-
-      .empty-icon {
-        font-size: 64px;
-        width: 64px;
-        height: 64px;
-        color: #ccc;
-        margin-bottom: 16px;
-      }
-
-      .empty-content h2 {
-        color: #666;
-        margin: 16px 0 8px 0;
-      }
-
-      .empty-content p {
-        color: #999;
-        margin-bottom: 24px;
-      }
-
-      .history-table-card {
-        margin: 20px 0;
-      }
-
-      .table-container {
-        overflow-x: auto;
-      }
-
-      .history-table {
-        width: 100%;
-      }
-
-      .date-cell {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .date {
-        font-weight: 500;
-        color: #333;
-      }
-
-      .time {
-        font-size: 12px;
-        color: #666;
-      }
-
-      .conversion-cell {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .conversion-text {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-      }
-
-      .arrow-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-        color: #666;
-      }
-
-      .rate {
-        font-size: 12px;
-        color: #666;
-      }
-
-      @media (max-width: 768px) {
-        .historial-container {
-          padding: 10px;
-        }
-
-        .filters-row {
-          grid-template-columns: 1fr;
-        }
-
-        .filters-actions {
-          justify-content: center;
-        }
-      }
-    `,
-  ],
+  styleUrl: './historial.scss', // ✅ USAR ARCHIVO SCSS EXTERNO
 })
 export class Historial implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -409,6 +281,7 @@ export class Historial implements OnInit, OnDestroy {
     count: 0,
   };
 
+  // ✅ MISMA LISTA QUE EL DASHBOARD (31 monedas)
   availableCurrencies = [
     { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
     { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
@@ -430,6 +303,18 @@ export class Historial implements OnInit, OnDestroy {
     { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
     { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
     { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱' },
+    // ✅ NUEVAS MONEDAS:
+    { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
+    { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
+    { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
+    { code: 'HUF', name: 'Florín Húngaro', flag: '🇭🇺' },
+    { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
+    { code: 'ILS', name: 'Shekel Israelí', flag: '🇮🇱' },
+    { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
+    { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
+    { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
+    { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
+    { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
   ];
 
   constructor(
@@ -447,25 +332,8 @@ export class Historial implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(
-      '🔍 DEBUG - authService.isAuthenticated():',
-      this.authService.isAuthenticated()
-    );
-
-    // ✅ AÑADIR ESTOS LOGS ADICIONALES:
-    console.log(
-      '🔍 Token en localStorage:',
-      localStorage.getItem('auth_token')
-    );
-    console.log(
-      '🔍 authService.isTokenValid():',
-      this.authService.isTokenValid()
-    );
-    console.log(
-      '🔍 authService.getCurrentUser():',
-      this.authService.getCurrentUser()
-    );
-
+    console.log('🔍 Iniciando componente Historial');
+    console.log('🔍 Usuario autenticado:', this.authService.isAuthenticated());
     this.loadHistory();
   }
 
@@ -503,27 +371,42 @@ export class Historial implements OnInit, OnDestroy {
         error: (error) => {
           console.error('❌ Error cargando historial:', error);
           this.loading = false;
+
+          this.snackBar.open(
+            'Error al cargar el historial. Inténtalo de nuevo.',
+            'Cerrar',
+            { duration: 4000, panelClass: ['error-snackbar'] }
+          );
         },
       });
   }
 
   applyFilters(): void {
     const filters = this.filtersForm.value;
-    // Limpiar campos vacíos
     Object.keys(filters).forEach((key) => {
       if (filters[key] === '' || filters[key] === null) {
         delete filters[key];
       }
     });
 
-    this.pagination.page = 1; // Reset a primera página
+    this.pagination.page = 1;
     this.loadHistory(filters);
+
+    this.snackBar.open('Filtros aplicados correctamente', 'Cerrar', {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
+    });
   }
 
   clearFilters(): void {
     this.filtersForm.reset();
     this.pagination.page = 1;
     this.loadHistory();
+
+    this.snackBar.open('Filtros limpiados', 'Cerrar', {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
+    });
   }
 
   onPageChange(event: any): void {
@@ -543,10 +426,20 @@ export class Historial implements OnInit, OnDestroy {
           next: () => {
             console.log('🗑️ Conversión eliminada');
             this.loadHistory(this.filtersForm.value);
+
+            this.snackBar.open('Conversión eliminada correctamente', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            });
           },
           error: (error) => {
             console.error('❌ Error eliminando conversión:', error);
             this.loading = false;
+
+            this.snackBar.open('Error al eliminar la conversión', 'Cerrar', {
+              duration: 4000,
+              panelClass: ['error-snackbar'],
+            });
           },
         });
     }
@@ -570,23 +463,50 @@ export class Historial implements OnInit, OnDestroy {
             this.pagination.total = 0;
             this.pagination.count = 0;
             this.loading = false;
+
+            this.snackBar.open('Historial completamente limpiado', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            });
           },
           error: (error) => {
             console.error('❌ Error eliminando historial:', error);
             this.loading = false;
+
+            this.snackBar.open('Error al limpiar el historial', 'Cerrar', {
+              duration: 4000,
+              panelClass: ['error-snackbar'],
+            });
           },
         });
     }
   }
 
   repeatConversion(conversion: ConversionHistory): void {
-    // Navegar al dashboard con los valores precargados
     console.log('🔄 Repitiendo conversión:', conversion);
-    // Implementar navegación con parámetros
+
+    this.snackBar.open(
+      `Redirígiendo al conversor: ${conversion.amount} ${conversion.from} → ${conversion.to}`,
+      'Cerrar',
+      { duration: 3000, panelClass: ['success-snackbar'] }
+    );
+
+    // TODO: Implementar navegación con parámetros al dashboard
+    // this.router.navigate(['/dashboard'], {
+    //   queryParams: {
+    //     from: conversion.from,
+    //     to: conversion.to,
+    //     amount: conversion.amount
+    //   }
+    // });
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('es-ES');
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   }
 
   formatTime(dateString: string): string {
@@ -596,7 +516,6 @@ export class Historial implements OnInit, OnDestroy {
     });
   }
 
-  // ✅ FILTRAR divisas para origen en filtros
   getFilteredFromCurrencies() {
     const selectedTo = this.filtersForm.get('to')?.value;
     return this.availableCurrencies.filter(
@@ -604,7 +523,6 @@ export class Historial implements OnInit, OnDestroy {
     );
   }
 
-  // ✅ FILTRAR divisas para destino en filtros
   getFilteredToCurrencies() {
     const selectedFrom = this.filtersForm.get('from')?.value;
     return this.availableCurrencies.filter(
@@ -612,23 +530,19 @@ export class Historial implements OnInit, OnDestroy {
     );
   }
 
-  // ✅ EVENTO cuando cambia divisa origen en filtros
   onFromFilterChange(): void {
     const fromValue = this.filtersForm.get('from')?.value;
     const toValue = this.filtersForm.get('to')?.value;
 
-    // Si ambas son iguales, resetear destino
     if (fromValue && fromValue === toValue) {
       this.filtersForm.patchValue({ to: '' });
     }
   }
 
-  // ✅ EVENTO cuando cambia divisa destino en filtros
   onToFilterChange(): void {
     const fromValue = this.filtersForm.get('from')?.value;
     const toValue = this.filtersForm.get('to')?.value;
 
-    // Si ambas son iguales, resetear origen
     if (toValue && toValue === fromValue) {
       this.filtersForm.patchValue({ from: '' });
     }

@@ -6,326 +6,225 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { MaterialModule } from '../../shared/material.module';
 
 import { AuthService, RegisterRequest } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+  ],
   template: `
     <div class="register-container">
-      <div class="register-card">
-        <div class="register-header">
+      <mat-card class="register-card">
+        <mat-card-header class="register-header">
           <div class="logo">💱</div>
-          <h1>DivisasPro</h1>
-          <p>Crea tu cuenta gratuita</p>
-        </div>
+          <mat-card-title>DivisasPro</mat-card-title>
+          <mat-card-subtitle>Crea tu cuenta gratuita</mat-card-subtitle>
+        </mat-card-header>
 
-        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-          <div class="form-field">
-            <label>Nombre completo</label>
-            <input
-              type="text"
-              formControlName="name"
-              placeholder="Carlos Rufián"
-              [class.error]="
-                registerForm.get('name')?.invalid &&
-                registerForm.get('name')?.touched
-              "
-            />
-            <div
-              class="error-text"
-              *ngIf="
-                registerForm.get('name')?.invalid &&
-                registerForm.get('name')?.touched
-              "
-            >
-              El nombre es requerido (mínimo 2 caracteres)
+        <mat-card-content>
+          <!-- Progress indicator -->
+          <div class="progress-container" *ngIf="loading">
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="getFormProgress()"
+              ></div>
+            </div>
+            <div class="progress-text">
+              Completado: {{ getFormProgress() }}%
             </div>
           </div>
 
-          <div class="form-field">
-            <label>Nombre de usuario</label>
-            <input
-              type="text"
-              formControlName="username"
-              placeholder="usuario123"
-              [class.error]="
-                registerForm.get('username')?.invalid &&
-                registerForm.get('username')?.touched
-              "
-            />
-            <div
-              class="error-text"
-              *ngIf="
-                registerForm.get('username')?.invalid &&
-                registerForm.get('username')?.touched
-              "
-            >
-              <span *ngIf="registerForm.get('username')?.hasError('required')"
-                >El nombre de usuario es requerido</span
+          <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+            <!-- Nombre completo -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nombre completo</mat-label>
+              <input
+                matInput
+                formControlName="name"
+                placeholder="Carlos Rufián"
+              />
+              <mat-icon matSuffix [class]="getFieldClass('name')"
+                >person</mat-icon
               >
-              <span *ngIf="registerForm.get('username')?.hasError('minlength')"
-                >Mínimo 3 caracteres</span
+              <mat-error *ngIf="registerForm.get('name')?.hasError('required')">
+                El nombre es requerido
+              </mat-error>
+              <mat-error
+                *ngIf="registerForm.get('name')?.hasError('minlength')"
               >
-              <span *ngIf="registerForm.get('username')?.hasError('maxlength')"
-                >Máximo 20 caracteres</span
-              >
-            </div>
-          </div>
+                Mínimo 2 caracteres
+              </mat-error>
+            </mat-form-field>
 
-          <div class="form-field">
-            <label>Email</label>
-            <input
-              type="email"
-              formControlName="email"
-              placeholder="tu@email.com"
-              [class.error]="
-                registerForm.get('email')?.invalid &&
-                registerForm.get('email')?.touched
-              "
-            />
-            <div
-              class="error-text"
-              *ngIf="
-                registerForm.get('email')?.invalid &&
-                registerForm.get('email')?.touched
-              "
-            >
-              <span *ngIf="registerForm.get('email')?.hasError('required')"
-                >El email es requerido</span
+            <!-- Nombre de usuario -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nombre de usuario</mat-label>
+              <input
+                matInput
+                formControlName="username"
+                placeholder="usuario123"
+              />
+              <mat-icon matSuffix [class]="getFieldClass('username')"
+                >account_circle</mat-icon
               >
-              <span *ngIf="registerForm.get('email')?.hasError('email')"
-                >Formato de email inválido</span
+              <mat-error
+                *ngIf="registerForm.get('username')?.hasError('required')"
               >
-            </div>
-          </div>
+                El nombre de usuario es requerido
+              </mat-error>
+              <mat-error
+                *ngIf="registerForm.get('username')?.hasError('minlength')"
+              >
+                Mínimo 3 caracteres
+              </mat-error>
+              <mat-error
+                *ngIf="registerForm.get('username')?.hasError('maxlength')"
+              >
+                Máximo 20 caracteres
+              </mat-error>
+            </mat-form-field>
 
-          <div class="form-field">
-            <label>Contraseña</label>
-            <input
-              [type]="hidePassword ? 'password' : 'text'"
-              formControlName="password"
-              placeholder="Mínimo 6 caracteres"
-              [class.error]="
-                registerForm.get('password')?.invalid &&
-                registerForm.get('password')?.touched
-              "
-            />
+            <!-- Email -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="tu@email.com"
+              />
+              <mat-icon matSuffix [class]="getFieldClass('email')"
+                >email</mat-icon
+              >
+              <mat-error
+                *ngIf="registerForm.get('email')?.hasError('required')"
+              >
+                El email es requerido
+              </mat-error>
+              <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                Formato de email inválido
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Contraseña -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Mínimo 6 caracteres"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hidePassword = !hidePassword"
+                type="button"
+              >
+                <mat-icon>{{
+                  hidePassword ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+              </button>
+              <mat-error
+                *ngIf="registerForm.get('password')?.hasError('required')"
+              >
+                La contraseña es requerida
+              </mat-error>
+              <mat-error
+                *ngIf="registerForm.get('password')?.hasError('minlength')"
+              >
+                Mínimo 6 caracteres
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Confirmar contraseña -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirmar contraseña</mat-label>
+              <input
+                matInput
+                [type]="hideConfirmPassword ? 'password' : 'text'"
+                formControlName="confirmPassword"
+                placeholder="Repite tu contraseña"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hideConfirmPassword = !hideConfirmPassword"
+                type="button"
+              >
+                <mat-icon>{{
+                  hideConfirmPassword ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+              </button>
+              <mat-error
+                *ngIf="
+                  registerForm.get('confirmPassword')?.hasError('required')
+                "
+              >
+                Confirma tu contraseña
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  registerForm.get('confirmPassword')?.hasError('mismatch')
+                "
+              >
+                Las contraseñas no coinciden
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Botón de registro -->
             <button
-              type="button"
-              class="toggle-password"
-              (click)="hidePassword = !hidePassword"
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="full-width register-button"
+              [disabled]="registerForm.invalid || loading"
             >
-              {{ hidePassword ? '👁️' : '🙈' }}
+              <span *ngIf="!loading">Crear Cuenta</span>
+              <span *ngIf="loading" class="loading-content">
+                <mat-progress-spinner
+                  diameter="20"
+                  mode="indeterminate"
+                ></mat-progress-spinner>
+                Creando cuenta...
+              </span>
             </button>
-            <div
-              class="error-text"
-              *ngIf="
-                registerForm.get('password')?.invalid &&
-                registerForm.get('password')?.touched
-              "
-            >
-              La contraseña debe tener al menos 6 caracteres
-            </div>
-          </div>
 
-          <div class="form-field">
-            <label>Confirmar contraseña</label>
-            <input
-              [type]="hideConfirmPassword ? 'password' : 'text'"
-              formControlName="confirmPassword"
-              placeholder="Repite tu contraseña"
-              [class.error]="
-                registerForm.get('confirmPassword')?.invalid &&
-                registerForm.get('confirmPassword')?.touched
-              "
-            />
+            <!-- Botón para ir al login -->
             <button
+              mat-stroked-button
               type="button"
-              class="toggle-password"
-              (click)="hideConfirmPassword = !hideConfirmPassword"
+              class="full-width secondary-button"
+              (click)="goToLogin()"
             >
-              {{ hideConfirmPassword ? '👁️' : '🙈' }}
+              <mat-icon>arrow_back</mat-icon>
+              ¿Ya tienes cuenta? Inicia sesión
             </button>
-            <div
-              class="error-text"
-              *ngIf="
-                registerForm.get('confirmPassword')?.invalid &&
-                registerForm.get('confirmPassword')?.touched
-              "
-            >
-              Las contraseñas no coinciden
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            class="register-button"
-            [disabled]="registerForm.invalid || loading"
-          >
-            {{ loading ? 'Creando cuenta...' : 'Crear Cuenta' }}
-          </button>
-
-          <div class="error-message" *ngIf="errorMessage">
-            {{ errorMessage }}
-          </div>
-
-          <div class="login-link">
-            ¿Ya tienes cuenta?
-            <button type="button" class="link-button" (click)="goToLogin()">
-              Inicia sesión aquí
-            </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
-  styles: [
-    `
-      .register-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px;
-      }
-
-      .register-card {
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 450px;
-      }
-
-      .register-header {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .logo {
-        font-size: 48px;
-        margin-bottom: 10px;
-      }
-
-      h1 {
-        color: #333;
-        margin: 10px 0;
-        font-size: 24px;
-      }
-
-      p {
-        color: #666;
-        margin: 0 0 20px 0;
-      }
-
-      .form-field {
-        margin-bottom: 20px;
-        position: relative;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 5px;
-        color: #333;
-        font-weight: 500;
-        font-size: 14px;
-      }
-
-      input {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #ddd;
-        border-radius: 6px;
-        font-size: 16px;
-        transition: border-color 0.3s;
-        box-sizing: border-box;
-      }
-
-      input:focus {
-        outline: none;
-        border-color: #667eea;
-      }
-
-      input.error {
-        border-color: #f44336;
-      }
-
-      .error-text {
-        color: #f44336;
-        font-size: 12px;
-        margin-top: 4px;
-      }
-
-      .toggle-password {
-        position: absolute;
-        right: 12px;
-        top: 35px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      .register-button {
-        width: 100%;
-        padding: 12px;
-        background: #667eea;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        margin-bottom: 15px;
-      }
-
-      .register-button:hover:not(:disabled) {
-        background: #5a6fd8;
-      }
-
-      .register-button:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-      }
-
-      .error-message {
-        color: #f44336;
-        text-align: center;
-        margin-bottom: 15px;
-        padding: 10px;
-        background: #ffebee;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-
-      .login-link {
-        text-align: center;
-        color: #666;
-        font-size: 14px;
-      }
-
-      .link-button {
-        background: none;
-        border: none;
-        color: #667eea;
-        cursor: pointer;
-        text-decoration: underline;
-        font-size: 14px;
-      }
-
-      .link-button:hover {
-        color: #5a6fd8;
-      }
-    `,
-  ],
+  styleUrl: './register.scss', // ✅ USAR ARCHIVO SCSS EXTERNO
 })
 export class Register {
   registerForm: FormGroup;
@@ -337,7 +236,8 @@ export class Register {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar // ✅ AÑADIR SNACKBAR
   ) {
     this.registerForm = this.fb.group(
       {
@@ -349,7 +249,7 @@ export class Register {
             Validators.minLength(3),
             Validators.maxLength(20),
           ],
-        ], // ✅ NUEVO
+        ],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
@@ -382,15 +282,31 @@ export class Register {
     return null;
   }
 
+  // ✅ NUEVO: Calcular progreso del formulario
+  getFormProgress(): number {
+    const fields = ['name', 'username', 'email', 'password', 'confirmPassword'];
+    const validFields = fields.filter(
+      (field) => this.registerForm.get(field)?.valid
+    ).length;
+    return Math.round((validFields / fields.length) * 100);
+  }
+
+  // ✅ NUEVO: Clase para iconos según validación
+  getFieldClass(fieldName: string): string {
+    const field = this.registerForm.get(fieldName);
+    if (!field || !field.touched) return '';
+    return field.valid ? 'field-valid' : 'field-invalid';
+  }
+
   onRegister(): void {
     if (this.registerForm.valid && !this.loading) {
       this.loading = true;
       this.errorMessage = '';
 
-      const { name, username, email, password } = this.registerForm.value; // ✅ AÑADIR username
-      const registerData: RegisterRequest = { name, username, email, password }; // ✅ INCLUIR username
+      const { name, username, email, password } = this.registerForm.value;
+      const registerData: RegisterRequest = { name, username, email, password };
 
-      console.log('📝 Registrando usuario:', { name, username, email }); // ✅ MOSTRAR username
+      console.log('📝 Registrando usuario:', { name, username, email });
 
       this.authService.register(registerData).subscribe({
         next: (response: any) => {
@@ -400,9 +316,16 @@ export class Register {
           const userName = response.user?.name || response.name || name;
           console.log(`🎉 Registro exitoso para: ${userName}`);
 
-          alert(
-            `¡Bienvenido ${userName}! Tu cuenta ha sido creada exitosamente.`
+          // ✅ USAR SNACKBAR EN LUGAR DE ALERT
+          this.snackBar.open(
+            `¡Bienvenido ${userName}! Cuenta creada exitosamente.`,
+            'Cerrar',
+            {
+              duration: 4000,
+              panelClass: ['success-snackbar'],
+            }
           );
+
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
@@ -411,6 +334,12 @@ export class Register {
           this.errorMessage =
             error.error?.message ||
             'Error al crear la cuenta. Inténtalo de nuevo.';
+
+          // ✅ USAR SNACKBAR PARA ERRORES
+          this.snackBar.open(this.errorMessage, 'Cerrar', {
+            duration: 5000,
+            panelClass: ['error-snackbar'],
+          });
         },
       });
     }

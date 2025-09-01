@@ -326,10 +326,32 @@ const getTrendingRates = async (req, res) => {
 
     console.log(`📈 Obteniendo tendencias: base ${base}, período ${days} días`);
 
-    // Lista de monedas principales si no se especifica
-    const targetCurrencies = currencies
-      ? currencies.split(',')
-      : ['EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'BRL', 'MXN', 'INR'];
+    // 🆕 OBTENER TODAS LAS MONEDAS DISPONIBLES AUTOMÁTICAMENTE
+    let targetCurrencies;
+
+    if (currencies) {
+      // Si se especifican monedas, usarlas
+      targetCurrencies = currencies.split(',');
+    } else {
+      // 🔥 OBTENER AUTOMÁTICAMENTE TODAS LAS MONEDAS SOPORTADAS
+      try {
+        const currenciesResponse = await axios.get('https://api.frankfurter.app/currencies');
+        const availableCurrencies = Object.keys(currenciesResponse.data);
+
+        // Filtrar la moneda base para evitar duplicados
+        targetCurrencies = availableCurrencies.filter(curr => curr !== base);
+
+        console.log(`✅ Obtenidas ${targetCurrencies.length} monedas automáticamente`);
+      } catch (error) {
+        console.warn('⚠️ No se pudieron obtener monedas automáticamente, usando lista predeterminada');
+        // Fallback robusto
+        targetCurrencies = [
+          'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'BRL', 'MXN', 'INR',
+          'KRW', 'SEK', 'NOK', 'HKD', 'SGD', 'NZD', 'ZAR', 'TRY', 'PLN', 'CZK',
+          'DKK', 'HUF', 'ILS', 'ISK', 'PHP', 'RON', 'RUB', 'THB', 'BGN', 'HRK'
+        ].filter(curr => curr !== base);
+      }
+    }
 
     // Obtener tasas actuales
     const currentResponse = await axios.get(
@@ -358,7 +380,7 @@ const getTrendingRates = async (req, res) => {
       console.warn('⚠️ No se pudieron obtener datos históricos');
     }
 
-    // Procesar tendencias
+    // Procesar tendencias para TODAS las monedas disponibles
     const ratesWithTrends = [];
     const currentRates = currentResponse.data.rates;
 
@@ -388,6 +410,19 @@ const getTrendingRates = async (req, res) => {
       }
     }
 
+    // 🎯 ORDENAR POR RELEVANCIA (mayor volumen/popularidad primero)
+    const popularCurrencies = ['EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'BRL', 'MXN', 'INR'];
+    ratesWithTrends.sort((a, b) => {
+      const aIndex = popularCurrencies.indexOf(a.currency);
+      const bIndex = popularCurrencies.indexOf(b.currency);
+
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+
+      return a.currency.localeCompare(b.currency);
+    });
+
     console.log(`✅ Tendencias calculadas para ${ratesWithTrends.length} monedas`);
 
     res.json({
@@ -395,7 +430,7 @@ const getTrendingRates = async (req, res) => {
       base,
       period: `${days} días`,
       date: currentResponse.data.date,
-      rates: ratesWithTrends,
+      rates: ratesWithTrends, // ✅ TODAS LAS MONEDAS, SIN LÍMITES
       summary: {
         total: ratesWithTrends.length,
         trending_up: ratesWithTrends.filter(r => r.trendStatus === 'up').length,

@@ -10,6 +10,7 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth';
 import { MaterialModule } from '../../shared/material.module';
 
@@ -128,7 +129,7 @@ interface MultipleConversionResponse {
 
       <!-- Loading -->
       <div *ngIf="loading" class="loading-container">
-        <mat-spinner></mat-spinner>
+        <mat-spinner diameter="60"></mat-spinner>
         <p>Calculando conversiones múltiples...</p>
       </div>
 
@@ -270,257 +271,17 @@ interface MultipleConversionResponse {
       </mat-card>
     </div>
   `,
-  styles: [
-    `
-      .calculator-container {
-        padding: 20px;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .calculator-header {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .premium-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(45deg, #ffd700, #ffed4e);
-        color: #333;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: 600;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-      }
-
-      .calculator-header h1 {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin: 0 0 8px 0;
-        color: #333;
-        font-size: 2.2rem;
-      }
-
-      .calculator-form-card {
-        margin-bottom: 24px;
-      }
-
-      .calculator-form {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-
-      .currencies-selector {
-        width: 100%;
-      }
-
-      .form-actions {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        margin-top: 16px;
-      }
-
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px;
-        gap: 16px;
-      }
-
-      .results-container {
-        margin-top: 24px;
-      }
-
-      .results-header-card {
-        margin-bottom: 24px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-      }
-
-      .results-summary h2 {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 0 0 16px 0;
-      }
-
-      .base-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 1.1rem;
-      }
-
-      .base-amount {
-        font-size: 1.4rem;
-        font-weight: 600;
-      }
-
-      .base-currency {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 4px 12px;
-        border-radius: 16px;
-        font-weight: 500;
-      }
-
-      .conversions-count {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 4px 12px;
-        border-radius: 16px;
-      }
-
-      .results-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
-      }
-
-      .conversion-card {
-        position: relative;
-        transition: transform 0.2s, box-shadow 0.2s;
-        border-left: 4px solid #ddd;
-      }
-
-      .conversion-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      }
-
-      .conversion-card.positive {
-        border-left-color: #4caf50;
-      }
-
-      .conversion-card.negative {
-        border-left-color: #f44336;
-      }
-
-      .currency-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .currency-flag {
-        font-size: 1.8rem;
-      }
-
-      .currency-info h3 {
-        margin: 0;
-        font-size: 1.2rem;
-        font-weight: 600;
-      }
-
-      .currency-info p {
-        margin: 0;
-        color: #666;
-        font-size: 0.9rem;
-      }
-
-      .conversion-result {
-        text-align: center;
-        padding: 16px 0;
-      }
-
-      .result-amount {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
-      }
-
-      .conversion-rate {
-        color: #666;
-        font-size: 0.9rem;
-      }
-
-      .rate-indicator {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-      }
-
-      .positive-icon {
-        color: #4caf50;
-      }
-      .negative-icon {
-        color: #f44336;
-      }
-      .neutral-icon {
-        color: #ff9800;
-      }
-
-      .results-actions-card {
-        background: #f5f5f5;
-      }
-
-      .results-actions {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .empty-state {
-        margin: 40px 0;
-        text-align: center;
-      }
-
-      .empty-content {
-        padding: 40px 20px;
-      }
-
-      .empty-icon {
-        font-size: 64px;
-        width: 64px;
-        height: 64px;
-        color: #ccc;
-        margin-bottom: 16px;
-      }
-
-      @media (max-width: 768px) {
-        .calculator-container {
-          padding: 10px;
-        }
-
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-
-        .results-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .form-actions,
-        .results-actions {
-          flex-direction: column;
-        }
-      }
-    `,
-  ],
+  styleUrl: './calculator.scss', // ✅ USAR ARCHIVO SCSS EXTERNO
 })
 export class Calculator implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;
 
   calculatorForm: FormGroup;
   loading = false;
   results?: MultipleConversionResponse;
 
+  // ✅ MISMA LISTA QUE OTROS COMPONENTES (31 monedas)
   availableCurrencies = [
     { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
     { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
@@ -542,6 +303,18 @@ export class Calculator implements OnInit, OnDestroy {
     { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
     { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
     { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱' },
+    // ✅ NUEVAS MONEDAS:
+    { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
+    { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
+    { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
+    { code: 'HUF', name: 'Florín Húngaro', flag: '🇭🇺' },
+    { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
+    { code: 'ILS', name: 'Shekel Israelí', flag: '🇮🇱' },
+    { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
+    { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
+    { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
+    { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
+    { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
   ];
 
   constructor(
@@ -565,7 +338,10 @@ export class Calculator implements OnInit, OnDestroy {
         .open(
           '🔐 Esta funcionalidad es exclusiva para usuarios registrados',
           'Iniciar Sesión',
-          { duration: 5000 }
+          {
+            duration: 5000,
+            panelClass: ['warning-snackbar'],
+          }
         )
         .onAction()
         .subscribe(() => {
@@ -573,6 +349,8 @@ export class Calculator implements OnInit, OnDestroy {
         });
       return;
     }
+
+    console.log('🧮 Componente Calculadora iniciado');
   }
 
   ngOnDestroy(): void {
@@ -616,7 +394,10 @@ export class Calculator implements OnInit, OnDestroy {
           this.snackBar.open(
             `✅ ${response.conversions.length} conversiones calculadas exitosamente`,
             'Cerrar',
-            { duration: 3000 }
+            {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            }
           );
         },
         error: (error) => {
@@ -626,7 +407,10 @@ export class Calculator implements OnInit, OnDestroy {
           this.snackBar.open(
             '❌ Error al calcular las conversiones múltiples',
             'Cerrar',
-            { duration: 3000 }
+            {
+              duration: 3000,
+              panelClass: ['error-snackbar'],
+            }
           );
         },
       });
@@ -638,6 +422,11 @@ export class Calculator implements OnInit, OnDestroy {
       amount: 1000,
       from: 'USD',
       targetCurrencies: ['EUR', 'GBP', 'JPY', 'CHF'],
+    });
+
+    this.snackBar.open('Formulario reiniciado', 'Cerrar', {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
     });
   }
 
@@ -662,7 +451,10 @@ export class Calculator implements OnInit, OnDestroy {
   copyToClipboard(conversion: MultipleConversion): void {
     const text = `${conversion.result.toFixed(2)} ${conversion.to}`;
     navigator.clipboard.writeText(text).then(() => {
-      this.snackBar.open(`📋 Copiado: ${text}`, 'Cerrar', { duration: 2000 });
+      this.snackBar.open(`📋 Copiado: ${text}`, 'Cerrar', {
+        duration: 2000,
+        panelClass: ['success-snackbar'],
+      });
     });
   }
 
@@ -671,7 +463,10 @@ export class Calculator implements OnInit, OnDestroy {
     this.snackBar.open(
       `⭐ Par ${conversion.from}/${conversion.to} añadido a favoritos`,
       'Cerrar',
-      { duration: 2000 }
+      {
+        duration: 2000,
+        panelClass: ['success-snackbar'],
+      }
     );
   }
 
@@ -690,7 +485,10 @@ export class Calculator implements OnInit, OnDestroy {
     this.snackBar.open(
       '📊 Funcionalidad de exportación próximamente',
       'Cerrar',
-      { duration: 2000 }
+      {
+        duration: 2000,
+        panelClass: ['warning-snackbar'],
+      }
     );
   }
 
@@ -712,6 +510,7 @@ export class Calculator implements OnInit, OnDestroy {
       navigator.clipboard.writeText(text).then(() => {
         this.snackBar.open('📋 Resultados copiados al portapapeles', 'Cerrar', {
           duration: 2000,
+          panelClass: ['success-snackbar'],
         });
       });
     }
