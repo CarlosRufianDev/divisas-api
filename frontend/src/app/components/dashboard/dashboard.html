@@ -629,4 +629,77 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL PREMIUM PARA USUARIOS NO REGISTRADOS -->
+  <div class="currency-detail-modal premium" 
+       *ngIf="showPremiumModal" 
+       (click)="onPremiumModalBackground($event)">
+    
+    <div class="modal-content simple-premium-modal" (click)="$event.stopPropagation()">
+      
+      <!-- Botón de cerrar -->
+      <button mat-icon-button (click)="closePremiumModal()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <!-- Banner principal -->
+      <div class="premium-register-banner">
+        
+        <!-- Icono del candado mejorado -->
+        <mat-icon class="premium-lock-icon">lock</mat-icon>
+        
+        <!-- Header del contenido -->
+        <div class="premium-header-content">
+          <h2>🌟 Análisis Premium de {{ premiumCurrency?.code }}</h2>
+          <p>Desbloquea análisis técnico avanzado y recomendaciones de inversión personalizadas</p>
+        </div>
+
+        <!-- Lista de características -->
+        <ul class="premium-features">
+          <li>
+            <mat-icon>trending_up</mat-icon>
+            Análisis técnico en tiempo real
+          </li>
+          <li>
+            <mat-icon>insights</mat-icon>
+            Indicadores RSI, SMA y volatilidad
+          </li>
+          <li>
+            <mat-icon>psychology</mat-icon>
+            Recomendaciones de inversión IA
+          </li>
+          <li>
+            <mat-icon>history</mat-icon>
+            Históricos de 30 días
+          </li>
+          <li>
+            <mat-icon>favorite</mat-icon>
+            Seguimiento de favoritos
+          </li>
+          <li>
+            <mat-icon>notifications</mat-icon>
+            Alertas personalizadas
+          </li>
+        </ul>
+
+        <!-- Botones de acción -->
+        <div class="premium-actions">
+          <button mat-raised-button 
+                  color="primary" 
+                  (click)="goToRegister()">
+            <mat-icon>person_add</mat-icon>
+            Crear Cuenta Gratis
+          </button>
+          
+          <button mat-stroked-button 
+                  color="primary"
+                  (click)="goToLogin()">
+            <mat-icon>login</mat-icon>
+            Ya tengo cuenta
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>

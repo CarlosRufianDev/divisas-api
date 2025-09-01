@@ -43,6 +43,10 @@ export class Dashboard implements OnInit, OnDestroy {
   selectedCurrency: any = null;
   selectedRate: any = null;
 
+  // AÑADIR nueva propiedad para el modal premium
+  showPremiumModal = false;
+  premiumCurrency: any = null;
+
   // Lista de divisas disponibles
   divisas = [
     { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
@@ -768,6 +772,13 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
+  // NUEVO: Cerrar modal premium al hacer clic en el fondo
+  onPremiumModalBackground(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closePremiumModal();
+    }
+  }
+
   // MÉTODOS PARA ANÁLISIS DE INVERSIÓN:
   getTrendDirection(): string {
     if (!this.selectedCurrency) return 'stable';
@@ -936,14 +947,15 @@ export class Dashboard implements OnInit, OnDestroy {
   }
   // AÑADIR después del método addToFavorites():
   goToRegister(): void {
+    // Cerrar cualquier modal abierto
+    this.closePremiumModal();
     this.closeCurrencyModal();
 
-    // ✅ NAVEGAR AL REGISTRO
+    // Navegar al registro
     this.router.navigate(['/register']).then(() => {
       console.log('🔄 Navegando al registro...');
     });
 
-    // Mostrar mensaje de transición
     this.snackBar.open('🔄 Redirigiendo al registro...', 'Cerrar', {
       duration: 2000,
       panelClass: ['info-snackbar'],
@@ -1086,28 +1098,35 @@ export class Dashboard implements OnInit, OnDestroy {
     if (this.authService.isAuthenticated()) {
       this.verDetalle(currencyCode);
     } else {
-      // Redirigir al login con returnUrl
-      this.router.navigate(['/login'], {
-        queryParams: {
-          returnUrl: '/dashboard',
-          currency: currencyCode,
-        },
-      });
+      // En lugar de redirigir, mostrar modal premium
+      this.showPremiumModal = true;
+      this.premiumCurrency = this.divisas.find((d) => d.code === currencyCode);
 
-      // Mostrar mensaje informativo
-      this.snackBar
-        .open(
-          'Regístrate para acceder al análisis detallado',
-          'Ir a registro',
-          {
-            duration: 5000,
-            panelClass: ['info-snackbar'],
-          }
-        )
-        .onAction()
-        .subscribe(() => {
-          this.router.navigate(['/register']);
-        });
+      // Bloquear scroll del body
+      document.body.style.overflow = 'hidden';
     }
+  }
+
+  // NUEVO: Cerrar modal premium
+  closePremiumModal(): void {
+    this.showPremiumModal = false;
+    this.premiumCurrency = null;
+
+    // Restaurar scroll del body
+    document.body.style.overflow = 'auto';
+  }
+
+  // NUEVO: Ir a login desde modal premium
+  goToLogin(): void {
+    this.closePremiumModal();
+
+    this.router.navigate(['/login']).then(() => {
+      console.log('🔄 Navegando al login...');
+    });
+
+    this.snackBar.open('🔄 Redirigiendo al login...', 'Cerrar', {
+      duration: 2000,
+      panelClass: ['info-snackbar'],
+    });
   }
 }

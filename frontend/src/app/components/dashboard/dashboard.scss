@@ -1970,3 +1970,369 @@ mat-toolbar {
     margin-top: 1rem;
   }
 }
+
+// ...existing code...
+
+// 🆕 MODAL PREMIUM - VERSIÓN COMPACTA SIN SCROLL
+.currency-detail-modal.premium {
+  .modal-content.simple-premium-modal {
+    max-width: 800px; // 🆕 Ligeramente más pequeño
+    width: 90%;
+    text-align: center;
+    padding: 0;
+    border-radius: 18px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    max-height: none; // 🆕 Sin límite de altura
+    display: block; // 🆕 Cambio a block
+
+    .close-button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(33, 150, 243, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        border-color: rgba(244, 67, 54, 0.3);
+      }
+
+      mat-icon {
+        font-size: 1.3rem;
+        width: 1.3rem;
+        height: 1.3rem;
+        color: #666;
+        transition: color 0.3s ease;
+      }
+
+      &:hover mat-icon {
+        color: #f44336;
+      }
+    }
+
+    .premium-register-banner {
+      padding: 2rem 2rem 1.8rem; // 🆕 Padding más compacto
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem; // 🆕 Gap reducido
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      border-radius: 18px;
+      text-align: center;
+      position: relative;
+
+      // 🆕 ICONO DEL CANDADO COMPACTO
+      .premium-lock-icon {
+        font-size: 3rem; // 🆕 Más pequeño
+        width: 4rem;
+        height: 4rem;
+        color: #1976d2;
+        margin-bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+          0 6px 24px rgba(25, 118, 210, 0.3),
+          0 3px 12px rgba(25, 118, 210, 0.2),
+          inset 0 2px 4px rgba(255, 255, 255, 0.8);
+        border: 3px solid rgba(25, 118, 210, 0.15);
+        animation: lockPulse 3s ease-in-out infinite;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 15%;
+          left: 20%;
+          width: 25%;
+          height: 25%;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 50%;
+          filter: blur(6px);
+          animation: shimmer 2s ease-in-out infinite alternate;
+        }
+
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 
+            0 8px 30px rgba(25, 118, 210, 0.4),
+            0 4px 15px rgba(25, 118, 210, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.9);
+        }
+      }
+
+      // 🆕 HEADER COMPACTO
+      .premium-header-content {
+        text-align: center;
+        max-width: 500px;
+        
+        h2 {
+          margin: 0 0 0.8rem 0; // 🆕 Margen reducido
+          font-size: 1.8rem; // 🆕 Más pequeño
+          font-weight: 700;
+          color: #1976d2;
+          line-height: 1.2;
+          letter-spacing: -0.02em;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.95rem; // 🆕 Más pequeño
+          color: #555;
+          line-height: 1.4;
+          font-weight: 400;
+        }
+      }
+
+      // 🆕 CARACTERÍSTICAS EN GRID 3x2 MUY COMPACTO
+      .premium-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem; // 🆕 Gap más pequeño
+        width: 100%;
+        max-width: 600px;
+
+        li {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem; // 🆕 Gap muy pequeño
+          padding: 0.8rem 0.6rem; // 🆕 Padding reducido
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 10px;
+          font-size: 0.8rem; // 🆕 Texto más pequeño
+          color: #333;
+          font-weight: 500;
+          text-align: center;
+          box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          min-height: 80px; // 🆕 Altura muy reducida
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+          }
+
+          mat-icon {
+            color: #1976d2;
+            font-size: 1.4rem; // 🆕 Iconos más pequeños
+            width: 1.4rem;
+            height: 1.4rem;
+            flex-shrink: 0;
+            background: rgba(25, 118, 210, 0.12);
+            border-radius: 6px;
+            padding: 0.4rem; // 🆕 Padding muy reducido
+          }
+        }
+      }
+
+      // 🆕 BOTONES COMPACTOS
+      .premium-actions {
+        display: flex;
+        gap: 1.2rem;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        margin-top: 0;
+
+        button {
+          flex: 1;
+          padding: 0.8rem 1.8rem; // 🆕 Padding reducido
+          border-radius: 22px;
+          font-weight: 600;
+          font-size: 0.9rem; // 🆕 Texto más pequeño
+          min-height: 44px; // 🆕 Altura reducida
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+
+          mat-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+          }
+
+          &[color="primary"] {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+            
+            &:hover {
+              background: linear-gradient(135deg, #1976d2, #1565c0);
+            }
+          }
+
+          &[mat-stroked-button] {
+            border: 2px solid #2196f3;
+            color: #2196f3;
+            background: rgba(255, 255, 255, 0.95);
+            
+            &:hover {
+              background: rgba(33, 150, 243, 0.1);
+              border-color: #1976d2;
+              color: #1976d2;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 🆕 ANIMACIONES COMPACTAS
+@keyframes lockPulse {
+  0%, 100% {
+    box-shadow: 
+      0 6px 24px rgba(25, 118, 210, 0.3),
+      0 3px 12px rgba(25, 118, 210, 0.2),
+      inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 
+      0 8px 30px rgba(25, 118, 210, 0.4),
+      0 4px 15px rgba(25, 118, 210, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 0.9);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+// 🆕 RESPONSIVE COMPACTO
+@media (max-width: 1024px) {
+  .currency-detail-modal.premium {
+    .modal-content.simple-premium-modal {
+      max-width: 85%;
+      
+      .premium-register-banner {
+        padding: 1.8rem 1.8rem 1.5rem;
+        gap: 1.3rem;
+
+        .premium-features {
+          grid-template-columns: repeat(2, 1fr);
+          max-width: 400px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .currency-detail-modal.premium {
+    padding: 0.5rem;
+
+    .modal-content.simple-premium-modal {
+      max-width: 95%;
+      
+      .premium-register-banner {
+        padding: 1.5rem 1.3rem 1.2rem;
+        gap: 1.2rem;
+
+        .premium-lock-icon {
+          font-size: 2.5rem;
+          width: 3.2rem;
+          height: 3.2rem;
+        }
+
+        .premium-header-content {
+          h2 {
+            font-size: 1.6rem;
+          }
+
+          p {
+            font-size: 0.85rem;
+          }
+        }
+
+        .premium-features {
+          grid-template-columns: 1fr;
+          max-width: 260px;
+          gap: 0.6rem;
+
+          li {
+            padding: 0.7rem 0.5rem;
+            min-height: 70px;
+            font-size: 0.75rem;
+
+            mat-icon {
+              font-size: 1.2rem;
+              width: 1.2rem;
+              height: 1.2rem;
+              padding: 0.3rem;
+            }
+          }
+        }
+
+        .premium-actions {
+          flex-direction: column;
+          max-width: 220px;
+          gap: 0.8rem;
+
+          button {
+            width: 100%;
+            min-height: 40px;
+            padding: 0.7rem 1.5rem;
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .currency-detail-modal.premium {
+    padding: 0.3rem;
+
+    .modal-content.simple-premium-modal {
+      .premium-register-banner {
+        padding: 1.2rem 1rem 1rem;
+        gap: 1rem;
+
+        .premium-header-content {
+          h2 {
+            font-size: 1.4rem;
+          }
+        }
+
+        .premium-features {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
