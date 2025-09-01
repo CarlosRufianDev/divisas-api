@@ -43,6 +43,11 @@ export class AuthService {
   // ✅ CAMBIAR: Usar tipo compatible con Angular
   private logoutTimer?: ReturnType<typeof setTimeout>;
 
+  // 🆕 AÑADIR: Cache para validación de tokens
+  private tokenValidationCache: { isValid: boolean; timestamp: number } | null =
+    null;
+  private readonly CACHE_DURATION = 10000; // 10 segundos
+
   constructor(private http: HttpClient, private router: Router) {
     this.checkStoredToken();
   }
@@ -118,6 +123,8 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials).pipe(
       tap((response) => {
         console.log('📨 Respuesta completa del backend:', response);
+
+        this.clearTokenCache(); // 🆕 AÑADIR esta línea
 
         localStorage.setItem(this.tokenKey, response.token);
 
@@ -204,7 +211,8 @@ export class AuthService {
   logout(): void {
     console.log('🚪 Cerrando sesión...');
 
-    this.clearLogoutTimer(); // ✅ AÑADIR
+    this.clearLogoutTimer();
+    this.clearTokenCache(); // 🆕 AÑADIR esta línea
 
     // Limpiar token
     localStorage.removeItem('auth_token');
@@ -235,12 +243,22 @@ export class AuthService {
     return localStorage.getItem('auth_token'); // ✅ CAMBIAR 'token' por 'auth_token'
   }
 
-  // AÑADIR método mejorado para verificar token:
+  // 🔄 REEMPLAZAR el método isTokenValid() existente:
   isTokenValid(): boolean {
+    // Usar cache para evitar validaciones excesivas
+    const now = Date.now();
+    if (
+      this.tokenValidationCache &&
+      now - this.tokenValidationCache.timestamp < this.CACHE_DURATION
+    ) {
+      return this.tokenValidationCache.isValid;
+    }
+
     const token = localStorage.getItem('auth_token');
 
     if (!token) {
       console.log('🔍 No hay token');
+      this.tokenValidationCache = { isValid: false, timestamp: now };
       return false;
     }
 
@@ -249,17 +267,32 @@ export class AuthService {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const currentTime = Math.floor(Date.now() / 1000);
 
-      if (payload.exp && payload.exp < currentTime) {
-        console.log('⏰ Token expirado:', new Date(payload.exp * 1000));
-        return false;
+      const isValid = payload.exp && payload.exp >= currentTime;
+
+      // Solo log cuando cambia el estado o es la primera vez
+      if (
+        !this.tokenValidationCache ||
+        this.tokenValidationCache.isValid !== isValid
+      ) {
+        if (isValid) {
+          console.log('✅ Token válido hasta:', new Date(payload.exp * 1000));
+        } else {
+          console.log('⏰ Token expirado:', new Date(payload.exp * 1000));
+        }
       }
 
-      console.log('✅ Token válido hasta:', new Date(payload.exp * 1000)); // 🔇 SILENCIADO
-      return true;
+      this.tokenValidationCache = { isValid, timestamp: now };
+      return isValid;
     } catch (error) {
       console.error('❌ Token malformado:', error);
+      this.tokenValidationCache = { isValid: false, timestamp: now };
       return false;
     }
+  }
+
+  // 🆕 AÑADIR: Método para limpiar cache cuando sea necesario
+  private clearTokenCache(): void {
+    this.tokenValidationCache = null;
   }
 
   // ✅ AÑADIR: Obtener tiempo restante del token
