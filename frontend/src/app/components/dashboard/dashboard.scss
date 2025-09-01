@@ -841,7 +841,8 @@ mat-toolbar {
 
     .result-main-improved {
       text-align: center;
-      padding: 1.5rem 0;
+      padding: 1.5rem 1rem;
+      min-width: 100%;
 
       .conversion-summary {
         display: flex;
@@ -869,18 +870,38 @@ mat-toolbar {
       .result-amount-improved {
         margin-bottom: 1.5rem;
 
-        .amount-display {
-          margin-bottom: 0.75rem;
+           .amount-display {
+              margin-bottom: 0.75rem;
+              display: flex;
+              align-items: baseline;
+              justify-content: center;
+              gap: 0.8rem; // ✅ AUMENTAR gap de 0.5rem a 0.8rem
+              min-width: 100%; // ✅ AÑADIR: Asegurar ancho completo
+              flex-wrap: nowrap; // ✅ AÑADIR: No permitir salto de línea
 
-          .amount-number-big {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #2196f3;
-            text-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
-            font-family: 'Roboto Mono', monospace;
-            letter-spacing: -0.02em;
-          }
-        }
+              .amount-number-big {
+                font-size: 3.2rem; // ✅ REDUCIR ligeramente de 3.5rem a 3.2rem
+                font-weight: 700;
+                color: #2196f3;
+                text-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+                font-family: 'Roboto Mono', monospace;
+                letter-spacing: -0.02em;
+                flex-shrink: 0; // ✅ AÑADIR: No permitir que se encoja
+              }
+
+              .currency-code-inline {
+                font-size: 1.6rem; // ✅ REDUCIR de 1.8rem a 1.6rem para dar más espacio
+                font-weight: 700;
+                color: #1976d2;
+                background: linear-gradient(135deg, #2196f3, #21cbf3);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-left: 0.3rem;
+                flex-shrink: 0; // ✅ AÑADIR: No permitir que se encoja
+                white-space: nowrap; // ✅ AÑADIR: No permitir salto de línea
+              }
+            }
 
         .currency-display {
           display: flex;
@@ -889,13 +910,7 @@ mat-toolbar {
           gap: 0.25rem;
 
           .currency-code-large {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1976d2;
-            background: linear-gradient(135deg, #2196f3, #21cbf3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            display: none;
           }
 
           .currency-name-small {
@@ -2556,7 +2571,21 @@ mat-toolbar {
     }
   }
 }
-
+@media (max-width: 600px) {
+  .result-amount-improved {
+    .amount-display {
+      gap: 0.6rem;
+      
+      .amount-number-big {
+        font-size: 2.8rem;
+      }
+      
+      .currency-code-inline {
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
 @media (max-width: 480px) {
   .currency-detail-modal.premium {
     padding: 0.3rem;
@@ -2575,6 +2604,7 @@ mat-toolbar {
         .premium-features {
           max-width: 100%;
         }
+        
       }
     }
   }

@@ -105,10 +105,10 @@
               
               <div class="result-amount-improved">
                 <div class="amount-display">
-                  <span class="amount-number-big">{{ resultado.result | number:'1.2-4' }}</span>
+                  <span class="amount-number-big">{{ resultado.result | number:'1.2-2' }}</span>
+                  <span class="currency-code-inline">{{ monedaDestino.value }}</span>
                 </div>
                 <div class="currency-display">
-                  <span class="currency-code-large">{{ monedaDestino.value }}</span>
                   <span class="currency-name-small">{{ getCurrencyFullName(monedaDestino.value!) }}</span>
                 </div>
               </div>
@@ -117,7 +117,7 @@
               <div class="exchange-rate-display">
                 <div class="rate-box">
                   <mat-icon>info</mat-icon>
-                  <span class="rate-text">1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.4-4' }} {{ monedaDestino.value }}</span>
+                  <span class="rate-text">1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.2-4' }} {{ monedaDestino.value }}</span>
                 </div>
               </div>
             </div>
@@ -156,7 +156,7 @@
                 <mat-icon class="stat-icon">swap_horiz</mat-icon>
                 <div class="stat-content">
                   <span class="stat-label">Inverso</span>
-                  <span class="stat-value">1 {{ monedaDestino.value }} = {{ (1/resultado.rate) | number:'1.4-4' }} {{ monedaOrigen.value }}</span>
+                  <span class="stat-value">1 {{ monedaDestino.value }} = {{ (1/resultado.rate) | number:'1.2-4' }} {{ monedaOrigen.value }}</span>
                 </div>
               </div>
 
@@ -340,7 +340,7 @@
               <!-- Tasa Principal -->
               <div class="rate-main">
                 <span class="rate-value" [class.updating]="cargandoTabla">
-                  {{ rate.rate | number:'1.6-6' }}
+                  {{ rate.rate | number:'1.2-2' }}
                 </span>
                 <span class="rate-label">{{ monedaBase.value }}/{{ rate.code }}</span>
               </div>
@@ -364,7 +364,7 @@
               <div class="rate-extra">
                 <div class="inverse-rate">
                   <mat-icon>swap_horiz</mat-icon>
-                  <span>1 {{ rate.code }} = {{ (1/rate.rate) | number:'1.6-6' }} {{ monedaBase.value }}</span>
+                  <span>1 {{ rate.code }} = {{ (1/rate.rate) | number:'1.2-2' }} {{ monedaBase.value }}</span>
                 </div>
               </div>
 

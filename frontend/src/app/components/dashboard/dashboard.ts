@@ -128,17 +128,25 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  // MÉTODO ACTUALIZADO PARA CARGAR TIPOS DE CAMBIO
   // Asegurar que cargarTiposCambio() usa datos reales
   async cargarTiposCambio(): Promise<void> {
     const base = this.monedaBase.value || 'USD';
     this.cargandoTabla = true;
 
     try {
-      // 1. Obtener tasas actuales
+      // ✅ AÑADIR LOG para verificar URL
+      console.log(
+        '🌍 Obteniendo datos de Frankfurter:',
+        `https://api.frankfurter.app/latest?from=${base}`
+      );
+
       const response = await this.divisasService
         .getLatestRatesFromFrankfurter(base)
         .toPromise();
+
+      // ✅ AÑADIR LOG para verificar respuesta
+      console.log('📊 Respuesta de Frankfurter:', response);
+      console.log('💱 Rates disponibles:', Object.keys(response.rates));
 
       // 2. Para cada divisa, cargar histórico y calcular indicadores
       this.tiposCambio = [];
@@ -283,62 +291,40 @@ export class Dashboard implements OnInit, OnDestroy {
 
     this.cargando = true;
 
-    // USAR INTERFAZ CORRECTA DE TU BACKEND
     const request: ConversionRequest = {
-      from: origen, // ✅ Tu backend usa 'from'
-      to: destino, // ✅ Tu backend usa 'to'
-      amount: cantidad, // ✅ Tu backend usa 'amount'
+      from: origen,
+      to: destino,
+      amount: cantidad,
     };
 
-    // Intentar con tu backend Node.js primero
     this.divisasService.convertCurrency(request).subscribe({
       next: (response: ConversionResponse) => {
         console.log('✅ Conversión desde tu backend:', response);
+
+        // ✅ CORREGIR: Usar directamente los valores del backend
         this.resultado = {
           amount: response.amount,
-          result: response.result,
+          result: response.result, // ✅ Ya está calculado correctamente (85.361)
           from: response.from,
           to: response.to,
-          rate: response.rate,
+          rate: response.rate, // ✅ Ya está calculado correctamente (0.85361)
           date: response.date,
         };
+
+        // ✅ AÑADIR: Calcular el rate inverso correctamente
+        this.resultado.inverseRate = 1 / response.rate; // Para mostrar EUR a USD
+
         this.cargando = false;
       },
       error: (error: any) => {
-        console.error('❌ Error en tu backend, usando Frankfurter:', error);
-        // Fallback a Frankfurter
-        this.convertirConFrankfurter(cantidad, origen, destino);
+        console.error('❌ Error en conversión:', error);
+        this.cargando = false;
       },
     });
   }
 
-  // FALLBACK para conversión
-  convertirConFrankfurter(
-    cantidad: number,
-    origen: string,
-    destino: string
-  ): void {
-    this.divisasService
-      .convertWithFrankfurter(origen, destino, cantidad)
-      .subscribe({
-        next: (response: any) => {
-          console.log('✅ Conversión con Frankfurter:', response);
-          this.resultado = {
-            amount: cantidad,
-            result: response.rates[destino],
-            from: origen,
-            to: destino,
-            rate: response.rates[destino] / cantidad,
-            date: response.date,
-          };
-          this.cargando = false;
-        },
-        error: (error: any) => {
-          console.error('❌ Error total en conversión:', error);
-          this.cargando = false;
-        },
-      });
-  }
+  // ❌ ELIMINAR este método que causa confusión:
+  // convertirConFrankfurter() { ... }
 
   intercambiarDivisas(): void {
     const temp = this.monedaOrigen.value;

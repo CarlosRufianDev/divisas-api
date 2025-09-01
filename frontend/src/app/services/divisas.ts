@@ -47,11 +47,10 @@ export class DivisasService {
 
   // CORREGIR: usar endpoint real sin /convert/
   convertCurrency(request: ConversionRequest): Observable<ConversionResponse> {
-    const headers = this.getAuthHeaders();
+    console.log('🔄 Enviando conversión al backend:', request);
     return this.http.post<ConversionResponse>(
-      `${this.apiUrl}/convert`, // ✅ CORRECTO: /api/convert
-      request,
-      { headers }
+      `${this.apiUrl}/convert`,
+      request
     );
   }
 
@@ -79,7 +78,9 @@ export class DivisasService {
 
   // Mantener fallbacks a Frankfurter
   getLatestRatesFromFrankfurter(base: string = 'USD'): Observable<any> {
-    return this.http.get(`${this.frankfurterUrl}/latest?from=${base}`);
+    const url = `${this.frankfurterUrl}/latest?from=${base}`;
+    console.log('🔗 URL Frankfurter:', url); // ✅ AÑADIR este log
+    return this.http.get(url);
   }
 
   convertWithFrankfurter(

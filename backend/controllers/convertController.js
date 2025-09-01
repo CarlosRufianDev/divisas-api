@@ -31,44 +31,66 @@ const convertCurrency = async (req, res) => {
   }
 
   try {
-    const apiUrl = `${API_URL}?amount=${amount}&from=${from}&to=${to}`;
+    // ✅ CORREGIR: No enviar amount a Frankfurter, solo obtener el rate
+    const apiUrl = `${API_URL}?from=${from}&to=${to}`;
     console.log('URL solicitada:', apiUrl);
     const response = await axios.get(apiUrl);
 
     if (!response.data.rates || response.data.rates[to] === undefined) {
-      console.log('Respuesta inesperada de la API:', response.data);
-      return res.status(400).json({ error: 'No se encontró la tasa de cambio para la moneda solicitada.' });
+      return res.status(400).json({ error: `No se encontró el tipo de cambio para ${from} a ${to}` });
     }
 
+    // ✅ CORREGIR: Obtener el rate correctamente y calcular el result
     const rate = response.data.rates[to];
     const result = amount * rate;
+
+    console.log('🔍 DEBUG Frankfurter response:', {
+      frankfurterRate: rate,
+      amount: amount,
+      calculatedResult: result
+    });
 
     // ✅ Intenta verificar el token (si se incluye)
     const authHeader = req.headers.authorization;
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
       try {
-        jwt.verify(token, process.env.JWT_SECRET);
-        // Ya no necesitas extraer userId aquí, lo tienes en req.user.userId
-      } catch (err) {
-        console.warn('Token inválido o expirado:', err.message);
-        // No interrumpimos la conversión, se permite sin login
+        const token = authHeader.substring(7);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        console.log('✅ Token válido:', decoded.userId);
+      } catch (tokenError) {
+        console.log('⚠️ Token inválido o expirado, pero continuando sin usuario');
       }
     }
 
     // 💾 Guardar la conversión en la BD (con usuario)
     let savedConversion = null;
     if (req.user && req.user.userId) {
-      savedConversion = await Conversion.create({
-        user: req.user.userId,
-        from,
-        to,
-        amount,
-        rate,
-        result,
-        date: new Date()
-      });
+      try {
+        savedConversion = new Conversion({
+          from,
+          to,
+          amount,
+          rate,
+          result,
+          user: req.user.userId,
+          date: new Date()
+        });
+        await savedConversion.save();
+
+        // Registrar actividad
+        await ActivityLog.create({
+          user: req.user.userId,
+          action: 'CONVERT_CURRENCY',
+          details: `Convertir ${amount} ${from} a ${to}`,
+          metadata: { from, to, amount, rate, result }
+        });
+
+        console.log('✅ Conversión guardada en BD');
+      } catch (saveError) {
+        console.error('❌ Error guardando conversión:', saveError.message);
+      }
     }
 
     res.json({
@@ -81,36 +103,14 @@ const convertCurrency = async (req, res) => {
       conversionId: savedConversion ? savedConversion._id : null
     });
 
-    // LOGGING MANUAL (temporal)
-    if (req.user && req.user.userId) {
-      try {
-        await ActivityLog.createLog(
-          req.user.userId,
-          'CONVERSION_SINGLE',
-          {
-            from,
-            to,
-            amount: parseFloat(amount),
-            result,
-            ipAddress: req.ip || req.connection.remoteAddress,
-            userAgent: req.get('User-Agent')
-          },
-          {
-            endpoint: req.originalUrl,
-            httpMethod: req.method,
-            statusCode: 200,
-            apiVersion: '1.0'
-          }
-        );
-        console.log('✅ Log creado exitosamente');
-      } catch (logError) {
-        console.error('❌ Error creando log:', logError.message);
-      }
-    }
-
   } catch (error) {
-    console.error('Error al convertir:', error.message);
-    res.status(500).json({ error: 'Error al obtener el tipo de cambio' });
+    console.error('❌ Error en conversión:', error.message);
+    
+    if (error.response && error.response.status === 404) {
+      return res.status(400).json({ error: 'Una o ambas monedas no son válidas' });
+    }
+    
+    res.status(500).json({ error: 'Error interno del servidor al realizar la conversión' });
   }
 };
 
