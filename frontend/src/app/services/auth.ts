@@ -254,7 +254,7 @@ export class AuthService {
         return false;
       }
 
-      console.log('✅ Token válido hasta:', new Date(payload.exp * 1000));
+      console.log('✅ Token válido hasta:', new Date(payload.exp * 1000)); // 🔇 SILENCIADO
       return true;
     } catch (error) {
       console.error('❌ Token malformado:', error);

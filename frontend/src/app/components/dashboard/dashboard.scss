@@ -807,888 +807,568 @@ mat-toolbar {
         }
       }
     }
-
-    // ...existing code...
   }
 }
 
-// RESULTADO MEJORADO - COHERENTE CON EL CONVERSOR:
-.result-card-improved {
-  backdrop-filter: blur(15px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
-  border-radius: 24px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.08),
-    0 8px 30px rgba(76, 175, 80, 0.12); // ✅ Verde para diferenciarlo
+// SECCIÓN 4: TIPOS DE CAMBIO OPTIMIZADA - CORREGIDO
+.rates-section-improved {
+  // Simplificar efectos para mejorar rendimiento
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s ease; // ✅ Simplificado
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 
-      0 25px 80px rgba(0, 0, 0, 0.12),
-      0 12px 40px rgba(76, 175, 80, 0.18);
+    transform: translateY(-2px); // ✅ Menos movimiento
   }
 
-  // Gradiente superior elegante - VERDE
+  // Gradiente simplificado
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #4caf50 0%, #8bc34a 50%, #4caf50 100%);
-    background-size: 200% 100%;
-    animation: gradientShift 3s ease-in-out infinite;
+    height: 4px;
+    background: linear-gradient(90deg, #ff9800, #ffc107);
+    z-index: 1;
   }
 
-  // Patrón de fondo sutil - VERDE
+  // Eliminar patrón de fondo para mejor rendimiento
   &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 15% 15%, rgba(76, 175, 80, 0.03) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(139, 195, 74, 0.03) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  // Header mejorado
-  mat-card-header {
-    padding: 2rem 2rem 1rem;
-    text-align: center;
-    border-bottom: none;
-    position: relative;
-    z-index: 2;
-
-    mat-card-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #1a202c;
-      margin: 0;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #2d3748, #4a5568);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-
-      mat-icon {
-        font-size: 1.8rem;
-        width: 1.8rem;
-        height: 1.8rem;
-        color: #4caf50;
-        background: rgba(76, 175, 80, 0.1);
-        border-radius: 50%;
-        padding: 0.5rem;
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-      }
-    }
-  }
-
-  mat-card-content {
-    padding: 1rem 2rem 2rem;
-    position: relative;
-    z-index: 2;
-  }
-
-  .result-display-improved {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    .result-main-improved {
-      text-align: center;
-      padding: 1.5rem 1rem;
-      min-width: 100%;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 20px;
-      border: 1px solid rgba(76, 175, 80, 0.1);
-      box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.06),
-        inset 0 2px 4px rgba(255, 255, 255, 0.9);
-
-      .conversion-summary {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-        border-radius: 25px;
-        display: inline-flex;
-        border: 2px solid rgba(76, 175, 80, 0.2);
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
-
-        .from-amount {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #2e7d32;
-        }
-
-        .equals-icon {
-          color: #4caf50;
-          transform: rotate(90deg);
-          font-size: 1.4rem;
-          width: 1.4rem;
-          height: 1.4rem;
-        }
-      }
-
-      .result-amount-improved {
-        margin-bottom: 1.5rem;
-
-        .amount-display {
-          margin-bottom: 0.75rem;
-          display: flex;
-          align-items: baseline;
-          justify-content: center;
-          gap: 0.8rem;
-          min-width: 100%;
-          flex-wrap: nowrap;
-
-          .amount-number-big {
-            font-size: 3.2rem;
-            font-weight: 800;
-            color: #2e7d32;
-            text-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-            font-family: 'Roboto Mono', monospace;
-            letter-spacing: -0.02em;
-            flex-shrink: 0;
-          }
-
-          .currency-code-inline {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #388e3c;
-            background: linear-gradient(135deg, #4caf50, #66bb6a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-left: 0.3rem;
-            flex-shrink: 0;
-            white-space: nowrap;
-          }
-        }
-
-        .currency-display {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.25rem;
-
-          .currency-name-small {
-            font-size: 0.9rem;
-            color: #666;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-        }
-      }
-
-      .exchange-rate-display {
-        .rate-box {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
-          background: rgba(255, 255, 255, 0.8);
-          border: 2px solid rgba(76, 175, 80, 0.2);
-          border-radius: 25px;
-          font-weight: 600;
-          color: #2e7d32;
-          box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-          backdrop-filter: blur(10px);
-
-          mat-icon {
-            color: #4caf50;
-            background: rgba(76, 175, 80, 0.1);
-            border-radius: 50%;
-            padding: 0.3rem;
-            font-size: 1.1rem;
-            width: 1.1rem;
-            height: 1.1rem;
-          }
-
-          .rate-text {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.95rem;
-          }
-        }
-      }
-    }
-
-    .result-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-
-      .stat-box {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1.2rem;
-        background: rgba(255, 255, 255, 0.7);
-        border-radius: 16px;
-        border: 2px solid rgba(226, 232, 240, 0.6);
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-          border-color: rgba(76, 175, 80, 0.3);
-          background: rgba(255, 255, 255, 0.9);
-        }
-
-        &:nth-child(1) { border-left: 4px solid #2196f3; }
-        &:nth-child(2) { border-left: 4px solid #4caf50; }
-        &:nth-child(3) { border-left: 4px solid #ff9800; }
-        &:nth-child(4) { border-left: 4px solid #9c27b0; }
-
-        .stat-icon {
-          font-size: 1.5rem;
-          width: 1.5rem;
-          height: 1.5rem;
-          color: #666;
-          background: rgba(255, 255, 255, 0.8);
-          border-radius: 50%;
-          padding: 0.5rem;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-          &.trending {
-            &.trending-up { 
-              color: #4caf50; 
-              background: rgba(76, 175, 80, 0.1);
-            }
-            &.trending-down { 
-              color: #f44336; 
-              background: rgba(244, 67, 54, 0.1);
-            }
-            &.trending-flat { 
-              color: #ff9800; 
-              background: rgba(255, 152, 0, 0.1);
-            }
-          }
-        }
-
-        .stat-content {
-          flex: 1;
-
-          .stat-label {
-            display: block;
-            font-size: 0.8rem;
-            color: #718096;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-
-          .stat-value {
-            display: block;
-            font-size: 0.9rem;
-            color: #2d3748;
-            font-weight: 700;
-
-            &.trend-strong { color: #4caf50; }
-            &.trend-weak { color: #f44336; }
-            &.trend-equal { color: #ff9800; }
-          }
-        }
-      }
-    }
-
-    .result-actions-improved {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      padding-top: 1.5rem;
-      border-top: 2px solid rgba(76, 175, 80, 0.1);
-
-      button {
-        flex: 1;
-        max-width: 140px;
-        border-radius: 25px;
-        font-weight: 600;
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        mat-icon {
-          margin-right: 0.5rem;
-          font-size: 1.1rem;
-          width: 1.1rem;
-          height: 1.1rem;
-        }
-
-        &[color="primary"] {
-          background: linear-gradient(135deg, #4caf50, #66bb6a);
-          color: white;
-          border: none;
-          
-          &:hover {
-            background: linear-gradient(135deg, #388e3c, #4caf50);
-          }
-        }
-
-        &[color="accent"] {
-          background: rgba(255, 255, 255, 0.9);
-          border: 2px solid #2196f3;
-          color: #2196f3;
-          
-          &:hover {
-            background: rgba(33, 150, 243, 0.1);
-            border-color: #1976d2;
-          }
-        }
-
-        &[color="warn"] {
-          background: rgba(255, 255, 255, 0.9);
-          border: 2px solid #ff9800;
-          color: #ff9800;
-          
-          &:hover {
-            background: rgba(255, 152, 0, 0.1);
-            border-color: #f57c00;
-          }
-        }
-      }
-    }
-  }
-}
-
-// SECCIÓN 2: ANALYTICS HORIZONTAL
-.analytics-compact {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-
-    &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #2196f3, #21cbf3, #00bcd4);
-    z-index: 1;
-  }
-
-  .stats-grid-horizontal {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-
-    .stat-card-compact {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border-left: 4px solid;
-      transition: transform 0.2s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-      }
-
-      &.conversions { border-left-color: #2196f3; }
-      &.volume { border-left-color: #4caf50; }
-      &.pair { border-left-color: #ff9800; }
-      &.alerts { border-left-color: #9c27b0; }
-
-      mat-icon {
-        font-size: 1.5rem;
-        width: 1.5rem;
-        height: 1.5rem;
-        
-        &:first-child {
-          color: #2196f3;
-        }
-      }
-
-      .stat-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-
-        .stat-number {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #333;
-        }
-
-        .stat-label {
-          font-size: 0.8rem;
-          color: #666;
-          font-weight: 500;
-        }
-
-        .stat-trend {
-          font-size: 0.7rem;
-          font-weight: 600;
-
-          &.positive { color: #4caf50; }
-          &.negative { color: #f44336; }
-        }
-      }
-    }
-  }
-}
-
-// SECCIÓN 3: TENDENCIAS HORIZONTAL
-.trends-compact {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-
-    &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #2196f3, #21cbf3, #00bcd4);
-    z-index: 1;
-  }
-
-  .trends-horizontal {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    padding: 0.5rem 0;
-
-    .trend-item-compact {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 1rem;
-      background: #f9f9f9;
-      border-radius: 12px;
-      min-width: 120px;
-      border: 2px solid transparent;
-      transition: all 0.2s ease;
-
-      &:hover {
-        border-color: #2196f3;
-        transform: scale(1.02);
-      }
-
-      .trend-pair-compact {
-        text-align: center;
-
-        .pair-name {
-          font-weight: 600;
-          color: #333;
-          font-size: 0.9rem;
-        }
-
-        .current-rate {
-          display: block;
-          font-size: 0.8rem;
-          color: #666;
-          margin-top: 0.25rem;
-        }
-      }
-
-      .trend-change-compact {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-size: 0.8rem;
-        font-weight: 600;
-
-        &.trend-up { color: #4caf50; }
-        &.trend-down { color: #f44336; }
-        &.trend-stable { color: #666; }
-
-        mat-icon {
-          font-size: 1rem;
-          width: 1rem;
-          height: 1rem;
-        }
-      }
-    }
-  }
-}
-
-// SECCIÓN 4: TIPOS DE CAMBIO MEJORADA
-.rates-section-improved {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-
-    &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #2196f3, #21cbf3, #00bcd4);
-    z-index: 1;
-  }
-
-  .rates-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-
-    .rates-title {
-      flex: 1;
-    }
-
-    .base-currency-selector {
-      min-width: 250px;
-
-      mat-form-field {
-        width: 100%;
-      }
-    }
-  }
-
-  .loading-rates {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 3rem;
-    color: #666;
+    display: none; // ✅ Eliminado para optimización
   }
 
   .rates-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
-    padding: 1rem 0;
+    padding: 0.5rem 0 1.5rem 0; // ✅ AÑADIR padding bottom para evitar cortes
 
     .rate-card {
       position: relative;
-      min-height: 260px;
-      padding: 1.5rem;
-      overflow: hidden;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      border-left: 4px solid #e0e0e0;
+      min-height: 280px; // ✅ AUMENTAR de 240px a 280px para dar más espacio
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 1.2rem 1.2rem 1.5rem 1.2rem; // ✅ AUMENTAR padding bottom
+      border: 2px solid rgba(226, 232, 240, 0.6);
       transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      overflow: visible; // ✅ CAMBIAR de hidden a visible para evitar cortes
+      display: flex;
+      flex-direction: column; // ✅ AÑADIR flex column
 
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-color: rgba(255, 152, 0, 0.4);
       }
 
-      // Colores según tendencia
+      // Simplificar colores según tendencia
       &.trending-up {
-        border-left-color: #4caf50;
-        background: linear-gradient(135deg, #ffffff 0%, #f1f8e9 100%);
-
-        .rate-value {
-          color: #2e7d32;
-        }
+        border-left: 4px solid #4caf50;
+        background: rgba(232, 245, 233, 0.3); // ✅ Menos opacidad
       }
 
       &.trending-down {
-        border-left-color: #f44336;
-        background: linear-gradient(135deg, #ffffff 0%, #ffebee 100%);
-
-        .rate-value {
-          color: #c62828;
-        }
+        border-left: 4px solid #f44336;
+        background: rgba(255, 235, 238, 0.3);
       }
 
       &.trending-stable {
-        border-left-color: #ff9800;
-        background: linear-gradient(135deg, #ffffff 0%, #fff3e0 100%);
+        border-left: 4px solid #ff9800;
+        background: rgba(255, 243, 224, 0.3);
+      }
 
-        .rate-value {
-          color: #ef6c00;
+      .rate-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1; // ✅ AÑADIR flex: 1 para que use todo el espacio
+
+        &.updating {
+          opacity: 0.6;
         }
       }
 
+      // Header optimizado
       .rate-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        flex-shrink: 0; // ✅ AÑADIR para que no se encoja
 
         .currency-info {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.8rem; // ✅ Gap reducido
 
           .flag {
-            font-size: 1.5rem;
+            font-size: 1.6rem; // ✅ Tamaño reducido
           }
 
           .currency-details {
             .currency-code {
               display: block;
-              font-size: 1.1rem;
-              font-weight: 600;
-              color: #333;
+              font-size: 1.1rem; // ✅ Tamaño reducido
+              font-weight: 700;
+              color: #2d3748;
+              margin-bottom: 0.2rem;
             }
 
             .currency-name {
               display: block;
-              font-size: 0.8rem;
-              color: #666;
-              margin-top: 0.25rem;
+              font-size: 0.75rem; // ✅ Más pequeño
+              color: #718096;
+              font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
             }
           }
         }
 
+        // Indicador más pequeño
         .trend-indicator {
-          padding: 0.5rem;
+          width: 36px; // ✅ Reducido de 48px
+          height: 36px;
           border-radius: 50%;
-          background: #f5f5f5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
           &.trend-up {
-            background: #e8f5e8;
-            color: #4caf50;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid rgba(76, 175, 80, 0.3);
           }
 
           &.trend-down {
             background: #ffebee;
-            color: #f44336;
+            color: #c62828;
+            border: 1px solid rgba(244, 67, 54, 0.3);
           }
 
           &.trend-stable {
             background: #fff3e0;
-            color: #ff9800;
+            color: #ef6c00;
+            border: 1px solid rgba(255, 152, 0, 0.3);
           }
 
           mat-icon {
-            font-size: 1.2rem;
+            font-size: 1.2rem; // ✅ Más pequeño
             width: 1.2rem;
             height: 1.2rem;
           }
+
+          &:hover {
+            transform: scale(1.05); // ✅ Efecto reducido
+          }
         }
       }
 
+      // Tasa Principal compacta - MEJORADO
       .rate-main {
         text-align: center;
-        margin-bottom: 1rem;
+        padding: 1rem 0.5rem; // ✅ AUMENTAR padding vertical
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        flex-shrink: 0; // ✅ AÑADIR para que mantenga su tamaño
+        margin-bottom: 0.5rem; // ✅ AÑADIR margen inferior
 
         .rate-value {
           display: block;
-          font-size: 2rem;
+          font-size: 1.8rem;
           font-weight: 700;
           font-family: 'Roboto Mono', monospace;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.4rem; // ✅ AUMENTAR margen
+          letter-spacing: -0.01em;
+          line-height: 1.1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          // Colores según tendencia
+          &.trending-up {
+            color: #2e7d32;
+          }
+
+          &.trending-down {
+            color: #c62828;
+          }
+
+          &.trending-stable {
+            color: #ef6c00;
+          }
         }
 
         .rate-label {
-          font-size: 0.9rem;
-          color: #666;
+          font-size: 0.8rem;
+          color: #718096;
           font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
         }
       }
 
+      // Cambio compacto - MEJORADO
       .rate-change {
         text-align: center;
-        margin-bottom: 1rem;
+        padding: 0.8rem; // ✅ AUMENTAR padding
+        background: rgba(247, 250, 252, 0.8);
+        border-radius: 8px;
+        flex-shrink: 0; // ✅ AÑADIR para que mantenga su tamaño
+        margin-bottom: 0.5rem; // ✅ AÑADIR margen inferior
 
         .change-percent {
           display: block;
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 600;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.4rem; // ✅ AUMENTAR margen
+          font-family: 'Roboto Mono', monospace;
 
-          &.positive {
-            color: #4caf50;
-          }
+          &.positive { color: #2e7d32; }
+          &.negative { color: #c62828; }
+          &.neutral { color: #ef6c00; }
 
-          &.negative {
-            color: #f44336;
-          }
-
-          &.neutral {
-            color: #ff9800;
+          .trend-period {
+            font-size: 0.65rem;
+            color: #888;
+            font-weight: 400;
+            display: block;
+            margin-top: 0.3rem; // ✅ AUMENTAR margen
           }
         }
 
-        .change-label {
-          font-size: 0.8rem;
-          color: #888;
+        .trend-details {
+          .change-label {
+            font-size: 0.7rem;
+            color: #718096;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+          }
         }
       }
 
+      // Info extra compacta - MEJORADO
       .rate-extra {
-        display: flex;
-        margin-bottom: 1rem;
-        padding: 0.75rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-
-        .rate-stat {
+        margin: 0.8rem 0 1rem 0; // ✅ AUMENTAR margen inferior
+        flex-shrink: 0; // ✅ AÑADIR para que mantenga su tamaño
+        
+        .inverse-rate {
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 0.5rem;
-          font-size: 0.85rem;
-          color: #666;
+          padding: 0.8rem; // ✅ AUMENTAR padding
+          background: rgba(255, 255, 255, 0.8);
+          border-radius: 8px;
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          transition: all 0.2s ease;
 
+          &:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+          }
+          
           mat-icon {
+            color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 50%;
+            padding: 0.3rem;
             font-size: 1rem;
             width: 1rem;
             height: 1rem;
-            color: #2196f3;
+          }
+          
+          span {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.8rem;
+            color: #4a5568;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 140px;
           }
         }
       }
 
-      .rate-actions {
+      // ✅ BOTONES COMPLETAMENTE REDISEÑADOS
+      .rate-actions-container {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.8rem; // ✅ AUMENTAR gap
+        margin-top: auto; // ✅ ESTO EMPUJA LOS BOTONES AL FINAL
+        padding-top: 1rem; // ✅ AÑADIR padding superior
+        border-top: 1px solid rgba(226, 232, 240, 0.3); // ✅ AÑADIR separador visual
+        flex-shrink: 0; // ✅ EVITAR que se encoja
 
         .action-button {
           flex: 1;
           border-radius: 20px;
-          font-weight: 600;
-          font-size: 0.8rem;
-          padding: 0.5rem 0.75rem;
+          padding: 0.7rem 1rem; // ✅ AUMENTAR padding
+          font-weight: 500;
+          font-size: 0.85rem; // ✅ AUMENTAR ligeramente el texto
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem; // ✅ AÑADIR gap para icono y texto
+          min-height: 40px; // ✅ ALTURA MÍNIMA para evitar botones muy pequeños
+          
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
 
           mat-icon {
-            margin-right: 0.25rem;
-            font-size: 0.9rem;
-            width: 0.9rem;
-            height: 0.9rem;
+            font-size: 1rem; // ✅ AUMENTAR tamaño del icono
+            width: 1rem;
+            height: 1rem;
+            margin: 0; // ✅ QUITAR margin, usar gap del contenedor
+          }
+
+          &[color="primary"] {
+            background: linear-gradient(135deg, #ff9800, #ffb74d);
+            color: white;
+            
+            &:hover {
+              background: linear-gradient(135deg, #f57c00, #ff9800);
+              box-shadow: 0 6px 16px rgba(255, 152, 0, 0.3);
+            }
+          }
+
+          &[color="accent"] {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #2196f3;
+            color: #2196f3;
+            
+            &:hover {
+              background: rgba(33, 150, 243, 0.1);
+              border-color: #1976d2;
+              box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
+            }
           }
         }
-      }
-
-      .rate-loading {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.85);
-        z-index: 2;
-        border-radius: 12px;
-        min-height: 100%;
-        min-width: 100%;
-      }
-
-      .rate-content {
-        transition: opacity 0.3s;
-        opacity: 1;
-        &.updating {
-          opacity: 0.4;
-        }
-      }
-
-      // Efecto de brillo sutil
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
       }
     }
   }
 
+  // Estado vacío - MEJORADO
   .empty-rates {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    padding: 3rem;
+    padding: 3rem 2rem; // ✅ AUMENTAR padding
     text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    margin: 1rem 0;
+
+    mat-icon {
+      font-size: 2.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      color: #ff9800;
+      background: rgba(255, 152, 0, 0.1);
+      border-radius: 50%;
+      padding: 0.8rem;
+    }
+
+    h3 {
+      margin: 0;
+      color: #2d3748;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: #718096;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      max-width: 300px;
+    }
+
+    button {
+      margin-top: 0.8rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 20px;
+      font-weight: 500;
+      background: linear-gradient(135deg, #ff9800, #ffb74d);
+      color: white;
+      border: none;
+      
+      &:hover {
+        background: linear-gradient(135deg, #f57c00, #ff9800);
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  // ✅ NUEVO: Estado de carga mejorado
+  .loading-rates {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem; // ✅ AUMENTAR padding
+    color: #666;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    margin: 1rem 0;
 
     mat-icon {
       font-size: 3rem;
       width: 3rem;
       height: 3rem;
-      color: #999;
+      color: #ff9800;
+      animation: pulse 2s ease-in-out infinite;
     }
 
     h3 {
       margin: 0;
+      font-size: 1.3rem;
       color: #333;
     }
 
     p {
       margin: 0;
-      color: #666;
+      text-align: center;
+      line-height: 1.5;
     }
   }
 }
 
-// Responsive
+// 📱 RESPONSIVE optimizado - MEJORADO
 @media (max-width: 1024px) {
-  .converter-section {
-    grid-template-columns: 1fr;
-  }
-
-  .analytics-compact .stats-grid-horizontal {
-    grid-template-columns: repeat(2, 1fr);
+  .rates-section-improved {
+    .rates-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      padding: 0.5rem 0 2rem 0; // ✅ MÁS padding en tablet
+    }
   }
 }
 
 @media (max-width: 768px) {
-  .analytics-compact .stats-grid-horizontal {
-    grid-template-columns: 1fr;
-  }
-
-  .trends-compact .trends-horizontal {
-    justify-content: center;
-  }
-
-  .dashboard-header h1 {
-    font-size: 2rem;
-  }
-
   .rates-section-improved {
-    .rates-header {
-      flex-direction: column;
-      gap: 1rem;
+    mat-card-header {
+      padding: 1.2rem 1.2rem 0.8rem;
+    }
 
-      .base-currency-selector {
-        min-width: 100%;
-      }
+    mat-card-content {
+      padding: 0.8rem 1.2rem 1.2rem;
     }
 
     .rates-grid {
       grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 0.5rem 0 2rem 0; // ✅ MÁS padding en móvil
+
+      .rate-card {
+        min-height: 260px; // ✅ ALTURA ESPECÍFICA para móvil
+        padding: 1rem 1rem 1.5rem 1rem;
+
+        .rate-main {
+          padding: 0.8rem 0.5rem;
+
+          .rate-value {
+            font-size: 1.6rem; // ✅ AJUSTADO para móvil
+          }
+        }
+
+        .rate-actions-container {
+          flex-direction: column; // ✅ BOTONES APILADOS en móvil
+          gap: 0.6rem;
+          padding-top: 1rem;
+
+          .action-button {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            min-height: 44px; // ✅ ALTURA TÁCTIL adecuada
+          }
+        }
+      }
     }
   }
+}
+
+@media (max-width: 480px) {
+  .rates-section-improved {
+    .rates-grid {
+      padding: 0.5rem 0 2.5rem 0; // ✅ AÚN MÁS padding en móviles pequeños
+
+      .rate-card {
+        min-height: 240px;
+        padding: 0.8rem 0.8rem 1.2rem 0.8rem;
+
+        .rate-header {
+          .currency-info {
+            gap: 0.6rem;
+
+            .flag {
+              font-size: 1.4rem;
+            }
+
+            .currency-details {
+              .currency-code {
+                font-size: 1rem;
+              }
+            }
+          }
+
+          .trend-indicator {
+            width: 32px;
+            height: 32px;
+
+            mat-icon {
+              font-size: 1rem;
+              width: 1rem;
+              height: 1rem;
+            }
+          }
+        }
+
+        .rate-main {
+          .rate-value {
+            font-size: 1.5rem;
+          }
+        }
+
+        .rate-actions-container {
+          padding-top: 0.8rem;
+
+          .action-button {
+            font-size: 0.8rem;
+            padding: 0.7rem 0.8rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ✅ NUEVO: Asegurar que el contenedor tenga suficiente espacio
+.rates-section-improved {
+  mat-card-content {
+    padding-bottom: 2rem !important; // ✅ FORZAR padding inferior
+  }
+}
+
+// ✅ NUEVO: Mejorar el espaciado del grid principal
+.rates-grid {
+  margin-bottom: 1rem; // ✅ AÑADIR margen inferior al grid
 }
 
 // ANIMACIONES
@@ -1962,7 +1642,7 @@ mat-toolbar {
                 
                 &.positive { color: #4caf50; }
                 &.negative { color: #f44336; }
-                &.neutral { color: #ff9800; }
+                &.neutral { color: #666; }
               }
             }
           }
@@ -2631,7 +2311,7 @@ mat-toolbar {
     top: 0;
     left: 0;
     right: 0;
-    height: 6px;
+    height: 4px;
     background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
     background-size: 200% 100%;
     animation: gradientShift 3s ease-in-out infinite;
@@ -2646,9 +2326,10 @@ mat-toolbar {
     right: 0;
     bottom: 0;
     background: 
-      radial-gradient(circle at 15% 15%, rgba(33, 150, 243, 0.03) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(33, 203, 243, 0.03) 0%, transparent 60%);
+      radial-gradient(circle at 20% 80%, rgba(33, 150, 243, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(33, 203, 243, 0.02) 0%, transparent 50%);
     pointer-events: none;
+    z-index: 0;
   }
 
   .converter-header-enhanced {
@@ -2669,7 +2350,7 @@ mat-toolbar {
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-      }
+           }
 
       .converter-subtitle-enhanced {
         font-size: 0.95rem;
@@ -2809,7 +2490,7 @@ mat-toolbar {
         .mat-mdc-select-value-text {
           font-weight: 700 !important;
           color: #2d3748 !important;
-          font-size: 1.1rem !important;
+          font-size: 1rem !important;
         }
       }
     }
@@ -2833,8 +2514,8 @@ mat-toolbar {
         background: linear-gradient(135deg, #4299e1, #3182ce);
         border: 4px solid rgba(255, 255, 255, 0.9);
         box-shadow: 
-          0 8px 25px rgba(66, 153, 225, 0.4),
-          0 4px 15px rgba(66, 153, 225, 0.2);
+          0 6px 20px rgba(66, 153, 225, 0.3),
+          0 3px 10px rgba(66, 153, 225, 0.2);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
@@ -2890,8 +2571,8 @@ mat-toolbar {
       color: white;
       border: none;
       box-shadow: 
-        0 12px 35px rgba(102, 126, 234, 0.4),
-        0 6px 20px rgba(102, 126, 234, 0.2);
+        0 12px 35px rgba(33, 150, 243, 0.4),
+        0 6px 20px rgba(33, 150, 243, 0.2);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -2900,15 +2581,15 @@ mat-toolbar {
       min-width: 220px;
       min-height: 56px;
 
-      &:hover:not(:disabled) {
+      &:hover {
         transform: translateY(-3px) scale(1.02);
         box-shadow: 
-          0 16px 45px rgba(102, 126, 234, 0.5),
-          0 8px 25px rgba(102, 126, 234, 0.3);
+          0 16px 45px rgba(33, 150, 243, 0.5),
+          0 8px 25px rgba(33, 150, 243, 0.3);
         background: linear-gradient(135deg, #1976d2, #1565c0);
       }
 
-      &:active:not(:disabled) {
+      &:active {
         transform: translateY(-1px) scale(0.98);
       }
 
@@ -3406,33 +3087,22 @@ mat-toolbar {
         }
 
         &[color="primary"] {
-          background: linear-gradient(135deg, #4caf50, #66bb6a);
+          background: linear-gradient(135deg, #ff9800, #ffb74d);
           color: white;
           
           &:hover {
-            background: linear-gradient(135deg, #388e3c, #4caf50);
+            background: linear-gradient(135deg, #f57c00, #ff9800);
           }
         }
 
         &[color="accent"] {
           background: rgba(255, 255, 255, 0.9);
-          border: 2px solid #2196f3;
-          color: #2196f3;
+          border: 2px solid #f44336;
+          color: #f44336;
           
           &:hover {
-            background: rgba(33, 150, 243, 0.1);
-            border-color: #1976d2;
-          }
-        }
-
-        &[color="warn"] {
-          background: rgba(255, 255, 255, 0.9);
-          border: 2px solid #ff9800;
-          color: #ff9800;
-          
-          &:hover {
-            background: rgba(255, 152, 0, 0.1);
-            border-color: #f57c00;
+            background: rgba(244, 67, 54, 0.1);
+            border-color: #d32f2f;
           }
         }
       }
@@ -3469,6 +3139,8 @@ mat-toolbar {
 
         .result-amount-improved {
           .amount-display {
+            gap: 0.5rem;
+
             .amount-number-big {
               font-size: 2.5rem;
             }
@@ -3533,4 +3205,32 @@ mat-toolbar {
       }
     }
   }
+}
+
+// ✅ NUEVO: Optimización para números largos
+.rate-value {
+  // Asegurar que los números se ajusten automáticamente
+  font-size: clamp(1.2rem, 4vw, 1.8rem) !important; // ✅ Tamaño responsivo
+  word-break: break-all; // ✅ Romper números largos si es necesario
+  hyphens: none;
+}
+
+// ✅ NUEVO: Optimización de rendimiento
+.rates-grid {
+  // Usar will-change para optimizar transiciones
+  .rate-card {
+    will-change: transform;
+    
+    &:hover {
+      will-change: auto;
+    }
+  }
+}
+
+// ✅ NUEVO: Evitar layout shift
+.rate-main {
+  min-height: 80px; // ✅ Altura mínima fija para evitar saltos
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

@@ -823,3 +823,39 @@ Authorization: Bearer {{userToken}}
 ### Verificar logs después de la conversión
 GET http://localhost:3000/api/activity-logs?days=1&limit=10
 Authorization: Bearer {{userToken}}
+
+
+//---------------------------------------
+
+
+### 1. Testear tendencias rápidas
+GET http://localhost:4000/api/calculator/trending-rates?base=USD&days=7
+
+### 2. Testear análisis técnico
+POST http://localhost:4000/api/calculator/technical-analysis
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "days": 30
+}
+
+### 3. Testear tipos de cambio mejorados
+GET http://localhost:4000/api/exchange/rates?base=USD
+
+
+
+### 3. Testear tipos de cambio mejorados
+GET http://localhost:4000/api/calculator/trending-rates?base=USD&days=7
+
+### 2. Testear análisis técnico
+POST http://localhost:4000/api/calculator/technical-analysis
+Content-Type: application/json
+
+{
+  "from": "USD",
+  "to": "EUR",
+  "days": 30
+}

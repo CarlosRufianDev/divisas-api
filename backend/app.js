@@ -8,7 +8,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/alert', require('./routes/alert'));
 app.use('/api/activity-logs', require('./routes/activityLogs'));
-app.use('/api/calculator', require('./routes/calculator'));
+app.use('/api/calculator', require('./routes/calculator')); // ✅ DEBE ESTAR
 app.use('/api/convert', require('./routes/convert'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/favorites', require('./routes/favorites'));
