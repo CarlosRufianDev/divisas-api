@@ -1,0 +1,213 @@
+<div class="profile-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person</mat-icon>
+        Mi Perfil
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Información del perfil -->
+      <div *ngIf="profileData" class="profile-info">
+        <h3>Información de la cuenta</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>ID:</strong> 
+            <span>{{profileData._id}}</span>
+          </div>
+          <div class="info-item">
+            <strong>Email:</strong> 
+            <span>{{profileData.email}}</span>
+          </div>
+          <div class="info-item">
+            <strong>Nombre:</strong> 
+            <span>{{profileData.name || 'Sin nombre'}}</span>
+          </div>
+          <div class="info-item">
+            <strong>Rol:</strong> 
+            <span>{{profileData.role}}</span>
+          </div>
+          <div class="info-item">
+            <strong>Fecha de registro:</strong> 
+            <span>{{profileData.createdAt | date:'medium'}}</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Cambiar nombre de usuario -->
+      <div class="form-section">
+        <h3>
+          <mat-icon>edit</mat-icon>
+          Cambiar nombre de usuario
+        </h3>
+        <form [formGroup]="usernameForm" (ngSubmit)="onChangeUsername()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre de usuario</mat-label>
+            <input matInput formControlName="newUsername" required>
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error *ngIf="usernameForm.get('newUsername')?.hasError('required')">
+              El nombre de usuario es requerido
+            </mat-error>
+            <mat-error *ngIf="usernameForm.get('newUsername')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="!usernameForm.valid || loading"
+                  class="action-button">
+            <mat-icon>update</mat-icon>
+            Actualizar nombre
+          </button>
+        </form>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Cambiar email -->
+      <div class="form-section">
+        <h3>
+          <mat-icon>email</mat-icon>
+          Cambiar email
+        </h3>
+        <form [formGroup]="emailForm" (ngSubmit)="onChangeEmail()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nuevo email</mat-label>
+            <input matInput type="email" formControlName="newEmail" required>
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="emailForm.get('newEmail')?.hasError('required')">
+              El email es requerido
+            </mat-error>
+            <mat-error *ngIf="emailForm.get('newEmail')?.hasError('email')">
+              Email inválido
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Contraseña actual</mat-label>
+            <input matInput [type]="hideEmailPassword ? 'password' : 'text'" 
+                   formControlName="password" required>
+            <button mat-icon-button matSuffix 
+                    (click)="hideEmailPassword = !hideEmailPassword" 
+                    type="button">
+              <mat-icon>{{hideEmailPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="emailForm.get('password')?.hasError('required')">
+              La contraseña es requerida
+            </mat-error>
+          </mat-form-field>
+          
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="!emailForm.valid || loading"
+                  class="action-button">
+            <mat-icon>update</mat-icon>
+            Actualizar email
+          </button>
+        </form>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Cambiar contraseña -->
+      <div class="form-section">
+        <h3>
+          <mat-icon>lock</mat-icon>
+          Cambiar contraseña
+        </h3>
+        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Contraseña actual</mat-label>
+            <input matInput [type]="hideCurrentPassword ? 'password' : 'text'" 
+                   formControlName="currentPassword" required>
+            <button mat-icon-button matSuffix 
+                    (click)="hideCurrentPassword = !hideCurrentPassword" 
+                    type="button">
+              <mat-icon>{{hideCurrentPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="passwordForm.get('currentPassword')?.hasError('required')">
+              La contraseña actual es requerida
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nueva contraseña</mat-label>
+            <input matInput [type]="hideNewPassword ? 'password' : 'text'" 
+                   formControlName="newPassword" required>
+            <button mat-icon-button matSuffix 
+                    (click)="hideNewPassword = !hideNewPassword" 
+                    type="button">
+              <mat-icon>{{hideNewPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">
+              La nueva contraseña es requerida
+            </mat-error>
+            <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">
+              Mínimo 6 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirmar nueva contraseña</mat-label>
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" 
+                   formControlName="confirmPassword" required>
+            <button mat-icon-button matSuffix 
+                    (click)="hideConfirmPassword = !hideConfirmPassword" 
+                    type="button">
+              <mat-icon>{{hideConfirmPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">
+              Confirma la nueva contraseña
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="!passwordForm.valid || loading"
+                  class="action-button">
+            <mat-icon>update</mat-icon>
+            Cambiar contraseña
+          </button>
+        </form>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Eliminar cuenta -->
+      <div class="form-section danger-zone">
+        <h3>
+          <mat-icon>warning</mat-icon>
+          Zona de peligro
+        </h3>
+        <p class="warning-text">
+          <mat-icon>error</mat-icon>
+          Una vez que elimines tu cuenta, no hay vuelta atrás. Se eliminarán todos tus datos permanentemente.
+        </p>
+        
+        <form [formGroup]="deleteForm" (ngSubmit)="onDeleteAccount()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirma tu contraseña</mat-label>
+            <input matInput [type]="hideDeletePassword ? 'password' : 'text'" 
+                   formControlName="password" required>
+            <button mat-icon-button matSuffix 
+                    (click)="hideDeletePassword = !hideDeletePassword" 
+                    type="button">
+              <mat-icon>{{hideDeletePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="deleteForm.get('password')?.hasError('required')">
+              La contraseña es requerida
+            </mat-error>
+          </mat-form-field>
+          
+          <button mat-raised-button color="warn" type="submit" 
+                  [disabled]="!deleteForm.valid || loading"
+                  class="delete-button">
+            <mat-icon>delete_forever</mat-icon>
+            Eliminar cuenta permanentemente
+          </button>
+        </form>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

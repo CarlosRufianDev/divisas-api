@@ -1,0 +1,52 @@
+### filepath: c:\PROYECTOS\divisas-api\backend\test-profile.http
+
+### 1. Login para obtener token (usa tus credenciales reales)
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "pruebausuario@email.com",
+  "password": "Pruebausuario123"
+}
+
+### 2. Obtener perfil
+GET http://localhost:4000/api/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGI2MjM5ZmI2ODExMWMwNDM0ZjRlNjkiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTY4NDM0MTAsImV4cCI6MTc1Njg1MDYxMH0.Sv_H1AjfFRker6ffxi1uKGCgw1pEriWznxRik1TgKgg
+
+### 3. Cambiar nombre de usuario
+PUT http://localhost:4000/api/profile/change-username
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGI2MjM5ZmI2ODExMWMwNDM0ZjRlNjkiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTY4NDM0MTAsImV4cCI6MTc1Njg1MDYxMH0.Sv_H1AjfFRker6ffxi1uKGCgw1pEriWznxRik1TgKgg
+Content-Type: application/json
+
+{
+  "newUsername": "nuevo_nombre"
+}
+
+### 4. Cambiar email
+PUT http://localhost:4000/api/profile/change-email
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGI2MjM5ZmI2ODExMWMwNDM0ZjRlNjkiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTY4NDM0MTAsImV4cCI6MTc1Njg1MDYxMH0.Sv_H1AjfFRker6ffxi1uKGCgw1pEriWznxRik1TgKgg
+Content-Type: application/json
+
+{
+  "newEmail": "nuevo_email@ejemplo.com",
+  "password": "Pruebausuario123"
+}
+
+### 5. Cambiar contraseña
+PUT http://localhost:4000/api/profile/change-password
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGI2MjM5ZmI2ODExMWMwNDM0ZjRlNjkiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTY4NDM0MTAsImV4cCI6MTc1Njg1MDYxMH0.Sv_H1AjfFRker6ffxi1uKGCgw1pEriWznxRik1TgKgg
+Content-Type: application/json
+
+{
+  "currentPassword": "Pruebausuario123",
+  "newPassword": "nueva_password123"
+}
+
+### 6. Eliminar cuenta (¡CUIDADO! Esto elimina todo)
+DELETE http://localhost:4000/api/profile/delete-account
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGI2MjM5ZmI2ODExMWMwNDM0ZjRlNjkiLCJlbWFpbCI6InBydWViYXVzdWFyaW9AZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTY4NDM0MTAsImV4cCI6MTc1Njg1MDYxMH0.Sv_H1AjfFRker6ffxi1uKGCgw1pEriWznxRik1TgKgg
+Content-Type: application/json
+
+{
+  "password": "Pruebausuario123"
+}

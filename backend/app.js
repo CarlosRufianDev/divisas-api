@@ -14,6 +14,7 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/favorites', require('./routes/favorites'));
 app.use('/api/favorite-currencies', require('./routes/favoriteCurrencies'));
 app.use('/api/monedas', require('./routes/monedas'));
+app.use('/api/profile', require('./routes/profile'));
 
 // Healthcheck
 app.get('/health', (req, res) => {

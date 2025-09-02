@@ -22,6 +22,7 @@ const calculatorRoutes = require('./routes/calculator');
 const favoritesRoutes = require('./routes/favorites');
 const favoriteCurrenciesRoutes = require('./routes/favoriteCurrencies');
 const activityLogsRoutes = require('./routes/activityLogs');
+const profileRoutes = require('./routes/profile');
 const exchangeController = require('./controllers/exchangeController');
 const Conversion = require('./models/Conversion');
 
@@ -35,6 +36,7 @@ app.use('/api/calculator', calculatorRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/favorite-currencies', favoriteCurrenciesRoutes);
 app.use('/api/activity-logs', activityLogsRoutes);
+app.use('/api/profile', profileRoutes);
 app.get('/api/exchange/rates', exchangeController.getExchangeRates);
 
 // Health

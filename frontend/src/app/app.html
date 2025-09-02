@@ -30,16 +30,15 @@
           Alertas
         </a>
       
-    
-
-            <a mat-button 
+        <a mat-button 
           routerLink="/calculator" 
-          routerLinkActive="active">  <!-- Ya está dentro de *ngIf="currentUser" -->
+          routerLinkActive="active">
           <mat-icon>calculate</mat-icon>
           Calculadora
-          </a>
+        </a>
       </ng-container>
     </nav>
+    
     <!-- Usuario Autenticado -->
     <div class="user-section" *ngIf="currentUser; else loginSection">
       <span class="welcome">¡Hola {{currentUser.name}}!</span>
@@ -54,13 +53,9 @@
           <div class="user-email">{{currentUser.email}}</div>
         </div>
         <mat-divider></mat-divider>
-        <button mat-menu-item>
+        <button mat-menu-item routerLink="/profile">
           <mat-icon>person</mat-icon>
           <span>Perfil</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon>settings</mat-icon>
-          <span>Configuración</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="logout()">

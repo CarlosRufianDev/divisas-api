@@ -26,6 +26,9 @@ const activityLogSchema = new mongoose.Schema({
       // Dashboard y consultas
       'DASHBOARD_VIEW', 'CURRENCIES_LIST', 'CALCULATOR_USE',
 
+      // Perfil y cuenta
+      'PROFILE_PASSWORD_CHANGED', 'PROFILE_EMAIL_CHANGED', 'PROFILE_USERNAME_CHANGED', 'ACCOUNT_DELETED', // ← AGREGAR ESTAS LÍNEAS
+
       // Errores importantes
       'ERROR_UNAUTHORIZED', 'ERROR_VALIDATION', 'ERROR_API_EXTERNAL'
     ]
