@@ -1,6 +1,29 @@
-# 🏦 DivisasPro - Plataforma Profesional de Divisas
+# 💱 DivisasPro - API Profesional de Conversión de Divisas
 
-> **Aplicación full-stack completa para gestión profesional de divisas con funcionalidades avanzadas de trading, alertas automáticas y análisis en tiempo real.**
+> **🚧 PROYECTO EN DESARROLLO ACTIVO** - Aplicación full-stack para gestión profesional de divisas con funcionalidades avanzadas de trading, alertas automáticas y análisis en tiempo real.
+
+[![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Desarrollo-yellow.svg)](https://github.com/tuusuario/divisas-api)
+[![Versión](https://img.shields.io/badge/Versión-1.0.0--beta-blue.svg)](https://github.com/tuusuario/divisas-api)
+[![Licencia](https://img.shields.io/badge/Licencia-MIT-green.svg)](LICENSE)
+
+---
+
+## 📋 **Resumen del Proyecto**
+
+**DivisasPro** es una aplicación web profesional que permite gestionar conversiones de divisas con funcionalidades empresariales avanzadas. La plataforma está diseñada para traders, empresas y usuarios que necesitan herramientas robustas para el manejo de divisas internacionales.
+
+### **🎯 Características Implementadas**
+
+- ✅ **Sistema de autenticación completo** (registro, login, roles)
+- ✅ **Conversor de divisas en tiempo real** (20 divisas globales)
+- ✅ **Gestión de favoritos** con actualización automática
+- ✅ **Sistema de alertas** (precio, porcentaje, programadas)
+- ✅ **Historial completo** con filtros avanzados
+- ✅ **Calculadora profesional** (conversiones múltiples)
+- ✅ **Dashboard administrativo** con estadísticas
+- ✅ **Auditoría completa** (logs de actividad)
+- ✅ **Sistema de notificaciones** por email
+- ✅ **API RESTful completa** con documentación
 
 ---
 
@@ -62,44 +85,79 @@
 
 ---
 
-## 🏗️ **Arquitectura Técnica**
+## 🏗️ **Arquitectura del Sistema**
 
 ### **Frontend (Angular 20)**
 
-```
-📱 Standalone Components
+```typescript
+📱 Standalone Components Architecture
 🎨 Angular Material Design System
-⚡ RxJS Reactive Programming
-🔒 Functional Guards & Interceptors
-📊 Real-time Data Updates
-🎯 TypeScript Full Coverage
+⚡ RxJS para programación reactiva
+🔒 Guards y interceptors funcionales
+📊 Actualizaciones en tiempo real
+🎯 TypeScript con tipado estricto
 ```
 
 ### **Backend (Node.js + Express)**
 
-```
-🚀 RESTful API Architecture
-🔐 JWT Authentication System
+```javascript
+🚀 API RESTful con Express.js
+🔐 Autenticación JWT con roles
 📊 MongoDB + Mongoose ODM
-📧 Automated Email System (Nodemailer)
-⏰ Cron Jobs for Background Tasks
-🛡️ Input Validation & Sanitization
+📧 Sistema de emails (Nodemailer)
+⏰ Cron jobs para tareas automáticas
+🛡️ Validación y sanitización de datos
 ```
 
 ### **Base de Datos (MongoDB)**
 
+```javascript
+👤 Users - Sistema de usuarios y roles
+💱 Conversions - Historial completo de conversiones
+⭐ Favorites - Pares de divisas favoritos
+🔔 Alerts - Alertas automatizadas
+📋 ActivityLogs - Auditoría completa
+🎯 FavoriteCurrencies - Divisas preferidas
 ```
-👤 Users (auth + roles)
-💱 Conversions (complete history)
-⭐ Favorites (currency pairs)
-🔔 Alerts (automated notifications)
-📋 ActivityLogs (full auditing)
-🎯 FavoriteCurrencies (preferred currencies)
+
+---
+
+## 💱 **Divisas Soportadas (20 Globales)**
+
+### **Divisas Principales**
+
+```
+🇺🇸 USD - Dólar Estadounidense    🇪🇺 EUR - Euro
+🇬🇧 GBP - Libra Esterlina         🇯🇵 JPY - Yen Japonés
+🇨🇭 CHF - Franco Suizo            🇨🇦 CAD - Dólar Canadiense
+🇦🇺 AUD - Dólar Australiano       🇨🇳 CNY - Yuan Chino
+```
+
+### **Mercados Emergentes**
+
+```
+🇲🇽 MXN - Peso Mexicano           🇧🇷 BRL - Real Brasileño
+🇰🇷 KRW - Won Surcoreano          🇮🇳 INR - Rupia India
+🇿🇦 ZAR - Rand Sudafricano        🇹🇷 TRY - Lira Turca
+```
+
+### **Divisas Regionales**
+
+```
+🇸🇪 SEK - Corona Sueca            🇳🇴 NOK - Corona Noruega
+🇭🇰 HKD - Dólar de Hong Kong      🇸🇬 SGD - Dólar de Singapur
+🇳🇿 NZD - Dólar Neozelandés       🇵🇱 PLN - Zloty Polaco
 ```
 
 ---
 
 ## ⚙️ **Instalación y Configuración**
+
+### **Prerrequisitos**
+
+- Node.js 18+
+- MongoDB 5.0+
+- Angular CLI 20+
 
 ### **1. Clonar el Repositorio**
 
@@ -108,25 +166,22 @@ git clone https://github.com/tuusuario/divisas-api.git
 cd divisas-api
 ```
 
-### **2. Backend Setup**
+### **2. Configurar Backend**
 
 ```bash
 cd backend
 npm install
 
-# Configurar .env
-MONGODB_URI=tu_uri_de_mongodb
-JWT_SECRET=YOUR_SECURE_JWT_SECRET
-EMAIL_USER=tu_email@gmail.com
-EMAIL_PASS=tu_contraseña_de_aplicacion
-API_URL=https://api.frankfurter.app/latest
+# Crear archivo .env basado en .env.example
+cp .env.example .env
+# Editar .env con tus credenciales
 
-# Iniciar servidor
-npm start
+# Iniciar servidor de desarrollo
+npm run dev
 # Servidor en http://localhost:3000
 ```
 
-### **3. Frontend Setup**
+### **3. Configurar Frontend**
 
 ```bash
 cd frontend
@@ -137,35 +192,89 @@ ng serve
 # Aplicación en http://localhost:4200
 ```
 
+### **4. Variables de Entorno Requeridas**
+
+```env
+MONGODB_URI=mongodb://localhost:27017/divisas-api
+JWT_SECRET=tu_clave_secreta_muy_segura
+EMAIL_USER=tu_email@gmail.com
+EMAIL_PASS=tu_contraseña_de_aplicacion
+API_URL=https://api.frankfurter.app/latest
+```
+
 ---
 
-## 🧪 **Testing y Desarrollo**
+## 📡 **API Endpoints Principales**
 
-### **Endpoints de Prueba**
+### **Autenticación**
 
 ```http
-### Autenticación
-POST http://localhost:3000/api/auth/register
-POST http://localhost:3000/api/auth/login
+POST /api/auth/register     # Registro de usuarios
+POST /api/auth/login        # Inicio de sesión
+GET  /api/auth/profile      # Perfil del usuario
+```
 
-### Conversiones
-POST http://localhost:3000/api/convert
-GET http://localhost:3000/api/historial
+### **Conversiones**
 
-### Tipos de Cambio
-GET http://localhost:3000/api/exchange/rates?base=USD
+```http
+POST /api/convert           # Nueva conversión
+GET  /api/historial         # Historial con filtros
+DELETE /api/historial/:id   # Eliminar conversión
+```
 
-### Favoritos
-GET http://localhost:3000/api/favorites
-POST http://localhost:3000/api/favorites
+### **Tipos de Cambio**
 
-### Alertas
-GET http://localhost:3000/api/alerts
-POST http://localhost:3000/api/alerts/percentage
+```http
+GET /api/exchange/rates     # Tasas actuales
+GET /api/exchange/rates/:base # Tasas base específica
+```
 
-### Calculadora
-POST http://localhost:3000/api/calculator/multiple
-POST http://localhost:3000/api/calculator/compare
+### **Favoritos**
+
+```http
+GET  /api/favorites         # Obtener favoritos
+POST /api/favorites         # Crear favorito
+DELETE /api/favorites/:id   # Eliminar favorito
+```
+
+### **Alertas**
+
+```http
+GET  /api/alerts           # Obtener alertas
+POST /api/alerts/percentage # Crear alerta porcentual
+POST /api/alerts/target    # Crear alerta objetivo
+```
+
+### **Calculadora**
+
+```http
+POST /api/calculator/multiple # Conversión múltiple
+POST /api/calculator/compare  # Comparación de pares
+```
+
+---
+
+## 🧪 **Testing y Calidad**
+
+### **Cobertura de Tests**
+
+- ✅ Tests unitarios para servicios principales
+- ✅ Tests de integración para API
+- ✅ Cobertura de código documentada
+- ✅ Validación de endpoints críticos
+
+### **Scripts de Testing**
+
+```bash
+# Backend
+cd backend
+npm test              # Ejecutar tests
+npm run test:coverage # Cobertura de código
+
+# Frontend
+cd frontend
+ng test               # Tests unitarios
+ng e2e                # Tests end-to-end
 ```
 
 ### **Scripts de Mantenimiento**
@@ -174,48 +283,9 @@ POST http://localhost:3000/api/calculator/compare
 # Limpieza manual de datos antiguos
 node scripts/test-borrado-antiguo.js
 
-# Los cron jobs se ejecutan automáticamente:
+# Cron jobs automáticos:
 # - Limpieza diaria: 2:00 AM
-# - Alertas: 8:00 AM
-```
-
----
-
-## 📊 **Divisas Soportadas (20 Globales)**
-
-### **Principales**
-
-```
-🇺🇸 USD - Dólar Estadounidense
-🇪🇺 EUR - Euro
-🇬🇧 GBP - Libra Esterlina
-🇯🇵 JPY - Yen Japonés
-🇨🇭 CHF - Franco Suizo
-🇨🇦 CAD - Dólar Canadiense
-🇦🇺 AUD - Dólar Australiano
-🇨🇳 CNY - Yuan Chino
-```
-
-### **Mercados Emergentes**
-
-```
-🇲🇽 MXN - Peso Mexicano
-🇧🇷 BRL - Real Brasileño
-🇰🇷 KRW - Won Surcoreano
-🇮🇳 INR - Rupia India
-```
-
-### **Regionales**
-
-```
-🇸🇪 SEK - Corona Sueca
-🇳🇴 NOK - Corona Noruega
-🇭🇰 HKD - Dólar de Hong Kong
-🇸🇬 SGD - Dólar de Singapur
-🇳🇿 NZD - Dólar Neozelandés
-🇿🇦 ZAR - Rand Sudafricano
-🇹🇷 TRY - Lira Turca
-🇵🇱 PLN - Zloty Polaco
+# - Verificación de alertas: 8:00 AM
 ```
 
 ---
@@ -245,55 +315,79 @@ node scripts/test-borrado-antiguo.js
 
 ---
 
-## 🛡️ **Seguridad y Buenas Prácticas**
+## 🛡️ **Seguridad Implementada**
 
 ```
-✅ Contraseñas encriptadas con BCrypt
-✅ JWT con expiración automática
+✅ Contraseñas encriptadas con BCrypt (10 rounds)
+✅ JWT con expiración automática (24h)
 ✅ Validación exhaustiva de inputs
-✅ Rate limiting en endpoints críticos
 ✅ Sanitización de datos
 ✅ Variables sensibles en .env
 ✅ CORS configurado correctamente
+✅ Rate limiting en endpoints críticos
 ✅ Logging de seguridad automático
+✅ Middleware de autenticación robusto
 ```
 
 ---
 
-## 🚀 **Próximas Funcionalidades**
+## 📈 **Performance y Optimización**
 
-```
-🔄 Gráficos de tendencias históricas
-📈 Dashboard de analytics avanzado
-🌍 Más divisas (criptomonedas)
-📱 App móvil React Native
-🔔 Notificaciones push
-🤖 Bot de Telegram/Discord
-```
+- **Frontend**: Angular 20 con Standalone Components
+- **Backend**: Node.js con clustering habilitado
+- **Base de datos**: MongoDB con índices optimizados
+- **Cache**: Tipos de cambio cacheados (30 segundos)
+- **API Externa**: Frankfurter API (99.9% uptime)
 
 ---
 
-## 📈 **Performance**
+## 🚧 **Estado Actual y Roadmap**
 
-```
-⚡ Frontend: Angular 20 + Standalone Components
-⚡ Backend: Node.js con clustering
-⚡ Base de datos: MongoDB con índices optimizados
-⚡ Cache: Tipos de cambio cacheados (30 segundos)
-⚡ API: Frankfurter (99.9% uptime)
-```
+### **✅ Completado**
+
+- [x] Sistema de autenticación completo
+- [x] Conversor de divisas funcional
+- [x] Gestión de favoritos
+- [x] Sistema de alertas básico
+- [x] Historial con filtros
+- [x] API RESTful completa
+- [x] Dashboard administrativo
+- [x] Sistema de auditoría
+
+### **🔄 En Desarrollo**
+
+- [ ] Optimización de performance
+- [ ] Mejoras en la UI/UX
+- [ ] Tests adicionales
+- [ ] Documentación extendida
+- [ ] Refactoring de componentes
+
+### **📋 Próximas Funcionalidades**
+
+- [ ] Gráficos de tendencias históricas
+- [ ] Dashboard de analytics avanzado
+- [ ] Soporte para criptomonedas
+- [ ] Aplicación móvil
+- [ ] Notificaciones push
+- [ ] Bot de Telegram/Discord
+- [ ] Modo offline
+- [ ] Exportación de datos (CSV, PDF)
 
 ---
 
 ## 🤝 **Contribuciones**
 
+> **⚠️ Nota**: Este proyecto está en desarrollo activo. Las contribuciones son bienvenidas pero ten en cuenta que la estructura puede cambiar.
+
 ```bash
 # Fork del proyecto
-# Crear rama feature
+git fork https://github.com/tuusuario/divisas-api
+
+# Crear rama de feature
 git checkout -b feature/nueva-funcionalidad
 
-# Commit con formato conventional
-git commit -m "feat: añadir conversión a criptomonedas"
+# Seguir conventional commits
+git commit -m "feat: añadir nueva funcionalidad"
 
 # Push y Pull Request
 git push origin feature/nueva-funcionalidad
@@ -301,9 +395,12 @@ git push origin feature/nueva-funcionalidad
 
 ---
 
-## 📝 **Licencia**
+## 📞 **Soporte y Contacto**
 
-MIT License - Ver archivo LICENSE para detalles
+- **📧 Email**: carlosrufiandev@gmail.com
+- **🐛 Issues**: [GitHub Issues](https://github.com/tuusuario/divisas-api/issues)
+- **📖 Documentación**: En desarrollo
+- **💬 Discusiones**: [GitHub Discussions](https://github.com/tuusuario/divisas-api/discussions)
 
 ---
 
@@ -317,11 +414,19 @@ MIT License - Ver archivo LICENSE para detalles
 
 ---
 
-> **🏆 Aplicación desarrollada con fines educativos y profesionales**  
-> **⭐ Si te gusta el proyecto, dale una estrella en GitHub!**
+## 📝 **Licencia**
+
+MIT License - Ver archivo [LICENSE](LICENSE) para más detalles.
 
 ---
 
-**Desarrollado con ❤️ por Carlos Tobias Rufian Salmeron**  
-**📧 Contacto: carlosrufiandev@gmail.com**  
-**🌐 Portfolio: tuportfolio.com**
+> **⚠️ AVISO IMPORTANTE**: Esta aplicación está en desarrollo activo. Algunas funcionalidades pueden estar incompletas o sujetas a cambios. No recomendado para uso en producción sin testing exhaustivo.
+
+---
+
+**🏆 Desarrollado con ❤️ por Carlos Tobias Rufian Salmeron**  
+**⭐ Si te gusta el proyecto, ¡dale una estrella en GitHub!**
+
+---
+
+_Última actualización: Septiembre 2025_
