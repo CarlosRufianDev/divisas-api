@@ -1,5 +1,5 @@
 <div class="profile-container">
-  <mat-card>
+  <mat-card class="profile-card">
     <mat-card-header>
       <mat-card-title>
         <mat-icon>person</mat-icon>
@@ -10,7 +10,10 @@
     <mat-card-content>
       <!-- Información del perfil -->
       <div *ngIf="profileData" class="profile-info">
-        <h3>Información de la cuenta</h3>
+        <h3>
+          <mat-icon>info</mat-icon>
+          Información de la cuenta
+        </h3>
         <div class="info-grid">
           <div class="info-item">
             <strong>ID:</strong> 
