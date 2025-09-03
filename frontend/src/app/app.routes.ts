@@ -11,7 +11,7 @@ export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
-  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  { path: 'dashboard', component: Dashboard },
   { path: 'historial', component: Historial, canActivate: [authGuard] },
   { path: 'favoritos', component: Favoritos, canActivate: [authGuard] },
   { path: 'alertas', component: Alertas, canActivate: [authGuard] },

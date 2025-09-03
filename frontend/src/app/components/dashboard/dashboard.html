@@ -2,10 +2,41 @@
   <!-- Header Compacto -->
   <div class="dashboard-header">
     <h1>💰 DivisasPro</h1>
-    <p class="subtitle">Conversión de divisas en tiempo real</p>
+    <p class="subtitle">
+      {{ isAuthenticated ? 'Conversión de divisas en tiempo real' : 'Conversión básica de divisas • Regístrate para funciones avanzadas' }}
+    </p>
   </div>
 
   <div class="content-wrapper">
+
+    <!-- 🆕 BANNER DE INFORMACIÓN PARA USUARIOS NO AUTENTICADOS -->
+    <mat-card class="limited-mode-banner" *ngIf="isLimitedMode">
+      <mat-card-content>
+        <div class="banner-content">
+          <div class="banner-icon">
+            <mat-icon>info</mat-icon>
+          </div>
+          <div class="banner-text">
+            <h3>Modo de Prueba Activado</h3>
+            <p>Estás usando DivisasPro en modo limitado. Puedes convertir entre las 8 divisas principales con USD como base.</p>
+            <ul class="limitations-list">
+              <li>• Solo 8 divisas principales disponibles ---- • Moneda base fija en USD</li>
+              <li>• Sin seguimiento de favoritos ---- • Sin análisis técnico ni recomendaciones</li>
+            </ul>
+          </div>
+          <div class="banner-actions">
+            <button mat-raised-button color="primary" (click)="router.navigate(['/register'])">
+              <mat-icon>person_add</mat-icon>
+              Crear Cuenta Gratis
+            </button>
+            <button mat-raised-button color="primary" (click)="router.navigate(['/login'])">
+              <mat-icon>login</mat-icon>
+              Iniciar Sesión
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
     <div class="update-info-banner">
       <mat-icon>info</mat-icon>

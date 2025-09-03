@@ -118,17 +118,30 @@ export class Dashboard implements OnInit, OnDestroy {
     { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
   ];
 
+  // 🆕 NUEVAS PROPIEDADES PARA MODO LIMITADO
+  isLimitedMode = false;
+  limitedCurrencies = [
+    { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
+    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
+    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
+    { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
+    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
+    { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
+    { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
+    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳' },
+  ];
+
   constructor(
     private divisasService: DivisasService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private router: Router
+    public router: Router
   ) {
     // Configurar reactive forms para mejor rendimiento
     this.monedaOrigen.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
-        this.convert(); // ✅ CORREGIDO: usar convert() en lugar de convertir()
+        this.convert();
       });
 
     this.monedaDestino.valueChanges
@@ -151,14 +164,24 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    console.log('🚀 Iniciando Dashboard con datos reales');
+    console.log('🚀 Iniciando Dashboard...');
+
+    // 🆕 DETERMINAR MODO DE OPERACIÓN
+    this.isLimitedMode = !this.authService.isAuthenticated();
+
+    if (this.isLimitedMode) {
+      console.log('⚠️ Modo limitado activado para usuario no autenticado');
+      // Fijar moneda base en USD para usuarios no autenticados
+      this.monedaBase.setValue('USD');
+      this.monedaBase.disable();
+    }
 
     try {
-      // Cargar datos en paralelo para mejor rendimiento
+      // Cargar datos según el modo
       await Promise.all([
-        this.cargarDivisas(), // ✅ CORREGIDO: usar cargarDivisas() en lugar de cargarMonedas()
+        this.cargarDivisas(),
         this.cargarTiposCambioReales(),
-        this.cargarDatosUsuario(),
+        this.isLimitedMode ? Promise.resolve() : this.cargarDatosUsuario(), // ✅ Solo si está autenticado
       ]);
 
       console.log('✅ Dashboard inicializado correctamente');
@@ -204,12 +227,15 @@ export class Dashboard implements OnInit, OnDestroy {
           tendenciasResponse.summary
         );
 
+        // 🆕 FILTRAR SEGÚN EL MODO
+        const divisasDisponibles = this.getDivisasDisponibles();
+
         // Procesar datos con tendencias reales
         this.tiposCambio = tendenciasResponse.rates
           .map((rateData) => {
-            const divisa = this.divisas.find(
+            const divisa = divisasDisponibles.find(
               (d) => d.code === rateData.currency
-            );
+            ); // ✅ CAMBIAR aquí
             if (!divisa) return null;
 
             // Guardar tendencia real
@@ -225,8 +251,8 @@ export class Dashboard implements OnInit, OnDestroy {
               trendStatus: rateData.trendStatus,
             };
           })
-          .filter(Boolean);
-        // ✅ Sin límite - mostrar todas las disponibles (ordenadas por popularidad)
+          .filter(Boolean)
+          .slice(0, this.isLimitedMode ? 8 : undefined); // ✅ AÑADIR límite
 
         this.ultimaActualizacion = new Date().toLocaleTimeString();
         console.log(
@@ -488,18 +514,6 @@ export class Dashboard implements OnInit, OnDestroy {
     return this.tendenciasReales.get(currencyCode) || 0;
   }
 
-  getDivisasOrigen() {
-    return this.divisas.filter(
-      (divisa) => divisa.code !== this.monedaDestino.value
-    );
-  }
-
-  getDivisasDestino() {
-    return this.divisas.filter(
-      (divisa) => divisa.code !== this.monedaOrigen.value
-    );
-  }
-
   onMonedaOrigenChange(): void {
     if (this.monedaDestino.value === this.monedaOrigen.value) {
       this.monedaDestino.setValue('');
@@ -747,5 +761,25 @@ export class Dashboard implements OnInit, OnDestroy {
 
   get isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
+  }
+  // 🆕 MÉTODO NUEVO: Obtener divisas según el modo
+  getDivisasDisponibles() {
+    return this.isLimitedMode ? this.limitedCurrencies : this.divisas;
+  }
+
+  // 🆕 MÉTODO MODIFICADO: Filtrar divisas origen según el modo
+  getDivisasOrigen() {
+    const disponibles = this.getDivisasDisponibles();
+    return disponibles.filter(
+      (divisa) => divisa.code !== this.monedaDestino.value
+    );
+  }
+
+  // 🆕 MÉTODO MODIFICADO: Filtrar divisas destino según el modo
+  getDivisasDestino() {
+    const disponibles = this.getDivisasDisponibles();
+    return disponibles.filter(
+      (divisa) => divisa.code !== this.monedaOrigen.value
+    );
   }
 }
