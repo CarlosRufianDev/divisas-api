@@ -118,6 +118,15 @@ export class Dashboard implements OnInit, OnDestroy {
     { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
   ];
 
+  // 🆕 PROPIEDADES PARA MARKET TICKER
+  tickerRates: any[] = [];
+  tickerPairs = [
+    { pair: 'EUR/USD', from: 'EUR', to: 'USD' },
+    { pair: 'GBP/USD', from: 'GBP', to: 'USD' },
+    { pair: 'USD/JPY', from: 'USD', to: 'JPY' },
+  ];
+  tickerUpdateInterval: any = null;
+
   // 🆕 NUEVAS PROPIEDADES PARA MODO LIMITADO
   isLimitedMode = false;
   limitedCurrencies = [
@@ -174,6 +183,9 @@ export class Dashboard implements OnInit, OnDestroy {
       // Fijar moneda base en USD para usuarios no autenticados
       this.monedaBase.setValue('USD');
       this.monedaBase.disable();
+    } else {
+      // 🆕 INICIAR TICKER SOLO PARA USUARIOS AUTENTICADOS
+      this.iniciarActualizacionTicker();
     }
 
     try {
@@ -181,7 +193,7 @@ export class Dashboard implements OnInit, OnDestroy {
       await Promise.all([
         this.cargarDivisas(),
         this.cargarTiposCambioReales(),
-        this.isLimitedMode ? Promise.resolve() : this.cargarDatosUsuario(), // ✅ Solo si está autenticado
+        this.isLimitedMode ? Promise.resolve() : this.cargarDatosUsuario(),
       ]);
 
       console.log('✅ Dashboard inicializado correctamente');
@@ -193,6 +205,9 @@ export class Dashboard implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+
+    // 🆕 LIMPIAR TICKER
+    this.detenerActualizacionTicker();
   }
 
   // ✅ MÉTODO AÑADIDO: Cargar divisas (antes faltaba)
@@ -781,5 +796,128 @@ export class Dashboard implements OnInit, OnDestroy {
     return disponibles.filter(
       (divisa) => divisa.code !== this.monedaOrigen.value
     );
+  }
+
+  // 🆕 MÉTODO PARA CARGAR TICKER EN TIEMPO REAL
+
+  // 🆕 MÉTODO ALTERNATIVO: Usar datos de tendencias reales para ticker
+  async cargarTickerRealTime(): Promise<void> {
+    if (!this.isAuthenticated) return;
+
+    try {
+      console.log('📊 Cargando ticker desde tendencias reales...');
+
+      // ✅ USAR EL MÉTODO EXISTENTE QUE YA FUNCIONA
+      const tendenciasResponse = await this.divisasService
+        .getTrendingRates('USD', undefined, 7)
+        .toPromise();
+
+      if (tendenciasResponse?.success && tendenciasResponse.rates) {
+        // Filtrar solo los pares que queremos en el ticker
+        const paresTickerCodes = ['EUR', 'GBP', 'JPY'];
+
+        this.tickerRates = []; // Limpiar array
+
+        tendenciasResponse.rates
+          .filter((rate) => paresTickerCodes.includes(rate.currency))
+          .forEach((rateData) => {
+            let pairName = '';
+
+            // Construir nombre del par
+            if (rateData.currency === 'EUR') pairName = 'EUR/USD';
+            else if (rateData.currency === 'GBP') pairName = 'GBP/USD';
+            else if (rateData.currency === 'JPY') pairName = 'USD/JPY';
+
+            if (pairName) {
+              this.actualizarTickerItem(
+                pairName,
+                rateData.currentRate,
+                rateData.trend
+              );
+            }
+          });
+
+        console.log(
+          `✅ Ticker actualizado con datos reales: ${this.tickerRates.length} pares`
+        );
+      } else {
+        // Fallback a datos simulados
+        this.cargarTickerFallback();
+      }
+    } catch (error) {
+      console.error('❌ Error cargando ticker real:', error);
+      this.cargarTickerFallback();
+    }
+  }
+
+  // 🆕 MÉTODO DE FALLBACK PARA TICKER
+  private cargarTickerFallback(): void {
+    console.log('🔄 Usando datos simulados para ticker...');
+
+    const simulatedData = [
+      { pair: 'EUR/USD', rate: 1.0847, change: 0.12 },
+      { pair: 'GBP/USD', rate: 1.2634, change: -0.08 },
+      { pair: 'USD/JPY', rate: 149.85, change: 0.25 },
+    ];
+
+    this.tickerRates = [];
+    simulatedData.forEach((data) => {
+      this.actualizarTickerItem(data.pair, data.rate, data.change);
+    });
+  }
+
+  // 🆕 MÉTODO PARA ACTUALIZAR ITEM DEL TICKER
+  private actualizarTickerItem(
+    pair: string,
+    rate: number,
+    tendencia: number
+  ): void {
+    const existingIndex = this.tickerRates.findIndex(
+      (item) => item.pair === pair
+    );
+
+    const tickerItem = {
+      pair: pair,
+      rate: rate.toFixed(4),
+      change:
+        tendencia > 0
+          ? `+${tendencia.toFixed(2)}%`
+          : `${tendencia.toFixed(2)}%`,
+      trend: tendencia > 0 ? 'up' : tendencia < 0 ? 'down' : 'stable',
+    };
+
+    if (existingIndex >= 0) {
+      this.tickerRates[existingIndex] = tickerItem;
+    } else {
+      this.tickerRates.push(tickerItem);
+    }
+  }
+
+  // 🆕 MÉTODO PARA INICIAR ACTUALIZACIÓN AUTOMÁTICA
+  private iniciarActualizacionTicker(): void {
+    if (!this.isAuthenticated) return;
+
+    // Cargar inmediatamente
+    this.cargarTickerRealTime();
+
+    // Actualizar cada 60 segundos
+    this.tickerUpdateInterval = setInterval(() => {
+      if (this.isAuthenticated) {
+        this.cargarTickerRealTime();
+      } else {
+        this.detenerActualizacionTicker();
+      }
+    }, 60000);
+
+    console.log('⏰ Ticker automático iniciado (60s)');
+  }
+
+  // 🆕 MÉTODO PARA DETENER ACTUALIZACIÓN
+  private detenerActualizacionTicker(): void {
+    if (this.tickerUpdateInterval) {
+      clearInterval(this.tickerUpdateInterval);
+      this.tickerUpdateInterval = null;
+      console.log('⏹️ Ticker automático detenido');
+    }
   }
 }

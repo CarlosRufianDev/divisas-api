@@ -1,4 +1,252 @@
-// estilos para el contenedor principal del dashboard
+// 🎯 IMPORTAR FUENTES PROFESIONALES - AGREGAR AL INICIO
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+// ✨ HEADER
+.dashboard-header {
+  background: linear-gradient(135deg, 
+    #0f172a 0%, 
+    #1e293b 25%, 
+    #334155 50%, 
+    #1e293b 75%, 
+    #0f172a 100%);
+  color: white;
+  padding: 2.5rem 2rem 2rem;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  margin: 1rem;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  // Patrón de fondo sutil
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(53, 39, 247, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1.5rem;
+
+    .main-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 0 0 0.8rem 0;
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      letter-spacing: -0.05em;
+      position: relative;
+
+      .currency-symbol {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+        animation: gemPulse 3s ease-in-out infinite;
+      }
+
+      .brand-text {
+          color: #ffffff !important; // ✅ Blanco sólido
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); // ✅ Sombra elegante
+          font-weight: 900;
+          position: relative;
+          margin-top: 1rem;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b);
+          border-radius: 2px;
+          opacity: 0.7;
+        }
+      }
+
+      .pro-badge {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.3rem 0.6rem;
+        border-radius: 20px;
+        letter-spacing: 0.1em;
+        box-shadow: 
+          0 4px 12px rgba(59, 130, 246, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        top: -1rem;
+        animation: badgeGlow 2s ease-in-out infinite alternate;
+      }
+    }
+
+    .title-tagline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      
+
+      .tagline-text {
+        font-family: 'Poppins', sans-serif;
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+        font-weight: 500;
+        color: #cbd5e1;
+        text-align: center;
+        letter-spacing: 0.02em;
+        line-height: 1.4;
+        max-width: 600px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        margin-top: 1rem;
+      }
+
+      .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(16, 185, 129, 0.15);
+        padding: 0.8rem;
+        border-radius: 20px;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+
+        .pulse-dot {
+          width: 8px;
+          height: 8px;
+          background: #10b981;
+          border-radius: 50%;
+          animation: livePulse 1.5s ease-in-out infinite;
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+
+        .live-text {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #10b981;
+          letter-spacing: 0.1em;
+          
+        }
+      }
+    }
+  }
+
+  // 📊 TICKER DEL MERCADO
+  .market-ticker {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    position: relative;
+    z-index: 2;
+
+    .ticker-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+
+      .ticker-pair {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #94a3b8;
+        letter-spacing: 0.05em;
+      }
+
+      .ticker-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.1rem;
+        font-weight: 700;
+        
+        &.up {
+          color: #10b981;
+          text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+        }
+        
+        &.down {
+          color: #ef4444;
+          text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+        }
+      }
+
+      .ticker-change {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #64748b;
+      }
+    }
+  }
+}
+
+// 🎭 ANIMACIONES PROFESIONALES
+@keyframes gemPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+  }
+  50% { 
+    transform: scale(1.05);
+    filter: drop-shadow(0 6px 16px rgba(251, 191, 36, 0.5));
+  }
+}
+
+@keyframes badgeGlow {
+  0% { 
+    box-shadow: 
+      0 4px 12px rgba(59, 130, 246, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% { 
+    box-shadow: 
+      0 6px 20px rgba(59, 130, 246, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes livePulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
 
 .dashboard-container {
   animation: fadeIn 0.3s ease-out;
@@ -393,7 +641,6 @@ mat-toolbar {
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 
-  // 🔧 CORREGIDO: Solo .converter-card (remover .result-card que no se usa)
   .converter-card {
     backdrop-filter: blur(10px);
     background: rgba(255, 255, 255, 0.95);
@@ -1017,6 +1264,7 @@ mat-toolbar {
 
           .flag {
             font-size: 1.4rem; 
+            color: #000;
           }
           .currency-details {
             .currency-code {
@@ -1101,6 +1349,7 @@ mat-toolbar {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          color: #1a202c;
 
           // Colores según tendencia
           &.trending-up {
@@ -1827,7 +2076,7 @@ mat-toolbar {
   color: inherit;
   &.updating {
     opacity: 0.4;
-    color: #aaa;
+    color: #020000;
   }
 }
 
@@ -3315,7 +3564,7 @@ mat-toolbar {
 .rate-value {
   // Asegurar que los números se ajusten automáticamente
   font-size: clamp(1.2rem, 4vw, 1.8rem) !important; // ✅ Tamaño responsivo
-  word-break: break-all; // ✅ Romper números largos si es necesario
+  word-break: break-all;
   hyphens: none;
 }
 
@@ -3483,5 +3732,70 @@ mat-toolbar {
         }
       }
     }
+  }
+}
+
+// 📱 RESPONSIVE PARA EL HEADER - AGREGAR AL FINAL
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 2rem 1.5rem 1.5rem;
+    border-radius: 0 0 20px 20px;
+
+    .title-container {
+      margin-bottom: 1rem;
+
+      .main-title {
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .pro-badge {
+          top: 0;
+          font-size: 0.6rem;
+        }
+      }
+    }
+
+    .market-ticker {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+
+      .ticker-item {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 1.5rem 1rem 1rem;
+
+    .market-ticker {
+      display: none; // Ocultar ticker en móviles muy pequeños
+    }
+  }
+}
+
+// 🎭 ANIMACIONES ADICIONALES - AGREGAR AL FINAL
+@keyframes shimmer {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes lockPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 
+      0 6px 24px rgba(25, 118, 210, 0.3),
+      0 3px 12px rgba(25, 118, 210, 0.2);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 
+      0 8px 30px rgba(25, 118, 210, 0.4),
+      0 4px 15px rgba(25, 118, 210, 0.3);
   }
 }

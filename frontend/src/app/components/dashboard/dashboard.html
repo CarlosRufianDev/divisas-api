@@ -1,11 +1,30 @@
 <div class="dashboard-container">
-  <!-- Header Compacto -->
-  <div class="dashboard-header">
-    <h1>💰 DivisasPro</h1>
-    <p class="subtitle">
-      {{ isAuthenticated ? 'Conversión de divisas en tiempo real' : 'Conversión básica de divisas • Regístrate para funciones avanzadas' }}
-    </p>
+  <!-- Header -->
+<div class="dashboard-header">
+  <div class="title-container">
+    <h1 class="main-title">
+      <span class="currency-symbol">💎</span>
+      <span class="brand-text">DivisasPro</span>
+      <span class="pro-badge">PRO</span>
+    </h1>
+    <div class="title-tagline">
+      <span class="tagline-text">{{ isAuthenticated ? 'Suite Profesional de Trading de Divisas' : 'Plataforma Líder en Conversión de Divisas • Únete Gratis' }}</span>
+      <div class="live-indicator" *ngIf="isAuthenticated">
+        <span class="pulse-dot"></span>
+        <span class="live-text">EN VIVO</span>
+      </div>
+    </div>
   </div>
+  
+  <!-- Indicadores del mercado en tiempo real -->
+<!-- Indicadores del mercado en tiempo real -->
+    <div class="market-ticker" *ngIf="isAuthenticated && tickerRates.length > 0">
+      <div class="ticker-item" *ngFor="let ticker of tickerRates">
+        <span class="ticker-pair">{{ ticker.pair }}</span>
+        <span class="ticker-value" [ngClass]="ticker.trend">{{ ticker.rate }}</span>
+        <span class="ticker-change">{{ ticker.change }}</span>
+      </div>
+    </div>
 
   <div class="content-wrapper">
 
