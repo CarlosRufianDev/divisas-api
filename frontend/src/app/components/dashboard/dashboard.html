@@ -358,12 +358,13 @@
       <mat-card-header>
         <div class="rates-header">
           <div class="rates-title">
-            <mat-card-title>
+            <mat-card-title>  
+              Mercado de Divisas 
               <mat-icon>trending_up</mat-icon>
-              Mercado de Divisas
             </mat-card-title>
             <mat-card-subtitle>
-              Base: {{ monedaBase.value }} • Actualizado {{ ultimaActualizacion }}
+              Base: <strong>{{ monedaBase.value }}</strong> • Actualizado <strong>{{ ultimaActualizacion }}</strong>
+              <span *ngIf="isLimitedMode" class="limited-indicator"> • Solo 8 divisas principales</span>
             </mat-card-subtitle>
           </div>
           
@@ -451,7 +452,6 @@
                         color="primary" 
                         (click)="convertirA(rate.code)"
                         class="action-button">
-                  <mat-icon>currency_exchange</mat-icon>
                   Convertir a {{ rate.code }}
                 </button>
                 
