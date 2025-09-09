@@ -835,6 +835,55 @@ mat-toolbar {
         background: rgba(255, 243, 224, 0.3);
       }
 
+      // ✅ ESTILO ESPECIAL PARA MONEDA BASE
+      &.base-currency {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border: 2px solid #2196f3;
+        border-left: 6px solid #1976d2;
+        position: relative;
+
+        &::before {
+          content: '📍 BASE';
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+          background: #1976d2;
+          color: white;
+          font-size: 0.6rem;
+          font-weight: 700;
+          padding: 0.2rem 0.5rem;
+          border-radius: 8px;
+          letter-spacing: 0.5px;
+        }
+
+        .rate-header .currency-info .currency-details {
+          .currency-code {
+            color: #1976d2 !important;
+            font-weight: 800;
+          }
+          
+          .currency-name {
+            color: #1565c0 !important;
+            font-weight: 600;
+          }
+        }
+
+        .rate-main .rate-value {
+          color: #0d47a1 !important;
+          font-weight: 800;
+          font-size: 1.6rem;
+        }
+
+        .trend-indicator {
+          background: rgba(33, 150, 243, 0.1) !important;
+          border: 2px solid #2196f3 !important;
+          
+          mat-icon {
+            color: #1976d2 !important;
+          }
+        }
+      }
+
       .rate-content {
         height: 100%;
         display: flex;
@@ -1085,31 +1134,38 @@ mat-toolbar {
           }
 
           mat-icon {
-            font-size: 0.7rem; 
-            width: 0.9rem;
-            height: 0.9rem;
-            margin: 0;
-          }
-
-          &[color="primary"] {
-            background: linear-gradient(135deg, #ff9800, #ffb74d);
-            color: white;
+            font-size: 1.2rem !important; // ✅ AUMENTADO de 0.7rem a 1.2rem
+            width: 1.2rem !important;     // ✅ AUMENTADO de 0.9rem a 1.2rem
+            height: 1.2rem !important;    // ✅ AUMENTADO de 0.9rem a 1.2rem
+            margin-right: 0.4rem;         // ✅ Más espacio entre icono y texto
             
-            &:hover {
-              background: linear-gradient(135deg, #f57c00, #ff9800);
-              box-shadow: 0 6px 16px rgba(255, 152, 0, 0.3);
+            // ✅ ESPECIAL: Icono lock más prominente
+            &[fonticon="lock"] {
+              font-size: 1.4rem !important; // ✅ Aún más grande para el candado
+              width: 1.4rem !important;
+              height: 1.4rem !important;
+              color: #f44336 !important;    // ✅ Color rojo más visible
+              text-shadow: 0 1px 3px rgba(244, 67, 54, 0.3); // ✅ Sombra para destacar
             }
           }
 
+          // ✅ MEJORAR botón warn (no autenticado)
+          &[color="warn"] {
+            mat-icon {
+              font-size: 1.4rem !important; // ✅ Candado más grande
+              width: 1.4rem !important;
+              height: 1.4rem !important;
+              color: #fff !important;       // ✅ Blanco sobre fondo rojo
+              filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)); // ✅ Sombra para contraste
+            }
+          }
+
+          // ✅ MEJORAR botón accent (autenticado)
           &[color="accent"] {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #2196f3;
-            color: #2196f3;
-            
-            &:hover {
-              background: rgba(33, 150, 243, 0.1);
-              border-color: #1976d2;
-              box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
+            mat-icon {
+              font-size: 1.1rem !important; // ✅ Analytics un poco más grande
+              width: 1.1rem !important;
+              height: 1.1rem !important;
             }
           }
         }
@@ -1148,7 +1204,7 @@ mat-toolbar {
 
     p {
       margin: 0;
-      color: #718096;
+      color: #666;
       font-size: 0.9rem;
       line-height: 1.4;
       max-width: 300px;
@@ -2278,25 +2334,6 @@ mat-toolbar {
   }
 }
 
-.rate-actions-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-top: 1rem;
-
-  .action-button {
-    width: 100%;
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
-    font-weight: 500;
-    
-    mat-icon {
-      margin-right: 0.5rem;
-    }
-  }
-}
-
-
 .premium-content-overlay {
   text-align: center;
   padding: 2rem;
@@ -2409,10 +2446,10 @@ mat-toolbar {
 
       // 🆕 ICONO DEL CANDADO COMPACTO
       .premium-lock-icon {
-        font-size: 3rem; // 🆕 Más pequeño
-        width: 4rem;
-        height: 4rem;
-        color: #1976d2;
+        font-size: 3rem;
+        width: 6rem; 
+        height: 6rem;
+        color: #fa0000;
         margin-bottom: 0;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
         border-radius: 50%;
@@ -3066,9 +3103,9 @@ mat-toolbar {
       background-clip: text;
 
       mat-icon {
-        font-size: 1.8rem;
-        width: 1.8rem;
-        height: 1.8rem;
+        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
         color: #4caf50;
         background: rgba(76, 175, 80, 0.1);
         border-radius: 50%;
@@ -3661,25 +3698,6 @@ mat-toolbar {
               font-size: 1.4rem;
             }
           }
-        }
-      }
-
-      .result-stats-grid {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-
-        .stat-box {
-          padding: 1rem;
-        }
-      }
-
-      .result-actions-improved {
-        flex-direction: column;
-        gap: 0.8rem;
-
-        button {
-          max-width: none;
-          width: 100%;
         }
       }
     }

@@ -407,9 +407,10 @@
           <div class="rate-card"
                *ngFor="let rate of tiposCambio"
                [ngClass]="{
-                 'trending-up': getTendenciaReal(rate.code) > 0,
-                 'trending-down': getTendenciaReal(rate.code) < 0,
-                 'trending-stable': getTendenciaReal(rate.code) === 0
+                 'trending-up': getTendenciaReal(rate.code) > 0 && !rate.isBaseCurrency,
+                 'trending-down': getTendenciaReal(rate.code) < 0 && !rate.isBaseCurrency,
+                 'trending-stable': getTendenciaReal(rate.code) === 0 || rate.isBaseCurrency,
+                 'base-currency': rate.isBaseCurrency
                }">
             <div class="rate-content" [class.updating]="cargandoTabla">
               <!-- Header de la Card -->
@@ -422,22 +423,24 @@
                   </div>
                 </div>
                 
-                <!-- Indicador de Tendencia -->
-                <div class="trend-indicator" [ngClass]="{
-                    'trend-up': rate.tendencia > 0,
-                    'trend-down': rate.tendencia < 0,
-                    'trend-stable': rate.tendencia === 0
-                }">
-                  <mat-icon *ngIf="rate.tendencia > 0">trending_up</mat-icon>
-                  <mat-icon *ngIf="rate.tendencia < 0">trending_down</mat-icon>
-                  <mat-icon *ngIf="rate.tendencia === 0">trending_flat</mat-icon>
+                <!-- ✅ ICONO ESPECIAL PARA MONEDA BASE -->
+                <div class="trend-indicator" 
+                     *ngIf="!rate.isBaseCurrency"
+                     [ngClass]="{
+                       'trend-up': rate.tendencia > 0,
+                       'trend-down': rate.tendencia < 0, 
+                       'trend-stable': rate.tendencia === 0
+                     }">
+                  <mat-icon>
+                    {{ rate.tendencia > 0 ? 'trending_up' : rate.tendencia < 0 ? 'trending_down' : 'trending_flat' }}
+                  </mat-icon>
                 </div>
               </div>
 
               <!-- Tasa Principal -->
               <div class="rate-main">
                 <span class="rate-value" [class.updating]="cargandoTabla">
-                  {{ rate.rate | number:'1.2-2' }}
+                  {{ rate.isBaseCurrency ? '1.0000' : (rate.rate | number:'1.2-2') }}
                 </span>
                 <span class="rate-label">{{ monedaBase.value }}/{{ rate.code }}</span>
               </div>
@@ -445,15 +448,15 @@
               <!-- Cambio y Porcentaje -->
               <div class="rate-change">
                 <span class="change-percent" [ngClass]="{
-                    'positive': rate.tendencia > 0,
-                    'negative': rate.tendencia < 0,
-                    'neutral': rate.tendencia === 0
+                    'positive': rate.tendencia > 0 && !rate.isBaseCurrency,
+                    'negative': rate.tendencia < 0 && !rate.isBaseCurrency,
+                    'neutral': rate.isBaseCurrency
                 }">
-                  {{ rate.tendencia > 0 ? '+' : '' }}{{ rate.cambio }}%
-                  <small class="trend-period">(30 días)</small>
+                  {{ rate.isBaseCurrency ? 'REFERENCIA' : (rate.tendencia > 0 ? '+' : '') + rate.cambio + '%' }}
+                  <small class="trend-period" *ngIf="!rate.isBaseCurrency">(30 días)</small>
                 </span>
                 <div class="trend-details">
-                  <small class="change-label">Datos históricos BCE</small>
+                  <small class="change-label">{{ rate.isBaseCurrency ? 'Moneda base seleccionada' : 'Datos históricos BCE' }}</small>
                 </div>
               </div>
 
@@ -461,26 +464,38 @@
               <div class="rate-extra">
                 <div class="inverse-rate">
                   <mat-icon>swap_horiz</mat-icon>
-                  <span>1 {{ rate.code }} = {{ (1/rate.rate) | number:'1.2-2' }} {{ monedaBase.value }}</span>
+                  <span>1 {{ rate.code }} = {{ rate.isBaseCurrency ? '1.0000' : ((1/rate.rate) | number:'1.2-2') }} {{ monedaBase.value }}</span>
                 </div>
               </div>
 
-              <!-- Acciones - Botón Único -->
+              <!-- ✅ ACCIONES ESPECIALES PARA BASE -->
               <div class="rate-actions-container">
-                <button mat-raised-button 
-                        color="primary" 
-                        (click)="convertirA(rate.code)"
-                        class="action-button">
+                <button 
+                  *ngIf="!rate.isBaseCurrency"
+                  mat-raised-button 
+                  color="primary" 
+                  (click)="convertirA(rate.code)"
+                  class="action-button">
                   Convertir a {{ rate.code }}
                 </button>
                 
-                <!-- Cambiar el botón actual -->
-                <button mat-raised-button 
-                        [color]="isAuthenticated ? 'accent' : 'warn'"
-                        (click)="handleDetalles(rate.code)"
-                        class="action-button">
-                    <mat-icon>{{ isAuthenticated ? 'analytics' : 'lock' }}</mat-icon>
-                    {{ isAuthenticated ? 'Ver Detalles' : 'Análisis Premium' }}
+                <button 
+                  *ngIf="rate.isBaseCurrency"
+                  mat-raised-button 
+                  color="accent" 
+                  class="action-button base-action"
+                  disabled>
+                  <mat-icon>home</mat-icon>
+                  Base Actual
+                </button>
+
+                <button 
+                  mat-raised-button 
+                  [color]="isAuthenticated ? 'accent' : 'warn'"
+                  (click)="handleDetalles(rate.code)"
+                  class="action-button">
+                  <mat-icon>{{ isAuthenticated ? 'analytics' : 'lock' }}</mat-icon>
+                  {{ isAuthenticated ? 'Ver Detalles' : 'Análisis Premium' }}
                 </button>
               </div>
             </div>

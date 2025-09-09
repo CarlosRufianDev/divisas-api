@@ -132,8 +132,8 @@ export class Dashboard implements OnInit, OnDestroy {
   limitedCurrencies = [
     { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
     { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
-    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
     { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
+    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
     { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
     { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
     { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
@@ -231,29 +231,39 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       console.log(`💱 Cargando tipos de cambio reales desde: ${base}`);
 
-      // 🔥 USAR EL NUEVO MÉTODO CON TENDENCIAS REALES
       const tendenciasResponse = await this.divisasService
         .getTrendingRates(base, undefined, 7)
         .toPromise();
 
       if (tendenciasResponse?.success) {
-        console.log(
-          '✅ Tendencias reales obtenidas:',
-          tendenciasResponse.summary
-        );
-
-        // 🆕 FILTRAR SEGÚN EL MODO
         const divisasDisponibles = this.getDivisasDisponibles();
 
-        // Procesar datos con tendencias reales
-        this.tiposCambio = tendenciasResponse.rates
+        // ✅ AÑADIR USD COMO REFERENCIA CUANDO ES LA BASE
+        const processedRates = [];
+
+        // 🔥 AGREGAR LA MONEDA BASE COMO REFERENCIA
+        if (base && divisasDisponibles.find((d) => d.code === base)) {
+          const baseCurrency = divisasDisponibles.find((d) => d.code === base);
+          processedRates.push({
+            code: base,
+            name: baseCurrency!.name,
+            flag: baseCurrency!.flag,
+            rate: 1.0,
+            tendencia: 0,
+            cambio: '0.00%',
+            trendStatus: 'reference',
+            isBaseCurrency: true, // ✅ MARCADOR ESPECIAL
+          });
+        }
+
+        // Procesar el resto de divisas
+        const otherRates = tendenciasResponse.rates
           .map((rateData) => {
             const divisa = divisasDisponibles.find(
               (d) => d.code === rateData.currency
-            ); // ✅ CAMBIAR aquí
-            if (!divisa) return null;
+            );
+            if (!divisa || rateData.currency === base) return null; // ✅ Skip si es la base
 
-            // Guardar tendencia real
             this.tendenciasReales.set(rateData.currency, rateData.trend);
 
             return {
@@ -264,18 +274,26 @@ export class Dashboard implements OnInit, OnDestroy {
               tendencia: rateData.trend,
               cambio: rateData.change,
               trendStatus: rateData.trendStatus,
+              isBaseCurrency: false,
             };
           })
-          .filter(Boolean)
-          .slice(0, this.isLimitedMode ? 8 : undefined); // ✅ AÑADIR límite
+          .filter(Boolean);
 
-        this.ultimaActualizacion = new Date().toLocaleTimeString();
-        console.log(
-          `✅ Procesadas ${this.tiposCambio.length} monedas con tendencias reales`
+        // ✅ COMBINAR: Base currency primero, luego el resto
+        this.tiposCambio = [...processedRates, ...otherRates].slice(
+          0,
+          this.isLimitedMode ? 8 : undefined
         );
-      } else {
-        throw new Error('Respuesta inválida del servidor');
+
+        console.log(
+          `✅ Procesadas ${this.tiposCambio.length} monedas (incluyendo base: ${base})`
+        );
       }
+
+      this.ultimaActualizacion = new Date().toLocaleTimeString();
+      console.log(
+        `✅ Procesadas ${this.tiposCambio.length} monedas con tendencias reales`
+      );
     } catch (error) {
       console.error('❌ Error cargando tendencias reales:', error);
       // Fallback al método anterior
