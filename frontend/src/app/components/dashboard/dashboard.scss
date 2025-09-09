@@ -789,19 +789,33 @@ mat-toolbar {
     z-index: 1;
   }
 
-  // Eliminar patrón de fondo para mejor rendimiento
+ 
   &::after {
-    display: none; // ✅ Eliminado para optimización
+    display: none;
   }
 
   .rates-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
     gap: 0.6rem; 
-    padding: 0.5rem 0 1.5rem 0; 
+
+      background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.4) 0%, 
+      rgba(248, 250, 252, 0.6) 50%, 
+      rgba(241, 245, 249, 0.4) 100%
+      ) !important;
+      border-radius: 16px !important;
+      padding: 1rem !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+      backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(226, 232, 240, 0.3) !important;
+
+      position: relative !important;
+      z-index: 1 !important;
 
     .rate-card {
-      position: relative;
+      position: relative !important;
+      z-index: 2 !important;
       min-height: 140px; 
       background: rgba(255, 255, 255, 0.9);
       border-radius: 10px;
@@ -816,23 +830,35 @@ mat-toolbar {
       &:hover {
         transform: translateY(-2px) scale(1.005);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-        border-color: rgba(255, 152, 0, 0.4);
+        border-color: rgb(56, 133, 248)  !important;
       }
 
       // Simplificar colores según tendencia
-      &.trending-up {
-        border-left: 4px solid #4caf50;
-        background: rgba(232, 245, 233, 0.3); 
+     &.trending-up {
+        border-left: 4px solid #2e7d32;
+        background: linear-gradient(135deg, 
+          rgba(76, 175, 80, 0.35) 0%,    // ✅ VERDE MÁS INTENSO (+250%)
+          rgba(129, 199, 132, 0.25) 50%, 
+          rgba(165, 214, 167, 0.15) 100%
+        ) !important;
       }
 
       &.trending-down {
-        border-left: 4px solid #f44336;
-        background: rgba(255, 235, 238, 0.3);
+        border-left: 4px solid #c62828;
+        background: linear-gradient(135deg, 
+          rgba(244, 67, 54, 0.35) 0%,     // ✅ ROJO MÁS INTENSO (+250%)
+          rgba(229, 115, 115, 0.25) 50%, 
+          rgba(239, 154, 154, 0.15) 100%
+        ) !important;
       }
 
       &.trending-stable {
-        border-left: 4px solid #ff9800;
-        background: rgba(255, 243, 224, 0.3);
+        border-left: 4px solid #f57c00;
+        background: linear-gradient(135deg, 
+          rgba(255, 152, 0, 0.35) 0%,     // ✅ NARANJA MÁS INTENSO (+250%)
+          rgba(255, 183, 77, 0.25) 50%, 
+          rgba(255, 204, 128, 0.15) 100%
+        ) !important;
       }
 
       // ✅ ESTILO ESPECIAL PARA MONEDA BASE
@@ -1115,57 +1141,62 @@ mat-toolbar {
         border-top: 1px solid rgba(226, 232, 240, 0.3);
         flex-shrink: 0;
 
+        // ✅ BOTONES GENERALES
         .action-button {
           flex: 1;
-          border-radius: 15px; 
-          padding: 0.5rem 0.6rem; 
+          border-radius: 15px;
+          padding: 0.5rem 0.6rem;
           font-weight: 500;
-          font-size: 0.7rem; 
+          font-size: 0.7rem;
           transition: all 0.2s ease;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.3rem; 
-          min-height: 32px; 
-          
+          gap: 0.3rem;
+          min-height: 32px;
+
           &:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           }
 
+          // ✅ ICONOS DENTRO DE BOTONES - UN SOLO NIVEL
           mat-icon {
-            font-size: 1.2rem !important; // ✅ AUMENTADO de 0.7rem a 1.2rem
-            width: 1.2rem !important;     // ✅ AUMENTADO de 0.9rem a 1.2rem
-            height: 1.2rem !important;    // ✅ AUMENTADO de 0.9rem a 1.2rem
-            margin-right: 0.4rem;         // ✅ Más espacio entre icono y texto
-            
-            // ✅ ESPECIAL: Icono lock más prominente
-            &[fonticon="lock"] {
-              font-size: 1.4rem !important; // ✅ Aún más grande para el candado
-              width: 1.4rem !important;
-              height: 1.4rem !important;
-              color: #f44336 !important;    // ✅ Color rojo más visible
-              text-shadow: 0 1px 3px rgba(244, 67, 54, 0.3); // ✅ Sombra para destacar
-            }
+            font-size: 1.1rem !important;
+            width: 1.1rem !important;     
+            height: 1.1rem !important;    
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;  
+            justify-content: center !important;
           }
 
-          // ✅ MEJORAR botón warn (no autenticado)
+          // ✅ BOTÓN WARN (usuarios no autenticados)
           &[color="warn"] {
             mat-icon {
-              font-size: 1.4rem !important; // ✅ Candado más grande
+              font-size: 1.4rem !important; 
               width: 1.4rem !important;
               height: 1.4rem !important;
-              color: #fff !important;       // ✅ Blanco sobre fondo rojo
-              filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)); // ✅ Sombra para contraste
+              color: #fff !important; 
+              filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
             }
           }
 
-          // ✅ MEJORAR botón accent (autenticado)
+          // ✅ BOTÓN ACCENT (usuarios autenticados)  
           &[color="accent"] {
             mat-icon {
-              font-size: 1.1rem !important; // ✅ Analytics un poco más grande
+              font-size: 1.1rem !important;
               width: 1.1rem !important;
               height: 1.1rem !important;
+            }
+          }
+
+          // ✅ BOTÓN PRIMARY (convertir)
+          &[color="primary"] {
+            mat-icon {
+              font-size: 1rem !important;
+              width: 1rem !important;
+              height: 1rem !important;
             }
           }
         }
