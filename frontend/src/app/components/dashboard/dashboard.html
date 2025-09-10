@@ -69,7 +69,7 @@
       </div>
     </div>
     
-    <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas) -->
+    <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas SIEMPRE visibles) -->
     <div class="converter-section">
       <!-- Conversor (Izquierda) - MEJORADO -->
       <mat-card class="converter-card-enhanced">
@@ -180,17 +180,18 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Resultado (Derecha) - MEJORADA -->
-      <mat-card class="result-card-improved" *ngIf="resultado">
+      <!-- Resultado (Derecha) - SIEMPRE VISIBLE -->
+      <mat-card class="result-card-improved">
         <mat-card-header>
           <mat-card-title>
             <mat-icon color="primary">currency_exchange</mat-icon>
-            Resultado de Conversión
+            {{ resultado ? 'Resultado de Conversión' : 'Panel de Resultados' }}
           </mat-card-title>
         </mat-card-header>
 
         <mat-card-content>
-          <div class="result-display-improved">
+          <!-- ✅ MOSTRAR RESULTADO SI EXISTE -->
+          <div class="result-display-improved" *ngIf="resultado">
             
             <!-- Resultado Principal - SIN SUPERPOSICIÓN -->
             <div class="result-main-improved">
@@ -281,6 +282,55 @@
                 <mat-icon>share</mat-icon>
                 Compartir
               </button>
+            </div>
+          </div>
+
+          <!-- 🆕 MOSTRAR MENSAJE INSTRUCTIVO SI NO HAY RESULTADO -->
+          <div class="welcome-instructions" *ngIf="!resultado">
+            <div class="welcome-icon">
+              <mat-icon>info</mat-icon>
+            </div>
+            
+            <div class="welcome-content">
+              <h3>¡Bienvenido al Conversor DivisasPro!</h3>
+              <div class="instructions-list">
+                <div class="instruction-item">
+                  <mat-icon color="primary">looks_one</mat-icon>
+                  <span>Introduce la <strong>cantidad</strong> que deseas convertir</span>
+                </div>
+                <div class="instruction-item">
+                  <mat-icon color="primary">looks_two</mat-icon>
+                  <span>Selecciona las <strong>divisas</strong> origen y destino</span>
+                </div>
+                <div class="instruction-item">
+                  <mat-icon color="primary">looks_3</mat-icon>
+                  <span>Haz clic en <strong>"Convertir Ahora"</strong></span>
+                </div>
+                <div class="instruction-item">
+                  <mat-icon color="primary">insights</mat-icon>
+                  <span>Obtén el resultado con <strong>datos en tiempo real</strong></span>
+                </div>
+              </div>
+
+              <div class="features-highlight">
+                <div class="feature-badge">
+                  <mat-icon>verified</mat-icon>
+                  <span>Datos del BCE</span>
+                </div>
+                <div class="feature-badge">
+                  <mat-icon>schedule</mat-icon>
+                  <span>Tiempo Real</span>
+                </div>
+                <div class="feature-badge">
+                  <mat-icon>precision_manufacturing</mat-icon>
+                  <span>Alta Precisión</span>
+                </div>
+              </div>
+
+              <div class="quick-start-tip">
+                <mat-icon color="accent">lightbulb</mat-icon>
+                <span><strong>Tip:</strong> Puedes usar el botón de intercambio para invertir las divisas rápidamente</span>
+              </div>
             </div>
           </div>
         </mat-card-content>
