@@ -1,0 +1,2125 @@
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// 📊 SECCIÓN MERCADO DE DIVISAS
+
+// =========================
+// =========================
+
+.rates-section-improved {
+  // ✅ CONTENEDOR UNIFICADO CON FONDO ÚNICO
+  position: relative;
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.6) 0%,      
+    rgba(51, 65, 85, 0.5) 25%,     
+    rgba(75, 85, 99, 0.4) 50%,     
+    rgba(55, 65, 81, 0.5) 75%,     
+    rgba(31, 41, 55, 0.6) 100%     
+  );
+  border-radius: 16px;
+  backdrop-filter: blur(15px);
+
+  // ✅ MÁSCARA DE TRANSICIÓN VISUAL
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(180deg, 
+        rgba(30, 41, 59, 0.2) 0%,
+        rgba(30, 41, 59, 0.1) 30%,
+        transparent 50%,
+        rgba(30, 41, 59, 0.1) 70%,
+        rgba(30, 41, 59, 0.2) 100%
+      ),
+      radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  mat-card-content,
+  .mat-mdc-card-content,
+  .mdc-card__content {
+    padding: 0 !important;
+    margin-top: 0 !important;
+    border-radius: 0 0 20px 20px  !important;
+    background: transparent !important;
+  }
+
+
+  mat-card-header {
+     padding: 24px 32px 16px;
+    margin-bottom: 0; 
+    background: transparent;
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    z-index: 2;
+
+        // ✅ LÍNEA DECORATIVA QUE SIGUE LA CURVA DEL HEADER
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 16px 16px 0 0; // ✅ MISMO radio que el header
+      z-index: 1;
+    }
+
+    // ✅ SUTIL ÉNFASIS EN EL HEADER
+    &::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        transparent 100%
+      );
+      border-radius: 16px 16px 0 0;
+      pointer-events: none;
+    }
+
+ 
+
+    .rates-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      position: relative;
+      z-index: 2;
+
+      .rates-title {
+        flex: 1;
+
+        mat-card-title {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin: 0 0 0.5rem 0;
+          font-size: 1.8rem;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          
+          // ✅ TEXTO BLANCO CON GRADIENTE SUTIL
+          color: #ffffff;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+          mat-icon {
+            font-size: 1.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            color: #ff9800;
+            background: linear-gradient(135deg, 
+              rgba(255, 152, 0, 0.2), 
+              rgba(255, 193, 7, 0.15)
+            );
+            border-radius: 50%;
+            padding: 0.5rem;
+            
+            border: 2px solid rgba(255, 152, 0, 0.3);
+            transition: all 0.3s ease;
+
+            &:hover {
+              transform: scale(1.05);
+              box-shadow: 
+                0 6px 20px rgba(255, 152, 0, 0.5),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            }
+          }
+        }
+
+        mat-card-subtitle {
+          font-size: 1rem;
+          font-weight: 500;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          // ✅ ESTILO OSCURO ELEGANTE
+          background: linear-gradient(135deg, 
+            rgba(255, 152, 0, 0.15), 
+            rgba(255, 152, 0, 0.1)
+          );
+          color: #e2e8f0; // Gris claro
+          padding: 0.75rem 1.25rem;
+          border-radius: 25px;
+          border: 1px solid rgba(255, 152, 0, 0.2);
+          
+          backdrop-filter: blur(10px);
+
+          &::before {
+            content: '📊';
+            font-size: 1.1rem;
+            margin-right: 0.3rem;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+          }
+
+          strong {
+            color: #fbbf24; // Amarillo dorado
+            font-weight: 700;
+            background: rgba(255, 152, 0, 0.2);
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+          }
+        }
+      }
+
+      .base-currency-selector {
+        min-width: 280px;
+        
+        mat-form-field {
+          width: 100%;
+          
+          .mat-mdc-form-field-flex {
+            // ✅ SELECTOR OSCURO ELEGANTE
+            background: linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.95), 
+              rgba(248, 250, 252, 0.9)
+            );
+            border-radius: 20px;
+            border: 2px solid rgba(255, 152, 0, 0.3);
+            transition: all 0.3s ease;
+            min-height: 56px;
+            box-shadow: 
+              0 6px 16px rgba(255, 152, 0, 0.2),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+
+            &:hover {
+              border-color: rgba(255, 152, 0, 0.5);
+              transform: translateY(-1px);
+              box-shadow: 
+                0 8px 20px rgba(255, 152, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            }
+          }
+
+          &.mat-focused .mat-mdc-form-field-flex {
+            border-color: #ff9800;
+            background: linear-gradient(135deg, #ffffff, #fff8e1);
+            box-shadow: 
+              0 0 0 3px rgba(255, 152, 0, 0.2),
+              0 8px 20px rgba(255, 152, 0, 0.35);
+          }
+
+          .mat-mdc-form-field-label {
+            font-weight: 600 !important;
+            color: #f57c00 !important;
+            font-size: 0.9rem !important;
+          }
+
+          .mat-mdc-select-value-text {
+            font-weight: 700 !important;
+            color: #1a202c !important;
+            font-size: 1rem !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Linea decorativa superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    z-index: 1;
+    border-radius: 50px 50px 0 0;
+  }
+
+ 
+  &::after {
+    display: none;
+  }
+
+  .rates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+    gap: 0.6rem; 
+    
+    background: transparent; // ✅ TRANSPARENTE - usa el fondo del padre
+    border: none;
+    padding: 3rem;
+    position: relative;
+    z-index: 2;
+
+    // ✅ ÉNFASIS SUTIL EN EL GRID
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, 
+        transparent 0%,
+        rgba(255, 255, 255, 0.02) 20%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      pointer-events: none;
+    }
+
+    .rate-card {
+      position: relative !important;
+      z-index: 2 !important;
+      min-height: 140px; 
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.98) 0%, 
+        rgba(248, 250, 252, 0.95) 100%
+      );
+      border-radius: 12px;
+      padding: 0.6rem 0.8rem 0.8rem 0.8rem;
+      border: 1px solid rgba(43, 43, 43, 0.281);
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(10px);
+
+      &:hover {
+        transform: translateY(-3px) scale(1.005);
+        box-shadow: 
+          0 8px 25px rgba(0, 0, 0, 0.18),
+          0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: rgba(59, 130, 246, 0.5);
+        background: linear-gradient(135deg, 
+          rgba(255, 255, 255, 1) 0%, 
+          rgba(248, 250, 252, 0.98) 100%
+        );
+      }
+
+      // Colores según tendencia
+    &.trending-up {
+        border-left: 4px solid #22c55e;
+        background: linear-gradient(135deg, 
+          rgba(34, 197, 94, 0.45) 0%,
+          rgba(74, 222, 128, 0.50) 75%, 
+          rgba(134, 239, 173, 0.40) 100%
+        ) !important;
+      }
+
+      &.trending-down {
+        border-left: 4px solid #ef4444;
+        background: linear-gradient(135deg, 
+          rgba(239, 68, 68, 0.45) 0%,
+          rgba(248, 113, 113, 0.50) 50%, 
+          rgba(252, 165, 165, 0.40) 100%
+        ) !important;
+      }
+
+      &.trending-stable {
+        border-left: 4px solid #f59e0b;
+        background: linear-gradient(135deg, 
+          rgba(245, 158, 11, 0.45) 0%,
+          rgba(251, 191, 36, 0.50) 50%, 
+          rgba(253, 224, 71, 0.40) 100%
+        ) !important;
+      }
+
+      // ✅ ESTILO ESPECIAL PARA MONEDA BASE
+      &.base-currency {
+        background: rgba(33, 150, 243, 0.1) !important;
+        border: 2px solid #2196f3;
+        border-left: 6px solid #1976d2;
+        position: relative;
+
+        &::before {
+          content: '📍 BASE';
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+          background: #1976d2;
+          color: white;
+          font-size: 0.6rem;
+          font-weight: 700;
+          padding: 0.2rem 0.5rem;
+          border-radius: 8px;
+          letter-spacing: 0.5px;
+        }
+
+        .rate-header .currency-info .currency-details {
+          .currency-code {
+            color: #cccccc !important;
+            font-weight: 800;
+          }
+          
+          .currency-name {
+            color: #90caf9 !important;
+            font-weight: 600;
+          }
+        }
+
+        .rate-main .rate-value {
+          color: #0d47a1 !important;
+          font-weight: 800;
+          font-size: 1.6rem;
+        }
+
+        .trend-indicator {
+          background: rgba(33, 150, 243, 0.1) !important;
+          border: 2px solid #2196f3 !important;
+          
+          mat-icon {
+            color: #1976d2 !important;
+          }
+        }
+      }
+
+      .rate-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        flex: 1;
+
+        &.updating {
+          opacity: 0.6;
+        }
+      }
+
+      // Header optimizado
+      .rate-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 0.6rem; 
+        border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        flex-shrink: 0;
+
+        .currency-info {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+
+            .flag {
+            font-size: 1.4rem; 
+            color: #1a202c;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 0.1rem;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(203, 213, 225, 0.5);
+            transform: translate(-5px, -10px);
+            }
+          .currency-details {
+            .currency-code {
+              display: block;
+              font-size: 1rem;
+              font-weight: 700;
+              color: #10141b;
+              margin-bottom: 0.1rem;
+            }
+
+            .currency-name {
+              display: block;
+              font-size: 0.7rem;
+              color: #1a202c;
+              font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+            }
+          }
+        }
+
+        
+        .trend-indicator {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.733);
+
+          &.trend-up {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+          }
+
+          &.trend-down {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+          }
+
+          &.trend-stable {
+            background: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+          }
+
+          mat-icon {
+            font-size: 1rem; 
+            width: 1rem;
+            height: 1rem;
+          }
+
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+
+      // Tasa Principal compacta - MEJORADO
+      .rate-main {
+        text-align: center;
+        padding: 0.4rem 0.2rem;
+        background: rgba(255, 255, 255, 0.904);
+        border-radius: 10px; 
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        flex-shrink: 0;
+        margin-bottom: 0.4rem;
+        gap: 0.1rem;
+
+        .rate-value {
+          display: block;
+          font-size: 3rem !important; 
+          font-weight: 600;
+          font-family: 'Roboto Mono', monospace;
+          margin-bottom: 0.3rem;
+          letter-spacing: -0.01em;
+          line-height: 1.4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: #171a20 !important;
+
+          // Colores según tendencia
+          &.trending-up {
+            color: #2e7d32;
+          }
+
+          &.trending-down {
+            color: #c62828;
+          }
+
+          &.trending-stable {
+            color: #ef6c00;
+          }
+        }
+
+        .rate-label {
+          font-size: 1rem !important; 
+          color: #090a0c;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+      }
+
+      .rate-change {
+        text-align: center;
+        padding: 0rem; 
+        background: rgba(255, 255, 255, 0.904);
+        border-radius: 6px; 
+        flex-shrink: 0;
+        margin-bottom: 0.4rem; 
+
+        .change-percent {
+          display: block;
+          font-size: 1.2rem; 
+          font-weight: 600;
+          margin-top: 0.6rem;
+          margin-bottom: 0.6rem;
+          font-family: 'Roboto Mono', monospace;
+
+          &.positive { color: #2e7d32; }
+          &.negative { color: #c62828; }
+          &.neutral { color: #ef6c00; }
+
+          .trend-period {
+            font-size: 0.7rem; 
+            color: #555555;
+            font-weight: 400;
+            display: block;
+            margin-top: 0.2rem; 
+          }
+        }
+
+        .trend-details {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 0.4rem;
+          .change-label {
+            font-size: 0.65rem;
+            color: #202020;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 1rem !important;
+          }
+            
+        }
+        
+      }
+
+      // Info extra 
+      .rate-extra {
+        margin: 0.6rem 0 0.8rem 0;
+        flex-shrink: 0;
+        
+        .inverse-rate {
+          color: #1a1b1d;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.2rem; 
+          padding: 0.2rem; 
+          background: rgba(255, 255, 255, 0.904);
+          border-radius: 6px;
+          border: 1px solid rgba(226, 232, 240, 0.5);
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+          }
+          
+          mat-icon {
+            color: #2196f3;
+            font-size: 0.9rem;
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 50%;
+            padding: 0.2rem; 
+            font-size: 0.9rem; 
+            width: 0.9rem;
+            height: 0.9rem;
+          }
+          
+          span {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.8rem; 
+            color: #131518;
+            font-weight: 1000 !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100px; 
+          }
+        }
+      }
+
+      // ✅ BOTONES
+      .rate-actions-container {
+        display: flex;
+        gap: 0.4rem; 
+        margin-top: auto;
+        padding-top: 0.4rem;
+        border-top: 1px solid rgba(226, 232, 240, 0.3);
+        flex-shrink: 0;
+
+        // ✅ BOTONES GENERALES
+        .action-button {
+          flex: 1;
+          border-radius: 15px;
+          padding: 0.5rem 0.6rem;
+          font-weight: 500;
+          font-size: 0.7rem;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.3rem;
+          min-height: 32px;
+          background: #ffffffd3;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+
+          // ✅ ICONOS DENTRO DE BOTONES - UN SOLO NIVEL
+          mat-icon {
+            font-size: 1.1rem !important;
+            width: 1.1rem !important;     
+            height: 1.1rem !important;    
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;  
+            justify-content: center !important;
+          }
+
+          // ✅ BOTÓN WARN (usuarios no autenticados)
+          &[color="warn"] {
+            mat-icon {
+              font-size: 1.4rem !important; 
+              width: 1.4rem !important;
+              height: 1.4rem !important;
+              color: #fff !important; 
+              filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
+            }
+          }
+
+          // ✅ BOTÓN ACCENT (usuarios autenticados)  
+          &[color="accent"] {
+            mat-icon {
+              font-size: 1.1rem !important;
+              width: 1.1rem !important;
+              height: 1.1rem !important;
+            }
+          }
+
+          // ✅ BOTÓN PRIMARY (convertir)
+          &[color="primary"] {
+            mat-icon {
+              font-size: 1rem !important;
+              width: 1rem !important;
+              height: 1rem !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Estado vacío - MEJORADO
+  .empty-rates {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(248, 250, 252, 0.9) 100%
+    );
+    border-radius: 12px;
+    margin: 1rem 0;
+
+    mat-icon {
+      font-size: 2.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      color: #ff9800;
+      background: rgba(255, 152, 0, 0.1);
+      border-radius: 50%;
+      padding: 0.8rem;
+    }
+
+    h3 {
+      margin: 0;
+      color: #2d3748;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      max-width: 300px;
+    }
+
+    button {
+      margin-top: 0.8rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 20px;
+      font-weight: 500;
+      background: linear-gradient(135deg, #ff9800, #ffb74d);
+      color: white;
+      border: none;
+      
+      &:hover {
+        background: linear-gradient(135deg, #f57c00, #ff9800);
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  // ✅ NUEVO: Estado de carga mejorado
+  .loading-rates {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem;
+    color: #666;
+    background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(248, 250, 252, 0.9) 100%
+    );
+    border-radius: 20px;
+    margin: 1rem 0;
+
+    mat-icon {
+      font-size: 3rem;
+      width: 3rem;
+      height: 3rem;
+      color: #ff9800;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    p {
+      margin: 0;
+      text-align: center;
+      line-height: 1.5;
+    }
+  }
+}
+
+// MODAL PARA DETALLES DE DIVISA
+.currency-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: modalFadeIn 0.3s ease;
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 900px;      
+    width: 100%;
+    max-height: 75vh;      
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease;
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid #e0e0e0;
+
+      .currency-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .currency-flag-large {
+          font-size: 3rem;
+        }
+
+        .currency-title {
+          h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+          }
+
+          .currency-code-subtitle {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .close-button {
+        background: #f5f5f5;
+        
+        &:hover {
+          background: #e0e0e0;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .currency-main-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+
+        .info-card {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1.5rem;
+          border-radius: 12px;
+          border-left: 4px solid;
+
+          &.primary {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left-color: #2196f3;
+          }
+
+          &.secondary {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border-left-color: #9c27b0;
+          }
+
+          mat-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+            color: #2196f3;
+          }
+
+          .info-content {
+            flex: 1;
+
+            .info-label {
+              display: block;
+              font-size: 0.9rem;
+              color: #666;
+              margin-bottom: 0.5rem;
+            }
+
+            .info-value {
+              display: block;
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: #333;
+              margin-bottom: 0.25rem;
+              font-family: 'Roboto Mono', monospace;
+            }
+
+            .info-description {
+              font-size: 0.8rem;
+              color: #888;
+            }
+          }
+        }
+      }
+
+
+// ✅ NUEVO: ANÁLISIS TÉCNICO CON ESTILO RATES-SECTION
+    .currency-analysis {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      margin: 1.5rem 0;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      // Gradiente superior - AZUL para análisis técnico
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #2196f3, #03a9f4);
+        z-index: 1;
+      }
+
+      .analysis-card {
+        background: #f8f9fa !important; // ✅ Fondo gris claro
+        border-radius: 12px;
+        padding: 1.5rem;
+
+        .analysis-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 1rem;
+
+          mat-icon {
+            font-size: 1.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            
+            &.trending-up { color: #4caf50 !important; }
+            &.trending-down { color: #f44336 !important; }
+            &.trending-flat { color: #ff9800 !important; }
+          }
+
+          h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #333 !important; // ✅ ARREGLAR: Texto oscuro
+          }
+        }
+
+        .trend-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+
+          .trend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+
+            .trend-label {
+              font-weight: 500;
+              color: #666 !important; // ✅ ARREGLAR: Texto gris oscuro
+            }
+
+            .trend-value {
+              font-weight: 600;
+              font-family: 'Roboto Mono', monospace;
+              
+              &.positive { color: #4caf50 !important; } // ✅ ARREGLAR: Verde oscuro
+              &.negative { color: #f44336 !important; } // ✅ ARREGLAR: Rojo oscuro  
+              &.neutral { color: #333 !important; } // ✅ ARREGLAR: Gris oscuro
+            }
+
+            // ✅ NUEVO: Arreglar valores específicos
+            .trend-value-container {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+
+              .trend-percentage {
+                font-family: 'Roboto Mono', monospace;
+                font-weight: 700;
+                color: #333 !important; // ✅ FORZAR color oscuro
+              }
+
+              mat-icon {
+                &[color="primary"] { color: #4caf50 !important; }
+                &[color="warn"] { color: #f44336 !important; }
+              }
+            }
+
+            // ✅ ARREGLAR spans dentro de trend-item
+            span {
+              color: #333 !important; // ✅ FORZAR todos los spans a ser oscuros
+              
+              &.trend-percentage {
+                font-family: 'Roboto Mono', monospace;
+                font-weight: 700;
+                color: #333 !important;
+              }
+            }
+          }
+        }
+      }
+
+      .analysis-header {
+        padding: 2rem 2rem 1rem;
+        border-bottom: 2px solid rgba(33, 150, 243, 0.1);
+        background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+        border-radius: 16px 16px 0 0;
+        position: relative;
+        z-index: 2;
+
+        .analysis-title-section {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 2rem;
+
+          .analysis-title {
+            flex: 1;
+
+            h3 {
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              margin: 0 0 0.5rem 0;
+              font-size: 1.8rem;
+              font-weight: 700;
+              color: #1a202c;
+              letter-spacing: -0.02em;
+              background: linear-gradient(135deg, #2d3748, #4a5568);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+
+              mat-icon {
+                font-size: 2rem;
+                width: 2rem;
+                height: 2rem;
+                color: #2196f3;
+                background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(3, 169, 244, 0.1));
+                border-radius: 50%;
+                padding: 0.5rem;
+                box-shadow: 
+                  0 4px 12px rgba(33, 150, 243, 0.2),
+                  inset 0 2px 4px rgba(255, 255, 255, 0.5);
+                border: 2px solid rgba(33, 150, 243, 0.2);
+                transition: all 0.3s ease;
+
+                &:hover {
+                  transform: scale(1.05);
+                  box-shadow: 
+                    0 6px 16px rgba(33, 150, 243, 0.3),
+                    inset 0 2px 4px rgba(255, 255, 255, 0.6);
+                }
+              }
+            }
+
+            .analysis-subtitle {
+              font-size: 1rem;
+              color: #718096;
+              font-weight: 500;
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              background: rgba(33, 150, 243, 0.05);
+              padding: 0.5rem 1rem;
+              border-radius: 12px;
+              border-left: 4px solid #2196f3;
+              box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+
+              &::before {
+                content: '📈';
+                font-size: 1.1rem;
+                margin-right: 0.3rem;
+              }
+
+              strong {
+                color: #1976d2;
+                font-weight: 700;
+                background: rgba(33, 150, 243, 0.1);
+                padding: 0.2rem 0.5rem;
+                border-radius: 6px;
+              }
+            }
+          }
+
+          .analysis-controls {
+            min-width: 200px;
+            display: flex;
+            gap: 1rem;
+
+            button {
+              background: linear-gradient(135deg, #2196f3, #1976d2);
+              color: white;
+              border-radius: 12px;
+              padding: 0.6rem 1.2rem;
+              font-weight: 600;
+              font-size: 0.9rem;
+              transition: all 0.3s ease;
+
+              &:hover {
+                background: linear-gradient(135deg, #1976d2, #1565c0);
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(33, 150, 243, 0.3);
+              }
+
+              mat-icon {
+                margin-right: 0.5rem;
+                font-size: 1rem;
+                width: 1rem;
+                height: 1rem;
+              }
+            }
+          }
+        }
+      }
+
+      .analysis-content {
+        padding: 1.5rem 2rem 2rem;
+
+        .analysis-cards-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1rem;
+
+          .analysis-card {
+            position: relative;
+            min-height: 160px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+            &:hover {
+              transform: translateY(-2px) scale(1.005);
+              box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+              border-color: rgba(33, 150, 243, 0.4);
+            }
+
+            // Colores según tipo de análisis
+            &.technical-bullish {
+              border-left: 4px solid #4caf50;
+              background: rgba(232, 245, 233, 0.3);
+            }
+
+            &.technical-bearish {
+              border-left: 4px solid #f44336;
+              background: rgba(255, 235, 238, 0.3);
+            }
+
+            &.technical-neutral {
+              border-left: 4px solid #2196f3;
+              background: rgba(227, 242, 253, 0.3);
+            }
+
+            .card-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding-bottom: 1rem;
+              border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+              margin-bottom: 1rem;
+
+              .indicator-info {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+
+                .indicator-icon {
+                  font-size: 1.4rem;
+                  background: rgba(33, 150, 243, 0.1);
+                  border-radius: 6px;
+                  padding: 0.3rem;
+                }
+
+                .indicator-details {
+                  .indicator-name {
+                    display: block;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    color: #2d3748;
+                    margin-bottom: 0.1rem;
+                  }
+
+                  .indicator-type {
+                    display: block;
+                    font-size: 0.7rem;
+                    color: #718096;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                  }
+                }
+              }
+
+              .signal-indicator {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.3s ease;
+
+                &.signal-buy {
+                  background: #e8f5e9;
+                  color: #2e7d32;
+                }
+
+                &.signal-sell {
+                  background: #ffebee;
+                  color: #c62828;
+                }
+
+                &.signal-hold {
+                  background: #e3f2fd;
+                  color: #1976d2;
+                }
+
+                mat-icon {
+                  font-size: 1rem;
+                  width: 1rem;
+                  height: 1rem;
+                }
+              }
+            }
+
+            .card-main {
+              text-align: center;
+              padding: 1rem 0.5rem;
+              background: rgba(255, 255, 255, 0.7);
+              border-radius: 10px;
+              border: 1px solid rgba(226, 232, 240, 0.5);
+              margin-bottom: 1rem;
+
+              .indicator-value {
+                display: block;
+                font-size: 1.8rem;
+                font-weight: 700;
+                font-family: 'Roboto Mono', monospace;
+                margin-bottom: 0.3rem;
+                color: #1a202c !important;
+
+                &.bullish { color: #2e7d32 !important; }
+                &.bearish { color: #c62828 !important; }
+                &.neutral { color: #1976d2 !important; }
+              }
+
+              .indicator-label {
+                font-size: 0.7rem;
+                color: #718096;
+                font-weight: 500;
+                text-transform: uppercase;
+              }
+            }
+
+            .card-details {
+              .trend-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+
+                .trend-item {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  padding: 0.5rem 0;
+
+                  .trend-label {
+                    font-weight: 500;
+                    color: #666 !important;
+                    font-size: 0.9rem;
+                  }
+
+                  .trend-value {
+                    font-weight: 600;
+                    font-family: 'Roboto Mono', monospace;
+                    font-size: 0.9rem;
+
+                    &.positive { color: #4caf50 !important; }
+                    &.negative { color: #f44336 !important; }
+                    &.neutral { color: #2196f3 !important; }
+
+                    // ✅ ARREGLAR spans dentro de trend-item
+                    span {
+                      color: inherit !important;
+                      font-family: 'Roboto Mono', monospace;
+                      font-weight: 700;
+                    }
+                  }
+                }
+              }
+            }
+
+            .card-actions {
+              display: flex;
+              gap: 0.5rem;
+              margin-top: 1rem;
+              padding-top: 1rem;
+              border-top: 1px solid rgba(226, 232, 240, 0.3);
+
+              .analysis-action-button {
+                flex: 1;
+                border-radius: 20px;
+                padding: 0.6rem 0.8rem;
+                font-weight: 500;
+                font-size: 0.75rem;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                  transform: translateY(-1px);
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                mat-icon {
+                  font-size: 0.8rem;
+                  width: 0.9rem;
+                  height: 0.9rem;
+                }
+
+                &[color="primary"] {
+                  background: linear-gradient(135deg, #2196f3, #42a5f5);
+                  color: white;
+                  
+                  &:hover {
+                    background: linear-gradient(135deg, #1976d2, #2196f3);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // Estado vacío - ANÁLISIS
+        .empty-analysis {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          padding: 3rem 2rem;
+          text-align: center;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 12px;
+          margin: 1rem 0;
+
+          mat-icon {
+            font-size: 2.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #2196f3;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 50%;
+            padding: 0.8rem;
+          }
+
+          h3 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 600;
+          }
+
+          p {
+            margin: 0;
+            color: #718096;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 300px;
+          }
+        }
+
+        // Estado de carga - ANÁLISIS
+        .loading-analysis {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.5rem;
+          padding: 4rem 2rem;
+          color: #666;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 20px;
+          margin: 1rem 0;
+
+          mat-icon {
+            font-size: 3rem;
+            width: 3rem;
+            height: 3rem;
+            color: #2196f3;
+            animation: pulse 2s ease-in-out infinite;
+          }
+
+          h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: #333;
+          }
+
+          p {
+            margin: 0;
+            text-align: center;
+            line-height: 1.5;
+          }
+        }
+      }
+    }
+
+// ✅ FORZAR COLORES EN MODAL DE ANÁLISIS
+    .currency-detail-modal .modal-body .currency-analysis {
+      .analysis-card {
+        background: rgba(255, 255, 255, 0.95) !important;
+
+        .trend-info .trend-item {
+          .trend-label {
+            color: #333 !important;
+            font-weight: 600;
+          }
+
+          .trend-value {
+            color: #333 !important;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+
+            &.positive { color: #2e7d32 !important; }
+            &.negative { color: #c62828 !important; }
+            &.neutral { color: #1976d2 !important; }
+          }
+        }
+
+        .indicator-value {
+          color: #1a202c !important;
+          font-family: 'Roboto Mono', monospace;
+          font-weight: 700;
+
+          &.bullish { color: #2e7d32 !important; }
+          &.bearish { color: #c62828 !important; }
+          &.neutral { color: #1976d2 !important; }
+        }
+      }
+    }
+
+      .investment-recommendation {
+
+        .recommendation-content {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+
+    .modal-actions {
+      padding: 1rem 2rem 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      border-top: 1px solid #e0e0e0;
+
+      button {
+        border-radius: 20px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// ===============================
+// 🔧 ESTILOS ADICIONALES
+// ===============================
+.rate-actions-single {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .convert-to-button {
+    flex: 1;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+
+    mat-icon {
+      margin-right: 0.5rem;
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  button[mat-icon-button] {
+    background: #f5f5f5;
+    
+    &:hover {
+      background: #e0e0e0;
+    }
+  }
+}
+
+// ✅ ESTILOS GLOBALES PARA ANÁLISIS TÉCNICO
+.technical-analysis-section {
+  .rsi-value, .sma-value, .volatility-value {
+    font-family: 'Roboto Mono', monospace !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    color: #333 !important; // ✅ FORZAR color oscuro
+
+    &.oversold, &.bullish { color: #2e7d32 !important; }
+    &.overbought, &.bearish { color: #c62828 !important; }
+    &.neutral { color: #ef6c00 !important; }
+  }
+
+  .trend-strength {
+    &.strong { color: #1b5e20 !important; }
+    &.weak { color: #b71c1c !important; }
+    &.moderate { color: #e65100 !important; }
+  }
+}
+
+// ✅ ARREGLO ESPECÍFICO PARA SPANS EN MODAL
+.currency-detail-modal .modal-body {
+  // Forzar que TODOS los spans sean legibles
+  span {
+    color: #333 !important;
+    
+    &:not(.trend-percentage):not(.rsi-label):not(.sma-label) {
+      color: #333 !important;
+    }
+  }
+
+  // Arreglo específico para valores numéricos
+  .trend-value, .trend-percentage, .breakdown-value {
+    color: #333 !important;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+  }
+
+  // Labels de RSI y SMA
+  .rsi-label, .sma-label {
+    &.sobreventa, &.sma-up { color: #2e7d32 !important; }
+    &.sobrecompra, &.sma-down { color: #c62828 !important; }
+    &.neutro { color: #ef6c00 !important; }
+  }
+}
+
+// ✅ INDICADORES TÉCNICOS ESPECÍFICOS
+.indicator-info {
+  margin: 1.2rem 0 1.5rem 0;
+  font-size: 1.05rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  
+  div {
+    margin-bottom: 0.4rem;
+    color: #333 !important; // ✅ FORZAR color base
+    
+    b {
+      color: #1976d2 !important; // ✅ Labels en azul
+    }
+  }
+}
+
+// ✅ BREAKDOWN VISUAL
+.recommendation-breakdown {
+  .breakdown-item {
+    .breakdown-value {
+      color: #333 !important;
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 600;
+    }
+    
+    .breakdown-label {
+      color: #555 !important;
+    }
+    
+    .breakdown-desc {
+      color: #777 !important;
+    }
+  }
+}
+
+// Indicadores adicionales (RSI, SMA, etc.)
+.indicator-info {
+  margin: 1.2rem 0 1.5rem 0;
+  font-size: 1.05rem;
+  div {
+    margin-bottom: 0.4rem;
+  }
+  .rsi-label.sobreventa { color: #43a047 !important; }
+  .rsi-label.sobrecompra { color: #e53935 !important; }
+  .rsi-label.neutro { color: #888 !important; }
+  .sma-label.sma-up { color: #43a047 !important; }
+  .sma-label.sma-down { color: #e53935 !important; }
+  .sma-label.neutro { color: #888 !important; }
+}
+
+// Explicación de la recomendación
+.recommendation-explanation {
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.97rem;
+  color: #333;
+  b { color: #1976d2; }
+}
+
+// Breakdown visual de señales
+.recommendation-breakdown {
+  margin-top: 1.5rem;
+  padding: 1.2rem 1.5rem;
+  background: #f8f9fa;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+  h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1976d2;
+  }
+
+  .breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+
+    mat-icon {
+      font-size: 1.3rem;
+    }
+
+    .breakdown-label {
+      font-weight: 600;
+      min-width: 90px;
+    }
+    .breakdown-value {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 500;
+      min-width: 60px;
+    }
+    .breakdown-desc {
+      color: #888;
+      font-size: 0.95rem;
+      margin-left: 0.5rem;
+    }
+
+    &.breakdown-positive {
+      background: #e8f5e9;
+      color: #388e3c;
+      mat-icon { color: #43a047; }
+    }
+    &.breakdown-negative {
+      background: #ffebee;
+      color: #d32f2f;
+      mat-icon { color: #e53935; }
+    }
+    &.breakdown-warn {
+      background: #fffde7;
+      color: #b8860b;
+      mat-icon { color: #fbc02d; }
+    }
+  }
+}
+
+.recommendation-horizontal-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.7rem 2.2rem;
+  border-radius: 22px;
+  margin: 2rem 0 0 0;
+  background: linear-gradient(90deg, #f5f7fa 0%, #c3cfe2 100%);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  min-height: 120px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  }
+  &.comprar { background: linear-gradient(90deg, #e8f5e9 0%, #b9f6ca 100%); }
+  &.vender { background: linear-gradient(90deg, #ffebee 0%, #ffcdd2 100%); }
+  &.mantener { background: linear-gradient(90deg, #027794 0%, #6dd5ed 100%); }
+  &.esperar { background: linear-gradient(90deg, #fffde7 0%, #fff9c4 100%); }
+}
+
+.horizontal-icon-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 80px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.3s;
+  &.comprar { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+  &.vender { background: linear-gradient(135deg, #ff5858 0%, #f09819 100%); }
+  &.mantener { background: linear-gradient(135deg, #027794 0%, #6dd5ed 100%); }
+  &.esperar { background: linear-gradient(135deg, #ff920c 0%, #ffd200 100%); }
+}
+
+.horizontal-tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.horizontal-tip-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+  &.comprar { color: #1b8c5a; }
+  &.vender { color: #c0392b; }
+  &.mantener { color: #1976d2; }
+  &.esperar { color: #b8860b; }
+}
+
+.horizontal-tip-message {
+  font-size: 1.13rem;
+  color: #222;
+  opacity: 0.97;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.analysis-recommendation-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .analysis-column,
+  .recommendation-column {
+    flex: 1;
+    min-width: 0; // Evita desbordamiento
+  }
+
+  // Ajustes para la recomendación
+  .recommendation-horizontal-card {
+    height: 100%;
+    margin: 0;
+  }
+}
+
+// Estilos para la sección de detalles
+.recommendation-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.update-info-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: #e3f2fd;
+    border-radius: 8px;
+    margin: 1rem 0;
+
+    mat-icon {
+        color: #1976d2;
+    }
+
+    .update-info-content {
+        display: flex;
+        flex-direction: column;
+
+        .update-timestamp {
+            font-weight: 500;
+            color: #1976d2;
+        }
+
+        .update-note {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+.rate-extra {
+  margin: 1rem 0;
+  
+  .inverse-rate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    
+    mat-icon {
+      color: #2196f3;
+    }
+    
+    span {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+}
+
+.premium-content-overlay {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  margin: 1rem 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #1976d2;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: #1976d2;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .premium-features {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem auto;
+    max-width: 280px;
+    text-align: left;
+
+    li {
+      margin: 0.5rem 0;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:before {
+        content: '✓';
+        color: #1976d2;
+      }
+    }
+  }
+
+  button {
+    margin-top: 1rem;
+  }
+}
+
+// 🆕 MODAL PREMIUM - VERSIÓN COMPACTA SIN SCROLL
+.currency-detail-modal.premium {
+  .modal-content.simple-premium-modal {
+    max-width: 800px; // 🆕 Ligeramente más pequeño
+    width: 90%;
+    text-align: center;
+    padding: 0;
+    border-radius: 18px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    max-height: none; // 🆕 Sin límite de altura
+    display: block; // 🆕 Cambio a block
+
+    .close-button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(33, 150, 243, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        border-color: rgba(244, 67, 54, 0.3);
+      }
+
+      mat-icon {
+        font-size: 1.3rem;
+        width: 1.3rem;
+        height: 1.3rem;
+        color: #666;
+        transition: color 0.3s ease;
+      }
+
+      &:hover mat-icon {
+        color: #f44336;
+      }
+    }
+
+    .premium-register-banner {
+      padding: 2rem 2rem 1.8rem; // 🆕 Padding más compacto
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem; // 🆕 Gap reducido
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      border-radius: 18px;
+      text-align: center;
+      position: relative;
+
+      // 🆕 ICONO DEL CANDADO COMPACTO
+      .premium-lock-icon {
+        font-size: 3rem;
+        width: 6rem; 
+        height: 6rem;
+        color: #fa0000;
+        margin-bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+          0 6px 24px rgba(25, 118, 210, 0.3),
+          0 3px 12px rgba(25, 118, 210, 0.2),
+          inset 0 2px 4px rgba(255, 255, 255, 0.8);
+        border: 3px solid rgba(25, 118, 210, 0.15);
+        animation: lockPulse 3s ease-in-out infinite;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 15%;
+          left: 20%;
+          width: 25%;
+          height: 25%;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 50%;
+          filter: blur(6px);
+          animation: shimmer 2s ease-in-out infinite alternate;
+        }
+
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 
+            0 8px 30px rgba(25, 118, 210, 0.4),
+            0 4px 15px rgba(25, 118, 210, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.9);
+        }
+      }
+
+      // 🆕 HEADER COMPACTO
+      .premium-header-content {
+        text-align: center;
+        max-width: 500px;
+        
+        h2 {
+          margin: 0 0 0.8rem 0; // 🆕 Margen reducido
+          font-size: 1.8rem; // 🆕 Más pequeño
+          font-weight: 700;
+          color: #1976d2;
+          line-height: 1.2;
+          letter-spacing: -0.02em;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.95rem; // 🆕 Más pequeño
+          color: #555;
+          line-height: 1.4;
+          font-weight: 400;
+        }
+      }
+
+      // 🆕 CARACTERÍSTICAS EN GRID 3x2 MUY COMPACTO
+      .premium-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem; // 🆕 Gap más pequeño
+        width: 100%;
+        max-width: 600px;
+
+        li {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem; // 🆕 Gap muy pequeño
+          padding: 0.8rem 0.6rem; // 🆕 Padding reducido
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 10px;
+          font-size: 0.8rem; // 🆕 Texto más pequeño
+          color: #333;
+          font-weight: 500;
+          text-align: center;
+          box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          min-height: 80px; // 🆕 Altura muy reducida
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+          }
+
+          mat-icon {
+            color: #1976d2;
+            font-size: 1.4rem; // 🆕 Iconos más pequeños
+            width: 1.4rem;
+            height: 1.4rem;
+            flex-shrink: 0;
+            background: rgba(25, 118, 210, 0.12);
+            border-radius: 6px;
+            padding: 0.4rem; // 🆕 Padding muy reducido
+          }
+        }
+      }
+
+      // 🆕 BOTONES COMPACTOS
+      .premium-actions {
+        display: flex;
+        gap: 1.2rem;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        margin-top: 0;
+
+        button {
+          flex: 1;
+          padding: 0.8rem 1.8rem; // 🆕 Padding reducido
+          border-radius: 50px;
+          font-weight: 700;
+          font-size: 1rem; // 🆕 Texto más pequeño
+          min-height: 48px; // 🆕 Altura reducida
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+
+          mat-icon {
+            font-size: 1.2rem;
+            width: 1.2rem;
+            height: 1.2rem;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+          }
+
+          &[color="primary"] {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+            
+            &:hover {
+              background: linear-gradient(135deg, #1976d2, #1565c0);
+            }
+          }
+
+          &[mat-stroked-button] {
+            border: 2px solid #2196f3;
+            color: #2196f3;
+            background: rgba(255, 255, 255, 0.95);
+            
+            &:hover {
+              background: rgba(33, 150, 243, 0.1);
+              border-color: #1976d2;
+              color: #1976d2;
+            }
+          }
+        }
+      }
+    }
+  }
+}

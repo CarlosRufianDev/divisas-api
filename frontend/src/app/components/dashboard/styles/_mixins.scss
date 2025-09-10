@@ -1,0 +1,150 @@
+@use 'sass:color';
+@use 'variables' as vars; // ✅ AÑADIR ESTA LÍNEA
+
+// 🎨 MIXINS REUTILIZABLES DEL DASHBOARD
+
+// ===============================
+// 🏗️ MIXINS DE LAYOUT
+// ===============================
+@mixin flex-center($direction: row, $gap: 0) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: #{$direction};
+  @if $gap != 0 {
+    gap: #{$gap};
+  }
+}
+
+@mixin glass-card() {
+  background: vars.$glass-white; // ✅ USAR NAMESPACE
+  backdrop-filter: blur(10px);
+  border-radius: vars.$radius-md; // ✅ USAR NAMESPACE
+  box-shadow: vars.$shadow-md; // ✅ USAR NAMESPACE
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: vars.$transition-normal; // ✅ USAR NAMESPACE
+}
+
+@mixin hover-lift($translateY: -2px, $scale: 1.002) {
+  transition: vars.$transition-normal; // ✅ USAR NAMESPACE
+  &:hover {
+    transform: translateY(#{$translateY}) scale(#{$scale});
+    box-shadow: vars.$shadow-lg; // ✅ USAR NAMESPACE
+  }
+}
+
+@mixin glass-container() {
+  background: vars.$glass-dark; // ✅ USAR NAMESPACE
+  border-radius: vars.$radius-lg; // ✅ USAR NAMESPACE
+  backdrop-filter: blur(15px);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@mixin button-base() {
+  border-radius: vars.$radius-md; // ✅ USAR NAMESPACE
+  font-weight: 600;
+  transition: vars.$transition-normal; // ✅ USAR NAMESPACE
+  @include flex-center(row, vars.$spacing-sm); // ✅ USAR NAMESPACE
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: vars.$shadow-sm; // ✅ USAR NAMESPACE
+  }
+}
+
+@mixin button-gradient($color1, $color2) {
+  background: linear-gradient(135deg, #{$color1}, #{$color2});
+  color: white;
+  
+  &:hover {
+    background: linear-gradient(135deg, 
+      color.adjust($color1, $lightness: -10%), 
+      color.adjust($color2, $lightness: -10%)
+    );
+  }
+}
+
+// ===============================
+// 🎯 MIXINS ESPECÍFICOS
+// ===============================
+@mixin rate-card-trend($color) {
+  border-left: 4px solid #{$color};
+  background: linear-gradient(135deg, 
+    rgba($color, 0.45) 0%,
+    rgba($color, 0.50) 50%, 
+    rgba($color, 0.40) 100%
+  ) !important;
+}
+
+@mixin input-field() {
+  .mat-mdc-form-field-flex {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: vars.$radius-md; // ✅ USAR NAMESPACE
+    border: 2px solid #e2e8f0;
+    transition: vars.$transition-normal; // ✅ USAR NAMESPACE
+    box-shadow: vars.$shadow-sm; // ✅ USAR NAMESPACE
+
+    &:hover {
+      border-color: #cbd5e0;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.mat-focused .mat-mdc-form-field-flex {
+    border-color: vars.$info-blue; // ✅ USAR NAMESPACE
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+  }
+}
+
+@mixin info-badge() {
+  @include flex-center(row, 0.3rem);
+  padding: 0.3rem vars.$spacing-sm; // ✅ USAR NAMESPACE
+  background: rgba(247, 250, 252, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  font-size: 0.65rem;
+  color: #718096;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 0.8rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    color: vars.$info-blue; // ✅ USAR NAMESPACE
+  }
+}
+
+// ===============================
+// 📱 MIXINS RESPONSIVE
+// ===============================
+@mixin mobile {
+  @media (max-width: #{vars.$mobile}) { // ✅ USAR NAMESPACE
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: #{vars.$tablet}) { // ✅ USAR NAMESPACE
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (max-width: #{vars.$desktop}) { // ✅ USAR NAMESPACE
+    @content;
+  }
+}

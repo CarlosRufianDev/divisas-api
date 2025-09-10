@@ -70,74 +70,76 @@
     </div>
     
     <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas SIEMPRE visibles) -->
-    <div class="converter-section">
-      <!-- Conversor (Izquierda) - MEJORADO -->
-      <mat-card class="converter-card-enhanced">
-        <mat-card-header class="converter-header-enhanced">
-          <div class="converter-title-section">
-            <mat-card-title class="converter-title-enhanced">
-              Conversor de Divisas
-            </mat-card-title>
-            <mat-card-subtitle class="converter-subtitle-enhanced">
-              Conversión instantánea con tipos de cambio en tiempo real
-            </mat-card-subtitle>
-          </div>
+    <div class="converter-result-section">
+      <!-- Conversor (Izquierda) - ADAPTADO AL TYPESCRIPT ACTUAL -->
+      <mat-card class="currency-converter-card">
+        <mat-card-header class="converter-card-header">
+          <mat-card-title class="converter-card-title">
+            <mat-icon>currency_exchange</mat-icon>
+            Conversor de Divisas
+          </mat-card-title>
+          <mat-card-subtitle class="converter-card-subtitle">
+            Conversión instantánea con datos del BCE
+          </mat-card-subtitle>
         </mat-card-header>
         
-        <mat-card-content class="converter-content-enhanced">
-          <div class="conversion-form-enhanced">
+        <mat-card-content class="converter-card-content">
+          <form class="conversion-form">
             
-            <!-- Cantidad (Centrada y prominente) -->
-            <div class="amount-section-enhanced">
-              <label class="amount-label-enhanced">Cantidad a convertir</label>
-              <div class="amount-input-container">
-                <mat-form-field appearance="outline" class="amount-field-enhanced">
-                  <input matInput 
-                         type="number" 
-                         [formControl]="cantidad"
-                         placeholder="0.00"
-                         class="amount-input-enhanced">
-                </mat-form-field>
-              </div>
+            <!-- Cantidad a convertir -->
+            <div class="amount-input-section">
+              <label class="input-label">Cantidad</label>
+              <mat-form-field appearance="outline" class="amount-input-field">
+                <input matInput 
+                       type="number" 
+                       [formControl]="cantidad"
+                       placeholder="0.00"
+                       class="amount-input">
+              </mat-form-field>
             </div>
 
-            <!-- Fila de Divisas Mejorada -->
-            <div class="currency-selection-enhanced">
-              <div class="currency-card from-currency">
-                <label class="currency-label">Desde</label>
-                <mat-form-field appearance="outline" class="currency-field-enhanced">
-                  <mat-select [formControl]="monedaOrigen" (selectionChange)="onMonedaOrigenChange()">
-                    <mat-option *ngFor="let divisa of getDivisasOrigen()" [value]="divisa.code">
-                      <div class="currency-option">
-                        <span class="currency-flag">{{divisa.flag}}</span>
-                        <span class="currency-code">{{divisa.code}}</span>
-                        <span class="currency-name-option">{{divisa.name}}</span>
+            <!-- Selección de divisas -->
+            <div class="currency-selector-grid">
+              <!-- Divisa origen -->
+              <div class="currency-selector-card from-card">
+                <span class="selector-label">Desde</span>
+                <mat-form-field appearance="outline" class="currency-select-field">
+                  <mat-select [formControl]="monedaOrigen" 
+                              (selectionChange)="limpiarResultado()">
+                    <mat-option *ngFor="let currency of divisas" [value]="currency.code">
+                      <div class="currency-option-content">
+                        <span class="currency-flag">{{ currency.flag }}</span>
+                        <span class="currency-code">{{ currency.code }}</span>
+                        <span class="currency-name">{{ currency.name }}</span>
                       </div>
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
 
-              <!-- Botón de intercambio mejorado -->
-              <div class="swap-section">
+              <!-- Botón de intercambio -->
+              <div class="swap-button-container">
                 <button mat-fab 
+                        size="mini"
                         color="primary" 
                         (click)="intercambiarDivisas()"
-                        class="swap-button-enhanced"
-                        matTooltip="Intercambiar divisas">
+                        class="currency-swap-button"
+                        type="button">
                   <mat-icon>swap_horiz</mat-icon>
                 </button>
               </div>
 
-              <div class="currency-card to-currency">
-                <label class="currency-label">Hacia</label>
-                <mat-form-field appearance="outline" class="currency-field-enhanced">
-                  <mat-select [formControl]="monedaDestino" (selectionChange)="onMonedaDestinoChange()">
-                    <mat-option *ngFor="let divisa of getDivisasDestino()" [value]="divisa.code">
-                      <div class="currency-option">
-                        <span class="currency-flag">{{divisa.flag}}</span>
-                        <span class="currency-code">{{divisa.code}}</span>
-                        <span class="currency-name-option">{{divisa.name}}</span>
+              <!-- Divisa destino -->
+              <div class="currency-selector-card to-card">
+                <span class="selector-label">Hacia</span>
+                <mat-form-field appearance="outline" class="currency-select-field">
+                  <mat-select [formControl]="monedaDestino" 
+                              (selectionChange)="limpiarResultado()">
+                    <mat-option *ngFor="let currency of divisas" [value]="currency.code">
+                      <div class="currency-option-content">
+                        <span class="currency-flag">{{ currency.flag }}</span>
+                        <span class="currency-code">{{ currency.code }}</span>
+                        <span class="currency-name">{{ currency.name }}</span>
                       </div>
                     </mat-option>
                   </mat-select>
@@ -145,191 +147,181 @@
               </div>
             </div>
 
-            <!-- Botón Convertir Mejorado -->
-            <div class="convert-section-enhanced">
+            <!-- Botón convertir -->
+            <div class="convert-button-section">
               <button mat-raised-button 
                       color="primary" 
                       (click)="convert()"
-                      class="convert-button-enhanced"
-                      [disabled]="cargando">
-                <div class="button-content">
-                  <mat-icon *ngIf="!cargando">trending_up</mat-icon>
+                      class="convert-action-button"
+                      [disabled]="cargando || !cantidad.valid || !monedaOrigen.valid || !monedaDestino.valid"
+                      type="button">
+                <div class="button-content-wrapper">
+                  <mat-icon *ngIf="!cargando">calculate</mat-icon>
                   <mat-progress-spinner 
                     *ngIf="cargando" 
-                    diameter="20" 
+                    diameter="18" 
                     mode="indeterminate">
                   </mat-progress-spinner>
-                  <span>{{ cargando ? 'Convirtiendo...' : 'Convertir Ahora' }}</span>
+                  <span>{{ cargando ? 'Convirtiendo...' : 'Convertir' }}</span>
                 </div>
               </button>
             </div>
 
-            <!-- Info adicional -->
-            <div class="conversion-info-enhanced">
-              <div class="info-item">
-                <mat-icon>schedule</mat-icon>
-                <span>Actualizado cada minuto</span>
-              </div>
-              <div class="info-item">
+            <!-- Info del servicio -->
+            <div class="service-info-section">
+              <div class="info-badge">
                 <mat-icon>verified</mat-icon>
-                <span>Datos del Banco Central Europeo</span>
+                <span>Datos BCE</span>
+              </div>
+              <div class="info-badge">
+                <mat-icon>schedule</mat-icon>
+                <span>Tiempo Real</span>
               </div>
             </div>
 
-          </div>
+          </form>
         </mat-card-content>
       </mat-card>
 
-      <!-- Resultado (Derecha) - SIEMPRE VISIBLE -->
-      <mat-card class="result-card-improved">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon color="primary">currency_exchange</mat-icon>
-            {{ resultado ? 'Resultado de Conversión' : 'Panel de Resultados' }}
+      <!-- Resultado (Derecha) - ADAPTADO AL TYPESCRIPT ACTUAL -->
+      <mat-card class="conversion-result-card">
+        <mat-card-header class="result-card-header">
+          <mat-card-title class="result-card-title">
+            <mat-icon>insights</mat-icon>
+            {{ resultado ? 'Resultado' : 'Panel de Resultados' }}
           </mat-card-title>
         </mat-card-header>
 
-        <mat-card-content>
-          <!-- ✅ MOSTRAR RESULTADO SI EXISTE -->
-          <div class="result-display-improved" *ngIf="resultado">
+        <mat-card-content class="result-card-content">
+          
+          <!-- Mostrar resultado si existe -->
+          <div class="conversion-result-display" *ngIf="resultado">
             
-            <!-- Resultado Principal - SIN SUPERPOSICIÓN -->
-            <div class="result-main-improved">
-              <div class="conversion-summary">
-                <span class="from-amount">{{ cantidad.value | number:'1.0-2' }} {{ monedaOrigen.value }}</span>
-                <mat-icon class="equals-icon">trending_flat</mat-icon>
+            <!-- Resultado principal -->
+            <div class="main-result-section">
+              <div class="conversion-equation">
+                <span class="original-amount">{{ cantidad.value | number:'1.0-2' }} {{ monedaOrigen.value }}</span>
+                <mat-icon class="equals-sign">keyboard_double_arrow_right</mat-icon>
               </div>
               
-              <div class="result-amount-improved">
-                <div class="amount-display">
-                  <span class="amount-number-big">{{ resultado.result | number:'1.2-2' }}</span>
-                  <span class="currency-code-inline">{{ monedaDestino.value }}</span>
-                </div>
-                <div class="currency-display">
-                  <span class="currency-name-small">{{ getCurrencyFullName(monedaDestino.value!) }}</span>
-                </div>
+              <div class="converted-amount-display">
+                <span class="result-number">{{ resultado.valorConvertido | number:'1.2-2' }}</span>
+                <span class="result-currency">{{ monedaDestino.value }}</span>
               </div>
 
-              <!-- Tasa de Cambio Prominente -->
-              <div class="exchange-rate-display">
-                <div class="rate-box">
-                  <mat-icon>info</mat-icon>
-                  <span class="rate-text">1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.2-4' }} {{ monedaDestino.value }}</span>
+              <div class="exchange-rate-info">
+                <div class="rate-display-box">
+                  <mat-icon>info_outline</mat-icon>
+                  <span>1 {{ monedaOrigen.value }} = {{ resultado.tasaCambio | number:'1.4-4' }} {{ monedaDestino.value }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- Stats en Grid 2x2 -->
-            <div class="result-stats-grid">
-              <div class="stat-box">
-                <mat-icon class="stat-icon">calendar_today</mat-icon>
-                <div class="stat-content">
-                  <span class="stat-label">Fecha</span>
-                  <span class="stat-value">{{ formatDate(resultado.date) }}</span>
+            <!-- Información adicional en grid -->
+            <div class="result-details-grid">
+              <div class="detail-item">
+                <mat-icon class="detail-icon">event</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Fecha</span>
+                  <span class="detail-value">{{ formatearFecha(resultado.timestamp) }}</span>
                 </div>
               </div>
 
-              <div class="stat-box">
-                <mat-icon class="stat-icon trending" [ngClass]="{
-                  'trending-up': resultado.rate > 1,
-                  'trending-down': resultado.rate < 1,
-                  'trending-flat': resultado.rate === 1
+              <div class="detail-item">
+                <mat-icon class="detail-icon">swap_horiz</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Inverso</span>
+                  <span class="detail-value">1 {{ monedaDestino.value }} = {{ obtenerTasaInversa() | number:'1.4-4' }} {{ monedaOrigen.value }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <mat-icon class="detail-icon trending" [ngClass]="{
+                  'trend-up': resultado.tasaCambio > 1,
+                  'trend-down': resultado.tasaCambio < 1,
+                  'trend-neutral': resultado.tasaCambio === 1
                 }">
-                  {{ resultado.rate > 1 ? 'trending_up' : resultado.rate < 1 ? 'trending_down' : 'trending_flat' }}
+                  {{ resultado.tasaCambio > 1 ? 'trending_up' : resultado.tasaCambio < 1 ? 'trending_down' : 'trending_flat' }}
                 </mat-icon>
-                <div class="stat-content">
-                  <span class="stat-label">Fuerza</span>
-                  <span class="stat-value" [ngClass]="{
-                    'trend-strong': resultado.rate > 1,
-                    'trend-weak': resultado.rate < 1,
-                    'trend-equal': resultado.rate === 1
+                <div class="detail-content">
+                  <span class="detail-label">Tendencia</span>
+                  <span class="detail-value" [ngClass]="{
+                    'strong': resultado.tasaCambio > 1,
+                    'weak': resultado.tasaCambio < 1,
+                    'neutral': resultado.tasaCambio === 1
                   }">
-                    {{ resultado.rate > 1 ? 'Fuerte' : resultado.rate < 1 ? 'Débil' : 'Equilibrado' }}
+                    {{ resultado.tasaCambio > 1 ? 'Fuerte' : resultado.tasaCambio < 1 ? 'Débil' : 'Neutral' }}
                   </span>
                 </div>
               </div>
 
-              <div class="stat-box">
-                <mat-icon class="stat-icon">swap_horiz</mat-icon>
-                <div class="stat-content">
-                  <span class="stat-label">Inverso</span>
-                  <span class="stat-value">1 {{ monedaDestino.value }} = {{ (1/resultado.rate) | number:'1.2-4' }} {{ monedaOrigen.value }}</span>
-                </div>
-              </div>
-
-              <div class="stat-box">
-                <mat-icon class="stat-icon">insights</mat-icon>
-                <div class="stat-content">
-                  <span class="stat-label">Volatilidad</span>
-                  <span class="stat-value">{{ getVolatilityLevel(resultado.rate) }}</span>
+              <div class="detail-item">
+                <mat-icon class="detail-icon">precision_manufacturing</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Precisión</span>
+                  <span class="detail-value">Alta (BCE)</span>
                 </div>
               </div>
             </div>
 
-            <!-- Acciones Mejoradas -->
-            <div class="result-actions-improved">
-              <button mat-raised-button color="primary" (click)="intercambiarDivisas()">
+            <!-- Acciones del resultado -->
+            <div class="result-actions-section">
+              <button mat-raised-button 
+                      color="primary" 
+                      (click)="intercambiarDivisas()"
+                      class="result-action-btn">
                 <mat-icon>swap_vert</mat-icon>
-                Invertir Divisas
+                Intercambiar
               </button>
               
-              <button mat-stroked-button color="accent" (click)="copiarResultado()">
+              <button mat-stroked-button 
+                      color="accent" 
+                      (click)="copiarResultado()"
+                      class="result-action-btn">
                 <mat-icon>content_copy</mat-icon>
                 Copiar
-              </button>
-              
-              <button mat-stroked-button color="warn" (click)="compartirResultado()">
-                <mat-icon>share</mat-icon>
-                Compartir
               </button>
             </div>
           </div>
 
-          <!-- 🆕 MOSTRAR MENSAJE INSTRUCTIVO SI NO HAY RESULTADO -->
-          <div class="welcome-instructions" *ngIf="!resultado">
-            <div class="welcome-icon">
-              <mat-icon>info</mat-icon>
+          <!-- Mensaje de bienvenida si no hay resultado -->
+          <div class="welcome-message-display" *ngIf="!resultado">
+            <div class="welcome-icon-container">
+              <mat-icon class="welcome-icon">calculate</mat-icon>
             </div>
             
-            <div class="welcome-content">
-              <h3>¡Bienvenido al Conversor DivisasPro!</h3>
-              <div class="instructions-list">
-                <div class="instruction-item">
-                  <mat-icon color="primary">looks_one</mat-icon>
-                  <span>Introduce la <strong>cantidad</strong> que deseas convertir</span>
+            <div class="welcome-text-content">
+              <h3 class="welcome-title">¡Bienvenido al Conversor!</h3>
+              
+              <div class="instruction-steps">
+                <div class="instruction-step">
+                  <mat-icon class="step-icon">looks_one</mat-icon>
+                  <span class="step-text">Introduce la <strong>cantidad</strong></span>
                 </div>
-                <div class="instruction-item">
-                  <mat-icon color="primary">looks_two</mat-icon>
-                  <span>Selecciona las <strong>divisas</strong> origen y destino</span>
+                <div class="instruction-step">
+                  <mat-icon class="step-icon">looks_two</mat-icon>
+                  <span class="step-text">Selecciona las <strong>divisas</strong></span>
                 </div>
-                <div class="instruction-item">
-                  <mat-icon color="primary">looks_3</mat-icon>
-                  <span>Haz clic en <strong>"Convertir Ahora"</strong></span>
-                </div>
-                <div class="instruction-item">
-                  <mat-icon color="primary">insights</mat-icon>
-                  <span>Obtén el resultado con <strong>datos en tiempo real</strong></span>
+                <div class="instruction-step">
+                  <mat-icon class="step-icon">looks_3</mat-icon>
+                  <span class="step-text">Haz clic en <strong>"Convertir"</strong></span>
                 </div>
               </div>
 
-              <div class="features-highlight">
-                <div class="feature-badge">
+              <div class="welcome-features">
+                <div class="feature-chip">
                   <mat-icon>verified</mat-icon>
-                  <span>Datos del BCE</span>
+                  <span>Datos BCE</span>
                 </div>
-                <div class="feature-badge">
-                  <mat-icon>schedule</mat-icon>
-                  <span>Tiempo Real</span>
-                </div>
-                <div class="feature-badge">
-                  <mat-icon>precision_manufacturing</mat-icon>
-                  <span>Alta Precisión</span>
+                <div class="feature-chip">
+                  <mat-icon>speed</mat-icon>
+                  <span>Instantáneo</span>
                 </div>
               </div>
 
-              <div class="quick-start-tip">
-                <mat-icon color="accent">lightbulb</mat-icon>
-                <span><strong>Tip:</strong> Puedes usar el botón de intercambio para invertir las divisas rápidamente</span>
+              <div class="quick-tip">
+                <mat-icon>lightbulb</mat-icon>
+                <span>Usa el botón de intercambio para invertir las divisas rápidamente</span>
               </div>
             </div>
           </div>

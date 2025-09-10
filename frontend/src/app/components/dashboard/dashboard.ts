@@ -521,15 +521,6 @@ export class Dashboard implements OnInit, OnDestroy {
     });
   }
 
-  copiarResultado(): void {
-    const texto = `${this.cantidad.value} ${this.monedaOrigen.value} = ${this.resultado.result} ${this.monedaDestino.value}`;
-    navigator.clipboard.writeText(texto).then(() => {
-      this.snackBar.open('✅ Resultado copiado al portapapeles', 'Cerrar', {
-        duration: 2000,
-      });
-    });
-  }
-
   compartirResultado(): void {
     const texto = `💰 ${this.cantidad.value} ${this.monedaOrigen.value} = ${this.resultado.result} ${this.monedaDestino.value} (DivisasPro)`;
 
@@ -936,6 +927,33 @@ export class Dashboard implements OnInit, OnDestroy {
       clearInterval(this.tickerUpdateInterval);
       this.tickerUpdateInterval = null;
       console.log('⏹️ Ticker automático detenido');
+    }
+  }
+
+  // 🆕 MÉTODOS AUXILIARES PARA EL NUEVO CONVERSOR
+  limpiarResultado(): void {
+    this.resultado = null;
+  }
+
+  formatearFecha(timestamp: Date): string {
+    return timestamp ? timestamp.toLocaleDateString('es-ES') : '';
+  }
+
+  obtenerTasaInversa(): number {
+    return this.resultado ? 1 / this.resultado.tasaCambio : 0;
+  }
+
+  copiarResultado(): void {
+    if (this.resultado) {
+      const texto = `${this.cantidad.value} ${
+        this.monedaOrigen.value
+      } = ${this.resultado.valorConvertido.toFixed(2)} ${
+        this.monedaDestino.value
+      }`;
+      navigator.clipboard.writeText(texto).then(() => {
+        // Opcional: mostrar mensaje de éxito
+        console.log('Resultado copiado al portapapeles');
+      });
     }
   }
 }
