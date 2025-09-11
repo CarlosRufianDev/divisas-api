@@ -414,7 +414,7 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- SECCIÓN 4: TIPOS DE CAMBIO MEJORADA -->
+    <!-- SECCIÓN 4: Mercado de Divisas -->
     <mat-card class="rates-section-improved">
       <mat-card-header>
         <div class="rates-header">
@@ -481,10 +481,15 @@
 
               <!-- Tasa Principal -->
               <div class="rate-main">
+                <!-- ✅ NUEVA LÍNEA: Etiqueta "1 USD =" -->
+                <span class="base-currency-label" *ngIf="!rate.isBaseCurrency">
+                  1 {{ monedaBase.value }} =
+                </span>
+                
                 <span class="rate-value" [class.updating]="cargandoTabla">
                   {{ rate.isBaseCurrency ? '1.0000' : (rate.rate | number:'1.2-2') }}
                 </span>
-                <span class="rate-label">{{ monedaBase.value }}/{{ rate.code }}</span>
+                <span class="rate-label">{{ rate.code }}</span>
               </div>
 
               <!-- Cambio y Porcentaje -->
