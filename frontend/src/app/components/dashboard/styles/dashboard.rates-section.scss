@@ -95,7 +95,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 3rem;
+      gap: 2rem;
       position: relative;
       z-index: 2;
       width: 100%; // ✅ AÑADIR: Ocupar todo el ancho
@@ -103,10 +103,7 @@
       .rates-title {
         flex: 1; 
         min-width: 0; 
-      }
-
-      .rates-title {
-        flex: 2;
+        max-width: 60%; // ✅ NUEVO: Limitar ancho para dar espacio
 
         mat-card-title {
           display: flex;
@@ -146,44 +143,49 @@
         }
 
         mat-card-subtitle {
-          font-size: 1rem;
+          font-size: 0.9rem;
           font-weight: 500;
           margin: 0;
-          margin-left: -0.3rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
           
-          // ✅ ESTILO OSCURO ELEGANTE
+          // ✅ COMPACTAR: Subtítulo más pequeño y compacto
           background: linear-gradient(135deg, 
             rgba(255, 152, 0, 0.15), 
             rgba(255, 152, 0, 0.1)
           );
           color: #e2e8f0;
-          padding: 0.75rem 1rem;
-          border-radius: 10px;
+          padding: 0.5rem 0.8rem;
+          border-radius: 8px;
           border: 1px solid rgba(255, 152, 0, 0.2);
-          margin-left: 1rem;
-          margin-top: 1rem;
-          
           backdrop-filter: blur(10px);
-
+          width: fit-content;
+          
           &::before {
             content: '📊';
-            font-size: 1.1rem;
-            margin-right: 0.3rem;
+            font-size: 1rem;
+            margin-right: 0.2rem;
             filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
           }
 
           strong {
-            color: #fbbf24; // Amarillo dorado
+            color: #fbbf24;
             font-weight: 700;
             background: rgba(255, 152, 0, 0.2);
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
           }
         }
+      }
+
+      // ✅ NUEVO: Contenedor intermedio para mejor control
+      .rates-info-controls {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        flex: 0 0 auto;
       }
     }
   }
@@ -762,213 +764,6 @@
   }
 }
 
-// 🆕 NUEVO SELECTOR DE MONEDA BASE - DISEÑO MODERNO
-.currency-base-selector-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%; // ✅ CAMBIAR: Ocupar todo el ancho del contenedor
-  padding: 1rem 1.2rem;
-  
-  // ✅ FONDO QUE COMBINA CON EL HEADER OSCURO
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.15) 0%, 
-    rgba(248, 250, 252, 0.12) 100%
-  );
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(15px);
-  transition: all 0.3s ease;
-  position: relative;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 6px 20px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 152, 0, 0.4);
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.18) 0%, 
-      rgba(248, 250, 252, 0.15) 100%
-    );
-  }
-
-  // ✅ HEADER DEL SELECTOR - ESTILO HEADER OSCURO
-  .selector-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-
-    .selector-icon {
-      color: #ff9800;
-      font-size: 1.1rem;
-      width: 1.1rem;
-      height: 1.1rem;
-      background: linear-gradient(135deg, 
-        rgba(255, 152, 0, 0.25), 
-        rgba(255, 193, 7, 0.2)
-      );
-      border-radius: 6px;
-      padding: 0.3rem;
-      border: 1px solid rgba(255, 152, 0, 0.3);
-    }
-
-    .selector-title {
-      font-weight: 600;
-      color: #ffffff;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  // ✅ CAMPO DEL FORMULARIO - ESTILO OSCURO
-  .base-select-field {
-    width: 100%;
-    margin: 0;
-
-    // Label
-    .mat-mdc-form-field-label {
-      color: rgba(255, 255, 255, 0.8) !important;
-      font-weight: 500 !important;
-      font-size: 0.8rem !important;
-    }
-
-    // Contenedor principal del select
-    .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      transition: all 0.3s ease;
-      min-height: 44px;
-      backdrop-filter: blur(10px);
-    }
-
-    // Estado enfocado
-    &.mat-focused {
-      .mat-mdc-form-field-flex {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: #ff9800;
-        box-shadow: 
-          0 0 0 3px rgba(255, 152, 0, 0.2),
-          0 4px 12px rgba(255, 152, 0, 0.15);
-      }
-
-      .mat-mdc-form-field-label {
-        color: #fbbf24 !important;
-      }
-    }
-
-    // Texto del valor seleccionado
-    .mat-mdc-select-value-text {
-      color: #ffffff !important;
-      font-weight: 600 !important;
-      font-size: 0.9rem !important;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    // Flecha del select
-    .mat-mdc-select-arrow {
-      color: rgba(255, 255, 255, 0.7) !important;
-      transition: color 0.3s ease;
-    }
-
-    &.mat-focused .mat-mdc-select-arrow {
-      color: #fbbf24 !important;
-    }
-
-    // Outline/border cuando está enfocado
-    .mat-mdc-form-field-focus-overlay {
-      background: rgba(255, 152, 0, 0.1);
-    }
-  }
-
-  // ✅ INFORMACIÓN ADICIONAL - ESTILO OSCURO
-  .selector-info {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.6rem;
-    background: rgba(255, 152, 0, 0.15);
-    border-radius: 6px;
-    border-left: 3px solid #ff9800;
-    backdrop-filter: blur(10px);
-
-    mat-icon {
-      color: #fbbf24;
-      font-size: 0.9rem;
-      width: 0.9rem;
-      height: 0.9rem;
-    }
-
-    span {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.7rem;
-      font-weight: 500;
-      line-height: 1.3;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  // ✅ INDICADOR DE ESTADO DESHABILITADO
-  &.disabled {
-    opacity: 0.7;
-    pointer-events: none;
-    background: linear-gradient(135deg, 
-      rgba(100, 116, 139, 0.15) 0%, 
-      rgba(71, 85, 105, 0.12) 100%
-    );
-    border-color: rgba(148, 163, 184, 0.3);
-
-    .selector-header {
-      .selector-icon {
-        color: #94a3b8;
-        background: rgba(148, 163, 184, 0.2);
-        border-color: rgba(148, 163, 184, 0.3);
-      }
-
-      .selector-title {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
-
-    .base-select-field {
-      .mat-mdc-form-field-flex {
-        background: rgba(148, 163, 184, 0.1);
-        border-color: rgba(148, 163, 184, 0.2);
-      }
-
-      .mat-mdc-select-value-text {
-        color: rgba(255, 255, 255, 0.6) !important;
-      }
-    }
-
-    .selector-info {
-      background: rgba(148, 163, 184, 0.1);
-      border-left-color: #94a3b8;
-
-      mat-icon {
-        color: #94a3b8;
-      }
-
-      span {
-        color: rgba(255, 255, 255, 0.6);
-
-        &::after {
-          content: ' (Usuario no registrado)';
-          font-weight: 600;
-          color: #f87171;
-        }
-      }
-    }
-  }
-}
 
 // ✅ AJUSTE DEL HEADER PRINCIPAL - ARREGLAR CENTRADO
 .rates-header {
@@ -986,481 +781,164 @@
   }
 }
 
-// ✅ CONTENEDOR PARA LOS CONTROLES - ARREGLAR POSICIONAMIENTO
+// ✅ CONTENEDOR PARA LOS CONTROLES
 .rates-controls {
-  flex: 0 0 auto; // ✅ MANTENER: No crecer
+  flex: 0 0 280px;
   display: flex;
-  justify-content: flex-end; // ✅ FORZAR a la derecha
+  justify-content: flex-end;
   align-items: flex-start;
-  min-width: 280px; // ✅ AÑADIR: Ancho mínimo
-  max-width: 320px; // ✅ AÑADIR: Ancho máximo
 }
 
-// 🆕 SELECTOR DE MONEDA BASE - AJUSTAR TAMAÑO
 .currency-base-selector-modern {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  width: 100%; // ✅ CAMBIAR: Ocupar todo el ancho del contenedor
-  padding: 1rem 1.2rem;
+  gap: 0.4rem; 
+  width: 100%;
+  padding: 0.8rem 1rem; 
   
-  // ✅ FONDO QUE COMBINA CON EL HEADER OSCURO
+  // ✅ FONDO 
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.15) 0%, 
-    rgba(248, 250, 252, 0.12) 100%
-  );
-  border-radius: 12px;
+    rgba(255, 152, 0, 0.15), 
+    rgba(255, 152, 0, 0.1)
+    );
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 3px 12px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(15px);
   transition: all 0.3s ease;
   position: relative;
   
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 
-      0 6px 20px rgba(0, 0, 0, 0.2),
+      0 4px 16px rgba(0, 0, 0, 0.16),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 152, 0, 0.4);
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.18) 0%, 
-      rgba(248, 250, 252, 0.15) 100%
-    );
   }
 
   // ✅ HEADER DEL SELECTOR - ESTILO HEADER OSCURO
   .selector-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
+    gap: 0.4rem; 
+    padding-bottom: 0.4rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 
     .selector-icon {
       color: #ff9800;
-      font-size: 1.1rem;
-      width: 1.1rem;
-      height: 1.1rem;
+      font-size: 1rem; 
+      width: 1rem;
+      height: 1rem;
       background: linear-gradient(135deg, 
         rgba(255, 152, 0, 0.25), 
         rgba(255, 193, 7, 0.2)
       );
-      border-radius: 6px;
-      padding: 0.3rem;
+      border-radius: 4px; 
+      padding: 0.25rem;
       border: 1px solid rgba(255, 152, 0, 0.3);
     }
 
     .selector-title {
       font-weight: 600;
       color: #ffffff;
-      font-size: 0.85rem;
+      font-size: 0.75rem; 
       text-transform: uppercase;
       letter-spacing: 0.5px;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
   }
 
-  // ✅ CAMPO DEL FORMULARIO - ESTILO OSCURO
   .base-select-field {
     width: 100%;
     margin: 0;
 
-    // Label
     .mat-mdc-form-field-label {
+      background: white !important;
       color: rgba(255, 255, 255, 0.8) !important;
       font-weight: 500 !important;
-      font-size: 0.8rem !important;
+      font-size: 0.75rem !important; 
     }
 
-    // Contenedor principal del select
     .mat-mdc-form-field-flex {
       background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
+      border-radius: 6px; 
       border: 1px solid rgba(255, 255, 255, 0.25);
       transition: all 0.3s ease;
-      min-height: 44px;
+      min-height: 40px;
       backdrop-filter: blur(10px);
     }
 
-    // Estado enfocado
     &.mat-focused {
       .mat-mdc-form-field-flex {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(223, 207, 207, 0.808);
         border-color: #ff9800;
         box-shadow: 
-          0 0 0 3px rgba(255, 152, 0, 0.2),
-          0 4px 12px rgba(255, 152, 0, 0.15);
-      }
-
-      .mat-mdc-form-field-label {
-        color: #fbbf24 !important;
+          0 0 0 2px rgba(255, 152, 0, 0.2),
+          0 3px 8px rgba(255, 152, 0, 0.15);
       }
     }
 
-    // Texto del valor seleccionado
     .mat-mdc-select-value-text {
       color: #ffffff !important;
       font-weight: 600 !important;
-      font-size: 0.9rem !important;
+      font-size: 0.85rem !important; 
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    // Flecha del select
-    .mat-mdc-select-arrow {
-      color: rgba(255, 255, 255, 0.7) !important;
-      transition: color 0.3s ease;
-    }
-
-    &.mat-focused .mat-mdc-select-arrow {
-      color: #fbbf24 !important;
-    }
-
-    // Outline/border cuando está enfocado
-    .mat-mdc-form-field-focus-overlay {
-      background: rgba(255, 152, 0, 0.1);
     }
   }
 
-  // ✅ INFORMACIÓN ADICIONAL - ESTILO OSCURO
   .selector-info {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.6rem;
+    gap: 0.3rem; 
+    padding: 0.3rem 0.5rem; 
     background: rgba(255, 152, 0, 0.15);
-    border-radius: 6px;
-    border-left: 3px solid #ff9800;
+    border-radius: 4px; 
+    border-left: 2px solid #ff9800; 
     backdrop-filter: blur(10px);
 
     mat-icon {
       color: #fbbf24;
-      font-size: 0.9rem;
-      width: 0.9rem;
-      height: 0.9rem;
+      font-size: 0.8rem;
+      width: 0.8rem;
+      height: 0.8rem;
     }
 
     span {
       color: rgba(255, 255, 255, 0.9);
-      font-size: 0.7rem;
+      font-size: 0.65rem; 
       font-weight: 500;
       line-height: 1.3;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
   }
-
-  // ✅ INDICADOR DE ESTADO DESHABILITADO
-  &.disabled {
-    opacity: 0.7;
-    pointer-events: none;
-    background: linear-gradient(135deg, 
-      rgba(100, 116, 139, 0.15) 0%, 
-      rgba(71, 85, 105, 0.12) 100%
-    );
-    border-color: rgba(148, 163, 184, 0.3);
-
-    .selector-header {
-      .selector-icon {
-        color: #94a3b8;
-        background: rgba(148, 163, 184, 0.2);
-        border-color: rgba(148, 163, 184, 0.3);
-      }
-
-      .selector-title {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
-
-    .base-select-field {
-      .mat-mdc-form-field-flex {
-        background: rgba(148, 163, 184, 0.1);
-        border-color: rgba(148, 163, 184, 0.2);
-      }
-
-      .mat-mdc-select-value-text {
-        color: rgba(255, 255, 255, 0.6) !important;
-      }
-    }
-
-    .selector-info {
-      background: rgba(148, 163, 184, 0.1);
-      border-left-color: #94a3b8;
-
-      mat-icon {
-        color: #94a3b8;
-      }
-
-      span {
-        color: rgba(255, 255, 255, 0.6);
-
-        &::after {
-          content: ' (Usuario no registrado)';
-          font-weight: 600;
-          color: #f87171;
-        }
-      }
-    }
-  }
 }
 
-// ✅ AJUSTE DEL HEADER PRINCIPAL - ARREGLAR CENTRADO
-.rates-header {
-  display: flex;
-  justify-content: space-between; // ✅ FORZAR space-between
-  align-items: flex-start;
-  gap: 2rem;
-  position: relative;
-  z-index: 2;
-  width: 100%; // ✅ AÑADIR: Ocupar todo el ancho
-
-  .rates-title {
-    flex: 1; 
-    min-width: 0; 
-  }
-}
-
-// ✅ CONTENEDOR PARA LOS CONTROLES - ARREGLAR POSICIONAMIENTO
-.rates-controls {
-  flex: 0 0 auto; // ✅ MANTENER: No crecer
-  display: flex;
-  justify-content: flex-end; // ✅ FORZAR a la derecha
-  align-items: flex-start;
-  min-width: 280px; // ✅ AÑADIR: Ancho mínimo
-  max-width: 320px; // ✅ AÑADIR: Ancho máximo
-}
-
-// 🆕 SELECTOR DE MONEDA BASE - AJUSTAR TAMAÑO
-.currency-base-selector-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%; // ✅ CAMBIAR: Ocupar todo el ancho del contenedor
-  padding: 1rem 1.2rem;
-  
-  // ✅ FONDO QUE COMBINA CON EL HEADER OSCURO
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.15) 0%, 
-    rgba(248, 250, 252, 0.12) 100%
-  );
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(15px);
-  transition: all 0.3s ease;
-  position: relative;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 6px 20px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 152, 0, 0.4);
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.18) 0%, 
-      rgba(248, 250, 252, 0.15) 100%
-    );
-  }
-
-  // ✅ HEADER DEL SELECTOR - ESTILO HEADER OSCURO
-  .selector-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-
-    .selector-icon {
-      color: #ff9800;
-      font-size: 1.1rem;
-      width: 1.1rem;
-      height: 1.1rem;
-      background: linear-gradient(135deg, 
-        rgba(255, 152, 0, 0.25), 
-        rgba(255, 193, 7, 0.2)
-      );
-      border-radius: 6px;
-      padding: 0.3rem;
-      border: 1px solid rgba(255, 152, 0, 0.3);
-    }
-
-    .selector-title {
-      font-weight: 600;
-      color: #ffffff;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  // ✅ CAMPO DEL FORMULARIO - ESTILO OSCURO
-  .base-select-field {
-    width: 100%;
-    margin: 0;
-
-    // Label
-    .mat-mdc-form-field-label {
-      color: rgba(255, 255, 255, 0.8) !important;
-      font-weight: 500 !important;
-      font-size: 0.8rem !important;
-    }
-
-    // Contenedor principal del select
-    .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      transition: all 0.3s ease;
-      min-height: 44px;
-      backdrop-filter: blur(10px);
-    }
-
-    // Estado enfocado
-    &.mat-focused {
-      .mat-mdc-form-field-flex {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: #ff9800;
-        box-shadow: 
-          0 0 0 3px rgba(255, 152, 0, 0.2),
-          0 4px 12px rgba(255, 152, 0, 0.15);
-      }
-
-      .mat-mdc-form-field-label {
-        color: #fbbf24 !important;
-      }
-    }
-
-    // Texto del valor seleccionado
-    .mat-mdc-select-value-text {
-      color: #ffffff !important;
-      font-weight: 600 !important;
-      font-size: 0.9rem !important;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    // Flecha del select
-    .mat-mdc-select-arrow {
-      color: rgba(255, 255, 255, 0.7) !important;
-      transition: color 0.3s ease;
-    }
-
-    &.mat-focused .mat-mdc-select-arrow {
-      color: #fbbf24 !important;
-    }
-
-    // Outline/border cuando está enfocado
-    .mat-mdc-form-field-focus-overlay {
-      background: rgba(255, 152, 0, 0.1);
-    }
-  }
-
-  // ✅ INFORMACIÓN ADICIONAL - ESTILO OSCURO
-  .selector-info {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.6rem;
-    background: rgba(255, 152, 0, 0.15);
-    border-radius: 6px;
-    border-left: 3px solid #ff9800;
-    backdrop-filter: blur(10px);
-
-    mat-icon {
-      color: #fbbf24;
-      font-size: 0.9rem;
-      width: 0.9rem;
-      height: 0.9rem;
-    }
-
-    span {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.7rem;
-      font-weight: 500;
-      line-height: 1.3;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  // ✅ INDICADOR DE ESTADO DESHABILITADO
-  &.disabled {
-    opacity: 0.7;
-    pointer-events: none;
-    background: linear-gradient(135deg, 
-      rgba(100, 116, 139, 0.15) 0%, 
-      rgba(71, 85, 105, 0.12) 100%
-    );
-    border-color: rgba(148, 163, 184, 0.3);
-
-    .selector-header {
-      .selector-icon {
-        color: #94a3b8;
-        background: rgba(148, 163, 184, 0.2);
-        border-color: rgba(148, 163, 184, 0.3);
-      }
-
-      .selector-title {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
-
-    .base-select-field {
-      .mat-mdc-form-field-flex {
-        background: rgba(148, 163, 184, 0.1);
-        border-color: rgba(148, 163, 184, 0.2);
-      }
-
-      .mat-mdc-select-value-text {
-        color: rgba(255, 255, 255, 0.6) !important;
-      }
-    }
-
-    .selector-info {
-      background: rgba(148, 163, 184, 0.1);
-      border-left-color: #94a3b8;
-
-      mat-icon {
-        color: #94a3b8;
-      }
-
-      span {
-        color: rgba(255, 255, 255, 0.6);
-
-        &::after {
-          content: ' (Usuario no registrado)';
-          font-weight: 600;
-          color: #f87171;
-        }
-      }
-    }
-  }
-}
 
 // 🔧 RESPONSIVE: Adaptación para pantallas pequeñas
 @media (max-width: 968px) {
   .rates-header {
     flex-direction: column;
     gap: 1.5rem;
-    align-items: stretch; // ✅ CAMBIAR: stretch en lugar de stretch
+    align-items: stretch; 
   }
 
   .rates-controls {
-    justify-content: flex-start; // ✅ CAMBIAR: flex-start en lugar de center
-    width: 100%; // ✅ AÑADIR: Ocupar todo el ancho en móviles
-    max-width: none; // ✅ AÑADIR: Sin máximo en móviles
+    justify-content: flex-start; 
+    width: 100%; 
+    max-width: none;
   }
 
   .currency-base-selector-modern {
-    width: 100%; // ✅ ASEGURAR: Todo el ancho en móviles
-    max-width: 400px; // ✅ MANTENER: Máximo en móviles
+    width: 100%; 
+    max-width: 400px; 
   }
 }
 
 @media (max-width: 768px) {
   .rates-controls {
-    justify-content: flex-start; // ✅ ASEGURAR: Izquierda en móviles
+    justify-content: flex-start; 
   }
   
   .currency-base-selector-modern {
@@ -2181,6 +1659,7 @@
 // ===============================
 // 🔧 ESTILOS ADICIONALES
 // ===============================
+
 .rate-actions-single {
   display: flex;
   gap: 0.5rem;
