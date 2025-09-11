@@ -429,20 +429,42 @@
             </mat-card-subtitle>
           </div>
           
-          <!-- Selector de Moneda Base -->
-          <div class="base-currency-selector">
-            <mat-form-field appearance="outline">
-              <mat-label>Moneda Base</mat-label>
-              <mat-select [formControl]="monedaBase" (selectionChange)="cambiarMonedaBase()">
-                <mat-option *ngFor="let divisa of divisas" [value]="divisa.code">
-                  {{ divisa.flag }} {{ divisa.code }} - {{ divisa.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+          <!-- ✅ NUEVO: Selector movido a la derecha -->
+          <div class="rates-controls">
+            <div class="currency-base-selector-modern" 
+                 [class.disabled]="isLimitedMode">
+              <div class="selector-header">
+                <mat-icon class="selector-icon">settings</mat-icon>
+                <span class="selector-title">Moneda Base</span>
+              </div>
+              
+              <mat-form-field appearance="outline" class="base-select-field">
+                <mat-label>Seleccionar base</mat-label>
+                <mat-select [formControl]="monedaBase" 
+                            (selectionChange)="cambiarMonedaBase()"
+                            [disabled]="isLimitedMode"
+                            class="base-select">
+                  <mat-option *ngFor="let divisa of getDivisasDisponibles()" 
+                              [value]="divisa.code"
+                              class="base-option">
+                    <div class="option-content">
+                      <span class="option-flag">{{ divisa.flag }}</span>
+                      <span class="option-code">{{ divisa.code }}</span>
+                      <span class="option-name">{{ divisa.name }}</span>
+                    </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <div class="selector-info">
+                <mat-icon>info_outline</mat-icon>
+                <span>Todas las tasas se muestran relativas a esta moneda</span>
+              </div>
+            </div>
           </div>
         </div>
       </mat-card-header>
-
+      
       <mat-card-content>
         <!-- Grid de Cards de Divisas -->
         <div class="rates-grid" *ngIf="tiposCambio.length > 0">
