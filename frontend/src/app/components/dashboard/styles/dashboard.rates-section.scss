@@ -796,16 +796,13 @@
   width: 100%;
   padding: 0.8rem 1rem; 
   
-  // ✅ FONDO 
-  background: linear-gradient(135deg, 
-    rgba(255, 152, 0, 0.15), 
-    rgba(255, 152, 0, 0.1)
-    );
+  // ✅ FONDO BLANCO EN LUGAR DEL GRADIENTE
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(226, 232, 240, 0.6);
   box-shadow: 
     0 3px 12px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(15px);
   transition: all 0.3s ease;
   position: relative;
@@ -814,17 +811,18 @@
     transform: translateY(-1px);
     box-shadow: 
       0 4px 16px rgba(0, 0, 0, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 152, 0, 0.4);
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+    border-color: rgba(33, 150, 243, 0.4);
+    background: rgba(255, 255, 255, 1);
   }
 
-  // ✅ HEADER DEL SELECTOR - ESTILO HEADER OSCURO
+  // ✅ HEADER DEL SELECTOR - AJUSTADO PARA FONDO BLANCO
   .selector-header {
     display: flex;
     align-items: center;
     gap: 0.4rem; 
     padding-bottom: 0.4rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.4);
 
     .selector-icon {
       color: #ff9800;
@@ -832,8 +830,8 @@
       width: 1rem;
       height: 1rem;
       background: linear-gradient(135deg, 
-        rgba(255, 152, 0, 0.25), 
-        rgba(255, 193, 7, 0.2)
+        rgba(255, 152, 0, 0.15), 
+        rgba(255, 193, 7, 0.1)
       );
       border-radius: 4px; 
       padding: 0.25rem;
@@ -842,11 +840,11 @@
 
     .selector-title {
       font-weight: 600;
-      color: #ffffff;
+      color: #1a202c; // ✅ CAMBIADO A COLOR OSCURO PARA CONTRASTE CON FONDO BLANCO
       font-size: 0.75rem; 
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: none; // ✅ REMOVIDO text-shadow
     }
   }
 
@@ -856,15 +854,15 @@
 
     .mat-mdc-form-field-label {
       background: white !important;
-      color: rgba(255, 255, 255, 0.8) !important;
+      color: #666 !important; // ✅ CAMBIADO PARA MEJOR CONTRASTE
       font-weight: 500 !important;
       font-size: 0.75rem !important; 
     }
 
     .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(248, 250, 252, 0.8); // ✅ FONDO MÁS CLARO
       border-radius: 6px; 
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(226, 232, 240, 0.6);
       transition: all 0.3s ease;
       min-height: 40px;
       backdrop-filter: blur(10px);
@@ -872,7 +870,7 @@
 
     &.mat-focused {
       .mat-mdc-form-field-flex {
-        background: rgba(223, 207, 207, 0.808);
+        background: rgba(255, 255, 255, 0.95);
         border-color: #ff9800;
         box-shadow: 
           0 0 0 2px rgba(255, 152, 0, 0.2),
@@ -881,10 +879,10 @@
     }
 
     .mat-mdc-select-value-text {
-      color: #ffffff !important;
+      color: #1a202c !important; // ✅ CAMBIADO A COLOR OSCURO
       font-weight: 600 !important;
       font-size: 0.85rem !important; 
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: none; // ✅ REMOVIDO text-shadow
     }
   }
 
@@ -893,24 +891,24 @@
     align-items: center;
     gap: 0.3rem; 
     padding: 0.3rem 0.5rem; 
-    background: rgba(255, 152, 0, 0.15);
+    background: rgba(255, 152, 0, 0.08); // ✅ FONDO MÁS CLARO
     border-radius: 4px; 
     border-left: 2px solid #ff9800; 
     backdrop-filter: blur(10px);
 
     mat-icon {
-      color: #fbbf24;
+      color: #ff9800; // ✅ MANTENIDO NARANJA PARA CONTRASTE
       font-size: 0.8rem;
       width: 0.8rem;
       height: 0.8rem;
     }
 
     span {
-      color: rgba(255, 255, 255, 0.9);
+      color: #4a5568; // ✅ CAMBIADO A COLOR OSCURO PARA CONTRASTE
       font-size: 0.65rem; 
       font-weight: 500;
       line-height: 1.3;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: none; // ✅ REMOVIDO text-shadow
     }
   }
 }
@@ -2198,6 +2196,7 @@
           flex-direction: column;
           align-items: center;
           gap: 0.5rem; // 🆕 Gap muy pequeño
+
           padding: 0.8rem 0.6rem; // 🆕 Padding reducido
           background: rgba(255, 255, 255, 0.9);
           border-radius: 10px;
