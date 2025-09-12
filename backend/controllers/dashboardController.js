@@ -345,8 +345,36 @@ const getFavoriteTrends = async (req, res) => {
   }
 };
 
+// Log de uso del filtro de divisas
+const logCurrencyFilter = async (req, res) => {
+  try {
+    const { filterValue, resultsCount } = req.body;
+    const userId = req.user.userId;
+
+    // Importar ActivityLog aquí para evitar dependencias circulares
+    const ActivityLog = require('../models/ActivityLog');
+
+    await ActivityLog.createLog(
+      userId,
+      'CURRENCY_FILTER',
+      {
+        filterValue: filterValue || '',
+        resultsCount: resultsCount || 0,
+        searchType: filterValue ? 'search' : 'clear'
+      }
+    );
+
+    res.json({ message: 'Filter usage logged' });
+
+  } catch (error) {
+    console.error('Error logging currency filter:', error);
+    res.status(500).json({ error: 'Error logging filter usage' });
+  }
+};
+
 module.exports = {
   getDashboard,
   getUserStats, // ✅ NUEVO
-  getFavoriteTrends // ✅ NUEVO
+  getFavoriteTrends, // ✅ NUEVO
+  logCurrencyFilter // 🆕 NUEVO
 };

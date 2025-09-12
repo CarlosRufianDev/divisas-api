@@ -36,6 +36,10 @@ export class Dashboard implements OnInit, OnDestroy {
   monedaBase = new FormControl('USD');
   ultimaActualizacion: string = '';
 
+  // FILTRO DE DIVISAS PARA USUARIOS REGISTRADOS
+  currencyFilter = new FormControl('');
+  filteredTiposCambio: any[] = [];
+
   // PROPIEDADES PARA ANALYTICS
   userStats: any = null;
   favoriteTrends: any = null;
@@ -170,6 +174,13 @@ export class Dashboard implements OnInit, OnDestroy {
       .subscribe(() => {
         this.cargarTiposCambioReales();
       });
+
+    // CONFIGURAR FILTRO DE DIVISAS (solo para usuarios registrados)
+    this.currencyFilter.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((filterValue) => {
+        this.filtrarDivisas(filterValue || '');
+      });
   }
 
   async ngOnInit(): Promise<void> {
@@ -294,6 +305,9 @@ export class Dashboard implements OnInit, OnDestroy {
       console.log(
         `✅ Procesadas ${this.tiposCambio.length} monedas con tendencias reales`
       );
+
+      // ✅ APLICAR FILTRO DESPUÉS DE CARGAR DATOS (CRÍTICO PARA USUARIOS AUTENTICADOS)
+      this.aplicarFiltroActual();
     } catch (error) {
       console.error('❌ Error cargando tendencias reales:', error);
       // Fallback al método anterior
@@ -340,6 +354,100 @@ export class Dashboard implements OnInit, OnDestroy {
       console.error('❌ Error en fallback:', error);
       this.tiposCambio = [];
     }
+
+    // Aplicar filtro después de cargar datos
+    this.aplicarFiltroActual();
+  }
+
+  // MÉTODO PARA FILTRAR DIVISAS (solo usuarios registrados)
+  private filtrarDivisas(filterValue: string): void {
+    console.log(
+      `🔍 filtrarDivisas llamado con: "${filterValue}", isAuthenticated=${this.isAuthenticated}, tiposCambio.length=${this.tiposCambio.length}`
+    );
+
+    if (!this.isAuthenticated) {
+      // Para usuarios no autenticados, siempre mostrar todas las divisas disponibles
+      this.filteredTiposCambio = [];
+      return;
+    }
+
+    if (!filterValue.trim()) {
+      // Sin filtro, mostrar todas las divisas
+      this.filteredTiposCambio = [...this.tiposCambio];
+    } else {
+      const filter = this.normalizeText(filterValue.toLowerCase().trim());
+      this.filteredTiposCambio = this.tiposCambio.filter(
+        (rate) =>
+          // Buscar en código (USD, EUR, etc.)
+          this.normalizeText(rate.code.toLowerCase()).includes(filter) ||
+          // Buscar en nombre completo (Dólar Estadounidense, Euro, etc.)
+          this.normalizeText(rate.name.toLowerCase()).includes(filter) ||
+          // Buscar en palabras individuales del nombre (Dólar, Estadounidense)
+          rate.name
+            .toLowerCase()
+            .split(' ')
+            .some((word: string) => this.normalizeText(word).includes(filter))
+      );
+    }
+
+    console.log(
+      `🔍 Filtro aplicado: "${filterValue}" - ${this.filteredTiposCambio.length} resultados de ${this.tiposCambio.length} divisas`
+    );
+
+    // Registrar uso del filtro (activity logging pattern)
+    if (filterValue.trim()) {
+      // Solo loggear búsquedas activas, no el clear
+      this.logFilterUsage(filterValue, this.filteredTiposCambio.length);
+    }
+  }
+
+  // MÉTODO AUXILIAR: Normalizar texto removiendo acentos y caracteres especiales
+  private normalizeText(text: string): string {
+    return text
+      .normalize('NFD') // Descomponer caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
+      .replace(/[^\w\s]/g, '') // Remover caracteres especiales excepto letras, números y espacios
+      .trim();
+  }
+
+  // LOGGING DE ACTIVIDAD (siguiendo patrón establecido)
+  private logFilterUsage(filterValue: string, resultsCount: number): void {
+    if (!this.isAuthenticated) return;
+
+    this.divisasService
+      .logCurrencyFilter(filterValue, resultsCount)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Log silencioso - no mostrar nada al usuario
+        },
+        error: (error: any) => {
+          console.warn('📊 No se pudo registrar el uso del filtro:', error);
+        },
+      });
+  }
+
+  // MÉTODO AUXILIAR PARA APLICAR EL FILTRO ACTUAL
+  private aplicarFiltroActual(): void {
+    if (!this.isAuthenticated) {
+      // Para usuarios no autenticados, la lista filtrada queda vacía
+      // porque van a usar directamente tiposCambio en el template
+      this.filteredTiposCambio = [];
+      return;
+    }
+
+    // Para usuarios autenticados, SIEMPRE inicializar con todas las divisas disponibles
+    this.filteredTiposCambio = [...this.tiposCambio];
+
+    // Si hay un filtro activo, aplicarlo
+    const currentFilter = this.currencyFilter.value || '';
+    if (currentFilter.trim()) {
+      this.filtrarDivisas(currentFilter);
+    }
+
+    console.log(
+      `📊 Lista filtrada inicializada: ${this.filteredTiposCambio.length} divisas de ${this.tiposCambio.length} total`
+    );
   }
 
   // ✅ MÉTODO PRINCIPAL DE CONVERSIÓN

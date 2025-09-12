@@ -429,8 +429,31 @@
             </mat-card-subtitle>
           </div>
           
-          <!-- ✅ NUEVO: Selector movido a la derecha -->
+          <!-- ✅ CONTROLES: Filtro + Selector -->
           <div class="rates-controls">
+            <!-- 🆕 FILTRO DE DIVISAS (solo usuarios registrados) -->
+            <div class="currency-filter-section" *ngIf="isAuthenticated">
+              <div class="filter-header">
+                <mat-icon class="filter-icon">search</mat-icon>
+                <span class="filter-title">Buscar Divisa</span>
+              </div>
+              
+              <mat-form-field appearance="outline" class="filter-field">
+                <mat-label>Filtrar por código o nombre</mat-label>
+                <input matInput 
+                       [formControl]="currencyFilter"
+                       placeholder="USD, Euro, Dólar..."
+                       class="filter-input">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+              
+              <div class="filter-info">
+                <mat-icon>info_outline</mat-icon>
+                <span>Busca entre {{ tiposCambio.length }} divisas disponibles</span>
+              </div>
+            </div>
+
+            <!-- SELECTOR DE MONEDA BASE -->
             <div class="currency-base-selector-modern" 
                  [class.disabled]="isLimitedMode">
               <div class="selector-header">
@@ -467,9 +490,9 @@
       
       <mat-card-content>
         <!-- Grid de Cards de Divisas -->
-        <div class="rates-grid" *ngIf="tiposCambio.length > 0">
+        <div class="rates-grid" *ngIf="(isAuthenticated ? filteredTiposCambio : tiposCambio).length > 0">
           <div class="rate-card"
-               *ngFor="let rate of tiposCambio"
+               *ngFor="let rate of (isAuthenticated ? filteredTiposCambio : tiposCambio)"
                [ngClass]="{
                  'trending-up': getTendenciaReal(rate.code) > 0 && !rate.isBaseCurrency,
                  'trending-down': getTendenciaReal(rate.code) < 0 && !rate.isBaseCurrency,
@@ -569,6 +592,25 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- 🆕 MENSAJE CUANDO NO HAY RESULTADOS DE FILTRO -->
+        <div class="no-filter-results" *ngIf="isAuthenticated && filteredTiposCambio.length === 0 && tiposCambio.length > 0 && currencyFilter.value?.trim()">
+          <mat-icon>search_off</mat-icon>
+          <h3>No se encontraron divisas</h3>
+          <p>No hay divisas que coincidan con "<strong>{{ currencyFilter.value }}</strong>"</p>
+          <div class="filter-suggestions">
+            <p><strong>Prueba buscando:</strong></p>
+            <ul>
+              <li>Código de divisa: <em>USD, EUR, GBP, JPY</em></li>
+              <li>Nombre completo: <em>Dólar, Euro, Libra</em></li>
+              <li>País/región: <em>Estadounidense, Europeo, Británico</em></li>
+            </ul>
+          </div>
+          <button mat-raised-button color="primary" (click)="currencyFilter.setValue('')">
+            <mat-icon>clear</mat-icon>
+            Limpiar filtro
+          </button>
         </div>
 
         <!-- Estado Vacío -->

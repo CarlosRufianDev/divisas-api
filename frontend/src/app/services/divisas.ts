@@ -274,4 +274,26 @@ export class DivisasService {
   getSupportedCurrencies(): Observable<any> {
     return this.http.get(`${this.frankfurterUrl}/currencies`);
   }
+
+  /**
+   * Registrar uso del filtro de divisas (activity logging)
+   */
+  logCurrencyFilter(
+    filterValue: string,
+    resultsCount: number
+  ): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+
+    return this.http.post(
+      `${this.apiUrl}/dashboard/log-filter`,
+      {
+        filterValue,
+        resultsCount,
+      },
+      { headers }
+    );
+  }
 }
