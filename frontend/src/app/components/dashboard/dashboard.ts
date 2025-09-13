@@ -87,8 +87,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  // Lista de divisas disponibles
-  divisas = [
+  // Lista de divisas disponibles (se cargará dinámicamente)
+  divisas: any[] = [];
+  // Información estática de divisas (flags y nombres)
+  private currencyInfo = [
     { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
     { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
     { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
@@ -150,23 +152,32 @@ export class Dashboard implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     public router: Router
   ) {
-    // Configurar reactive forms para mejor rendimiento
+    // Configurar reactive forms - SOLO resetear resultado al cambiar divisas
     this.monedaOrigen.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
-        this.convert();
+        // No hacer conversión automática, solo resetear resultado si es diferente
+        if (this.resultado && this.monedaOrigen.value !== this.resultado.from) {
+          this.resultado = null;
+        }
       });
 
     this.monedaDestino.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
-        this.convert(); // ✅ CORREGIDO
+        // No hacer conversión automática, solo resetear resultado si es diferente
+        if (this.resultado && this.monedaDestino.value !== this.resultado.to) {
+          this.resultado = null;
+        }
       });
 
     this.cantidad.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
-        this.convert(); // ✅ CORREGIDO
+        // No hacer conversión automática, solo resetear resultado si es diferente
+        if (this.resultado && this.cantidad.value !== this.resultado.amount) {
+          this.resultado = null;
+        }
       });
 
     this.monedaBase.valueChanges
@@ -195,6 +206,8 @@ export class Dashboard implements OnInit, OnDestroy {
       this.monedaBase.setValue('USD');
       this.monedaBase.disable();
     } else {
+      // Asegurar que el control esté habilitado para usuarios autenticados
+      this.monedaBase.enable();
       // 🆕 INICIAR TICKER SOLO PARA USUARIOS AUTENTICADOS
       this.iniciarActualizacionTicker();
     }
@@ -221,17 +234,41 @@ export class Dashboard implements OnInit, OnDestroy {
     this.detenerActualizacionTicker();
   }
 
-  // ✅ MÉTODO AÑADIDO: Cargar divisas (antes faltaba)
+  // � CARGAR DIVISAS DINÁMICAMENTE DESDE FRANKFURTER
   async cargarDivisas(): Promise<void> {
     try {
-      // Las divisas ya están hardcodeadas, pero podrías cargarlas desde el API
-      console.log('✅ Divisas cargadas desde configuración local');
+      console.log('🌍 Cargando divisas disponibles...');
+
+      // Usar directamente la lista hardcodeada que es más confiable
+      this.divisas = [...this.currencyInfo];
+
+      // Configurar divisas limitadas para usuarios no autenticados
+      this.limitedCurrencies = this.divisas.filter((d) =>
+        ['USD', 'EUR', 'JPY', 'GBP', 'CHF', 'CAD', 'AUD', 'CNY'].includes(
+          d.code
+        )
+      );
+
+      console.log(`✅ Cargadas ${this.divisas.length} divisas`);
+      console.log(
+        `📊 Disponibles para no autenticados: ${this.limitedCurrencies.length}`
+      );
     } catch (error) {
-      console.warn('⚠️ Error cargando divisas:', error);
+      console.error(
+        '❌ Error cargando divisas, usando fallback estático:',
+        error
+      );
+      // Fallback: usar divisas hardcodeadas
+      this.divisas = [...this.currencyInfo];
+      this.limitedCurrencies = this.divisas.filter((d) =>
+        ['USD', 'EUR', 'JPY', 'GBP', 'CHF', 'CAD', 'AUD', 'CNY'].includes(
+          d.code
+        )
+      );
     }
   }
 
-  // 🆕 MÉTODO PRINCIPAL: Cargar tipos de cambio con datos reales
+  // �🆕 MÉTODO PRINCIPAL: Cargar tipos de cambio con datos reales de Frankfurter
   async cargarTiposCambioReales(): Promise<void> {
     if (this.loadingStates.rates) return;
 
@@ -240,123 +277,113 @@ export class Dashboard implements OnInit, OnDestroy {
     this.cargandoTabla = true;
 
     try {
-      console.log(`💱 Cargando tipos de cambio reales desde: ${base}`);
+      console.log(
+        `💱 Cargando tipos de cambio y tendencias REALES desde BCE: ${base}`
+      );
 
-      const tendenciasResponse = await this.divisasService
+      // 🚀 USAR DATOS REALES DE TENDENCIAS VIA NUESTRO BACKEND
+      const trendingResponse = await this.divisasService
         .getTrendingRates(base, undefined, 7)
         .toPromise();
 
-      if (tendenciasResponse?.success) {
-        const divisasDisponibles = this.getDivisasDisponibles();
-
-        // ✅ AÑADIR USD COMO REFERENCIA CUANDO ES LA BASE
+      if (trendingResponse?.success && trendingResponse.rates) {
         const processedRates = [];
 
         // 🔥 AGREGAR LA MONEDA BASE COMO REFERENCIA
-        if (base && divisasDisponibles.find((d) => d.code === base)) {
-          const baseCurrency = divisasDisponibles.find((d) => d.code === base);
+        const baseCurrencyInfo = this.divisas.find((d) => d.code === base);
+        if (baseCurrencyInfo) {
           processedRates.push({
             code: base,
-            name: baseCurrency!.name,
-            flag: baseCurrency!.flag,
+            name: baseCurrencyInfo.name,
+            flag: baseCurrencyInfo.flag,
             rate: 1.0,
             tendencia: 0,
             cambio: '0.00%',
             trendStatus: 'reference',
-            isBaseCurrency: true, // ✅ MARCADOR ESPECIAL
+            changeText: 'REFERENCIA',
+            isBaseCurrency: true,
           });
         }
 
-        // Procesar el resto de divisas
-        const otherRates = tendenciasResponse.rates
-          .map((rateData) => {
-            const divisa = divisasDisponibles.find(
-              (d) => d.code === rateData.currency
+        // 🌍 PROCESAR TODAS LAS DIVISAS CON TENDENCIAS REALES DEL BCE
+        trendingResponse.rates.forEach((rateData) => {
+          // Buscar info de la divisa en nuestra lista (para flag y nombre)
+          const currencyInfo = this.divisas.find(
+            (d) => d.code === rateData.currency
+          );
+
+          if (currencyInfo) {
+            // 🔄 MAPEAR trendStatus del backend a los valores esperados por el frontend
+            let mappedTrendStatus: string;
+            console.log(
+              `🔍 Procesando ${rateData.currency}: trendStatus=${rateData.trendStatus}, trend=${rateData.trend}`
             );
-            if (!divisa || rateData.currency === base) return null; // ✅ Skip si es la base
 
-            this.tendenciasReales.set(rateData.currency, rateData.trend);
+            switch (rateData.trendStatus) {
+              case 'up':
+                mappedTrendStatus = 'trending-up';
+                break;
+              case 'down':
+                mappedTrendStatus = 'trending-down';
+                break;
+              case 'stable':
+              default:
+                mappedTrendStatus = 'trending-stable'; // Cambiar a trending-stable
+                break;
+            }
 
-            return {
+            processedRates.push({
               code: rateData.currency,
-              name: divisa.name,
-              flag: divisa.flag,
+              name: currencyInfo.name,
+              flag: currencyInfo.flag,
               rate: rateData.currentRate,
-              tendencia: rateData.trend,
-              cambio: rateData.change,
-              trendStatus: rateData.trendStatus,
+              tendencia: rateData.trend, // REAL del BCE
+              cambio: rateData.change, // REAL del BCE
+              trendStatus: mappedTrendStatus, // MAPEADO para CSS
+              changeText: rateData.change, // REAL del BCE
               isBaseCurrency: false,
-            };
-          })
-          .filter(Boolean);
+            });
+          }
+        });
 
-        // ✅ COMBINAR: Base currency primero, luego el resto
-        this.tiposCambio = [...processedRates, ...otherRates].slice(
+        this.tiposCambio = processedRates.slice(
           0,
           this.isLimitedMode ? 8 : undefined
         );
+        this.ultimaActualizacion =
+          trendingResponse.date || new Date().toLocaleDateString();
 
         console.log(
-          `✅ Procesadas ${this.tiposCambio.length} monedas (incluyendo base: ${base})`
+          `✅ Cargados ${processedRates.length} tipos de cambio CON TENDENCIAS REALES desde BCE`
         );
+        console.log('📊 Fecha de datos:', trendingResponse.date);
+        console.log('📈 Resumen tendencias:', trendingResponse.summary);
+        console.log(
+          '🎨 Datos procesados para CSS:',
+          processedRates.map((r) => ({
+            code: r.code,
+            trendStatus: r.trendStatus,
+            tendencia: r.tendencia,
+            isBaseCurrency: r.isBaseCurrency,
+          }))
+        );
+
+        // ✅ APLICAR FILTRO DESPUÉS DE CARGAR DATOS
+        this.aplicarFiltroActual();
+      } else {
+        throw new Error('No se recibieron datos de tendencias reales');
       }
-
-      this.ultimaActualizacion = new Date().toLocaleTimeString();
-      console.log(
-        `✅ Procesadas ${this.tiposCambio.length} monedas con tendencias reales`
-      );
-
-      // ✅ APLICAR FILTRO DESPUÉS DE CARGAR DATOS (CRÍTICO PARA USUARIOS AUTENTICADOS)
-      this.aplicarFiltroActual();
     } catch (error) {
-      console.error('❌ Error cargando tendencias reales:', error);
-      // Fallback al método anterior
-      await this.cargarTiposCambioFallback(base);
+      console.error('❌ Error cargando tipos de cambio:', error);
+      this.snackBar.open(
+        '❌ Error al cargar tipos de cambio. Inténtalo más tarde.',
+        'Cerrar',
+        { duration: 4000 }
+      );
     } finally {
       this.loadingStates.rates = false;
       this.cargandoTabla = false;
     }
-  }
-
-  // 🆕 MÉTODO: Fallback para tipos de cambio
-  private async cargarTiposCambioFallback(base: string): Promise<void> {
-    try {
-      console.log('🔄 Usando fallback de Frankfurter directo...');
-
-      const response = await this.divisasService
-        .getLatestRatesFromFrankfurter(base)
-        .toPromise();
-
-      if (response?.rates) {
-        this.tiposCambio = Object.entries(response.rates)
-          .map(([code, rate]) => {
-            const divisa = this.divisas.find((d) => d.code === code);
-            if (!divisa) return null;
-
-            return {
-              code,
-              name: divisa.name,
-              flag: divisa.flag,
-              rate: Number(rate),
-              tendencia: 0, // Sin datos históricos en fallback
-              cambio: '0.00%',
-              trendStatus: 'stable',
-            };
-          })
-          .filter(Boolean)
-          .slice(0, 12);
-
-        this.ultimaActualizacion =
-          response.date || new Date().toLocaleDateString();
-        console.log('✅ Fallback completado');
-      }
-    } catch (error) {
-      console.error('❌ Error en fallback:', error);
-      this.tiposCambio = [];
-    }
-
-    // Aplicar filtro después de cargar datos
-    this.aplicarFiltroActual();
   }
 
   // MÉTODO PARA FILTRAR DIVISAS (solo usuarios registrados)
@@ -958,29 +985,13 @@ export class Dashboard implements OnInit, OnDestroy {
           `✅ Ticker actualizado con datos reales: ${this.tickerRates.length} pares`
         );
       } else {
-        // Fallback a datos simulados
-        this.cargarTickerFallback();
+        console.warn('⚠️ No se recibieron datos reales para ticker');
+        this.tickerRates = []; // Mantener vacío sin datos simulados
       }
     } catch (error) {
       console.error('❌ Error cargando ticker real:', error);
-      this.cargarTickerFallback();
+      this.tickerRates = []; // Mantener vacío si falla, no usar datos simulados
     }
-  }
-
-  // 🆕 MÉTODO DE FALLBACK PARA TICKER
-  private cargarTickerFallback(): void {
-    console.log('🔄 Usando datos simulados para ticker...');
-
-    const simulatedData = [
-      { pair: 'EUR/USD', rate: 1.0847, change: 0.12 },
-      { pair: 'GBP/USD', rate: 1.2634, change: -0.08 },
-      { pair: 'USD/JPY', rate: 149.85, change: 0.25 },
-    ];
-
-    this.tickerRates = [];
-    simulatedData.forEach((data) => {
-      this.actualizarTickerItem(data.pair, data.rate, data.change);
-    });
   }
 
   // 🆕 MÉTODO PARA ACTUALIZAR ITEM DEL TICKER
@@ -1043,21 +1054,22 @@ export class Dashboard implements OnInit, OnDestroy {
     this.resultado = null;
   }
 
-  formatearFecha(timestamp: Date): string {
-    return timestamp ? timestamp.toLocaleDateString('es-ES') : '';
+  formatearFecha(timestamp: string | Date): string {
+    if (!timestamp) return '';
+    const date =
+      typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+    return date.toLocaleDateString('es-ES');
   }
 
   obtenerTasaInversa(): number {
-    return this.resultado ? 1 / this.resultado.tasaCambio : 0;
+    return this.resultado ? 1 / this.resultado.rate : 0;
   }
 
   copiarResultado(): void {
     if (this.resultado) {
       const texto = `${this.cantidad.value} ${
         this.monedaOrigen.value
-      } = ${this.resultado.valorConvertido.toFixed(2)} ${
-        this.monedaDestino.value
-      }`;
+      } = ${this.resultado.result.toFixed(2)} ${this.monedaDestino.value}`;
       navigator.clipboard.writeText(texto).then(() => {
         // Opcional: mostrar mensaje de éxito
         console.log('Resultado copiado al portapapeles');

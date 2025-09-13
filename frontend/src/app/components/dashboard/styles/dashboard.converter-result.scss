@@ -451,7 +451,9 @@
     .welcome-message-display {
       @include mix.flex-center(column, vars.$spacing-md);
       justify-content: center;
+      align-items: center; // ✅ ASEGURAR CENTRADO
       height: 100%;
+      width: 100%; // ✅ ASEGURAR ANCHO COMPLETO
       text-align: center;
       background: linear-gradient(135deg, 
         rgba(248, 250, 252, 0.8) 0%, 
@@ -459,12 +461,15 @@
       );
       border-radius: vars.$radius-md;
       border: 2px dashed rgba(59, 130, 246, 0.3);
-      padding: vars.$spacing-md;
+      padding: vars.$spacing-lg; // ✅ MÁS PADDING
       backdrop-filter: blur(10px);
       animation: fadeInUp 0.8s ease-out;
+      box-sizing: border-box; // ✅ ASEGURAR BOX-SIZING
 
       .welcome-icon-container {
         margin-bottom: vars.$spacing-md;
+        display: flex;
+        justify-content: center; // ✅ CENTRAR ICONO
         
         .welcome-icon {
           font-size: 2.5rem;
@@ -477,11 +482,15 @@
           box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
           border: 2px solid rgba(59, 130, 246, 0.2);
           animation: pulse 2s ease-in-out infinite;
+          display: flex;
+          align-items: center;
+          justify-content: center; // ✅ CENTRAR CONTENIDO DEL ICONO
         }
       }
 
       .welcome-text-content {
-        max-width: 280px;
+        max-width: 320px; // ✅ AUMENTAR ANCHO MÁXIMO
+        width: 100%;
         
         .welcome-title {
           margin: 0 0 vars.$spacing-md 0;

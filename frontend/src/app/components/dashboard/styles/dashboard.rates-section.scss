@@ -50,6 +50,44 @@
     background: transparent !important;
   }
 
+  // 🆕 LOADING STATE PARA DATOS REALES
+  .loading-real-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    padding: 2rem;
+    position: relative;
+    z-index: 10;
+
+    .loading-content {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      mat-progress-spinner {
+        margin: 0 auto 1rem;
+      }
+
+      h3 {
+        color: #1e293b;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0;
+      }
+    }
+  }
+
 
   mat-card-header {
      padding: 24px 32px 16px;
@@ -110,7 +148,7 @@
           align-items: center;
           gap: 0.75rem;
           margin: 0 0 3rem 5px;
-          font-size: 4rem;
+          font-size: 3rem;
           font-weight: 700;
           letter-spacing: -0.02em;
           color: #ffffff;
@@ -550,6 +588,19 @@
             
         }
         
+      }
+
+      // ✅ COLORES ESPECÍFICOS SEGÚN TENDENCIA DE LA TARJETA
+      &.trending-up .rate-change .change-percent {
+        color: #2e7d32 !important; // Verde para trending-up
+      }
+
+      &.trending-down .rate-change .change-percent {
+        color: #c62828 !important; // Rojo para trending-down
+      }
+
+      &.trending-stable .rate-change .change-percent {
+        color: #ef6c00 !important; // Naranja para trending-stable
       }
 
       // Info extra 

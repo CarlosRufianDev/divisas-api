@@ -395,8 +395,9 @@ const getTrendingRates = async (req, res) => {
         if (historicalRate && historicalRate !== currentRate) {
           trend = ((currentRate - historicalRate) / historicalRate) * 100;
 
-          if (trend > 0.5) trendStatus = 'up';
-          else if (trend < -0.5) trendStatus = 'down';
+          // Umbrales más sensibles para mejor visualización
+          if (trend > 0.1) trendStatus = 'up'; // Era 0.5, ahora 0.1
+          else if (trend < -0.1) trendStatus = 'down'; // Era -0.5, ahora -0.1
         }
 
         ratesWithTrends.push({

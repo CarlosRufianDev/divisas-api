@@ -205,14 +205,14 @@
               </div>
               
               <div class="converted-amount-display">
-                <span class="result-number">{{ resultado.valorConvertido | number:'1.2-2' }}</span>
+                <span class="result-number">{{ resultado.result | number:'1.2-2' }}</span>
                 <span class="result-currency">{{ monedaDestino.value }}</span>
               </div>
 
               <div class="exchange-rate-info">
                 <div class="rate-display-box">
                   <mat-icon>info_outline</mat-icon>
-                  <span>1 {{ monedaOrigen.value }} = {{ resultado.tasaCambio | number:'1.4-4' }} {{ monedaDestino.value }}</span>
+                  <span>1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.4-4' }} {{ monedaDestino.value }}</span>
                 </div>
               </div>
             </div>
@@ -223,7 +223,7 @@
                 <mat-icon class="detail-icon">event</mat-icon>
                 <div class="detail-content">
                   <span class="detail-label">Fecha</span>
-                  <span class="detail-value">{{ formatearFecha(resultado.timestamp) }}</span>
+                  <span class="detail-value">{{ formatearFecha(resultado.date) }}</span>
                 </div>
               </div>
 
@@ -237,29 +237,29 @@
 
               <div class="detail-item">
                 <mat-icon class="detail-icon trending" [ngClass]="{
-                  'trend-up': resultado.tasaCambio > 1,
-                  'trend-down': resultado.tasaCambio < 1,
-                  'trend-neutral': resultado.tasaCambio === 1
+                  'trend-up': resultado.rate > 1,
+                  'trend-down': resultado.rate < 1,
+                  'trend-neutral': resultado.rate === 1
                 }">
-                  {{ resultado.tasaCambio > 1 ? 'trending_up' : resultado.tasaCambio < 1 ? 'trending_down' : 'trending_flat' }}
+                  {{ resultado.rate > 1 ? 'trending_up' : resultado.rate < 1 ? 'trending_down' : 'trending_flat' }}
                 </mat-icon>
                 <div class="detail-content">
                   <span class="detail-label">Tendencia</span>
                   <span class="detail-value" [ngClass]="{
-                    'strong': resultado.tasaCambio > 1,
-                    'weak': resultado.tasaCambio < 1,
-                    'neutral': resultado.tasaCambio === 1
+                    'strong': resultado.rate > 1,
+                    'weak': resultado.rate < 1,
+                    'neutral': resultado.rate === 1
                   }">
-                    {{ resultado.tasaCambio > 1 ? 'Fuerte' : resultado.tasaCambio < 1 ? 'Débil' : 'Neutral' }}
+                    {{ resultado.rate > 1 ? 'Fuerte' : resultado.rate < 1 ? 'Débil' : 'Neutral' }}
                   </span>
                 </div>
               </div>
 
               <div class="detail-item">
-                <mat-icon class="detail-icon">precision_manufacturing</mat-icon>
+                <mat-icon class="detail-icon">schedule</mat-icon>
                 <div class="detail-content">
-                  <span class="detail-label">Precisión</span>
-                  <span class="detail-value">Alta (BCE)</span>
+                  <span class="detail-label">Actualizado</span>
+                  <span class="detail-value">16:00 CET (diario)</span>
                 </div>
               </div>
             </div>
@@ -465,7 +465,6 @@
                 <mat-label>Seleccionar base</mat-label>
                 <mat-select [formControl]="monedaBase" 
                             (selectionChange)="cambiarMonedaBase()"
-                            [disabled]="isLimitedMode"
                             class="base-select">
                   <mat-option *ngFor="let divisa of getDivisasDisponibles()" 
                               [value]="divisa.code"
@@ -489,14 +488,23 @@
       </mat-card-header>
       
       <mat-card-content>
+        <!-- Loading state para datos reales -->
+        <div class="loading-real-data" *ngIf="cargandoTabla">
+          <div class="loading-content">
+            <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+            <h3>Cargando datos reales del BCE</h3>
+            <p>Obteniendo tasas de cambio y tendencias oficiales...</p>
+          </div>
+        </div>
+
         <!-- Grid de Cards de Divisas -->
-        <div class="rates-grid" *ngIf="(isAuthenticated ? filteredTiposCambio : tiposCambio).length > 0">
+        <div class="rates-grid" *ngIf="!cargandoTabla && (isAuthenticated ? filteredTiposCambio : tiposCambio).length > 0">
           <div class="rate-card"
                *ngFor="let rate of (isAuthenticated ? filteredTiposCambio : tiposCambio)"
                [ngClass]="{
-                 'trending-up': getTendenciaReal(rate.code) > 0 && !rate.isBaseCurrency,
-                 'trending-down': getTendenciaReal(rate.code) < 0 && !rate.isBaseCurrency,
-                 'trending-stable': getTendenciaReal(rate.code) === 0 || rate.isBaseCurrency,
+                 'trending-up': rate.trendStatus === 'trending-up' && !rate.isBaseCurrency,
+                 'trending-down': rate.trendStatus === 'trending-down' && !rate.isBaseCurrency,
+                 'trending-stable': rate.trendStatus === 'trending-stable' || rate.isBaseCurrency,
                  'base-currency': rate.isBaseCurrency
                }">
             <div class="rate-content" [class.updating]="cargandoTabla">
@@ -514,12 +522,12 @@
                 <div class="trend-indicator" 
                      *ngIf="!rate.isBaseCurrency"
                      [ngClass]="{
-                       'trend-up': rate.tendencia > 0,
-                       'trend-down': rate.tendencia < 0, 
-                       'trend-stable': rate.tendencia === 0
+                       'trend-up': rate.trendStatus === 'trending-up',
+                       'trend-down': rate.trendStatus === 'trending-down', 
+                       'trend-stable': rate.trendStatus === 'trending-stable'
                      }">
                   <mat-icon>
-                    {{ rate.tendencia > 0 ? 'trending_up' : rate.tendencia < 0 ? 'trending_down' : 'trending_flat' }}
+                    {{ rate.trendStatus === 'trending-up' ? 'trending_up' : rate.trendStatus === 'trending-down' ? 'trending_down' : 'trending_flat' }}
                   </mat-icon>
                 </div>
               </div>
@@ -540,11 +548,11 @@
               <!-- Cambio y Porcentaje -->
               <div class="rate-change">
                 <span class="change-percent" [ngClass]="{
-                    'positive': rate.tendencia > 0 && !rate.isBaseCurrency,
-                    'negative': rate.tendencia < 0 && !rate.isBaseCurrency,
-                    'neutral': rate.isBaseCurrency
+                    'positive': rate.trendStatus === 'trending-up' && !rate.isBaseCurrency,
+                    'negative': rate.trendStatus === 'trending-down' && !rate.isBaseCurrency,
+                    'neutral': rate.isBaseCurrency || rate.trendStatus === 'trending-stable'
                 }">
-                  {{ rate.isBaseCurrency ? 'REFERENCIA' : (rate.tendencia > 0 ? '+' : '') + rate.cambio + '%' }}
+                  {{ rate.isBaseCurrency ? 'REFERENCIA' : rate.changeText }}
                   <small class="trend-period" *ngIf="!rate.isBaseCurrency">(30 días)</small>
                 </span>
                 <div class="trend-details">

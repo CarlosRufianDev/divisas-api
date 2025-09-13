@@ -11,6 +11,7 @@ app.use('/api/activity-logs', require('./routes/activityLogs'));
 app.use('/api/calculator', require('./routes/calculator')); // ✅ DEBE ESTAR
 app.use('/api/convert', require('./routes/convert'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/exchange', require('./routes/exchange')); // 🆕 NUEVA RUTA
 app.use('/api/favorites', require('./routes/favorites'));
 app.use('/api/favorite-currencies', require('./routes/favoriteCurrencies'));
 app.use('/api/monedas', require('./routes/monedas'));
