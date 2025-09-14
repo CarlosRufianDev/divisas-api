@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,6 +13,12 @@ import {
   HistoryService,
 } from '../../services/history';
 
+interface PageEvent {
+  pageIndex: number;
+  pageSize: number;
+  length: number;
+}
+
 @Component({
   selector: 'app-historial',
   standalone: true,
@@ -20,34 +26,47 @@ import {
   template: `
     <div class="historial-container">
       <div class="content-wrapper">
+        <!-- Header integrado con filtros como en el dashboard -->
         <div class="historial-header">
-          <h1><mat-icon>history</mat-icon> Historial de Conversiones</h1>
-          <p>Todas tus conversiones de divisas en un solo lugar</p>
-        </div>
+          <div class="title-container">
+            <h1 class="simple-title">
+              <mat-icon class="history-symbol">history</mat-icon>
+              Historial de Conversiones
+            </h1>
 
-        <!-- Filtros -->
-        <mat-card class="filters-card">
-          <mat-card-header>
-            <mat-card-title>
-              <mat-icon>filter_list</mat-icon>
-              Filtros de Búsqueda
-            </mat-card-title>
-            <div class="spacer"></div>
-            <button
-              mat-button
-              color="warn"
-              (click)="clearAllHistory()"
-              [disabled]="loading || conversions.length === 0"
-            >
-              <mat-icon>delete_sweep</mat-icon>
-              Limpiar Todo
-            </button>
-          </mat-card-header>
+            <div class="title-tagline">
+              <p class="tagline-text">
+                Todas tus conversiones de divisas organizadas y filtradas
+                profesionalmente
+              </p>
+            </div>
+          </div>
 
-          <mat-card-content>
-            <form [formGroup]="filtersForm" class="filters-form">
-              <div class="filters-row">
-                <mat-form-field appearance="outline">
+          <!-- Filtros integrados en el header -->
+          <div class="filters-section">
+            <div class="filters-header">
+              <div class="filters-title">
+                <mat-icon>filter_list</mat-icon>
+                <span>Filtros de Búsqueda</span>
+              </div>
+              <button
+                mat-button
+                class="clear-all-btn"
+                (click)="clearAllHistory()"
+                [disabled]="loading || conversions.length === 0"
+              >
+                <mat-icon>delete_sweep</mat-icon>
+                Limpiar Todo
+              </button>
+            </div>
+
+            <form [formGroup]="filtersForm" class="filters-form-integrated">
+              <div class="filters-grid">
+                <mat-form-field
+                  appearance="outline"
+                  class="filter-field"
+                  data-field="from"
+                >
                   <mat-label>Divisa origen</mat-label>
                   <mat-select
                     formControlName="from"
@@ -65,7 +84,11 @@ import {
                   <mat-icon matSuffix>currency_exchange</mat-icon>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field
+                  appearance="outline"
+                  class="filter-field"
+                  data-field="to"
+                >
                   <mat-label>Divisa destino</mat-label>
                   <mat-select
                     formControlName="to"
@@ -83,7 +106,11 @@ import {
                   <mat-icon matSuffix>currency_exchange</mat-icon>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field
+                  appearance="outline"
+                  class="filter-field"
+                  data-field="minAmount"
+                >
                   <mat-label>Cantidad mínima</mat-label>
                   <input
                     matInput
@@ -96,7 +123,11 @@ import {
                   <mat-icon matSuffix>trending_up</mat-icon>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field
+                  appearance="outline"
+                  class="filter-field"
+                  data-field="maxAmount"
+                >
                   <mat-label>Cantidad máxima</mat-label>
                   <input
                     matInput
@@ -110,10 +141,10 @@ import {
                 </mat-form-field>
               </div>
 
-              <div class="filters-actions">
+              <div class="filters-actions-integrated">
                 <button
                   mat-raised-button
-                  color="primary"
+                  class="apply-filters-btn"
                   (click)="applyFilters()"
                   [disabled]="loading"
                 >
@@ -122,6 +153,7 @@ import {
                 </button>
                 <button
                   mat-button
+                  class="clear-filters-btn"
                   (click)="clearFilters()"
                   [disabled]="loading"
                 >
@@ -130,8 +162,8 @@ import {
                 </button>
               </div>
             </form>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
 
         <!-- Loading -->
         <div *ngIf="loading" class="loading-container">
@@ -168,7 +200,7 @@ import {
           <mat-card-header>
             <mat-card-title>
               <mat-icon>list_alt</mat-icon>
-              Historial de Conversiones ({{ pagination.total }} total)
+              Resultados del Historial ({{ pagination.total }} total)
             </mat-card-title>
           </mat-card-header>
 
@@ -269,6 +301,12 @@ import {
 export class Historial implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  // ✅ USANDO INJECT EN LUGAR DE CONSTRUCTOR INJECTION
+  private historyService = inject(HistoryService);
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private snackBar = inject(MatSnackBar);
+
   filtersForm: FormGroup;
   conversions: ConversionHistory[] = [];
   loading = false;
@@ -317,12 +355,7 @@ export class Historial implements OnInit, OnDestroy {
     { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
   ];
 
-  constructor(
-    private historyService: HistoryService,
-    private authService: AuthService,
-    private fb: FormBuilder,
-    private snackBar: MatSnackBar
-  ) {
+  constructor() {
     this.filtersForm = this.fb.group({
       from: [''],
       to: [''],
@@ -409,7 +442,7 @@ export class Historial implements OnInit, OnDestroy {
     });
   }
 
-  onPageChange(event: any): void {
+  onPageChange(event: PageEvent): void {
     this.pagination.page = event.pageIndex + 1;
     this.pagination.limit = event.pageSize;
     this.loadHistory(this.filtersForm.value);
