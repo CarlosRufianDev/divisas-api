@@ -147,7 +147,7 @@ interface MultipleConversionResponse {
               </h2>
               <div class="base-info">
                 <span class="base-amount">{{
-                  results.baseAmount | number : '1.2-2'
+                  results.baseAmount | number : '1.2-2' : 'es-ES'
                 }}</span>
                 <span class="base-currency">{{ results.baseCurrency }}</span>
                 <mat-icon>arrow_forward</mat-icon>
@@ -185,7 +185,7 @@ interface MultipleConversionResponse {
             <mat-card-content>
               <div class="conversion-result">
                 <div class="result-amount">
-                  {{ conversion.result | number : '1.2-2' }}
+                  {{ conversion.result | number : '1.2-2' : 'es-ES' }}
                 </div>
                 <div class="conversion-rate">
                   1 {{ conversion.from }} =
@@ -449,7 +449,10 @@ export class Calculator implements OnInit, OnDestroy {
   }
 
   copyToClipboard(conversion: MultipleConversion): void {
-    const text = `${conversion.result.toFixed(2)} ${conversion.to}`;
+    const text = `${conversion.result.toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} ${conversion.to}`;
     navigator.clipboard.writeText(text).then(() => {
       this.snackBar.open(`📋 Copiado: ${text}`, 'Cerrar', {
         duration: 2000,
@@ -475,9 +478,18 @@ export class Calculator implements OnInit, OnDestroy {
 
     const data = this.results.conversions.map((c) => ({
       'Moneda Destino': c.to,
-      Cantidad: c.result.toFixed(2),
-      Tasa: c.rate.toFixed(4),
-      Descripción: `1 ${c.from} = ${c.rate.toFixed(4)} ${c.to}`,
+      Cantidad: c.result.toLocaleString('es-ES', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+      Tasa: c.rate.toLocaleString('es-ES', {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+      }),
+      Descripción: `1 ${c.from} = ${c.rate.toLocaleString('es-ES', {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+      })} ${c.to}`,
     }));
 
     // TODO: Implementar exportación real
@@ -498,7 +510,13 @@ export class Calculator implements OnInit, OnDestroy {
     const text =
       `Conversión de ${this.results.baseAmount} ${this.results.baseCurrency}:\n` +
       this.results.conversions
-        .map((c) => `${c.to}: ${c.result.toFixed(2)}`)
+        .map(
+          (c) =>
+            `${c.to}: ${c.result.toLocaleString('es-ES', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`
+        )
         .join('\n');
 
     if (navigator.share) {

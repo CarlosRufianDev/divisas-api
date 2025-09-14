@@ -36,7 +36,7 @@
         rgba(30, 41, 59, 0.2) 100%
       ),
       radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+      radial-gradient(circle at 90% 80%, vars.$info-blue-03 0%, transparent 50%);
     pointer-events: none;
     z-index: 1;
   }
@@ -105,7 +105,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #667eea, #764ba2);
+      background: linear-gradient(90deg, vars.$primary-blue, vars.$primary-purple);
       border-radius: 16px 16px 0 0; // ✅ MISMO radio que el header
       z-index: 1;
     }
@@ -298,7 +298,7 @@
         box-shadow: 
           0 8px 25px rgba(0, 0, 0, 0.18),
           0 4px 12px rgba(0, 0, 0, 0.12);
-        border-color: rgba(59, 130, 246, 0.5);
+        border-color: vars.$info-blue-50;
         background: linear-gradient(135deg, 
           rgba(255, 255, 255, 1) 0%, 
           rgba(248, 250, 252, 0.98) 100%
@@ -551,6 +551,30 @@
         flex-shrink: 0;
         margin-bottom: 0.4rem; 
 
+        .trend-header {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.3rem;
+          padding: 0.3rem 0;
+          background: rgba(vars.$info-blue, 0.1);
+          border-radius: 4px 4px 0 0;
+          margin-bottom: 0.2rem;
+
+          .trend-icon {
+            font-size: 0.9rem;
+            color: rgba(vars.$info-blue, 0.8);
+          }
+
+          .trend-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(vars.$info-blue, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+        }
+
         .change-percent {
           display: block;
           font-size: 1.2rem; 
@@ -787,10 +811,10 @@
     padding: 3rem 2rem;
     text-align: center;
     background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.05) 0%, 
+      vars.$info-blue-05 0%, 
       rgba(147, 197, 253, 0.03) 100%
     );
-    border: 2px dashed rgba(59, 130, 246, 0.2);
+    border: 2px dashed vars.$info-blue-20;
     border-radius: 12px;
     margin: 1rem 0;
 
@@ -798,8 +822,8 @@
       font-size: 2.5rem;
       width: 2.5rem;
       height: 2.5rem;
-      color: #3b82f6;
-      background: rgba(59, 130, 246, 0.1);
+      color: vars.$info-blue;
+      background: vars.$info-blue-10;
       border-radius: 50%;
       padding: 0.8rem;
     }
@@ -847,10 +871,10 @@
           font-size: 0.85rem;
           
           em {
-            color: #3b82f6;
+            color: vars.$info-blue;
             font-style: normal;
             font-weight: 500;
-            background: rgba(59, 130, 246, 0.1);
+            background: vars.$info-blue-10;
             padding: 0.1rem 0.3rem;
             border-radius: 3px;
           }
@@ -863,12 +887,12 @@
       padding: 0.6rem 1.5rem;
       border-radius: 20px;
       font-weight: 500;
-      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      background: linear-gradient(135deg, vars.$info-blue, vars.$info-blue-light);
       color: white;
       border: none;
       
       &:hover {
-        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        background: linear-gradient(135deg, vars.$info-blue-dark, vars.$info-blue);
         transform: translateY(-1px);
       }
     }

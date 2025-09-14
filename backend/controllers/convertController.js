@@ -7,6 +7,27 @@ const ActivityLog = require('../models/ActivityLog'); // ← Añadir esta línea
 // URL de la API de Frankfurter
 const API_URL = process.env.API_URL || 'https://api.frankfurter.app/latest';
 
+// 🌟 DIVISAS ADICIONALES NO DISPONIBLES EN FRANKFURTER (exchangerate-api)
+const ADDITIONAL_CURRENCIES = ['ARS', 'COP', 'CLP', 'PEN', 'UYU', 'RUB', 'EGP', 'VND', 'KWD'];
+
+// 🔗 Función para obtener conversión desde exchangerate-api
+const getAdditionalCurrencyConversion = async (from, to) => {
+  try {
+    const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${from}`);
+    const rate = response.data.rates[to];
+
+    if (!rate) {
+      throw new Error(`No se encontró conversión para ${from} a ${to} en exchangerate-api`);
+    }
+
+    console.log(`✅ Conversión adicional obtenida: ${from} → ${to} = ${rate}`);
+    return rate;
+  } catch (error) {
+    console.error(`❌ Error en exchangerate-api para ${from}→${to}:`, error.message);
+    throw error;
+  }
+};
+
 // Convertir moneda
 // Requiere: from, to, amount
 // Respuesta: { from, to, amount, rate, result, date, user (si está autenticado), id }
@@ -31,22 +52,38 @@ const convertCurrency = async (req, res) => {
   }
 
   try {
-    // ✅ CORREGIR: No enviar amount a Frankfurter, solo obtener el rate
-    const apiUrl = `${API_URL}?from=${from}&to=${to}`;
-    console.log('URL solicitada:', apiUrl);
-    const response = await axios.get(apiUrl);
+    let rate;
+    let apiUsed = 'frankfurter';
 
-    if (!response.data.rates || response.data.rates[to] === undefined) {
-      return res.status(400).json({ error: `No se encontró el tipo de cambio para ${from} a ${to}` });
+    // 🔄 LÓGICA DUAL: Decidir qué API usar basado en las monedas
+    const needsAdditionalAPI = ADDITIONAL_CURRENCIES.includes(from) || ADDITIONAL_CURRENCIES.includes(to);
+
+    if (needsAdditionalAPI) {
+      // 📊 Usar exchangerate-api para monedas adicionales
+      console.log(`🌟 Usando exchangerate-api para conversión: ${from} → ${to}`);
+      rate = await getAdditionalCurrencyConversion(from, to);
+      apiUsed = 'exchangerate-api';
+    } else {
+      // 📊 Usar Frankfurter para monedas soportadas
+      console.log(`🏛️ Usando Frankfurter para conversión: ${from} → ${to}`);
+      const apiUrl = `${API_URL}?from=${from}&to=${to}`;
+      console.log('URL solicitada:', apiUrl);
+      const response = await axios.get(apiUrl);
+
+      if (!response.data.rates || response.data.rates[to] === undefined) {
+        return res.status(400).json({ error: `No se encontró el tipo de cambio para ${from} a ${to}` });
+      }
+
+      rate = response.data.rates[to];
     }
 
-    // ✅ CORREGIR: Obtener el rate correctamente y calcular el result
-    const rate = response.data.rates[to];
+    // ✅ Calcular el resultado
     const result = amount * rate;
 
-    console.log('🔍 DEBUG Frankfurter response:', {
-      frankfurterRate: rate,
-      amount: amount,
+    console.log('🔍 DEBUG Conversion response:', {
+      apiUsed,
+      rate,
+      amount,
       calculatedResult: result
     });
 
@@ -84,7 +121,7 @@ const convertCurrency = async (req, res) => {
           user: req.user.userId,
           action: 'CONVERT_CURRENCY',
           details: `Convertir ${amount} ${from} a ${to}`,
-          metadata: { from, to, amount, rate, result }
+          metadata: { from, to, amount, rate, result, apiUsed }
         });
 
         console.log('✅ Conversión guardada en BD');
@@ -100,16 +137,17 @@ const convertCurrency = async (req, res) => {
       rate,
       result,
       date: new Date(),
-      conversionId: savedConversion ? savedConversion._id : null
+      conversionId: savedConversion ? savedConversion._id : null,
+      apiUsed
     });
 
   } catch (error) {
     console.error('❌ Error en conversión:', error.message);
-    
+
     if (error.response && error.response.status === 404) {
       return res.status(400).json({ error: 'Una o ambas monedas no son válidas' });
     }
-    
+
     res.status(500).json({ error: 'Error interno del servidor al realizar la conversión' });
   }
 };

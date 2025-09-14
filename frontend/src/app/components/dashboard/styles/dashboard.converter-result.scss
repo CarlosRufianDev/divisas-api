@@ -460,7 +460,7 @@
         rgba(241, 245, 249, 0.9) 100%
       );
       border-radius: vars.$radius-md;
-      border: 2px dashed rgba(59, 130, 246, 0.3);
+      border: 2px dashed vars.$info-blue-30;
       padding: vars.$spacing-lg; // ✅ MÁS PADDING
       backdrop-filter: blur(10px);
       animation: fadeInUp 0.8s ease-out;
@@ -476,11 +476,11 @@
           width: 2.5rem;
           height: 2.5rem;
           color: vars.$info-blue;
-          background: rgba(59, 130, 246, 0.1);
+          background: vars.$info-blue-10;
           border-radius: 50%;
           padding: vars.$spacing-sm;
-          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
-          border: 2px solid rgba(59, 130, 246, 0.2);
+          box-shadow: 0 4px 15px vars.$info-blue-20;
+          border: 2px solid vars.$info-blue-20;
           animation: pulse 2s ease-in-out infinite;
           display: flex;
           align-items: center;
@@ -526,7 +526,7 @@
               font-size: 0.8rem;
               width: 0.8rem;
               height: 0.8rem;
-              background: rgba(59, 130, 246, 0.1);
+              background: vars.$info-blue-10;
               border-radius: 50%;
               padding: 0.2rem;
               color: vars.$info-blue;
@@ -633,7 +633,7 @@
     rgba(241, 245, 249, 0.9) 100%
   );
   border-radius: 16px;
-  border: 2px dashed rgba(59, 130, 246, 0.3);
+  border: 2px dashed vars.$info-blue-30;
   min-height: 400px;
   backdrop-filter: blur(10px);
   animation: fadeInUp 0.8s ease-out;
@@ -645,10 +645,10 @@
       font-size: 4rem;
       width: 4rem;
       height: 4rem;
-      color: #3b82f6;
+      color: vars.$info-blue;
       background: linear-gradient(135deg, 
-        rgba(59, 130, 246, 0.15), 
-        rgba(59, 130, 246, 0.08)
+        vars.$info-blue-15, 
+        vars.$info-blue-08
       );
       border-radius: 50%;
       padding: 1rem;

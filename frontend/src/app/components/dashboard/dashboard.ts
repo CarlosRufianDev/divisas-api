@@ -352,7 +352,7 @@ export class Dashboard implements OnInit, OnDestroy {
             // 🔄 MAPEAR trendStatus del backend a los valores esperados por el frontend
             let mappedTrendStatus: string;
             console.log(
-              `🔍 Procesando ${rateData.currency}: trendStatus=${rateData.trendStatus}, trend=${rateData.trend}`
+              `🔍 Procesando ${rateData.currency}: trendStatus=${rateData.trendStatus}, trend=${rateData.trend}, currentRate=${rateData.currentRate}`
             );
 
             switch (rateData.trendStatus) {
@@ -693,7 +693,12 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   compartirResultado(): void {
-    const texto = `💰 ${this.cantidad.value} ${this.monedaOrigen.value} = ${this.resultado.result} ${this.monedaDestino.value} (DivisasPro)`;
+    const texto = `💰 ${this.cantidad.value} ${
+      this.monedaOrigen.value
+    } = ${this.resultado.result.toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} ${this.monedaDestino.value} (DivisasPro)`;
 
     if (navigator.share) {
       navigator.share({
@@ -1105,7 +1110,10 @@ export class Dashboard implements OnInit, OnDestroy {
     if (this.resultado) {
       const texto = `${this.cantidad.value} ${
         this.monedaOrigen.value
-      } = ${this.resultado.result.toFixed(2)} ${this.monedaDestino.value}`;
+      } = ${this.resultado.result.toLocaleString('es-ES', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })} ${this.monedaDestino.value}`;
       navigator.clipboard.writeText(texto).then(() => {
         // Opcional: mostrar mensaje de éxito
         console.log('Resultado copiado al portapapeles');

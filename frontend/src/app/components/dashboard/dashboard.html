@@ -200,19 +200,19 @@
             <!-- Resultado principal -->
             <div class="main-result-section">
               <div class="conversion-equation">
-                <span class="original-amount">{{ cantidad.value | number:'1.0-2' }} {{ monedaOrigen.value }}</span>
+                <span class="original-amount">{{ cantidad.value | number:'1.0-2':'es-ES' }} {{ monedaOrigen.value }}</span>
                 <mat-icon class="equals-sign">keyboard_double_arrow_right</mat-icon>
               </div>
               
               <div class="converted-amount-display">
-                <span class="result-number">{{ resultado.result | number:'1.2-2' }}</span>
+                <span class="result-number">{{ resultado.result | number:'1.2-2':'es-ES' }}</span>
                 <span class="result-currency">{{ monedaDestino.value }}</span>
               </div>
 
               <div class="exchange-rate-info">
                 <div class="rate-display-box">
                   <mat-icon>info_outline</mat-icon>
-                  <span>1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.4-4' }} {{ monedaDestino.value }}</span>
+                  <span>1 {{ monedaOrigen.value }} = {{ resultado.rate | number:'1.4-4':'es-ES' }} {{ monedaDestino.value }}</span>
                 </div>
               </div>
             </div>
@@ -547,16 +547,20 @@
 
               <!-- Cambio y Porcentaje -->
               <div class="rate-change">
+                <div class="trend-header" *ngIf="!rate.isBaseCurrency">
+                  <mat-icon class="trend-icon">trending_up</mat-icon>
+                  <span class="trend-title">Variación</span>
+                </div>
                 <span class="change-percent" [ngClass]="{
                     'positive': rate.trendStatus === 'trending-up' && !rate.isBaseCurrency,
                     'negative': rate.trendStatus === 'trending-down' && !rate.isBaseCurrency,
                     'neutral': rate.isBaseCurrency || rate.trendStatus === 'trending-stable'
                 }">
                   {{ rate.isBaseCurrency ? 'REFERENCIA' : rate.changeText }}
-                  <small class="trend-period" *ngIf="!rate.isBaseCurrency">(30 días)</small>
+                  <small class="trend-period" *ngIf="!rate.isBaseCurrency">(7 días)</small>
                 </span>
                 <div class="trend-details">
-                  <small class="change-label">{{ rate.isBaseCurrency ? 'Moneda base seleccionada' : 'Datos históricos BCE' }}</small>
+                  <small class="change-label">{{ rate.isBaseCurrency ? 'Moneda base seleccionada' : 'Datos históricos reales' }}</small>
                 </div>
               </div>
 
@@ -564,7 +568,7 @@
               <div class="rate-extra">
                 <div class="inverse-rate">
                   <mat-icon>swap_horiz</mat-icon>
-                  <span>1 {{ rate.code }} = {{ rate.isBaseCurrency ? '1.0000' : ((1/rate.rate) | number:'1.2-2') }} {{ monedaBase.value }}</span>
+                  <span>1 {{ rate.code }} = {{ rate.isBaseCurrency ? '1.0000' : ((1/rate.rate) | number:'1.2-6':'es-ES') }} {{ monedaBase.value }}</span>
                 </div>
               </div>
 

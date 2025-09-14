@@ -1,3 +1,5 @@
+@use 'variables' as vars;
+
 // 🎭 ANIMACIONES DEL DASHBOARD
 
 // ===============================
@@ -79,10 +81,10 @@
 
 @keyframes badgeGlow {
   0% { 
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 12px vars.$info-blue-40;
   }
   100% { 
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+    box-shadow: 0 6px 20px vars.$info-blue-60;
   }
 }
 

@@ -273,65 +273,7 @@ const technicalAnalysis = async (req, res) => {
     const startStr = startDate.toISOString().slice(0, 10);
     const endStr = endDate.toISOString().slice(0, 10);
 
-    // 🔥 VERIFICAR SI ES UNA MONEDA ADICIONAL
-    const ADDITIONAL_CURRENCIES = ['ARS', 'COP', 'CLP', 'PEN', 'UYU', 'RUB', 'EGP', 'VND', 'KWD'];
-    const needsAlternativeAPI = ADDITIONAL_CURRENCIES.includes(from) || ADDITIONAL_CURRENCIES.includes(to);
-
-    if (needsAlternativeAPI) {
-      // 🚨 ANÁLISIS TÉCNICO LIMITADO PARA MONEDAS ADICIONALES
-      console.log(`⚠️ Análisis técnico limitado para ${from}→${to} (exchangerate-api)`);
-
-      const currentRate = await getAdditionalCurrencyRate(to, from);
-      const historicalRate = await getAdditionalCurrencyHistoricalRate(to, from, parseInt(days));
-
-      if (!currentRate || !historicalRate) {
-        return res.status(400).json({
-          success: false,
-          error: 'No se pueden obtener datos históricos para esta moneda'
-        });
-      }
-
-      // Análisis básico con estimación
-      const trend = ((currentRate - historicalRate) / historicalRate) * 100;
-      const volatility = Math.abs(trend) / parseInt(days); // Estimación simple
-
-      const result = {
-        success: true,
-        pair: `${from}/${to}`,
-        period: `${days} días`,
-        dataPoints: 2, // Solo actual y estimado
-        currentRate,
-        analysis: {
-          trend: Number(trend.toFixed(4)),
-          volatility: Number(volatility.toFixed(6)),
-          rsi: 50, // Neutral (no calculable sin datos históricos suficientes)
-          sma: currentRate, // Usar tasa actual como SMA
-          support: Math.min(currentRate, historicalRate),
-          resistance: Math.max(currentRate, historicalRate),
-          avgDailyChange: Number((trend / parseInt(days)).toFixed(4))
-        },
-        recommendation: {
-          action: 'ESPERAR',
-          color: '#ff9800',
-          message: 'Datos limitados - Solo exchangerate-api disponible',
-          confidence: 30,
-          signals: ['Análisis básico con datos limitados'],
-          score: 0
-        },
-        rawData: {
-          rates: [historicalRate, currentRate],
-          dates: [startStr, endStr],
-          dailyChanges: [trend]
-        },
-        timestamp: new Date(),
-        apiSource: 'exchangerate-api (limitado)'
-      };
-
-      console.log(`✅ Análisis limitado completado para ${from}→${to}`);
-      return res.json(result);
-    }
-
-    // 🔥 USAR FRANKFURTER PARA RANGO DE FECHAS (solo monedas soportadas)
+    // 🔥 USAR FRANKFURTER PARA RANGO DE FECHAS
     const url = `https://api.frankfurter.app/${startStr}..${endStr}?from=${from}&to=${to}`;
     console.log('🔗 URL:', url);
 

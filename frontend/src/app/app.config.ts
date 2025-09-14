@@ -1,10 +1,19 @@
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import localeEs from '@angular/common/locales/es';
+import {
+  ApplicationConfig,
+  LOCALE_ID,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { authInterceptorFn } from './interceptors/auth.interceptor'; // ✅ FUNCIONAL
+
+// Registrar locale español
+registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,5 +21,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([authInterceptorFn])), // ✅ NUEVO FORMATO
+    { provide: LOCALE_ID, useValue: 'es-ES' }, // 🌍 Configurar locale español
   ],
 };
