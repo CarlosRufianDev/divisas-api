@@ -1,0 +1,200 @@
+// ===============================
+// 🎨 MIXINS GLOBALES - DivisasPro
+// ===============================
+
+@use 'variables' as vars;
+
+// ===============================
+// 🔄 GLASSMORPHISM EFFECTS
+// ===============================
+
+@mixin glassmorphism-card($blur: 10px, $opacity: 0.95) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  border: 1px solid vars.$glass-border;
+  border-radius: vars.$radius-xl;
+  box-shadow: vars.$shadow-heavy;
+}
+
+@mixin glassmorphism-light($blur: 8px, $opacity: 0.8) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  border: 1px solid vars.$glass-border;
+  border-radius: vars.$radius-base;
+  box-shadow: vars.$shadow-medium;
+}
+
+// ===============================
+// 🎭 BACKGROUND PATTERNS
+// ===============================
+
+@mixin background-gradient() {
+  background: vars.$gradient-primary;
+  position: relative;
+  overflow: hidden;
+}
+
+@mixin particle-background() {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+    pointer-events: none;
+    background-size: 100px 100px;
+    animation: float 20s infinite linear;
+  }
+}
+
+@mixin advanced-background() {
+  background: vars.$gradient-primary;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(59, 130, 246, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, vars.$info-blue-03 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+// ===============================
+// 🎮 INTERACTIVE ELEMENTS
+// ===============================
+
+@mixin button-primary() {
+  background: vars.$gradient-info;
+  color: white;
+  border: none;
+  border-radius: vars.$radius-lg;
+  padding: vars.$spacing-base vars.$spacing-xl;
+  font-weight: vars.$font-weight-semibold;
+  cursor: pointer;
+  transition: vars.$transition-base;
+  box-shadow: vars.$shadow-button;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: vars.$shadow-button-hover;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@mixin button-secondary() {
+  background: vars.$glass-white;
+  color: vars.$info-blue;
+  border: 2px solid vars.$info-blue-20;
+  border-radius: vars.$radius-lg;
+  padding: vars.$spacing-base vars.$spacing-xl;
+  font-weight: vars.$font-weight-semibold;
+  cursor: pointer;
+  transition: vars.$transition-base;
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    background: vars.$info-blue-10;
+    border-color: vars.$info-blue-30;
+    transform: translateY(-1px);
+  }
+}
+
+// ===============================
+// 📱 RESPONSIVE HELPERS
+// ===============================
+
+@mixin mobile {
+  @media (max-width: vars.$mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: vars.$tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: vars.$desktop) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: vars.$large-desktop) {
+    @content;
+  }
+}
+
+// ===============================
+// 🎨 UTILITY MIXINS
+// ===============================
+
+@mixin center-content() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin fade-in($duration: 0.6s) {
+  opacity: 0;
+  animation: fadeIn $duration ease-out forwards;
+}
+
+@mixin slide-up($duration: 0.6s) {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideInUp $duration ease-out forwards;
+}
+
+@mixin bounce() {
+  animation: bounce 2s infinite;
+}
+
+// ===============================
+// 🎭 PREMIUM ELEMENTS
+// ===============================
+
+@mixin premium-badge() {
+  display: inline-flex;
+  align-items: center;
+  gap: vars.$spacing-sm;
+  background: vars.$gradient-gold;
+  color: vars.$text-dark;
+  padding: vars.$spacing-base vars.$spacing-xl;
+  border-radius: 25px;
+  font-weight: vars.$font-weight-bold;
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+  animation: pulse 2s infinite;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: vars.$font-size-sm;
+}
+
+@mixin trend-indicator($color: vars.$success-green) {
+  display: inline-flex;
+  align-items: center;
+  gap: vars.$spacing-xs;
+  padding: vars.$spacing-xs vars.$spacing-sm;
+  border-radius: vars.$radius-sm;
+  font-size: vars.$font-size-xs;
+  font-weight: vars.$font-weight-semibold;
+  background: rgba($color, 0.1);
+  color: $color;
+  border: 1px solid rgba($color, 0.2);
+}

@@ -1,52 +1,38 @@
-// Estilos unificados para Register - Basado en Dashboard
+// ===============================
+// 🎨 REGISTER - DivisasPro
+// ===============================
+
+@use '../../../styles/shared' as shared;
 
 // Contenedor principal igual que login
 .register-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
-    pointer-events: none;
-  }
+  @include shared.background-gradient;
+  @include shared.particle-background;
+  @include shared.center-content;
+  padding: shared.$spacing-xl;
 }
 
 .register-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  @include shared.glassmorphism-card;
+  padding: shared.$spacing-3xl;
   width: 100%;
   max-width: 500px; // Más ancho que login por más campos
-  border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   z-index: 1;
-  animation: slideInUp 0.6s ease-out;
+  @include shared.slide-up;
 }
 
 // Header del registro
 .register-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: shared.$spacing-2xl;
   
   .logo {
-    font-size: 4rem;
-    margin-bottom: 15px;
+    font-size: shared.$font-size-4xl;
+    margin-bottom: shared.$spacing-lg;
     display: block;
-    animation: bounce 2s infinite;
+    @include shared.bounce;
   }
   
   .mat-mdc-card-title {

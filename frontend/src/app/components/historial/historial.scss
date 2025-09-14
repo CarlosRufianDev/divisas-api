@@ -1,24 +1,17 @@
-// Estilos unificados para Historial - Basado en Dashboard
+// ===============================
+// 🎨 HISTORIAL - DivisasPro
+// ===============================
+
+@use '../../../styles/shared' as shared;
 
 // Contenedor principal con el mismo estilo del dashboard
 .historial-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  @include shared.background-gradient;
+  @include shared.particle-background;
+  padding: shared.$spacing-xl;
   position: relative;
   overflow: hidden;
-
-  // Efecto de partículas de fondo
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
-    pointer-events: none;
-  }
 
   // Contenido por encima del fondo
   > * {
@@ -29,39 +22,42 @@
 
 // Wrapper para el contenido con max-width
 .content-wrapper {
-  max-width: 1200px;
+  max-width: shared.$large-desktop;
   margin: 0 auto;
 }
 
 // Header mejorado
 .historial-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: shared.$spacing-2xl;
   
   h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 0 0 15px 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: rgba(255, 255, 255, 0.95);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    backdrop-filter: blur(10px);
+    @include shared.center-content;
+    gap: shared.$spacing-lg;
+    margin: 0 0 shared.$spacing-lg 0;
+    font-size: shared.$font-size-4xl;
+    font-weight: shared.$font-weight-bold;
+    color: shared.$text-white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     
     mat-icon {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 2.5rem;
+      color: shared.$text-white;
+      font-size: shared.$font-size-4xl;
       width: 2.5rem;
       height: 2.5rem;
     }
   }
   
   p {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.2rem;
+    color: shared.$text-white-secondary;
+    font-size: shared.$font-size-xl;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .subtitle {
+    color: shared.$text-white-secondary;
+    font-size: shared.$font-size-lg;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }

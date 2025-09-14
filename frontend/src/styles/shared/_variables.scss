@@ -1,0 +1,118 @@
+// ===============================
+// 🎨 SISTEMA DE COLORES GLOBAL - DivisasPro
+// ===============================
+
+// Colores principales del gradiente
+$primary-blue: #667eea;
+$primary-purple: #764ba2;
+
+// Colores semánticos
+$success-green: #4caf50;
+$warning-orange: #ff9800;
+$error-red: #f44336;
+$info-blue: #3b82f6;
+$info-blue-light: #60a5fa;
+$info-blue-dark: #2563eb;
+$warning-yellow: #fbbf24;
+
+// Transparencias del azul para coherencia
+$info-blue-03: rgba(59, 130, 246, 0.03);
+$info-blue-05: rgba(59, 130, 246, 0.05);
+$info-blue-08: rgba(59, 130, 246, 0.08);
+$info-blue-10: rgba(59, 130, 246, 0.1);
+$info-blue-15: rgba(59, 130, 246, 0.15);
+$info-blue-20: rgba(59, 130, 246, 0.2);
+$info-blue-30: rgba(59, 130, 246, 0.3);
+$info-blue-40: rgba(59, 130, 246, 0.4);
+$info-blue-50: rgba(59, 130, 246, 0.5);
+$info-blue-60: rgba(59, 130, 246, 0.6);
+
+// ===============================
+// 🌈 GRADIENTES
+// ===============================
+$gradient-primary: linear-gradient(135deg, $primary-blue 0%, $primary-purple 100%);
+$gradient-success: linear-gradient(135deg, $success-green, #8bc34a);
+$gradient-warning: linear-gradient(135deg, $warning-orange, #ffb74d);
+$gradient-info: linear-gradient(135deg, $info-blue, $info-blue-light);
+$gradient-gold: linear-gradient(45deg, #ffd700, #ffed4e);
+
+// ===============================
+// 🔄 FONDOS GLASSMORPHISM
+// ===============================
+$glass-white: rgba(255, 255, 255, 0.95);
+$glass-white-80: rgba(255, 255, 255, 0.8);
+$glass-white-90: rgba(255, 255, 255, 0.9);
+$glass-border: rgba(255, 255, 255, 0.2);
+
+// ===============================
+// 📱 BREAKPOINTS RESPONSIVOS
+// ===============================
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+$large-desktop: 1200px;
+
+// ===============================
+// 🎭 SOMBRAS Y EFECTOS
+// ===============================
+$shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 10px 25px rgba(0, 0, 0, 0.15);
+$shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.1);
+$shadow-card: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+// Sombras específicas para elementos interactivos
+$shadow-button: 0 4px 15px rgba(59, 130, 246, 0.3);
+$shadow-button-hover: 0 6px 20px rgba(59, 130, 246, 0.4);
+
+// ===============================
+// 🔤 TIPOGRAFÍA
+// ===============================
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+$font-size-4xl: 2.25rem;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// ===============================
+// 🎨 COLORES DE TEXTO
+// ===============================
+$text-white: rgba(255, 255, 255, 0.95);
+$text-white-secondary: rgba(255, 255, 255, 0.8);
+$text-dark: #333;
+$text-gray: #6b7280;
+$text-gray-light: #9ca3af;
+
+// ===============================
+// 🎮 ESTADOS INTERACTIVOS
+// ===============================
+$transition-base: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+$transition-slow: all 0.5s ease;
+
+// ===============================
+// 📏 ESPACIADO
+// ===============================
+$spacing-xs: 0.25rem;  // 4px
+$spacing-sm: 0.5rem;   // 8px
+$spacing-base: 1rem;   // 16px
+$spacing-lg: 1.5rem;   // 24px
+$spacing-xl: 2rem;     // 32px
+$spacing-2xl: 3rem;    // 48px
+$spacing-3xl: 4rem;    // 64px
+
+// ===============================
+// 🎯 BORDER RADIUS
+// ===============================
+$radius-sm: 8px;
+$radius-base: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-full: 50%;

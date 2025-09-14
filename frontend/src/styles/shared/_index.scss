@@ -1,0 +1,13 @@
+// ===============================
+// 🎨 SISTEMA DE ESTILOS GLOBAL - DivisasPro
+// ===============================
+
+// Importaciones principales
+@forward 'variables';
+@forward 'mixins';
+@forward 'animations';
+
+// Re-exportamos todo para uso directo
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'animations' as *;
