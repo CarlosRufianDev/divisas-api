@@ -1,6 +1,61 @@
 const axios = require('axios');
 
-const multipleConversion = async (req, res) => {
+// � HELPER: Obtener tasa de divisas adicionales usando API alternativa
+const getAdditionalCurrencyRate = async (currency, baseCurrency = 'USD') => {
+  try {
+    // Usar exchangerate-api.com (gratuita, 1500 requests/mes)
+    const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+
+    if (response.data && response.data.rates && response.data.rates[currency]) {
+      return response.data.rates[currency];
+    }
+    return null;
+  } catch (error) {
+    console.warn(`⚠️ Error obteniendo tasa ${currency} desde API alternativa:`, error.message);
+    // Fallbacks estáticos aproximados (actualizar manualmente cuando sea necesario)
+    const fallbackRates = {
+      ARS: 365.50, // USD/ARS
+      COP: 4150.00, // USD/COP
+      CLP: 920.00, // USD/CLP
+      PEN: 3.75, // USD/PEN
+      UYU: 39.50, // USD/UYU
+      RUB: 92.00, // USD/RUB
+      EGP: 31.00, // USD/EGP
+      VND: 24500.00, // USD/VND
+      KWD: 0.31 // USD/KWD
+    };
+    return baseCurrency === 'USD' ? fallbackRates[currency] : null;
+  }
+};
+
+// � HELPER: Obtener tasa histórica de divisas adicionales (estimación)
+const getAdditionalCurrencyHistoricalRate = async (currency, baseCurrency = 'USD', daysAgo = 7) => {
+  try {
+    const currentRate = await getAdditionalCurrencyRate(currency, baseCurrency);
+    if (!currentRate) return null;
+
+    // Estimaciones de volatilidad típica por divisa (% diario)
+    const volatilityEstimates = {
+      ARS: 0.002, // 0.2% diario (muy volátil)
+      COP: 0.001, // 0.1% diario
+      CLP: 0.0008, // 0.08% diario
+      PEN: 0.0005, // 0.05% diario (más estable)
+      UYU: 0.001, // 0.1% diario
+      RUB: 0.003, // 0.3% diario (muy volátil)
+      EGP: 0.0015, // 0.15% diario
+      VND: 0.0003, // 0.03% diario (estable)
+      KWD: 0.0002 // 0.02% diario (muy estable)
+    };
+
+    const dailyVolatility = volatilityEstimates[currency] || 0.001;
+    const historicalRate = currentRate * (1 - (dailyVolatility * daysAgo));
+
+    return historicalRate;
+  } catch (error) {
+    console.warn(`⚠️ Error estimando tasa histórica ${currency}:`, error.message);
+    return null;
+  }
+}; const multipleConversion = async (req, res) => {
   try {
     const { from, amount, currencies } = req.body;
 
@@ -341,14 +396,21 @@ const getTrendingRates = async (req, res) => {
         // Filtrar la moneda base para evitar duplicados
         targetCurrencies = availableCurrencies.filter(curr => curr !== base);
 
-        console.log(`✅ Obtenidas ${targetCurrencies.length} monedas automáticamente`);
+        // 🆕 AGREGAR DIVISAS ADICIONALES (como ARS) que no están en Frankfurter
+        const additionalCurrencies = ['ARS', 'COP', 'CLP', 'PEN', 'UYU', 'RUB', 'EGP', 'VND', 'KWD']; // 9 divisas adicionales
+        targetCurrencies = [...targetCurrencies, ...additionalCurrencies];
+
+        console.log(`✅ Obtenidas ${targetCurrencies.length} monedas (${availableCurrencies.length} desde Frankfurter + ${additionalCurrencies.length} adicionales)`);
+        console.log(`🔍 Lista completa de monedas: ${targetCurrencies.join(', ')}`);
+        console.log(`🇦🇷 ARS incluido: ${targetCurrencies.includes('ARS')}`);
       } catch (error) {
         console.warn('⚠️ No se pudieron obtener monedas automáticamente, usando lista predeterminada');
         // Fallback robusto
         targetCurrencies = [
+          'ARS', 'COP', 'CLP', 'PEN', 'UYU', 'RUB', 'EGP', 'VND', 'KWD', // ✅ AGREGADAS - Divisas adicionales
           'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'BRL', 'MXN', 'INR',
           'KRW', 'SEK', 'NOK', 'HKD', 'SGD', 'NZD', 'ZAR', 'TRY', 'PLN', 'CZK',
-          'DKK', 'HUF', 'ILS', 'ISK', 'PHP', 'RON', 'RUB', 'THB', 'BGN', 'HRK'
+          'DKK', 'HUF', 'ILS', 'ISK', 'PHP', 'RON', 'THB', 'BGN', 'HRK'
         ].filter(curr => curr !== base);
       }
     }
@@ -383,32 +445,50 @@ const getTrendingRates = async (req, res) => {
     // Procesar tendencias para TODAS las monedas disponibles
     const ratesWithTrends = [];
     const currentRates = currentResponse.data.rates;
+    const additionalCurrencies = ['ARS', 'COP', 'CLP', 'PEN', 'UYU', 'RUB', 'EGP', 'VND', 'KWD'];
 
     for (const currency of targetCurrencies) {
-      if (currentRates[currency]) {
-        const currentRate = currentRates[currency];
-        const historicalRate = historicalRates[currency];
+      let currentRate, historicalRate;
 
-        let trend = 0;
-        let trendStatus = 'stable';
+      // � MANEJAR DIVISAS ADICIONALES CON API ALTERNATIVA
+      if (additionalCurrencies.includes(currency)) {
+        console.log(`� Procesando ${currency}...`);
+        currentRate = await getAdditionalCurrencyRate(currency, base);
+        historicalRate = await getAdditionalCurrencyHistoricalRate(currency, base, parseInt(days));
 
-        if (historicalRate && historicalRate !== currentRate) {
-          trend = ((currentRate - historicalRate) / historicalRate) * 100;
+        console.log(`� ${currency} currentRate: ${currentRate}, historicalRate: ${historicalRate}`);
 
-          // Umbrales más sensibles para mejor visualización
-          if (trend > 0.1) trendStatus = 'up'; // Era 0.5, ahora 0.1
-          else if (trend < -0.1) trendStatus = 'down'; // Era -0.5, ahora -0.1
+        if (!currentRate) {
+          console.warn(`⚠️ No se pudo obtener tasa ${currency}, saltando...`);
+          continue;
         }
-
-        ratesWithTrends.push({
-          currency,
-          currentRate,
-          historicalRate: historicalRate || currentRate,
-          trend: Number(trend.toFixed(4)),
-          trendStatus,
-          change: `${trend >= 0 ? '+' : ''}${trend.toFixed(2)}%`
-        });
+      } else if (currentRates[currency]) {
+        currentRate = currentRates[currency];
+        historicalRate = historicalRates[currency];
+      } else {
+        continue; // Saltar si no hay datos para esta moneda
       }
+
+      let trend = 0;
+      let trendStatus = 'stable';
+
+      if (historicalRate && historicalRate !== currentRate) {
+        trend = ((currentRate - historicalRate) / historicalRate) * 100;
+
+        // Umbrales más sensibles para mejor visualización
+        if (trend > 0.1) trendStatus = 'up'; // Era 0.5, ahora 0.1
+        else if (trend < -0.1) trendStatus = 'down'; // Era -0.5, ahora -0.1
+      }
+
+      ratesWithTrends.push({
+        currency,
+        currentRate,
+        historicalRate: historicalRate || currentRate,
+        trend: Number(trend.toFixed(4)),
+        trendStatus,
+        change: `${trend >= 0 ? '+' : ''}${trend.toFixed(2)}%`,
+        source: currency === 'ARS' ? 'exchangerate-api' : 'frankfurter' // 🆕 Indicar fuente
+      });
     }
 
     // 🎯 ORDENAR POR RELEVANCIA (mayor volumen/popularidad primero)

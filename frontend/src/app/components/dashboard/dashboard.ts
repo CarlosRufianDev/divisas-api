@@ -12,6 +12,11 @@ import {
   DivisasService,
   TechnicalAnalysis,
 } from '../../services/divisas';
+import {
+  ADDITIONAL_CURRENCIES,
+  CURRENCY_FLAGS,
+  LIMITED_CURRENCIES,
+} from '../../shared/currency-flags';
 import { MaterialModule } from '../../shared/material.module';
 
 @Component({
@@ -87,42 +92,8 @@ export class Dashboard implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  // Lista de divisas disponibles (se cargará dinámicamente)
+  // Lista de divisas disponibles (se cargará dinámicamente desde Frankfurter)
   divisas: any[] = [];
-  // Información estática de divisas (flags y nombres)
-  private currencyInfo = [
-    { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
-    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
-    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
-    { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
-    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
-    { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
-    { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
-    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳' },
-    { code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽' },
-    { code: 'BRL', name: 'Real Brasileño', flag: '🇧🇷' },
-    { code: 'KRW', name: 'Won Surcoreano', flag: '🇰🇷' },
-    { code: 'INR', name: 'Rupia India', flag: '🇮🇳' },
-    { code: 'SEK', name: 'Corona Sueca', flag: '🇸🇪' },
-    { code: 'NOK', name: 'Corona Noruega', flag: '🇳🇴' },
-    { code: 'HKD', name: 'Dólar de Hong Kong', flag: '🇭🇰' },
-    { code: 'SGD', name: 'Dólar de Singapur', flag: '🇸🇬' },
-    { code: 'NZD', name: 'Dólar Neozelandés', flag: '🇳🇿' },
-    { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
-    { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
-    { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱' },
-    { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
-    { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
-    { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
-    { code: 'HUF', name: 'Florín Húngaro', flag: '🇭🇺' },
-    { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
-    { code: 'ILS', name: 'Shekel Israelí', flag: '🇮🇱' },
-    { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
-    { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
-    { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
-    { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
-    { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
-  ];
 
   // 🆕 PROPIEDADES PARA MARKET TICKER
   tickerRates: any[] = [];
@@ -135,16 +106,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // 🆕 NUEVAS PROPIEDADES PARA MODO LIMITADO
   isLimitedMode = false;
-  limitedCurrencies = [
-    { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
-    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
-    { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
-    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
-    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
-    { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
-    { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
-    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳' },
-  ];
+  limitedCurrencies: any[] = [];
 
   constructor(
     private divisasService: DivisasService,
@@ -237,35 +199,109 @@ export class Dashboard implements OnInit, OnDestroy {
   // � CARGAR DIVISAS DINÁMICAMENTE DESDE FRANKFURTER
   async cargarDivisas(): Promise<void> {
     try {
-      console.log('🌍 Cargando divisas disponibles...');
+      console.log('🌍 Cargando divisas dinámicamente desde Frankfurter...');
 
-      // Usar directamente la lista hardcodeada que es más confiable
-      this.divisas = [...this.currencyInfo];
+      // 🆕 CARGAR DESDE FRANKFURTER API
+      const currenciesData = await this.divisasService
+        .loadCurrenciesFromFrankfurter()
+        .toPromise();
 
-      // Configurar divisas limitadas para usuarios no autenticados
-      this.limitedCurrencies = this.divisas.filter((d) =>
-        ['USD', 'EUR', 'JPY', 'GBP', 'CHF', 'CAD', 'AUD', 'CNY'].includes(
-          d.code
-        )
-      );
+      if (currenciesData) {
+        // Transformar respuesta de Frankfurter en nuestro formato
+        this.divisas = Object.keys(currenciesData).map((code) => ({
+          code,
+          name: currenciesData[code],
+          flag: CURRENCY_FLAGS[code] || '🏳️', // Fallback si no tenemos flag
+        }));
 
-      console.log(`✅ Cargadas ${this.divisas.length} divisas`);
-      console.log(
-        `📊 Disponibles para no autenticados: ${this.limitedCurrencies.length}`
-      );
+        // 🆕 AGREGAR DIVISAS ADICIONALES (como ARS) que no están en Frankfurter
+        this.divisas = [...this.divisas, ...ADDITIONAL_CURRENCIES];
+
+        // Configurar divisas limitadas para usuarios no autenticados
+        this.limitedCurrencies = this.divisas.filter((d) =>
+          LIMITED_CURRENCIES.includes(d.code)
+        );
+
+        console.log(
+          `✅ Cargadas dinámicamente ${this.divisas.length} divisas (${
+            Object.keys(currenciesData).length
+          } desde Frankfurter + ${ADDITIONAL_CURRENCIES.length} adicionales)`
+        );
+        console.log(
+          `📊 Disponibles para no autenticados: ${this.limitedCurrencies.length}`
+        );
+      } else {
+        throw new Error('No se recibieron datos de Frankfurter');
+      }
     } catch (error) {
       console.error(
-        '❌ Error cargando divisas, usando fallback estático:',
+        '❌ Error cargando divisas dinámicamente, usando fallback:',
         error
       );
-      // Fallback: usar divisas hardcodeadas
-      this.divisas = [...this.currencyInfo];
+
+      // Fallback: crear lista mínima desde el mapeo de flags
+      this.divisas = Object.keys(CURRENCY_FLAGS).map((code) => ({
+        code,
+        name: this.getCurrencyNameFallback(code),
+        flag: CURRENCY_FLAGS[code],
+      }));
+
       this.limitedCurrencies = this.divisas.filter((d) =>
-        ['USD', 'EUR', 'JPY', 'GBP', 'CHF', 'CAD', 'AUD', 'CNY'].includes(
-          d.code
-        )
+        LIMITED_CURRENCIES.includes(d.code)
+      );
+
+      console.log(
+        `🔄 Fallback aplicado: ${this.divisas.length} divisas desde mapeo local`
       );
     }
+  }
+
+  // 🔧 HELPER: Nombres de divisas como fallback
+  private getCurrencyNameFallback(code: string): string {
+    const names: { [key: string]: string } = {
+      ARS: 'Argentine Peso', // ✅ AGREGADO
+      COP: 'Colombian Peso', // ✅ AGREGADO
+      CLP: 'Chilean Peso', // ✅ AGREGADO
+      PEN: 'Peruvian Sol', // ✅ AGREGADO
+      UYU: 'Uruguayan Peso', // ✅ AGREGADO
+      RUB: 'Russian Ruble', // ✅ AGREGADO
+      EGP: 'Egyptian Pound', // ✅ AGREGADO
+      VND: 'Vietnamese Dong', // ✅ AGREGADO
+      KWD: 'Kuwaiti Dinar', // ✅ AGREGADO
+      USD: 'US Dollar',
+      EUR: 'Euro',
+      GBP: 'British Pound',
+      JPY: 'Japanese Yen',
+      CHF: 'Swiss Franc',
+      CAD: 'Canadian Dollar',
+      AUD: 'Australian Dollar',
+      CNY: 'Chinese Yuan',
+      SEK: 'Swedish Krona',
+      NOK: 'Norwegian Krone',
+      DKK: 'Danish Krone',
+      PLN: 'Polish Zloty',
+      CZK: 'Czech Koruna',
+      HUF: 'Hungarian Forint',
+      RON: 'Romanian Leu',
+      BGN: 'Bulgarian Lev',
+      HRK: 'Croatian Kuna',
+      TRY: 'Turkish Lira',
+      BRL: 'Brazilian Real',
+      MXN: 'Mexican Peso',
+      SGD: 'Singapore Dollar',
+      HKD: 'Hong Kong Dollar',
+      NZD: 'New Zealand Dollar',
+      KRW: 'South Korean Won',
+      INR: 'Indian Rupee',
+      MYR: 'Malaysian Ringgit',
+      THB: 'Thai Baht',
+      IDR: 'Indonesian Rupiah',
+      PHP: 'Philippine Peso',
+      ZAR: 'South African Rand',
+      ILS: 'Israeli Shekel',
+      ISK: 'Icelandic Krona',
+    };
+    return names[code] || `${code} Currency`;
   }
 
   // �🆕 MÉTODO PRINCIPAL: Cargar tipos de cambio con datos reales de Frankfurter

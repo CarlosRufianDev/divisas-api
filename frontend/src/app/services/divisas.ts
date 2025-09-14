@@ -113,7 +113,7 @@ export class DivisasService {
     return this.http.get(`${this.apiUrl}/exchange/rates?base=${baseCurrency}`);
   }
 
-  // 🌍 Obtener todas las divisas disponibles desde Frankfurter
+  // 🌍 Obtener todas las divisas disponibles desde Frankfurter (DIRECTO)
   getAvailableCurrencies(): Observable<{
     success: boolean;
     currencies: string[];
@@ -121,6 +121,13 @@ export class DivisasService {
     date: string;
   }> {
     return this.http.get<any>(`${this.apiUrl}/exchange/currencies`);
+  }
+
+  // 🆕 NUEVO: Cargar divisas dinámicamente desde Frankfurter API
+  loadCurrenciesFromFrankfurter(): Observable<{ [key: string]: string }> {
+    return this.http.get<{ [key: string]: string }>(
+      'https://api.frankfurter.app/currencies'
+    );
   }
 
   getCurrencies(): Observable<{
