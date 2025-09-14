@@ -96,8 +96,8 @@ activityLogSchema.index({ user: 1, action: 1, createdAt: -1 });
 
 ### Development Commands
 
-```bash
-# Backend development
+```cmd
+# Backend development (Windows)
 cd backend && npm run dev  # Starts nodemon for auto-reload
 
 # Frontend development
@@ -106,6 +106,10 @@ cd frontend && ng serve   # Starts dev server on :4200
 # Testing
 cd backend && npm test    # Jest with MongoDB Memory Server
 cd frontend && ng test    # Karma/Jasmine
+
+# Linting (backend only)
+cd backend && npm run lint      # Check code style
+cd backend && npm run lint:fix  # Auto-fix issues
 ```
 
 ### External API Integration
@@ -172,7 +176,77 @@ EMAIL_PASS=your_app_password
 ## 📦 Key Dependencies
 
 - **Backend**: express, mongoose, bcryptjs, jsonwebtoken, node-cron, nodemailer, axios
-- **Frontend**: @angular/core v20, @angular/material, rxjs
+- **Frontend**: @angular/core v20, @angular/material, rxjs, @fortawesome/fontawesome-free
 - **Testing**: jest, supertest, mongodb-memory-server, karma, jasmine
+
+## 🔧 Development Environment Setup
+
+**Required Environment Variables** (create `.env` in `/backend/`):
+
+```env
+MONGODB_URI=mongodb://localhost:27017/divisas-api
+JWT_SECRET=your_secure_secret_key_here
+EMAIL_USER=your_gmail_address@gmail.com
+EMAIL_PASS=your_gmail_app_password
+NODE_ENV=development
+```
+
+**Windows Development Setup**:
+
+```cmd
+# Clone and setup
+git clone <repo-url>
+cd divisas-api
+
+# Backend setup
+cd backend
+npm install
+npm run dev
+
+# Frontend setup (new terminal)
+cd frontend
+npm install
+ng serve
+```
+
+**Port Configuration**: Backend runs on `:3000`, Frontend on `:4200`
+
+## 🚨 Critical Project-Specific Patterns
+
+### Supported Currencies
+
+Always validate against exactly **20 supported currencies**:
+`USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, MXN, BRL, KRW, INR, SEK, NOK, HKD, SGD, NZD, ZAR, TRY, PLN`
+
+### JWT Token Management
+
+- **Expiration**: 2 hours (configurable in auth controller)
+- **Auto-logout**: Frontend interceptor handles 401 responses automatically
+- **Storage**: localStorage in frontend, sent as `Bearer ${token}` header
+
+### Activity Logging Pattern
+
+All user actions should be logged via middleware:
+
+```js
+const { logConversion } = require('../middleware/activityLogger');
+router.post('/convert', requireAuth, logConversion, controller.method);
+```
+
+### Angular Functional Architecture
+
+- **Guards**: Use `CanActivateFn` functional guards instead of class-based
+- **Interceptors**: Use `HttpInterceptorFn` functional interceptors
+- **Locale**: Spanish (`es-ES`) configured globally
+
+### Database Performance
+
+Critical compound indexes for large datasets:
+
+```js
+// Example from ActivityLog model
+activityLogSchema.index({ user: 1, createdAt: -1 });
+activityLogSchema.index({ user: 1, action: 1, createdAt: -1 });
+```
 
 When implementing new features, follow the established patterns: use middleware for cross-cutting concerns, implement proper error handling, add activity logging for user actions, and ensure responsive design with Material components.
