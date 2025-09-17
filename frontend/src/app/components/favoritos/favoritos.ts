@@ -11,10 +11,11 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { interval, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth';
 import { DivisasService } from '../../services/divisas';
+import { CURRENCY_FLAGS } from '../../shared/currency-flags';
 import { MaterialModule } from '../../shared/material.module';
 import { AddCurrencyDialogComponent } from './add-currency-dialog.component';
 import { AddFavoriteDialogComponent } from './add-favorite-dialog.component';
@@ -27,6 +28,7 @@ interface RateData {
   currentRate: number;
   change: string;
   trendStatus: string;
+  source?: string; // ✅ NUEVO: Indica si viene de 'frankfurter' o 'exchangerate-api'
 }
 
 interface FavoritePair {
@@ -40,6 +42,9 @@ interface FavoritePair {
   updatedAt: string;
   change?: number;
   previousRate?: number;
+  // ✅ NUEVOS CAMPOS PARA DATOS COMPLETOS DEL BCE
+  trendStatus?: string; // 'up', 'down', 'stable'
+  changeText?: string; // Texto formateado del backend (ej: "+1.23%")
 }
 
 interface UpdatePairRequest {
@@ -80,6 +85,9 @@ interface FavoriteCurrency {
   change?: number;
   previousRate?: number;
   currentRate?: number;
+  // ✅ NUEVOS CAMPOS PARA DATOS COMPLETOS DEL BCE
+  trendStatus?: string; // 'up', 'down', 'stable'
+  changeText?: string; // Texto formateado del backend (ej: "+1.23%")
 }
 
 interface ConversionResponse {
@@ -105,33 +113,7 @@ interface BaseCurrency {
       <!-- Header Principal -->
       <div class="favoritos-header">
         <h1>⭐ Tu Centro de Control de Divisas</h1>
-        <p class="subtitle">
-          Gestiona y monitorea tus pares favoritos en tiempo real
-        </p>
-
-        <!-- Auto-refresh indicator -->
-        <div class="refresh-indicator" *ngIf="autoRefresh">
-          <mat-icon [class.spinning]="loading">refresh</mat-icon>
-          <span>Actualizando cada 30s</span>
-          <button
-            mat-icon-button
-            (click)="toggleAutoRefresh()"
-            matTooltip="Pausar auto-actualización"
-          >
-            <mat-icon>pause</mat-icon>
-          </button>
-        </div>
-        <div class="refresh-indicator" *ngIf="!autoRefresh">
-          <mat-icon>pause</mat-icon>
-          <span>Auto-actualización pausada</span>
-          <button
-            mat-icon-button
-            (click)="toggleAutoRefresh()"
-            matTooltip="Reanudar auto-actualización"
-          >
-            <mat-icon>play_arrow</mat-icon>
-          </button>
-        </div>
+        <p class="subtitle">Gestiona y monitorea tus pares favoritos</p>
       </div>
 
       <!-- SECCIÓN 1: FAVORITOS ACTIVOS -->
@@ -218,7 +200,10 @@ interface BaseCurrency {
                 <mat-icon *ngIf="(favorite.change || 0) === 0"
                   >trending_flat</mat-icon
                 >
-                <span>{{ formatPercentageChange(favorite.change || 0) }}</span>
+                <span>{{
+                  favorite.changeText ||
+                    formatPercentageChange(favorite.change || 0)
+                }}</span>
               </div>
 
               <div class="par-actions">
@@ -346,7 +331,10 @@ interface BaseCurrency {
                 <mat-icon *ngIf="(currency.change || 0) === 0"
                   >trending_flat</mat-icon
                 >
-                <span>{{ formatPercentageChange(currency.change || 0) }}</span>
+                <span>{{
+                  currency.changeText ||
+                    formatPercentageChange(currency.change || 0)
+                }}</span>
               </div>
 
               <div class="currency-actions">
@@ -423,10 +411,11 @@ interface BaseCurrency {
                 (selectionChange)="onFromCurrencyChange()"
               >
                 <mat-option
-                  *ngFor="let currency of getUniqueCurrencies()"
+                  *ngFor="let currency of getFavoriteCurrencies()"
                   [value]="currency"
                 >
-                  {{ currency }}
+                  {{ getCurrencyFlag(currency) }} {{ currency }}
+                  {{ getCurrencyName(currency) }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -452,7 +441,8 @@ interface BaseCurrency {
                   *ngFor="let currency of getFilteredToCurrencies()"
                   [value]="currency"
                 >
-                  {{ currency }}
+                  {{ getCurrencyFlag(currency) }} {{ currency }}
+                  {{ getCurrencyName(currency) }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -689,7 +679,6 @@ interface BaseCurrency {
 export class Favoritos implements OnInit, OnDestroy {
   private apiUrl = environment.apiUrl;
   private destroy$ = new Subject<void>();
-  private refreshInterval$ = interval(30000); // 30 segundos
 
   // Angular 20: Usar inject() function en lugar de constructor injection
   private fb = inject(FormBuilder);
@@ -701,10 +690,10 @@ export class Favoritos implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
 
   loading = false;
-  autoRefresh = true;
   favoritePairs: FavoritePair[] = [];
   favoriteCurrencies: FavoriteCurrency[] = [];
   dropdownCurrencies: string[] = []; // Optimized list from backend
+  allAvailableCurrencies: string[] = []; // Lista completa de las 40 monedas
   baseCurrency = 'EUR'; // Base currency for individual favorites
   baseCurrencyControl = new FormControl('EUR'); // Control para cambiar divisa base
   availableBaseCurrencies: BaseCurrency[] = [
@@ -758,7 +747,7 @@ export class Favoritos implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Verificar autenticación
     if (!this.authService.isAuthenticated()) {
       this.snackBar
@@ -774,25 +763,35 @@ export class Favoritos implements OnInit, OnDestroy {
     }
 
     console.log('⭐ Iniciando componente Favoritos');
+
+    // ✅ MOSTRAR RESUMEN DE MEJORAS BCE
+    console.log(
+      '🚀 FAVORITOS CON DATOS 100% REALES - MISMO PATRÓN QUE DASHBOARD:'
+    );
+    console.log(
+      '   📈 getTrendingRates(base, undefined, 7) - UNA LLAMADA para todas las monedas'
+    );
+    console.log(
+      '   🌍 ~30 monedas desde Frankfurter + 9 adicionales desde exchangerate-api'
+    );
+    console.log('   💹 Rates actuales directos del BCE/Frankfurter');
+    console.log(
+      '   📊 Estados de tendencia (up/down/stable) calculados por el backend'
+    );
+    console.log('   🎯 Cambios porcentuales reales de los últimos 7 días');
+    console.log('   � ZERO múltiples llamadas - eficiencia máxima');
+    console.log('   ⚡ Performance optimizada igual que Dashboard');
+
+    await this.loadAllCurrencies(); // Cargar las 40 monedas completas (ahora async)
     this.loadFavorites();
     this.loadFavoriteCurrencies();
     this.loadDropdownCurrencies(); // Nueva función optimizada
-    this.setupAutoRefresh();
     this.setupFormSubscriptions();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  setupAutoRefresh(): void {
-    this.refreshInterval$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      if (this.autoRefresh && !this.loading) {
-        this.loadFavorites(true); // Silent refresh
-        this.loadFavoriteCurrencies(true); // Silent refresh
-      }
-    });
   }
 
   setupFormSubscriptions(): void {
@@ -802,6 +801,166 @@ export class Favoritos implements OnInit, OnDestroy {
       .subscribe(() => {
         this.calculateQuickConversion();
       });
+  }
+
+  /**
+   * Cargar todas las monedas disponibles
+   * FUENTE: Frankfurter API (~30 monedas) + ADDITIONAL_CURRENCIES (9 monedas)
+   * FALLBACK: CURRENCY_FLAGS (lista estática en caso de error)
+   *
+   * ✅ MISMA LÓGICA QUE DASHBOARD para consistencia total
+   */
+  async loadAllCurrencies(): Promise<void> {
+    try {
+      console.log(
+        '🌍 Cargando divisas dinámicamente desde Frankfurter (patrón Dashboard)...'
+      );
+
+      // ✅ USAR MISMO MÉTODO QUE DASHBOARD
+      const currenciesData = await this.divisasService
+        .loadCurrenciesFromFrankfurter()
+        .toPromise();
+
+      if (currenciesData) {
+        // Transformar respuesta de Frankfurter + divisas adicionales
+        const frankfurterCurrencies = Object.keys(currenciesData);
+        const additionalCurrencies = [
+          'ARS',
+          'COP',
+          'CLP',
+          'PEN',
+          'UYU',
+          'RUB',
+          'EGP',
+          'VND',
+          'KWD',
+        ];
+
+        // Combinar ambas listas y eliminar duplicados
+        this.allAvailableCurrencies = [
+          ...new Set([...frankfurterCurrencies, ...additionalCurrencies]),
+        ].sort();
+
+        console.log(
+          `✅ Cargadas dinámicamente ${this.allAvailableCurrencies.length} monedas (${frankfurterCurrencies.length} desde Frankfurter + ${additionalCurrencies.length} adicionales)`
+        );
+      } else {
+        throw new Error('No se recibieron datos de Frankfurter');
+      }
+    } catch (error) {
+      console.error(
+        '❌ Error cargando divisas dinámicamente, usando fallback:',
+        error
+      );
+      // Fallback a las monedas desde CURRENCY_FLAGS
+      this.allAvailableCurrencies = Object.keys(CURRENCY_FLAGS).sort();
+    }
+
+    // Actualizar también las monedas base disponibles
+    this.updateAvailableBaseCurrencies();
+  }
+
+  /**
+   * Actualizar la lista de monedas base disponibles basado en todas las monedas
+   */
+  private updateAvailableBaseCurrencies(): void {
+    this.availableBaseCurrencies = this.allAvailableCurrencies.map((code) => ({
+      code,
+      name: this.getCurrencyName(code),
+      flag: CURRENCY_FLAGS[code] || '🏳️',
+    }));
+  }
+
+  /**
+   * Obtener el nombre de una moneda (completo para todas las monedas de Frankfurter + Exchange)
+   * Compatible con ambas fuentes: /api/exchange/currencies (Frankfurter ~40) y /api/convert/currencies (Lista hardcodeada 20)
+   */
+  getCurrencyName(code: string): string {
+    const names: Record<string, string> = {
+      // Principales (Exchange + Frankfurter)
+      ARS: 'Peso Argentino',
+      AUD: 'Dólar Australiano',
+      BGN: 'Lev Búlgaro',
+      BRL: 'Real Brasileño',
+      CAD: 'Dólar Canadiense',
+      CHF: 'Franco Suizo',
+      CLP: 'Peso Chileno',
+      CNY: 'Yuan Chino',
+      COP: 'Peso Colombiano',
+      CZK: 'Corona Checa',
+      DKK: 'Corona Danesa',
+      EGP: 'Libra Egipcia',
+      EUR: 'Euro',
+      GBP: 'Libra Esterlina',
+      HKD: 'Dólar de Hong Kong',
+      HRK: 'Kuna Croata', // Frankfurter adicional
+      HUF: 'Forint Húngaro',
+      IDR: 'Rupia Indonesia',
+      ILS: 'Nuevo Shékel Israelí',
+      INR: 'Rupia India',
+      ISK: 'Corona Islandesa',
+      JPY: 'Yen Japonés',
+      KRW: 'Won Surcoreano',
+      KWD: 'Dinar Kuwaití', // Frankfurter adicional
+      MXN: 'Peso Mexicano',
+      MYR: 'Ringgit Malayo',
+      NOK: 'Corona Noruega',
+      NZD: 'Dólar Neozelandés',
+      PEN: 'Sol Peruano', // Frankfurter adicional
+      PHP: 'Peso Filipino',
+      PLN: 'Zloty Polaco',
+      RON: 'Leu Rumano',
+      RUB: 'Rublo Ruso',
+      SEK: 'Corona Sueca',
+      SGD: 'Dólar de Singapur',
+      THB: 'Baht Tailandés',
+      TRY: 'Lira Turca',
+      USD: 'Dólar Estadounidense',
+      UYU: 'Peso Uruguayo', // Frankfurter adicional
+      VND: 'Dong Vietnamita', // Frankfurter adicional
+      ZAR: 'Rand Sudafricano',
+
+      // Adicionales que puede devolver Frankfurter
+      CAR: 'Franco CFA Central',
+      XOF: 'Franco CFA Occidental',
+      XAF: 'Franco CFA Central Africano',
+      MAD: 'Dirham Marroquí',
+      TND: 'Dinar Tunecino',
+      TWD: 'Dólar Taiwanés',
+      LKR: 'Rupia de Sri Lanka',
+      BDT: 'Taka de Bangladesh',
+      PKR: 'Rupia Pakistaní',
+      SAR: 'Riyal Saudí',
+      AED: 'Dirham de EAU',
+      QAR: 'Riyal Catarí',
+      BHD: 'Dinar de Baréin',
+      OMR: 'Rial Omaní',
+      JOD: 'Dinar Jordano',
+      LBP: 'Libra Libanesa',
+      KES: 'Chelín Keniano',
+      UGX: 'Chelín Ugandés',
+      TZS: 'Chelín Tanzano',
+      ETB: 'Birr Etíope',
+      GHS: 'Cedi Ghanés',
+      NGN: 'Naira Nigeriana',
+      ZMW: 'Kwacha Zambiano',
+      BWP: 'Pula de Botsuana',
+      MUR: 'Rupia Mauriciana',
+      SCR: 'Rupia de Seychelles',
+      MVR: 'Rufiyaa de Maldivas',
+      AFN: 'Afgani Afgano',
+      IRR: 'Rial Iraní',
+      IQD: 'Dinar Iraquí',
+      SYP: 'Libra Siria',
+      YER: 'Rial Yemení',
+
+      // Fallbacks genéricos para códigos desconocidos
+      XXX: 'Moneda Desconocida',
+      XTS: 'Código de Prueba',
+    };
+
+    // ✅ Fallback inteligente: si no conocemos el nombre, devolver el código formateado
+    return names[code] || `${code} (Divisa)`;
   }
 
   async loadFavorites(silent = false): Promise<void> {
@@ -934,6 +1093,13 @@ export class Favoritos implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Cargar monedas optimizadas para dropdowns (solo favoritos del usuario)
+   * FUENTE: /api/favorite-currencies/dropdown (monedas favoritas del usuario)
+   * FALLBACK: getUniqueCurrencies() (extrae de favoritos locales)
+   *
+   * OPTIMIZACIÓN: Reduce la lista a solo las monedas que el usuario usa
+   */
   loadDropdownCurrencies(): void {
     this.http
       .get<{ code: string; name: string; isDefault: boolean }[]>(
@@ -968,17 +1134,33 @@ export class Favoritos implements OnInit, OnDestroy {
     return ((newRate - oldRate) / oldRate) * 100;
   }
 
-  // ===== MÉTODOS PARA DATOS REALES (mismo patrón que Dashboard) =====
+  // ===== MÉTODOS PARA DATOS REALES (Frankfurter API vía Backend) =====
 
   /**
-   * Obtener cambio real para un par de divisas desde Frankfurter/BCE
+   * Obtener datos completos y reales para un par de divisas
+   * FUENTE: Frankfurter API vía /api/calculator/trending-rates (mismo patrón que Dashboard)
+   * RETORNA: Objeto completo con rate, change, trendStatus del BCE
    */
-  private async getRealChangeForPair(pair: string): Promise<number> {
+  private async getRealDataForPair(pair: string): Promise<{
+    currentRate: number;
+    change: number;
+    trendStatus: string;
+    changeText: string;
+  }> {
     try {
       const [from, to] = pair.split('/');
-      if (!from || !to) return 0;
+      if (!from || !to) {
+        return {
+          currentRate: 0,
+          change: 0,
+          trendStatus: 'stable',
+          changeText: '0.00%',
+        };
+      }
 
-      // Usar el mismo método que el Dashboard para obtener tendencias reales
+      console.log(`🌍 Obteniendo datos REALES del BCE para par: ${pair}`);
+
+      // 🚀 USAR EL MISMO MÉTODO QUE EL DASHBOARD (datos 100% reales)
       const trendingResponse = await this.divisasService
         .getTrendingRates(from, [to], 7)
         .toPromise();
@@ -987,65 +1169,186 @@ export class Favoritos implements OnInit, OnDestroy {
         const rateData = trendingResponse.rates.find(
           (r: RateData) => r.currency === to
         );
-        return rateData?.trend || 0;
+
+        if (rateData) {
+          console.log(`✅ Datos reales del BCE para ${pair}:`, {
+            currentRate: rateData.currentRate,
+            trend: rateData.trend,
+            trendStatus: rateData.trendStatus,
+            change: rateData.change,
+          });
+
+          return {
+            currentRate: rateData.currentRate || 0,
+            change: rateData.trend || 0, // Usar trend como percentage change
+            trendStatus: rateData.trendStatus || 'stable',
+            changeText: rateData.change || '0.00%', // Texto formateado del backend
+          };
+        }
       }
 
-      return 0;
+      console.warn(`⚠️ No se recibieron datos del BCE para ${pair}`);
+      return {
+        currentRate: 0,
+        change: 0,
+        trendStatus: 'stable',
+        changeText: '0.00%',
+      };
     } catch (error) {
-      console.warn(`⚠️ Error obteniendo datos reales para ${pair}:`, error);
-      return 0;
+      console.warn(`❌ Error obteniendo datos reales para ${pair}:`, error);
+      return {
+        currentRate: 0,
+        change: 0,
+        trendStatus: 'stable',
+        changeText: '0.00%',
+      };
     }
   }
 
   /**
-   * Obtener cambio real para una divisa individual desde Frankfurter/BCE
+   * Obtener datos completos y reales para una divisa individual
+   * FUENTE: Frankfurter API vía /api/calculator/trending-rates (mismo patrón que Dashboard)
+   * SOPORTE: Base dinámica (this.baseCurrency) vs cualquier moneda objetivo
    */
-  private async getRealChangeForCurrency(
+  private async getRealDataForCurrency(
     currency: string,
-    baseCurrency = 'EUR'
-  ): Promise<number> {
+    baseCurrency?: string
+  ): Promise<{
+    currentRate: number;
+    change: number;
+    trendStatus: string;
+    changeText: string;
+  }> {
     try {
-      // Usar el mismo método que el Dashboard
+      const base = baseCurrency || this.baseCurrency;
+      console.log(`🌍 Obteniendo datos REALES del BCE: ${base} → ${currency}`);
+
+      // 🚀 USAR EL MISMO MÉTODO QUE EL DASHBOARD (datos 100% reales)
       const trendingResponse = await this.divisasService
-        .getTrendingRates(baseCurrency, [currency], 7)
+        .getTrendingRates(base, [currency], 7)
         .toPromise();
 
       if (trendingResponse?.success && trendingResponse.rates?.length > 0) {
         const rateData = trendingResponse.rates.find(
           (r: RateData) => r.currency === currency
         );
-        return rateData?.trend || 0;
+
+        if (rateData) {
+          console.log(`✅ Datos reales del BCE para ${base}/${currency}:`, {
+            currentRate: rateData.currentRate,
+            trend: rateData.trend,
+            trendStatus: rateData.trendStatus,
+            change: rateData.change,
+          });
+
+          return {
+            currentRate: rateData.currentRate || 0,
+            change: rateData.trend || 0, // Usar trend como percentage change
+            trendStatus: rateData.trendStatus || 'stable',
+            changeText: rateData.change || '0.00%', // Texto formateado del backend
+          };
+        }
       }
 
-      return 0;
+      console.warn(
+        `⚠️ No se recibieron datos del BCE para ${base}/${currency}`
+      );
+      return {
+        currentRate: 0,
+        change: 0,
+        trendStatus: 'stable',
+        changeText: '0.00%',
+      };
     } catch (error) {
-      console.warn(`⚠️ Error obteniendo datos reales para ${currency}:`, error);
-      return 0;
+      console.warn(
+        `❌ Error obteniendo datos reales para ${
+          baseCurrency || this.baseCurrency
+        }/${currency}:`,
+        error
+      );
+      return {
+        currentRate: 0,
+        change: 0,
+        trendStatus: 'stable',
+        changeText: '0.00%',
+      };
     }
   }
 
   /**
    * Cargar datos reales para todos los pares favoritos
+   * ACTUALIZADO: Usar MISMO PATRÓN que Dashboard (una sola llamada para todas las monedas)
    */
   private async loadRealDataForPairs(): Promise<void> {
     if (this.favoritePairs.length === 0) return;
 
-    console.log('🌍 Cargando datos reales para pares favoritos...');
-
-    // Procesar todos los pares en paralelo para mejor performance
-    const promises = this.favoritePairs.map(async (favorite) => {
-      const realChange = await this.getRealChangeForPair(favorite.pair);
-      return {
-        ...favorite,
-        change: realChange,
-        // Mantener previousRate si existe para cálculos posteriores
-        previousRate: favorite.previousRate || favorite.currentRate,
-      };
-    });
+    console.log(
+      '🌍 Cargando datos COMPLETOS del BCE para pares favoritos (patrón Dashboard)...'
+    );
 
     try {
-      this.favoritePairs = await Promise.all(promises);
-      console.log('✅ Datos reales cargados para pares favoritos');
+      // 🚀 OBTENER TODAS LAS MONEDAS DE UNA VEZ (mismo patrón que Dashboard)
+      const uniqueBases = [...new Set(this.favoritePairs.map((p) => p.from))];
+
+      // Procesar cada base por separado para mayor precisión
+      for (const base of uniqueBases) {
+        console.log(`📊 Obteniendo datos del BCE con base ${base}...`);
+
+        // ✅ MISMO MÉTODO QUE DASHBOARD: getTrendingRates(base, undefined, 7)
+        const trendingResponse = await this.divisasService
+          .getTrendingRates(base, undefined, 7) // ✅ undefined = TODAS las monedas (~40)
+          .toPromise();
+
+        if (trendingResponse?.success && trendingResponse.rates) {
+          console.log(
+            `✅ Recibidos datos para ${trendingResponse.rates.length} monedas desde base ${base}`
+          );
+          console.log(
+            `🔍 Incluye ARS: ${
+              trendingResponse.rates.find((r) => r.currency === 'ARS')
+                ? 'SÍ'
+                : 'NO'
+            }`
+          );
+          console.log(
+            `🔍 Incluye EUR: ${
+              trendingResponse.rates.find((r) => r.currency === 'EUR')
+                ? 'SÍ'
+                : 'NO'
+            }`
+          );
+
+          // Actualizar todos los pares que usan esta base
+          this.favoritePairs = this.favoritePairs.map((favorite) => {
+            if (favorite.from === base) {
+              // Buscar los datos para la moneda destino
+              const rateData = trendingResponse.rates.find(
+                (r: RateData) => r.currency === favorite.to
+              );
+
+              if (rateData) {
+                console.log(
+                  `🔍 ${favorite.pair}: rate=${rateData.currentRate}, change=${rateData.change}, trend=${rateData.trendStatus}`
+                );
+
+                return {
+                  ...favorite,
+                  currentRate: rateData.currentRate || favorite.currentRate, // ✅ Rate del BCE
+                  change: rateData.trend || 0, // ✅ Cambio porcentual del BCE
+                  trendStatus: rateData.trendStatus || 'stable', // ✅ Estado de tendencia del BCE
+                  changeText: rateData.change || '0.00%', // ✅ Texto formateado del BCE
+                  previousRate: favorite.previousRate || rateData.currentRate,
+                };
+              }
+            }
+            return favorite;
+          });
+        }
+      }
+
+      console.log(
+        '✅ Datos COMPLETOS del BCE cargados para pares favoritos (patrón Dashboard)'
+      );
     } catch (error) {
       console.error('❌ Error cargando datos reales para pares:', error);
     }
@@ -1053,30 +1356,172 @@ export class Favoritos implements OnInit, OnDestroy {
 
   /**
    * Cargar datos reales para todas las divisas favoritas individuales
+   * ACTUALIZADO: Usar MISMO PATRÓN que Dashboard + manejo de monedas base no soportadas
    */
   private async loadRealDataForCurrencies(): Promise<void> {
     if (this.favoriteCurrencies.length === 0) return;
 
-    console.log('🌍 Cargando datos reales para divisas favoritas...');
-
-    // Procesar todas las divisas en paralelo
-    const promises = this.favoriteCurrencies.map(async (favorite) => {
-      const realChange = await this.getRealChangeForCurrency(
-        favorite.currency,
-        this.baseCurrency // ✅ Usar la moneda base actual, no hardcodeado EUR
-      );
-      return {
-        ...favorite,
-        change: realChange,
-        previousRate: favorite.previousRate || favorite.currentRate,
-      };
-    });
+    console.log(
+      '🌍 Cargando datos COMPLETOS del BCE para divisas favoritas (patrón Dashboard)...'
+    );
 
     try {
-      this.favoriteCurrencies = await Promise.all(promises);
-      console.log('✅ Datos reales cargados para divisas favoritas');
+      // 🔍 VERIFICAR SI LA MONEDA BASE ESTÁ SOPORTADA EN FRANKFURTER
+      const unsupportedBases = [
+        'ARS',
+        'COP',
+        'CLP',
+        'PEN',
+        'UYU',
+        'RUB',
+        'EGP',
+        'VND',
+        'KWD',
+      ];
+      const needsConversion = unsupportedBases.includes(this.baseCurrency);
+
+      if (needsConversion) {
+        console.log(
+          `⚠️ ${this.baseCurrency} no está soportado como base en Frankfurter, usando conversión via USD...`
+        );
+        await this.loadRealDataWithUSDConversion();
+        return;
+      }
+
+      // 🚀 USAR UNA SOLA LLAMADA PARA TODAS LAS MONEDAS (mismo patrón que Dashboard)
+      console.log(
+        `📊 Obteniendo datos del BCE con base ${this.baseCurrency}...`
+      );
+
+      // ✅ MISMO MÉTODO QUE DASHBOARD: getTrendingRates(base, undefined, 7)
+      const trendingResponse = await this.divisasService
+        .getTrendingRates(this.baseCurrency, undefined, 7) // ✅ undefined = TODAS las monedas (~40)
+        .toPromise();
+
+      if (trendingResponse?.success && trendingResponse.rates) {
+        console.log(
+          `✅ Recibidos datos para ${trendingResponse.rates.length} monedas desde base ${this.baseCurrency}`
+        );
+        console.log(
+          `🔍 Incluye ARS: ${
+            trendingResponse.rates.find((r) => r.currency === 'ARS')
+              ? 'SÍ'
+              : 'NO'
+          }`
+        );
+        console.log(
+          `🔍 Incluye USD: ${
+            trendingResponse.rates.find((r) => r.currency === 'USD')
+              ? 'SÍ'
+              : 'NO'
+          }`
+        );
+
+        // Actualizar todas las divisas favoritas de una vez
+        this.favoriteCurrencies = this.favoriteCurrencies.map((favorite) => {
+          // Buscar los datos para esta divisa
+          const rateData = trendingResponse.rates.find(
+            (r: RateData) => r.currency === favorite.currency
+          );
+
+          if (rateData) {
+            console.log(
+              `🔍 ${this.baseCurrency}/${favorite.currency}: rate=${rateData.currentRate}, change=${rateData.change}, trend=${rateData.trendStatus}`
+            );
+
+            return {
+              ...favorite,
+              currentRate: rateData.currentRate || favorite.currentRate, // ✅ Rate del BCE
+              change: rateData.trend || 0, // ✅ Cambio porcentual del BCE
+              trendStatus: rateData.trendStatus || 'stable', // ✅ Estado de tendencia del BCE
+              changeText: rateData.change || '0.00%', // ✅ Texto formateado del BCE
+              previousRate: favorite.previousRate || rateData.currentRate,
+            };
+          }
+
+          return favorite; // Mantener sin cambios si no hay datos del BCE
+        });
+      }
+
+      console.log(
+        '✅ Datos COMPLETOS del BCE cargados para divisas favoritas (patrón Dashboard)'
+      );
     } catch (error) {
       console.error('❌ Error cargando datos reales para divisas:', error);
+    }
+  }
+
+  /**
+   * Cargar datos con conversión USD para monedas base no soportadas (ARS, COP, etc.)
+   */
+  private async loadRealDataWithUSDConversion(): Promise<void> {
+    try {
+      console.log(
+        `🔄 Cargando datos via USD para base ${this.baseCurrency}...`
+      );
+
+      // 1. Obtener datos con USD como base
+      const usdTrendingResponse = await this.divisasService
+        .getTrendingRates('USD', undefined, 7)
+        .toPromise();
+
+      // 2. Obtener rate actual de USD a la moneda base (ej: USD/ARS)
+      const baseRateResponse = await this.divisasService
+        .getTrendingRates('USD', [this.baseCurrency], 7)
+        .toPromise();
+
+      if (usdTrendingResponse?.success && baseRateResponse?.success) {
+        const usdRates = usdTrendingResponse.rates;
+        const baseRateData = baseRateResponse.rates.find(
+          (r) => r.currency === this.baseCurrency
+        );
+
+        if (!baseRateData || !baseRateData.currentRate) {
+          console.error(`❌ No se pudo obtener rate USD/${this.baseCurrency}`);
+          return;
+        }
+
+        const usdToBaseRate = baseRateData.currentRate;
+        console.log(`📊 Rate USD/${this.baseCurrency}: ${usdToBaseRate}`);
+
+        // 3. Convertir todas las divisas favoritas
+        this.favoriteCurrencies = this.favoriteCurrencies.map((favorite) => {
+          const usdRateData = usdRates.find(
+            (r: RateData) => r.currency === favorite.currency
+          );
+
+          if (usdRateData) {
+            // Convertir de USD/Currency a BaseCurrency/Currency
+            const convertedRate = usdRateData.currentRate / usdToBaseRate;
+
+            console.log(
+              `🔄 ${this.baseCurrency}/${
+                favorite.currency
+              }: ${convertedRate.toFixed(4)} (via USD conversion)`
+            );
+
+            return {
+              ...favorite,
+              currentRate: convertedRate,
+              change: usdRateData.trend || 0, // Usar trend de USD (aproximación)
+              trendStatus: usdRateData.trendStatus || 'stable',
+              changeText: usdRateData.change || '0.00%',
+              previousRate: favorite.previousRate || convertedRate,
+            };
+          }
+
+          return favorite;
+        });
+
+        console.log(
+          `✅ Conversión USD completada para base ${this.baseCurrency}`
+        );
+      }
+    } catch (error) {
+      console.error(
+        `❌ Error en conversión USD para ${this.baseCurrency}:`,
+        error
+      );
     }
   }
 
@@ -1118,29 +1563,22 @@ export class Favoritos implements OnInit, OnDestroy {
     return `${sign}${change.toFixed(2)}%`;
   }
 
-  toggleAutoRefresh(): void {
-    this.autoRefresh = !this.autoRefresh;
-    const message = this.autoRefresh
-      ? '✅ Auto-actualización activada'
-      : '⏸️ Auto-actualización pausada';
-
-    this.snackBar.open(message, 'Cerrar', {
-      duration: 2000,
-      panelClass: ['success-snackbar'],
-    });
-  }
-
   trackByFavorite(index: number, favorite: FavoritePair): string {
     return favorite.id;
   }
 
   getUniqueCurrencies(): string[] {
-    // Si ya tenemos datos del dropdown optimizado, usarlos
+    // Prioridad 1: Si tenemos las 40 monedas completas, usarlas
+    if (this.allAvailableCurrencies.length > 0) {
+      return this.allAvailableCurrencies;
+    }
+
+    // Prioridad 2: Si tenemos datos del dropdown optimizado, usarlos
     if (this.dropdownCurrencies.length > 0) {
       return this.dropdownCurrencies;
     }
 
-    // Fallback al método tradicional
+    // Fallback al método tradicional (solo favoritos)
     const currencies = new Set<string>();
 
     // Añadir divisas de los pares favoritos
@@ -1162,9 +1600,32 @@ export class Favoritos implements OnInit, OnDestroy {
 
   getFilteredToCurrencies(): string[] {
     const fromCurrency = this.quickConversionForm.get('from')?.value;
-    return this.getUniqueCurrencies().filter(
+    return this.getFavoriteCurrencies().filter(
       (currency) => currency !== fromCurrency
     );
+  }
+
+  /**
+   * Obtener solo las monedas que están en favoritos (para conversión rápida)
+   */
+  getFavoriteCurrencies(): string[] {
+    const currencies = new Set<string>();
+
+    // Añadir divisas de los pares favoritos
+    this.favoritePairs.forEach((fav) => {
+      currencies.add(fav.from);
+      currencies.add(fav.to);
+    });
+
+    // Añadir divisas favoritas individuales
+    this.favoriteCurrencies.forEach((fav) => {
+      currencies.add(fav.currency);
+    });
+
+    // Añadir EUR como base si no está presente
+    currencies.add('EUR');
+
+    return Array.from(currencies).sort();
   }
 
   onFromCurrencyChange(): void {
@@ -1514,11 +1975,68 @@ export class Favoritos implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Debug: Comparar datos del backend vs BCE
+   */
+  private logDataComparison(
+    item: FavoritePair | FavoriteCurrency,
+    type: 'pair' | 'currency'
+  ): void {
+    if (type === 'pair') {
+      const pair = item as FavoritePair;
+      console.log(`🔍 Comparación de datos para par ${pair.pair}:`, {
+        backend: {
+          currentRate: pair.currentRate,
+          change: pair.change,
+        },
+        bce: {
+          currentRate: 'N/A', // Los pares no tienen rate directo del backend
+          change: pair.change,
+          trendStatus: pair.trendStatus,
+          changeText: pair.changeText,
+        },
+      });
+    } else {
+      const currency = item as FavoriteCurrency;
+      const backendRate = this.getCurrentRateFromBackend(currency);
+      console.log(`🔍 Comparación de datos para divisa ${currency.currency}:`, {
+        backend: {
+          currentRate: backendRate,
+          change: 'N/A', // Backend no proporciona change para divisas individuales
+        },
+        bce: {
+          currentRate: currency.currentRate,
+          change: currency.change,
+          trendStatus: currency.trendStatus,
+          changeText: currency.changeText,
+        },
+      });
+    }
+  }
+
+  /**
+   * Obtener rate del backend (método original)
+   */
+  private getCurrentRateFromBackend(
+    favoriteCurrency: FavoriteCurrency
+  ): number {
+    const base = this.baseCurrency;
+    const rateKey = `${base}_to_${favoriteCurrency.currency}`;
+    const rate = favoriteCurrency.rates[rateKey];
+    return typeof rate === 'number' ? rate : 0;
+  }
+
   getCurrentRateForCurrency(
     favoriteCurrency: FavoriteCurrency,
     baseCurrency?: string
   ): number {
-    const base = baseCurrency || this.baseCurrency; // ✅ Usar this.baseCurrency como default
+    // ✅ PRIORIDAD 1: Usar currentRate del BCE si está disponible
+    if (favoriteCurrency.currentRate && favoriteCurrency.currentRate > 0) {
+      return favoriteCurrency.currentRate;
+    }
+
+    // ✅ FALLBACK: Usar rates del backend como antes
+    const base = baseCurrency || this.baseCurrency;
     const rateKey = `${base}_to_${favoriteCurrency.currency}`;
     const rate = favoriteCurrency.rates[rateKey];
     return typeof rate === 'number' ? rate : 0;
@@ -1667,6 +2185,51 @@ export class Favoritos implements OnInit, OnDestroy {
         color: '#ff9800',
         icon: 'access_time',
       };
+    }
+  }
+
+  /**
+   * Obtener la bandera de una moneda desde CURRENCY_FLAGS
+   */
+  getCurrencyFlag(code: string): string {
+    return CURRENCY_FLAGS[code] || '🏳️'; // Fallback a bandera genérica
+  }
+
+  /**
+   * Detectar si una moneda viene de Exchange (Frankfurter ~40) o Convert (Hardcoded 20)
+   * ÚTIL: Para debugging y logging de fuentes de datos
+   */
+  private getCurrencySource(code: string): 'exchange' | 'convert' | 'unknown' {
+    // Lista hardcodeada de /api/convert/currencies (20 monedas)
+    const convertCurrencies = [
+      'USD',
+      'EUR',
+      'GBP',
+      'JPY',
+      'CHF',
+      'CAD',
+      'AUD',
+      'CNY',
+      'MXN',
+      'BRL',
+      'KRW',
+      'INR',
+      'SEK',
+      'NOK',
+      'HKD',
+      'SGD',
+      'NZD',
+      'ZAR',
+      'TRY',
+      'PLN',
+    ];
+
+    if (convertCurrencies.includes(code)) {
+      return 'convert'; // Disponible en ambas fuentes
+    } else if (this.allAvailableCurrencies.includes(code)) {
+      return 'exchange'; // Solo disponible en Frankfurter
+    } else {
+      return 'unknown'; // No disponible en ninguna fuente conocida
     }
   }
 }

@@ -191,7 +191,7 @@ Email can be disabled via `DISABLE_EMAIL=1` environment variable.
 ### Component Communication
 
 - **Services**: Use RxJS BehaviorSubject for state management
-- **Auto-refresh**: Most components implement 30-second intervals with proper cleanup
+- **Data Updates**: Components load data on-demand without auto-refresh intervals
 - **Error Handling**: Interceptor handles 401 (logout) and 403 (access denied) globally
 - **Shared Constants**: Currency data centralized in `shared/currency-flags.ts` with `CURRENCY_FLAGS`, `LIMITED_CURRENCIES`, and `ADDITIONAL_CURRENCIES` exports
 
@@ -199,6 +199,27 @@ Email can be disabled via `DISABLE_EMAIL=1` environment variable.
 
 **Supported Currencies**: Always validate against exactly **40 supported currencies** (dinamically fetched from Frankfurter API via `/api/exchange/currencies`):
 Dynamic list includes: `USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, MXN, BRL, KRW, INR, SEK, NOK, HKD, SGD, NZD, ZAR, TRY, PLN` + 20 more
+
+**Currency Loading Pattern**: Components should load all available currencies dynamically:
+
+```ts
+// ✅ Correct - load all 40 currencies dynamically
+loadAllCurrencies(): void {
+  this.divisasService.getAvailableCurrencies().subscribe({
+    next: (response) => {
+      this.allAvailableCurrencies = response.currencies.sort();
+      this.updateAvailableBaseCurrencies();
+    }
+  });
+}
+
+// ✅ Use in form dropdowns
+getUniqueCurrencies(): string[] {
+  return this.allAvailableCurrencies.length > 0
+    ? this.allAvailableCurrencies
+    : fallbackMethod();
+}
+```
 
 **Non-authenticated users** only see: `USD, EUR, JPY, GBP, CHF, CAD, AUD, CNY` (LIMITED_CURRENCIES)
 
