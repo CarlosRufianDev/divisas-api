@@ -1020,41 +1020,65 @@ $spacing-xl: 2rem;
 }
 
 .favorite-card-enhanced {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(248, 250, 252, 0.95) 100%
+  );
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(43, 43, 43, 0.281);
   border-radius: 16px;
   padding: 0;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeIn 0.6s ease-out;
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.18),
+      0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: $info-blue;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 1) 0%, 
+      rgba(248, 250, 252, 0.98) 100%
+    );
   }
 
-  // Estados de tendencia con bordes izquierdos como historial
+  // Estados de tendencia con bordes izquierdos como dashboard
   &.trending-up {
-    border-left: 4px solid #10b981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-left: 4px solid #22c55e;
+    background: linear-gradient(135deg, 
+      rgba(34, 197, 94, 0.45) 0%,
+      rgba(74, 222, 128, 0.50) 75%, 
+      rgba(134, 239, 173, 0.40) 100%
+    ) !important;
   }
 
   &.trending-down {
     border-left: 4px solid #ef4444;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    background: linear-gradient(135deg, 
+      rgba(239, 68, 68, 0.45) 0%,
+      rgba(248, 113, 113, 0.50) 50%, 
+      rgba(252, 165, 165, 0.40) 100%
+    ) !important;
   }
 
   &.trending-neutral {
-    border-left: 4px solid #6b7280;
-    background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(135deg, 
+      rgba(245, 158, 11, 0.45) 0%,
+      rgba(251, 191, 36, 0.50) 50%, 
+      rgba(253, 224, 71, 0.40) 100%
+    ) !important;
   }
 
   .favorite-header {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1068,15 +1092,16 @@ $spacing-xl: 2rem;
         font-family: 'Inter', sans-serif;
         font-weight: 700;
         font-size: 1.2rem;
-        color: white;
+        color: #1e293b;
         letter-spacing: 0.5px;
       }
 
       .pair-nickname {
         font-family: 'Poppins', sans-serif;
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: $warning-yellow;
         font-style: italic;
+        font-weight: 500;
       }
     }
 
@@ -1087,7 +1112,7 @@ $spacing-xl: 2rem;
         height: 1.5rem;
 
         &.trend-up {
-          color: #10b981;
+          color: #22c55e;
         }
 
         &.trend-down {
@@ -1095,7 +1120,7 @@ $spacing-xl: 2rem;
         }
 
         &.trend-neutral {
-          color: #6b7280;
+          color: #f59e0b;
         }
       }
     }
@@ -1107,6 +1132,10 @@ $spacing-xl: 2rem;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     text-align: center;
+    background: rgba(255, 255, 255, 0.904);
+    border-radius: 8px;
+    margin: 0.5rem;
+    border: 1px solid rgba(226, 232, 240, 0.5);
 
     .current-rate {
       display: flex;
@@ -1117,15 +1146,16 @@ $spacing-xl: 2rem;
         font-family: 'JetBrains Mono', monospace;
         font-weight: 700;
         font-size: 1.4rem;
-        color: white;
+        color: #171a20;
       }
 
       .rate-label {
         font-family: 'Poppins', sans-serif;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: #090a0c;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 500;
       }
     }
 
@@ -1140,32 +1170,33 @@ $spacing-xl: 2rem;
         font-size: 1.2rem;
 
         &.positive {
-          color: #10b981;
+          color: #2e7d32;
         }
 
         &.negative {
-          color: #ef4444;
+          color: #c62828;
         }
 
         &.neutral {
-          color: #6b7280;
+          color: #ef6c00;
         }
       }
 
       .change-label {
         font-family: 'Poppins', sans-serif;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: #090a0c;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 500;
       }
     }
   }
 
   .favorite-actions {
     padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
@@ -1186,13 +1217,14 @@ $spacing-xl: 2rem;
       font-weight: 600 !important;
       transition: all 0.3s ease !important;
       min-height: 60px !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
 
       .btn-text {
         font-family: 'Inter', sans-serif !important;
         font-size: 0.7rem !important;
         font-weight: 500 !important;
         white-space: nowrap !important;
+        color: $warning-yellow !important;
 
         @media (max-width: 480px) {
           font-size: 0.65rem !important;
@@ -1204,6 +1236,7 @@ $spacing-xl: 2rem;
         width: 1.1rem !important;
         height: 1.1rem !important;
         margin: 0 !important;
+        color: $warning-yellow !important;
       }
 
       // 🎨 DISEÑO UNIFORME Y ELEGANTE - BOTONES SUTILES
@@ -1673,41 +1706,65 @@ $spacing-xl: 2rem;
 }
 
 .currency-card-enhanced {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(248, 250, 252, 0.95) 100%
+  );
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(43, 43, 43, 0.281);
   border-radius: 16px;
   padding: 0;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeIn 0.6s ease-out;
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.18),
+      0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: $info-blue;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 1) 0%, 
+      rgba(248, 250, 252, 0.98) 100%
+    );
   }
 
-  // Estados de tendencia con bordes izquierdos
+  // Estados de tendencia con bordes izquierdos como dashboard
   &.trending-up {
-    border-left: 4px solid #10b981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-left: 4px solid #22c55e;
+    background: linear-gradient(135deg, 
+      rgba(34, 197, 94, 0.45) 0%,
+      rgba(74, 222, 128, 0.50) 75%, 
+      rgba(134, 239, 173, 0.40) 100%
+    ) !important;
   }
 
   &.trending-down {
     border-left: 4px solid #ef4444;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    background: linear-gradient(135deg, 
+      rgba(239, 68, 68, 0.45) 0%,
+      rgba(248, 113, 113, 0.50) 50%, 
+      rgba(252, 165, 165, 0.40) 100%
+    ) !important;
   }
 
   &.trending-neutral {
-    border-left: 4px solid #6b7280;
-    background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(135deg, 
+      rgba(245, 158, 11, 0.45) 0%,
+      rgba(251, 191, 36, 0.50) 50%, 
+      rgba(253, 224, 71, 0.40) 100%
+    ) !important;
   }
 
   .currency-header {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1721,15 +1778,16 @@ $spacing-xl: 2rem;
         font-family: 'Inter', sans-serif;
         font-weight: 700;
         font-size: 1.2rem;
-        color: white;
+        color: #1e293b;
         letter-spacing: 0.5px;
       }
 
       .currency-nickname {
         font-family: 'Poppins', sans-serif;
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: $warning-yellow;
         font-style: italic;
+        font-weight: 500;
       }
 
       ::ng-deep .default-chip {
@@ -1750,7 +1808,7 @@ $spacing-xl: 2rem;
         height: 1.5rem;
 
         &.trend-up {
-          color: #10b981;
+          color: #22c55e;
         }
 
         &.trend-down {
@@ -1758,7 +1816,7 @@ $spacing-xl: 2rem;
         }
 
         &.trend-neutral {
-          color: #6b7280;
+          color: #f59e0b;
         }
       }
     }
@@ -1770,6 +1828,10 @@ $spacing-xl: 2rem;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     text-align: center;
+    background: rgba(255, 255, 255, 0.904);
+    border-radius: 8px;
+    margin: 0.5rem;
+    border: 1px solid rgba(226, 232, 240, 0.5);
 
     .exchange-rate {
       display: flex;
@@ -1780,15 +1842,16 @@ $spacing-xl: 2rem;
         font-family: 'JetBrains Mono', monospace;
         font-weight: 700;
         font-size: 1.4rem;
-        color: white;
+        color: #171a20;
       }
 
       .rate-label {
         font-family: 'Poppins', sans-serif;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: #090a0c;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 500;
       }
     }
 
@@ -1803,32 +1866,33 @@ $spacing-xl: 2rem;
         font-size: 1.2rem;
 
         &.positive {
-          color: #10b981;
+          color: #2e7d32;
         }
 
         &.negative {
-          color: #ef4444;
+          color: #c62828;
         }
 
         &.neutral {
-          color: #6b7280;
+          color: #ef6c00;
         }
       }
 
       .change-label {
         font-family: 'Poppins', sans-serif;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: #090a0c;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 500;
       }
     }
   }
 
   .currency-actions {
     padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
@@ -1849,13 +1913,14 @@ $spacing-xl: 2rem;
       font-weight: 600 !important;
       transition: all 0.3s ease !important;
       min-height: 60px !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
 
       .btn-text {
         font-family: 'Inter', sans-serif !important;
         font-size: 0.7rem !important;
         font-weight: 500 !important;
         white-space: nowrap !important;
+        color: $warning-yellow !important;
 
         @media (max-width: 480px) {
           font-size: 0.65rem !important;
@@ -1867,6 +1932,7 @@ $spacing-xl: 2rem;
         width: 1.1rem !important;
         height: 1.1rem !important;
         margin: 0 !important;
+        color: $warning-yellow !important;
       }
 
       // 🎨 DISEÑO UNIFORME Y ELEGANTE - BOTONES SUTILES
