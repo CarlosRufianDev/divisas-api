@@ -2,6 +2,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
+// 🚨 FORZAR ESTILOS GLOBALES PARA ANGULAR MATERIAL
+::ng-deep {
+  .historial-container {
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text, 
+    .mat-mdc-select-min-line {
+      color: white !important;
+    }
+    
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: #fbbf24 !important;
+    }
+
+    // 🎯 ÍCONOS EN AMARILLO - TODOS LOS ÍCONOS DE LOS FILTROS
+    .mat-mdc-form-field-icon-suffix,
+    .mat-icon,
+    mat-icon {
+      color: #fbbf24 !important;
+    }
+
+    // Íconos específicos de select (flechas dropdown)
+    .mat-mdc-select-arrow,
+    .mat-mdc-select-arrow svg {
+      color: #fbbf24 !important;
+      fill: #fbbf24 !important;
+    }
+  }
+}
+
 // 🎨 VARIABLES DE COLORES (Basadas en el dashboard)
 $primary-blue: #667eea;
 $primary-purple: #764ba2;
@@ -70,6 +102,16 @@ $spacing-xl: 2rem;
   background: $gradient-primary;
   min-height: 100vh;
   padding: $spacing-md;
+  
+  // 🎯 LABELS AMARILLOS PARA TODOS LOS FILTROS
+  .filters-form-integrated {
+    mat-label,
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label {
+      color: $warning-yellow !important;
+    }
+  }
   
   .content-wrapper {
     max-width: 1400px;
@@ -241,484 +283,192 @@ $spacing-xl: 2rem;
 }
 
 // ===============================
-// 📝 FORMULARIO DE FILTROS INTEGRADO
+// 🔍 FILTROS DE BÚSQUEDA INTEGRADOS
 // ===============================
 .filters-form-integrated {
+  // 🎯 FORZAR AMARILLO EN TODOS LOS LABELS (REGLA GLOBAL)
+  mat-label,
+  .mat-mdc-form-field-label,
+  .mdc-floating-label,
+  .mat-mdc-floating-label {
+    color: $warning-yellow !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+  }
+
   .filters-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.2rem;
     margin-bottom: 1.5rem;
 
-    // ✅ NO MÁS ESTILOS GENÉRICOS - SOLO ESPECÍFICOS POR FIELD
-    // Los estilos se aplicarán individualmente a cada data-field al final del archivo
-  }
-}
-
-// 🎯 ESTILOS ESPECÍFICOS PARA CADA FIELD - MÁXIMA ESPECIFICIDAD
-// Aplicamos estilos individuales a cada campo para evitar conflictos
-
-// 🎯 FIELD ESPECÍFICO: DIVISA ORIGEN
-.filters-grid .filter-field[data-field="from"].mat-mdc-form-field.mat-form-field {
-  // 🎯 RESETEO TOTAL DE ANGULAR MATERIAL - ESPECIFICIDAD MÁXIMA
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 12px !important;
-  border: 2px solid rgba(251, 191, 36, 0.6) !important;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(15px) !important;
-  transition: all 0.3s ease !important;
-  
-  // 🚫 ELIMINAR OUTLINES NATIVOS DE MATERIAL
-  .mdc-notched-outline,
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch, 
-  .mdc-notched-outline__trailing,
-  .mat-mdc-form-field-outline,
-  .mat-mdc-form-field-outline-start,
-  .mat-mdc-form-field-outline-notch,
-  .mat-mdc-form-field-outline-end,
-  .mat-mdc-line-ripple {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    border: none !important;
-  }
-  
-  .mat-mdc-text-field-wrapper {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 12px !important;
-    border: none !important;
-    
-    .mdc-text-field,
-    .mdc-text-field--outlined {
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-radius: 12px !important;
-      border: none !important;
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
     }
-    
-    .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.95) !important;
-      padding: 0.75rem 1rem !important;
+  }
+
+  .filter-field {
+    .mat-mdc-form-field {
+      width: 100%;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 0.95rem !important;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      background: rgba(255, 255, 255, 0.12) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       border-radius: 12px !important;
-      border: none !important;
-      
-      .mat-mdc-form-field-infix {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: none !important;
-        padding: 0 !important;
-        
-        .mat-mdc-select {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-          
-          .mat-mdc-select-trigger {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: none !important;
-            
-            .mat-mdc-select-value {
-              background: rgba(255, 255, 255, 0.95) !important;
-            }
-          }
-        }
-        
-        input.mat-mdc-input-element {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-        }
+      transition: all 0.3s ease !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+      }
+
+      &.mdc-text-field--focused {
+        background: rgba(255, 255, 255, 0.18) !important;
+        border-color: $info-blue !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+      }
+    }
+
+    // 🎯 LABELS EN AMARILLO - REGLAS ESPECÍFICAS PARA ANGULAR MATERIAL
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: $warning-yellow !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+    }
+
+    // Estados específicos del label
+    .mat-mdc-form-field-label.mdc-floating-label--float-above,
+    .mdc-floating-label--float-above,
+    .mat-mdc-floating-label.mdc-floating-label--float-above {
+      color: $warning-yellow !important;
+    }
+
+    // Para asegurar que el mat-label dentro también sea amarillo
+    .mat-mdc-form-field mat-label {
+      color: $warning-yellow !important;
+    }
+
+    input {
+      color: white !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-weight: 500 !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-style: italic;
+      }
+    }
+
+    // 🎯 TEXTO "TODAS LAS DIVISAS" EN BLANCO - FORZADO
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: white !important;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+    }
+
+    // Para el texto cuando no hay selección (placeholder)
+    .mat-mdc-select-placeholder {
+      color: rgba(255, 255, 255, 0.7) !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+
+    // 🚨 FORZAR USANDO ::ng-deep PARA MAYOR ESPECIFICIDAD
+    ::ng-deep {
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-min-line {
+        color: white !important;
+      }
+    }
+
+    .mat-mdc-form-field-icon-suffix {
+      color: $warning-yellow !important;
+    }
+
+    // 🚨 FORZAR ÍCONOS CON ::ng-deep
+    ::ng-deep {
+      .mat-mdc-form-field-icon-suffix,
+      .mat-icon,
+      mat-icon {
+        color: $warning-yellow !important;
+      }
+
+      // Flecha específica del select
+      .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow,
+      .mat-mdc-select-arrow svg,
+      .mat-mdc-select-arrow svg path {
+        color: $warning-yellow !important;
+        fill: $warning-yellow !important;
       }
     }
   }
-  
-  // 🎯 LABEL FLOTANTE
-  .mat-mdc-floating-label {
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: rgba(0, 0, 0, 0.6) !important;
-    
-    &.mat-mdc-floating-label-floating {
-      background: rgba(255, 255, 255, 0.9) !important;
-      color: #fbbf24 !important;
-    }
-  }
-}
 
-// 🎯 FIELD ESPECÍFICO: DIVISA DESTINO  
-.filters-grid .filter-field[data-field="to"].mat-mdc-form-field.mat-form-field {
-  // 🎯 RESETEO TOTAL DE ANGULAR MATERIAL - ESPECIFICIDAD MÁXIMA
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 12px !important;
-  border: 2px solid rgba(251, 191, 36, 0.6) !important;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(15px) !important;
-  transition: all 0.3s ease !important;
-  
-  // 🚫 ELIMINAR OUTLINES NATIVOS DE MATERIAL
-  .mdc-notched-outline,
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch, 
-  .mdc-notched-outline__trailing,
-  .mat-mdc-form-field-outline,
-  .mat-mdc-form-field-outline-start,
-  .mat-mdc-form-field-outline-notch,
-  .mat-mdc-form-field-outline-end,
-  .mat-mdc-line-ripple {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    border: none !important;
-  }
-  
-  .mat-mdc-text-field-wrapper {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 12px !important;
-    border: none !important;
-    
-    .mdc-text-field,
-    .mdc-text-field--outlined {
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-radius: 12px !important;
-      border: none !important;
-    }
-    
-    .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.95) !important;
-      padding: 0.75rem 1rem !important;
-      border-radius: 12px !important;
-      border: none !important;
-      
-      .mat-mdc-form-field-infix {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: none !important;
-        padding: 0 !important;
-        
-        .mat-mdc-select {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-          
-          .mat-mdc-select-trigger {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: none !important;
-            
-            .mat-mdc-select-value {
-              background: rgba(255, 255, 255, 0.95) !important;
-            }
-          }
-        }
-        
-        input.mat-mdc-input-element {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-        }
-      }
-    }
-  }
-  
-  // 🎯 LABEL FLOTANTE
-  .mat-mdc-floating-label {
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: rgba(0, 0, 0, 0.6) !important;
-    
-    &.mat-mdc-floating-label-floating {
-      background: rgba(255, 255, 255, 0.9) !important;
-      color: #fbbf24 !important;
-    }
-  }
-}
-
-// 🎯 FIELD ESPECÍFICO: MONTO MÍNIMO
-.filters-grid .filter-field[data-field="minAmount"].mat-mdc-form-field.mat-form-field {
-  // 🎯 RESETEO TOTAL DE ANGULAR MATERIAL - ESPECIFICIDAD MÁXIMA
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 12px !important;
-  border: 2px solid rgba(251, 191, 36, 0.6) !important;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(15px) !important;
-  transition: all 0.3s ease !important;
-  
-  // 🚫 ELIMINAR OUTLINES NATIVOS DE MATERIAL
-  .mdc-notched-outline,
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch, 
-  .mdc-notched-outline__trailing,
-  .mat-mdc-form-field-outline,
-  .mat-mdc-form-field-outline-start,
-  .mat-mdc-form-field-outline-notch,
-  .mat-mdc-form-field-outline-end,
-  .mat-mdc-line-ripple {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    border: none !important;
-  }
-  
-  .mat-mdc-text-field-wrapper {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 12px !important;
-    border: none !important;
-    
-    .mdc-text-field,
-    .mdc-text-field--outlined {
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-radius: 12px !important;
-      border: none !important;
-    }
-    
-    .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.95) !important;
-      padding: 0.75rem 1rem !important;
-      border-radius: 12px !important;
-      border: none !important;
-      
-      .mat-mdc-form-field-infix {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: none !important;
-        padding: 0 !important;
-        
-        .mat-mdc-select {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-          
-          .mat-mdc-select-trigger {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: none !important;
-            
-            .mat-mdc-select-value {
-              background: rgba(255, 255, 255, 0.95) !important;
-            }
-          }
-        }
-        
-        input.mat-mdc-input-element {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-        }
-      }
-    }
-  }
-  
-  // 🎯 LABEL FLOTANTE
-  .mat-mdc-floating-label {
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: rgba(0, 0, 0, 0.6) !important;
-    
-    &.mat-mdc-floating-label-floating {
-      background: rgba(255, 255, 255, 0.9) !important;
-      color: #fbbf24 !important;
-    }
-  }
-}
-
-// 🎯 FIELD ESPECÍFICO: MONTO MÁXIMO
-.filters-grid .filter-field[data-field="maxAmount"].mat-mdc-form-field.mat-form-field {
-  // 🎯 RESETEO TOTAL DE ANGULAR MATERIAL - ESPECIFICIDAD MÁXIMA
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 12px !important;
-  border: 2px solid rgba(251, 191, 36, 0.6) !important;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(15px) !important;
-  transition: all 0.3s ease !important;
-  
-  // 🚫 ELIMINAR OUTLINES NATIVOS DE MATERIAL
-  .mdc-notched-outline,
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch, 
-  .mdc-notched-outline__trailing,
-  .mat-mdc-form-field-outline,
-  .mat-mdc-form-field-outline-start,
-  .mat-mdc-form-field-outline-notch,
-  .mat-mdc-form-field-outline-end,
-  .mat-mdc-line-ripple {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    border: none !important;
-  }
-  
-  .mat-mdc-text-field-wrapper {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 12px !important;
-    border: none !important;
-    
-    .mdc-text-field,
-    .mdc-text-field--outlined {
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-radius: 12px !important;
-      border: none !important;
-    }
-    
-    .mat-mdc-form-field-flex {
-      background: rgba(255, 255, 255, 0.95) !important;
-      padding: 0.75rem 1rem !important;
-      border-radius: 12px !important;
-      border: none !important;
-      
-      .mat-mdc-form-field-infix {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: none !important;
-        padding: 0 !important;
-        
-        .mat-mdc-select {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-          
-          .mat-mdc-select-trigger {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: none !important;
-            
-            .mat-mdc-select-value {
-              background: rgba(255, 255, 255, 0.95) !important;
-            }
-          }
-        }
-        
-        input.mat-mdc-input-element {
-          background: rgba(255, 255, 255, 0.95) !important;
-          border: none !important;
-          outline: none !important;
-        }
-      }
-    }
-  }
-  
-  // 🎯 LABEL FLOTANTE
-  .mat-mdc-floating-label {
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: rgba(0, 0, 0, 0.6) !important;
-    
-    &.mat-mdc-floating-label-floating {
-      background: rgba(255, 255, 255, 0.9) !important;
-      color: #fbbf24 !important;
-    }
-  }
-}
-
-// Animación para el badge
-@keyframes badgeGlow {
-  0% {
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-  }
-  100% {
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
-  }
-}
-
-// ===============================
-// 🔍 TARJETA DE FILTROS (YA NO SE USA - INTEGRADA EN HEADER)
-// ===============================
-/*
-.filters-card {
-  // Estilos comentados porque ahora los filtros están integrados en el header
-  // ...
-}
-
-.filters-form {
-  // Estilos comentados porque ahora usamos .filters-form-integrated
-  // ...
-}
-*/
-
-// ===============================
-// ⏳ LOADING Y ESTADOS VACÍOS
-// ===============================
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 3rem;
-  color: white;
-  text-align: center;
-
-  mat-spinner {
-    ::ng-deep circle {
-      stroke: $warning-yellow !important;
-    }
-  }
-
-  p {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 0;
-  }
-}
-
-.empty-state {
-  background: $gradient-card !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 20px !important;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-
-  mat-card-content {
-    padding: 3rem !important;
-  }
-
-  .empty-content {
+  .filters-actions-integrated {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    text-align: center;
-    color: white;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
 
-    .empty-icon {
-      font-size: 4rem;
-      width: 4rem;
-      height: 4rem;
-      color: $warning-yellow;
-      opacity: 0.8;
-    }
-
-    h2 {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1.8rem;
-      margin: 0;
-      color: white;
-    }
-
-    p {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.6;
-      margin: 0;
-      max-width: 400px;
-    }
-
-    button {
+    .apply-filters-btn {
       background: linear-gradient(135deg, $info-blue, #2563eb) !important;
       color: white !important;
       border: none !important;
       border-radius: 12px !important;
-      padding: 1rem 2rem !important;
+      padding: 0.8rem 1.5rem !important;
       font-weight: 600 !important;
-      font-size: 1rem !important;
+      font-size: 0.95rem !important;
       transition: all 0.3s ease !important;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+      font-family: 'Inter', sans-serif !important;
 
-      &:hover {
+      &:hover:not([disabled]) {
         background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+      }
+
+      &[disabled] {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+      }
+
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+
+    .clear-filters-btn {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 12px !important;
+      padding: 0.8rem 1.5rem !important;
+      font-weight: 500 !important;
+      font-size: 0.95rem !important;
+      transition: all 0.3s ease !important;
+      font-family: 'Inter', sans-serif !important;
+
+      &:hover:not([disabled]) {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        transform: translateY(-1px);
+      }
+
+      &[disabled] {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
       }
 
       mat-icon {
@@ -727,6 +477,92 @@ $spacing-xl: 2rem;
     }
   }
 }
+
+// ===============================
+// 📊 ESTADOS DE CARGA Y VACÍO
+// ===============================
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 2rem 0;
+
+  mat-spinner {
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 20px !important;
+  margin: 2rem 0;
+
+  .empty-content {
+    text-align: center;
+    padding: 2rem;
+    color: white;
+
+    .empty-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      color: $warning-yellow;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+    }
+
+    h2 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 1rem 0;
+      color: white;
+    }
+
+    p {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin: 1.5rem 0;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, $primary-blue, $primary-purple) !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 0.8rem 1.5rem !important;
+      font-weight: 600 !important;
+      font-family: 'Inter', sans-serif !important;
+      transition: all 0.3s ease !important;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+      }
+
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
 
 // ===============================
 // 📊 TARJETA DE TABLA DE HISTORIAL
@@ -906,511 +742,66 @@ $spacing-xl: 2rem;
 }
 
 // ===============================
-// 📄 PAGINADOR
+// 📄 PAGINADOR - ESTILO GLASSMORPHIC
 // ===============================
-mat-paginator {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: white !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0 0 20px 20px;
-
-  ::ng-deep {
-    .mat-mdc-paginator-range-label {
-      color: rgba(255, 255, 255, 0.8) !important;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    // ✅ FLECHAS DE NAVEGACIÓN AMARILLAS
-    .mat-mdc-icon-button {
-      color: $warning-yellow !important;
+::ng-deep {
+  .history-table-card {
+    .mat-mdc-paginator {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 20px 20px !important;
+      color: white !important;
       
-      &:hover:not([disabled]) {
-        background: rgba(251, 191, 36, 0.2) !important;
-        color: $warning-yellow !important;
+      // Texto del paginador
+      .mat-mdc-paginator-range-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
       }
 
-      &[disabled] {
-        color: rgba(255, 255, 255, 0.3) !important;
-      }
-    }
-
-    // ✅ SOLO EL SELECT DE ITEMS PER PAGE CON FONDO BLANCO
-    .mat-mdc-paginator-page-size {
-      display: flex !important;
-      align-items: center !important;
-      gap: 0.5rem !important;
-
-      .mat-mdc-paginator-page-size-label {
-        color: rgba(255, 255, 255, 0.8) !important;
-        font-size: 0.875rem !important;
-      }
-
-      .mat-mdc-form-field {
-        background: white !important;
-        border-radius: 8px !important;
-        min-width: 70px !important;
-        height: 36px !important;
-
-        .mat-mdc-form-field-flex {
-          background: white !important;
-          border-radius: 8px !important;
-          padding: 0.25rem 0.5rem !important;
-          height: 36px !important;
-          align-items: center !important;
+      // Select de items por página
+      .mat-mdc-select {
+        color: white !important;
+        
+        .mat-mdc-select-value {
+          color: white !important;
         }
-
-        .mat-mdc-select {
-          color: rgba(0, 0, 0, 0.87) !important;
-          font-size: 0.875rem !important;
-          font-weight: 600 !important;
-        }
-
-        .mat-mdc-select-trigger {
-          background: transparent !important;
-          border: none !important;
-          height: auto !important;
-        }
-
+        
         .mat-mdc-select-arrow {
           color: $warning-yellow !important;
         }
-
-        .mat-mdc-form-field-outline,
-        .mat-mdc-line-ripple,
-        .mat-mdc-form-field-subscript-wrapper {
-          display: none !important;
-        }
       }
-    }
 
-    .mat-mdc-select {
-      color: rgba(255, 255, 255, 0.8) !important; // Para otros selects que no sean el paginador
-    }
-  }
-}
+      // Botones de navegación
+      .mat-mdc-icon-button {
+        color: rgba(255, 255, 255, 0.8) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        margin: 0 0.2rem !important;
 
-// ===============================
-// 📱 RESPONSIVE DESIGN
-// ===============================
+        &:hover:not([disabled]) {
+          background: rgba(255, 255, 255, 0.2) !important;
+          color: white !important;
+          transform: translateY(-1px);
+        }
 
-// Tablet (768px)
-@media (max-width: 768px) {
-  .historial-container {
-    padding: 0.5rem;
+        &[disabled] {
+          opacity: 0.4 !important;
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
 
-    .content-wrapper {
-      padding: 1rem;
-    }
-  }
-
-  .historial-header {
-    padding: 2rem 1.5rem 2.5rem;
-    border-radius: 0 0 20px 20px;
-    margin-bottom: 1rem;
-
-    .title-container {
-      margin-bottom: 2rem;
-
-      .simple-title {
-        font-size: 1.6rem;
-        flex-direction: column;
-        gap: 0.5rem;
-        
-        .history-symbol {
-          font-size: 1.6rem;
+        .mat-icon {
+          color: inherit !important;
         }
       }
 
-      .title-tagline .tagline-text {
-        font-size: 0.9rem;
-        padding: 0.6rem 1rem;
-      }
-    }
-
-    .filters-section {
-      padding: 1rem;
-
-      .filters-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-
-        .filters-title {
-          justify-content: center;
-          font-size: 1.1rem;
-        }
-
-        .clear-all-btn {
-          width: 100%;
-          justify-content: center;
-        }
-      }
-    }
-  }
-
-  .filters-form-integrated {
-    .filters-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    .filters-actions-integrated {
-      flex-direction: column;
-      align-items: stretch;
-
-      button {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-  }
-
-  .history-table {
-    font-size: 0.9rem;
-
-    .mat-mdc-header-cell,
-    .mat-mdc-cell {
-      padding: 0.8rem 0.5rem !important;
-    }
-  }
-}
-
-// Mobile (480px)
-@media (max-width: 480px) {
-  .historial-header {
-    padding: 1.5rem 1rem 2rem;
-
-    .title-container .simple-title {
-      font-size: 1.4rem;
-
-      .history-symbol {
-        font-size: 1.4rem;
-      }
-    }
-
-    .filters-section {
-      margin: 0 -0.5rem;
-      border-radius: 16px;
-    }
-  }
-
-  .history-table-card {
-    margin: 0 -0.5rem;
-    border-radius: 16px !important;
-  }
-
-  .table-container {
-    margin: 0 -1rem;
-  }
-
-  .history-table {
-    .conversion-cell .conversion-text {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.3rem;
-      font-size: 0.85rem;
-    }
-  }
-}
-
-// ===============================
-// 🎨 UTILIDADES
-// ===============================
-.spacer {
-  flex: 1 1 auto;
-}
-
-// Clases para snackbars
-::ng-deep {
-  .success-snackbar {
-    background: linear-gradient(135deg, $success-green, #22c55e) !important;
-    color: white !important;
-  }
-
-  .error-snackbar {
-    background: linear-gradient(135deg, $error-red, #dc2626) !important;
-    color: white !important;
-  }
-
-  // ✅ OVERLAY DE MAT-SELECT SIN CONFLICTOS
-  .mat-mdc-select-panel {
-    background: white !important;
-    border: 2px solid $warning-yellow !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-    margin-top: 8px !important;
-    max-height: 300px !important;
-    overflow-y: auto !important;
-
-    .mat-mdc-option {
-      color: rgba(0, 0, 0, 0.87) !important;
-      padding: 0.75rem 1rem !important;
-      font-size: 0.875rem !important;
-      line-height: 1.25rem !important;
-      min-height: auto !important;
-
-      &:hover {
-        background: rgba(251, 191, 36, 0.1) !important;
-      }
-
-      &.mdc-list-item--selected {
-        background: rgba(251, 191, 36, 0.2) !important;
-        color: rgba(0, 0, 0, 0.87) !important;
-        font-weight: 600 !important;
-      }
-
-      // Flag y texto bien alineados
-      .mat-option-text {
-        display: flex !important;
-        align-items: center !important;
-        gap: 0.5rem !important;
-      }
-    }
-  }
-
-  // ✅ PAGINADOR SELECT (ITEMS PER PAGE)
-  .mat-mdc-paginator .mat-mdc-select-panel {
-    background: white !important;
-    border: 1px solid rgba(0, 0, 0, 0.12) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    min-width: 80px !important;
-
-    .mat-mdc-option {
-      padding: 0.5rem 1rem !important;
-      font-size: 0.875rem !important;
-      text-align: center !important;
-    }
-  }
-
-  // Tooltips
-  .mat-mdc-tooltip {
-    background: rgba(15, 23, 42, 0.9) !important;
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-  }
-}
-
-// ===============================
-// 🎯 FIELD ESPECÍFICO - DIVISA ORIGEN (MÁXIMA ESPECIFICIDAD)
-// ===============================
-
-// 🔥 ESTILOS GLOBALES SÚPER AGRESIVOS PARA TODOS LOS FIELDS
-.filters-grid {
-  .filter-field[data-field] {
-    &.mat-mdc-form-field {
-      // 🎯 FUERZA BRUTA TOTAL - MÁXIMA ESPECIFICIDAD
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-radius: 12px !important;
-      border: 2px solid rgba(251, 191, 36, 0.6) !important;
-      box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-      backdrop-filter: blur(15px) !important;
-      transition: all 0.3s ease !important;
-      
-      // 🎯 AJUSTE DE TAMAÑO PERFECTO PARA ENCAJAR
-      min-height: 56px !important;
-      height: 56px !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      
-      // 🚫 ELIMINAR TODOS LOS BORDES Y OUTLINES DE MATERIAL
-      * {
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-      }
-      
-      // 🚫 ELIMINAR MARCOS ESPECÍFICOS DE MATERIAL DESIGN
-      .mdc-text-field,
-      .mdc-text-field--filled,
-      .mdc-text-field--outlined {
-        background: transparent !important;
-        border: none !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        
-        &::before,
-        &::after {
-          display: none !important;
-          content: none !important;
-        }
-      }
-      
-      // 🚫 ELIMINAR ESTADOS DE HOVER Y FOCUS
-      .mdc-text-field:hover,
-      .mdc-text-field--focused,
-      .mdc-text-field:focus-within {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-      
-      // 🔥 ELIMINAR APPEARANCE OUTLINE AGRESIVAMENTE
-      &.mat-form-field-appearance-outline {
-        .mat-mdc-form-field-outline,
-        .mat-mdc-form-field-outline-start,
-        .mat-mdc-form-field-outline-notch,
-        .mat-mdc-form-field-outline-end {
-          display: none !important;
-          opacity: 0 !important;
-          visibility: hidden !important;
-          border: none !important;
-          background: none !important;
-        }
-        
-        .mdc-notched-outline {
-          display: none !important;
-        }
-      }
-      
-      // 🎯 CONTENEDORES PRINCIPALES - TAMAÑO EXACTO PARA ENCAJAR
-      .mat-mdc-text-field-wrapper {
-        background: transparent !important;
-        border-radius: 12px !important;
-        border: none !important;
-        height: 54px !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        
-        // 🎯 ELEMENTOS INTERNOS TRANSPARENTES CON ALTURA EXACTA
-        .mdc-text-field,
-        .mdc-text-field--outlined,
-        .mat-mdc-form-field-flex,
-        .mat-mdc-form-field-infix,
-        .mat-mdc-select,
-        .mat-mdc-select-trigger,
-        .mat-mdc-select-value,
-        input.mat-mdc-input-element {
-          background: transparent !important;
-          border: none !important;
-          outline: none !important;
-          border-radius: 0 !important;
-        }
-        
-        // 🎯 FLEX CONTAINER CON ALTURA EXACTA
-        .mat-mdc-form-field-flex {
-          padding: 0.75rem 1rem !important;
-          min-height: 54px !important;
-          height: 54px !important;
-          align-items: center !important;
-        }
-      }
-      
-      // 🚫 ELIMINAR OUTLINES ESPECÍFICOS
-      .mdc-notched-outline,
-      .mdc-notched-outline__leading,
-      .mdc-notched-outline__notch, 
-      .mdc-notched-outline__trailing,
-      .mat-mdc-form-field-outline,
-      .mat-mdc-form-field-outline-start,
-      .mat-mdc-form-field-outline-notch,
-      .mat-mdc-form-field-outline-end,
-      .mat-mdc-line-ripple,
-      .mdc-line-ripple,
-      .mdc-line-ripple::before,
-      .mdc-line-ripple::after {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        width: 0 !important;
-        height: 0 !important;
-        border: none !important;
-        background: none !important;
-      }
-      
-      // 🔥 ELIMINAR LÍNEA INFERIOR ESPECÍFICAMENTE 
-      .mat-mdc-form-field-bottom-align,
-      .mat-mdc-form-field-subscript-wrapper {
-        display: none !important;
-        
-        &::before,
-        &::after {
-          display: none !important;
-          content: none !important;
-          border: none !important;
-          background: none !important;
-        }
-      }
-      
-      // 🔥 ELIMINAR UNDERLINE Y RIPPLE EFFECTS
-      .mat-mdc-form-field-underline,
-      .mdc-text-field__ripple,
-      .mat-ripple,
-      .mat-mdc-form-field-ripple {
-        display: none !important;
-      }
-      
-      // 🚫 ELIMINAR CUALQUIER BORDE RESIDUAL EN INPUTS
-      input.mat-mdc-input-element,
-      .mat-mdc-select-trigger,
-      .mat-mdc-select-value {
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
-        
-        &:focus,
-        &:hover,
-        &:active {
-          border: none !important;
-          outline: none !important;
-          box-shadow: none !important;
-        }
-      }
-      
-      // 🎯 LABELS LIMPIOS (SIN FONDO AMARILLO DE PRUEBA)
-      label,
-      .mat-mdc-form-field-label-wrapper,
-      .mat-mdc-form-field-label,
-      .mdc-floating-label,
-      .mat-label {
-        background: rgba(255, 255, 255, 0.9) !important;
-        color: rgba(0, 0, 0, 0.7) !important;
-        font-weight: 600 !important;
-        padding: 0.25rem 0.5rem !important;
-        border-radius: 4px !important;
-        z-index: 10 !important;
-      }
-      
-      // 🎯 INFIX CON ALTURA CONTROLADA
-      .mat-mdc-form-field-infix {
-        padding: 0 !important;
-        min-height: auto !important;
-        height: auto !important;
-        display: flex !important;
-        align-items: center !important;
-      }
-      
-      // 🎯 LABEL FLOTANTE LIMPIO (SIN FONDO AMARILLO)
-      .mat-mdc-floating-label {
-        background: rgba(255, 255, 255, 0.9) !important;
-        color: rgba(0, 0, 0, 0.7) !important;
+      // Texto "items per page"
+      .mat-mdc-paginator-page-size-label {
+        color: rgba(255, 255, 255, 0.8) !important;
         font-family: 'Inter', sans-serif !important;
-        padding: 0.25rem 0.5rem !important;
-        border-radius: 4px !important;
-        font-weight: 600 !important;
-        
-        &.mat-mdc-floating-label-floating {
-          background: rgba(255, 255, 255, 0.95) !important;
-          color: #fbbf24 !important;
-          font-weight: 700 !important;
-        }
-      }
-      
-      // 🎯 TAMBIÉN EN EL MAT-LABEL ESTÁTICO LIMPIO
-      .mat-mdc-form-field-label,
-      mat-label {
-        background: rgba(255, 255, 255, 0.9) !important;
-        color: rgba(0, 0, 0, 0.7) !important;
-        font-weight: 600 !important;
-        padding: 0.25rem 0.5rem !important;
-        border-radius: 4px !important;
       }
     }
   }
 }
-

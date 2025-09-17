@@ -1,0 +1,275 @@
+<div class="historial-container">
+  <div class="content-wrapper">
+    <!-- Header integrado con filtros como en el dashboard -->
+    <div class="historial-header">
+      <div class="title-container">
+        <h1 class="simple-title">
+          <mat-icon class="history-symbol">history</mat-icon>
+          Historial de Conversiones
+        </h1>
+
+        <div class="title-tagline">
+          <p class="tagline-text">
+            Todas tus conversiones de divisas organizadas y filtradas
+            profesionalmente
+          </p>
+        </div>
+      </div>
+
+      <!-- Filtros integrados en el header -->
+      <div class="filters-section">
+        <div class="filters-header">
+          <div class="filters-title">
+            <mat-icon>filter_list</mat-icon>
+            <span>Filtros de Búsqueda</span>
+          </div>
+          <button
+            mat-button
+            class="clear-all-btn"
+            (click)="clearAllHistory()"
+            [disabled]="loading || conversions.length === 0"
+          >
+            <mat-icon>delete_sweep</mat-icon>
+            Limpiar Todo
+          </button>
+        </div>
+
+        <form [formGroup]="filtersForm" class="filters-form-integrated">
+          <div class="filters-grid">
+            <mat-form-field
+              appearance="outline"
+              class="filter-field"
+              data-field="from"
+              floatLabel="always"
+            >
+              <mat-label>Divisa origen</mat-label>
+              <mat-select
+                formControlName="from"
+                (selectionChange)="onFromFilterChange()"
+              >
+                <mat-option value="">Todas las divisas</mat-option>
+                <mat-option
+                  *ngFor="let currency of getFilteredFromCurrencies()"
+                  [value]="currency.code"
+                >
+                  {{ currency.flag }} {{ currency.code }} -
+                  {{ currency.name }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>currency_exchange</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field
+              appearance="outline"
+              class="filter-field"
+              data-field="to"
+              floatLabel="always"
+            >
+              <mat-label>Divisa destino</mat-label>
+              <mat-select
+                formControlName="to"
+                (selectionChange)="onToFilterChange()"
+              >
+                <mat-option value="">Todas las divisas</mat-option>
+                <mat-option
+                  *ngFor="let currency of getFilteredToCurrencies()"
+                  [value]="currency.code"
+                >
+                  {{ currency.flag }} {{ currency.code }} -
+                  {{ currency.name }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>currency_exchange</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field
+              appearance="outline"
+              class="filter-field"
+              data-field="minAmount"
+              floatLabel="always"
+            >
+              <mat-label>Cantidad mínima</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="minAmount"
+                min="0"
+                step="0.01"
+                placeholder="Ej: 100.00"
+              />
+              <mat-icon matSuffix>trending_up</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field
+              appearance="outline"
+              class="filter-field"
+              data-field="maxAmount"
+              floatLabel="always"
+            >
+              <mat-label>Cantidad máxima</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="maxAmount"
+                min="0"
+                step="0.01"
+                placeholder="Ej: 10000.00"
+              />
+              <mat-icon matSuffix>trending_down</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="filters-actions-integrated">
+            <button
+              mat-raised-button
+              class="apply-filters-btn"
+              (click)="applyFilters()"
+              [disabled]="loading"
+            >
+              <mat-icon>search</mat-icon>
+              Aplicar Filtros
+            </button>
+            <button
+              mat-button
+              class="clear-filters-btn"
+              (click)="clearFilters()"
+              [disabled]="loading"
+            >
+              <mat-icon>clear</mat-icon>
+              Limpiar Filtros
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>Cargando historial de conversiones...</p>
+    </div>
+
+    <!-- Sin datos -->
+    <mat-card
+      *ngIf="!loading && conversions.length === 0"
+      class="empty-state"
+    >
+      <mat-card-content>
+        <div class="empty-content">
+          <mat-icon class="empty-icon">history</mat-icon>
+          <h2>No hay conversiones registradas</h2>
+          <p>
+            Aún no has realizado ninguna conversión de divisas.<br />
+            ¡Empieza a convertir para ver tu historial aquí!
+          </p>
+          <button mat-raised-button color="primary" routerLink="/dashboard">
+            <mat-icon>currency_exchange</mat-icon>
+            Ir al Conversor
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabla de historial -->
+    <mat-card
+      *ngIf="!loading && conversions.length > 0"
+      class="history-table-card"
+    >
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>list_alt</mat-icon>
+          Resultados del Historial ({{ pagination.total }} total)
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="conversions" class="history-table">
+            <!-- Fecha -->
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-icon>schedule</mat-icon> Fecha y Hora
+              </th>
+              <td mat-cell *matCellDef="let conversion">
+                <div class="date-cell">
+                  <span class="date">{{
+                    formatDate(conversion.createdAt)
+                  }}</span>
+                  <span class="time">{{
+                    formatTime(conversion.createdAt)
+                  }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Conversión -->
+            <ng-container matColumnDef="conversion">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-icon>swap_horiz</mat-icon> Conversión Realizada
+              </th>
+              <td mat-cell *matCellDef="let conversion">
+                <div class="conversion-cell">
+                  <span class="conversion-text">
+                    {{ conversion.amount | number : '1.2-2' }}
+                    {{ conversion.from }}
+                    <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                    {{ conversion.result | number : '1.2-2' }}
+                    {{ conversion.to }}
+                  </span>
+                  <span class="rate">
+                    Tasa aplicada: {{ conversion.rate | number : '1.4-4' }}
+                  </span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Acciones -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-icon>settings</mat-icon> Acciones
+              </th>
+              <td mat-cell *matCellDef="let conversion">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="repeatConversion(conversion)"
+                  matTooltip="Repetir esta conversión"
+                  matTooltipPosition="above"
+                >
+                  <mat-icon>refresh</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteConversion(conversion._id)"
+                  [disabled]="loading"
+                  matTooltip="Eliminar conversión"
+                  matTooltipPosition="above"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+            ></tr>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <mat-paginator
+          [length]="pagination.total"
+          [pageSize]="pagination.limit"
+          [pageIndex]="pagination.page - 1"
+          [pageSizeOptions]="[5, 10, 20, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
