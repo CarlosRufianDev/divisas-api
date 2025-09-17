@@ -95,6 +95,91 @@ $spacing-xl: 2rem;
 }
 
 // ===============================
+// 📊 ESTADOS DE CARGA Y VACÍO
+// ===============================
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 2rem 0;
+
+  mat-spinner {
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 20px !important;
+  margin: 2rem 0;
+
+  .empty-content {
+    text-align: center;
+    padding: 2rem;
+    color: white;
+
+    .empty-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      color: $warning-yellow;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+    }
+
+    h2 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 1rem 0;
+      color: white;
+    }
+
+    p {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin: 1.5rem 0;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, $primary-blue, $primary-purple) !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 0.8rem 1.5rem !important;
+      font-weight: 600 !important;
+      font-family: 'Inter', sans-serif !important;
+      transition: all 0.3s ease !important;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+      }
+
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+// ===============================
 // 🏠 CONTENEDOR PRINCIPAL
 // ===============================
 .historial-container {
@@ -479,92 +564,6 @@ $spacing-xl: 2rem;
 }
 
 // ===============================
-// 📊 ESTADOS DE CARGA Y VACÍO
-// ===============================
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 2rem 0;
-
-  mat-spinner {
-    margin-bottom: 1rem;
-  }
-
-  p {
-    color: rgba(255, 255, 255, 0.8);
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
-    margin: 0;
-  }
-}
-
-.empty-state {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 20px !important;
-  margin: 2rem 0;
-
-  .empty-content {
-    text-align: center;
-    padding: 2rem;
-    color: white;
-
-    .empty-icon {
-      font-size: 4rem;
-      width: 4rem;
-      height: 4rem;
-      color: $warning-yellow;
-      margin-bottom: 1rem;
-      filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
-    }
-
-    h2 {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1.8rem;
-      margin: 1rem 0;
-      color: white;
-    }
-
-    p {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.6;
-      margin: 1.5rem 0;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      background: linear-gradient(135deg, $primary-blue, $primary-purple) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 12px !important;
-      padding: 0.8rem 1.5rem !important;
-      font-weight: 600 !important;
-      font-family: 'Inter', sans-serif !important;
-      transition: all 0.3s ease !important;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
-      }
-
-      mat-icon {
-        margin-right: 0.5rem;
-      }
-    }
-  }
-}
-
-
-// ===============================
 // 📊 TARJETA DE TABLA DE HISTORIAL
 // ===============================
 .history-table-card {
@@ -698,6 +697,8 @@ $spacing-xl: 2rem;
       .arrow-icon {
         color: $warning-yellow;
         font-size: 1.2rem;
+        transform: translateY(3.5px);
+        margin-left: 5px;
       }
     }
 
@@ -713,6 +714,9 @@ $spacing-xl: 2rem;
     margin: 0 0.2rem !important;
     border-radius: 8px !important;
     transition: all 0.3s ease !important;
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.9rem !important;
+    margin-left: 40px !important;
 
     &[color="primary"] {
       background: rgba(59, 130, 246, 0.2) !important;
@@ -770,12 +774,13 @@ $spacing-xl: 2rem;
         
         .mat-mdc-select-arrow {
           color: $warning-yellow !important;
+          fill: $warning-yellow !important;
         }
       }
 
       // Botones de navegación
       .mat-mdc-icon-button {
-        color: rgba(255, 255, 255, 0.8) !important;
+        color: $warning-yellow !important;
         background: rgba(255, 255, 255, 0.1) !important;
         border-radius: 8px !important;
         transition: all 0.3s ease !important;
@@ -783,17 +788,35 @@ $spacing-xl: 2rem;
 
         &:hover:not([disabled]) {
           background: rgba(255, 255, 255, 0.2) !important;
-          color: white !important;
+          color: $warning-yellow !important;
           transform: translateY(-1px);
         }
 
         &[disabled] {
           opacity: 0.4 !important;
           background: rgba(255, 255, 255, 0.05) !important;
+          
+          .mat-icon {
+            color: rgba(251, 191, 36, 0.4) !important;
+          }
         }
 
-        .mat-icon {
-          color: inherit !important;
+        &:not([disabled]) {
+          .mat-icon {
+            color: $warning-yellow !important;
+          }
+        }
+
+        // Forzar color del icono con máxima especificidad
+        .mat-icon,
+        mat-icon {
+          color: $warning-yellow !important;
+        }
+
+        // Para los iconos SVG específicos
+        svg {
+          fill: $warning-yellow !important;
+          color: $warning-yellow !important;
         }
       }
 
@@ -801,6 +824,40 @@ $spacing-xl: 2rem;
       .mat-mdc-paginator-page-size-label {
         color: rgba(255, 255, 255, 0.8) !important;
         font-family: 'Inter', sans-serif !important;
+      }
+    }
+  }
+}
+
+// ===============================
+// 🚨 FORZAR ICONOS AMARILLOS EN PAGINADOR (ESPECIFICIDAD MÁXIMA)
+// ===============================
+::ng-deep {
+  .historial-container {
+    .mat-mdc-paginator {
+      .mat-mdc-icon-button {
+        .mat-icon,
+        mat-icon {
+          color: #fbbf24 !important;
+        }
+        
+        svg,
+        svg path {
+          fill: #fbbf24 !important;
+          color: #fbbf24 !important;
+        }
+        
+        &[disabled] {
+          .mat-icon,
+          mat-icon {
+            color: rgba(251, 191, 36, 0.4) !important;
+          }
+          
+          svg,
+          svg path {
+            fill: rgba(251, 191, 36, 0.4) !important;
+          }
+        }
       }
     }
   }
