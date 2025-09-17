@@ -1252,6 +1252,33 @@ export class Favoritos implements OnInit, OnDestroy {
     );
   }
 
+  // ✅ NUEVO: Método para navegar a alertas con pares preseleccionados
+  navigateToAlerts(fromCurrency?: string, toCurrency?: string): void {
+    if (fromCurrency && toCurrency) {
+      // Navegar con query parameters para preseleccionar el par
+      this.router.navigate(['/alertas'], {
+        queryParams: {
+          from: fromCurrency,
+          to: toCurrency,
+        },
+      });
+    } else {
+      // Navegar sin parámetros
+      this.router.navigate(['/alertas']);
+    }
+
+    this.snackBar.open(
+      `🔔 Navegando a alertas${
+        fromCurrency && toCurrency ? ` para ${fromCurrency}/${toCurrency}` : ''
+      }`,
+      'Cerrar',
+      {
+        duration: 2000,
+        panelClass: ['info-snackbar'],
+      }
+    );
+  }
+
   getBestPerformer(): PerformanceItem | null {
     const allPerformers: PerformanceItem[] = [
       // Pares favoritos

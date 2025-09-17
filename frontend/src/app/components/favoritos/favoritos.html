@@ -46,8 +46,8 @@
       </div>
     </div>
 
-  <!-- SECCIÓN 1: FAVORITOS ACTIVOS -->
-  <mat-card class="section-card">
+  <!-- SECCIÓN 1: FAVORITOS ACTIVOS MEJORADA -->
+  <mat-card class="section-card favorites-section-card">
     <mat-card-header>
       <mat-card-title>
         <mat-icon>star</mat-icon>
@@ -57,6 +57,7 @@
         mat-raised-button
         color="primary"
         (click)="openAddFavoriteDialog()"
+        class="header-action-btn"
       >
         <mat-icon>add</mat-icon>
         Añadir Par
@@ -94,71 +95,88 @@
         </button>
       </div>
 
-      <!-- Grid de favoritos -->
-      <div *ngIf="favoritePairs.length > 0" class="favoritos-grid">
+      <!-- Grid de favoritos mejorado -->
+      <div *ngIf="favoritePairs.length > 0" class="favorites-grid-enhanced">
         <div
           *ngFor="let favorite of favoritePairs; trackBy: trackByFavorite"
-          class="favorito-item"
+          class="favorite-card-enhanced"
           [class.trending-up]="(favorite.change || 0) > 0"
           [class.trending-down]="(favorite.change || 0) < 0"
           [class.trending-neutral]="(favorite.change || 0) === 0"
         >
-          <div class="par-info">
-            <div class="par-header">
-              <span class="par-name">{{ favorite.pair }}</span>
-              <span class="par-nickname" *ngIf="favorite.nickname">{{
-                favorite.nickname
-              }}</span>
+          <!-- Header del par -->
+          <div class="favorite-header">
+            <div class="pair-info">
+              <span class="pair-code">
+                {{ favorite.pair }}
+              </span>
+              <span class="pair-nickname" *ngIf="favorite.nickname">
+                {{ favorite.nickname }}
+              </span>
             </div>
-            <span class="par-rate">{{
-              favorite.currentRate | number : '1.4-4'
-            }}</span>
+            <div class="trend-indicator">
+              <mat-icon *ngIf="(favorite.change || 0) > 0" class="trend-up">trending_up</mat-icon>
+              <mat-icon *ngIf="(favorite.change || 0) < 0" class="trend-down">trending_down</mat-icon>
+              <mat-icon *ngIf="(favorite.change || 0) === 0" class="trend-neutral">trending_flat</mat-icon>
+            </div>
           </div>
 
-          <div
-            class="par-change"
-            [class.positive]="(favorite.change || 0) > 0"
-            [class.negative]="(favorite.change || 0) < 0"
-            [class.neutral]="(favorite.change || 0) === 0"
-          >
-            <mat-icon *ngIf="(favorite.change || 0) > 0"
-              >trending_up</mat-icon
-            >
-            <mat-icon *ngIf="(favorite.change || 0) < 0"
-              >trending_down</mat-icon
-            >
-            <mat-icon *ngIf="(favorite.change || 0) === 0"
-              >trending_flat</mat-icon
-            >
-            <span>{{
-              favorite.changeText ||
-                formatPercentageChange(favorite.change || 0)
-            }}</span>
+          <!-- Información principal -->
+          <div class="favorite-main-info">
+            <div class="current-rate">
+              <span class="rate-value">{{ favorite.currentRate | number : '1.4-4' }}</span>
+              <span class="rate-label">Tasa actual</span>
+            </div>
+            <div class="change-display">
+              <span 
+                class="change-value"
+                [class.positive]="(favorite.change || 0) > 0"
+                [class.negative]="(favorite.change || 0) < 0"
+                [class.neutral]="(favorite.change || 0) === 0"
+              >
+                {{ favorite.changeText || formatPercentageChange(favorite.change || 0) }}
+              </span>
+              <span class="change-label">Cambio 24h</span>
+            </div>
           </div>
 
-          <div class="par-actions">
+          <!-- Acciones -->
+          <div class="favorite-actions">
             <button
-              mat-icon-button
+              mat-button
+              class="action-btn edit-btn"
               (click)="editFavorite(favorite)"
               matTooltip="Editar nickname"
             >
               <mat-icon>edit</mat-icon>
+              <span class="btn-text">Editar</span>
             </button>
             <button
-              mat-icon-button
-              (click)="deleteFavorite(favorite)"
-              matTooltip="Eliminar favorito"
-              color="warn"
+              mat-button
+              class="action-btn alert-btn"
+              (click)="navigateToAlerts(favorite.from, favorite.to)"
+              matTooltip="Crear alerta"
             >
-              <mat-icon>delete</mat-icon>
+              <mat-icon>notifications</mat-icon>
+              <span class="btn-text">Alerta</span>
             </button>
             <button
-              mat-icon-button
+              mat-button
+              class="action-btn convert-btn"
               (click)="useInQuickConversion(favorite)"
               matTooltip="Usar en conversión rápida"
-              color="primary"
             >
               <mat-icon>swap_horiz</mat-icon>
+              <span class="btn-text">Convertir</span>
+            </button>
+            <button
+              mat-button
+              class="action-btn remove-btn"
+              (click)="deleteFavorite(favorite)"
+              matTooltip="Eliminar favorito"
+            >
+              <mat-icon>delete</mat-icon>
+              <span class="btn-text">Eliminar</span>
             </button>
           </div>
         </div>
@@ -166,16 +184,16 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- SECCIÓN 1.5: DIVISAS FAVORITAS INDIVIDUALES -->
-  <mat-card class="section-card">
+  <!-- ⭐ SECCIÓN DIVISAS FAVORITAS (ESTILO HISTORIAL) -->
+  <mat-card class="favorites-section-card currencies-section-enhanced">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>monetization_on</mat-icon>
+        <mat-icon>star</mat-icon>
         Divisas Favoritas ({{ favoriteCurrencies.length }})
       </mat-card-title>
       <button
         mat-raised-button
-        color="accent"
+        class="header-action-btn"
         (click)="openAddCurrencyDialog()"
       >
         <mat-icon>add</mat-icon>
@@ -196,16 +214,14 @@
       <!-- Sin divisas favoritas -->
       <div
         *ngIf="!loading && favoriteCurrencies.length === 0"
-        class="empty-favorites"
+        class="no-data-message"
       >
-        <mat-icon class="empty-icon">monetization_on</mat-icon>
+        <mat-icon class="no-data-icon">star_border</mat-icon>
         <h3>No tienes divisas favoritas</h3>
-        <p>
-          Añade divisas individuales para monitorear sus tipos de cambio
-        </p>
+        <p>Añade divisas individuales para monitorear sus tipos de cambio</p>
         <button
           mat-raised-button
-          color="accent"
+          class="action-btn primary"
           (click)="openAddCurrencyDialog()"
         >
           <mat-icon>add</mat-icon>
@@ -213,97 +229,105 @@
         </button>
       </div>
 
-      <!-- Grid de divisas favoritas -->
-      <div *ngIf="favoriteCurrencies.length > 0" class="currencies-grid">
+      <!-- Grid de divisas favoritas mejorado -->
+      <div 
+        *ngIf="favoriteCurrencies.length > 0" 
+        class="currencies-grid-enhanced"
+      >
         <div
-          *ngFor="
-            let currency of favoriteCurrencies;
-            trackBy: trackByFavoriteCurrency
-          "
-          class="currency-item"
-          [class.trending-up]="(currency.change || 0) > 0"
-          [class.trending-down]="(currency.change || 0) < 0"
-          [class.trending-neutral]="(currency.change || 0) === 0"
+          *ngFor="let currency of favoriteCurrencies; trackBy: trackByFavoriteCurrency"
+          class="currency-card-enhanced"
+          [ngClass]="{
+            'trending-up': (currency.change || 0) > 0,
+            'trending-down': (currency.change || 0) < 0,
+            'trending-neutral': (currency.change || 0) === 0
+          }"
         >
-          <div class="currency-info">
-            <div class="currency-header">
-              <span class="currency-code">{{ currency.currency }}</span>
-              <span class="currency-nickname" *ngIf="currency.nickname">{{
-                currency.nickname
-              }}</span>
-              <mat-chip
-                *ngIf="currency.isDefault"
-                class="default-chip"
-                color="primary"
-              >
-                Por defecto
-              </mat-chip>
+          <!-- Header de la divisa -->
+          <div class="currency-header">
+            <div class="currency-info">
+              <div class="currency-code">{{ currency.currency }}</div>
+              <div class="currency-nickname" *ngIf="currency.nickname">{{ currency.nickname }}</div>
+              <mat-chip *ngIf="currency.isDefault" class="default-chip">Por defecto</mat-chip>
             </div>
-            <span class="currency-rate">
-              1 {{ baseCurrency }} =
-              {{ getCurrentRateForCurrency(currency) | number : '1.4-4' }}
-              {{ currency.currency }}
-            </span>
+            <div class="trend-indicator">
+              <mat-icon 
+                *ngIf="(currency.change || 0) > 0"
+                class="trend-up"
+              >trending_up</mat-icon>
+              <mat-icon 
+                *ngIf="(currency.change || 0) < 0"
+                class="trend-down"
+              >trending_down</mat-icon>
+              <mat-icon 
+                *ngIf="(currency.change || 0) === 0"
+                class="trend-neutral"
+              >trending_flat</mat-icon>
+            </div>
           </div>
 
-          <div
-            class="currency-change"
-            [class.positive]="(currency.change || 0) > 0"
-            [class.negative]="(currency.change || 0) < 0"
-            [class.neutral]="(currency.change || 0) === 0"
-          >
-            <mat-icon *ngIf="(currency.change || 0) > 0"
-              >trending_up</mat-icon
-            >
-            <mat-icon *ngIf="(currency.change || 0) < 0"
-              >trending_down</mat-icon
-            >
-            <mat-icon *ngIf="(currency.change || 0) === 0"
-              >trending_flat</mat-icon
-            >
-            <span>{{
-              currency.changeText ||
-                formatPercentageChange(currency.change || 0)
-            }}</span>
+          <!-- Información principal -->
+          <div class="currency-main-info">
+            <div class="exchange-rate">
+              <div class="rate-value">{{ getCurrentRateForCurrency(currency) | number:'1.4-4' }}</div>
+              <div class="rate-label">1 {{ baseCurrency }} = {{ currency.currency }}</div>
+            </div>
+            <div class="change-display">
+              <div
+                class="change-value"
+                [ngClass]="{
+                  'positive': (currency.change || 0) > 0,
+                  'negative': (currency.change || 0) < 0,
+                  'neutral': (currency.change || 0) === 0
+                }"
+              >
+                {{ currency.changeText || formatPercentageChange(currency.change || 0) }}
+              </div>
+              <div class="change-label">Variación 24h</div>
+            </div>
           </div>
 
+          <!-- Acciones -->
           <div class="currency-actions">
             <button
-              mat-icon-button
+              mat-button
+              class="action-btn edit-btn"
               (click)="editFavoriteCurrency(currency)"
               matTooltip="Editar nickname"
             >
               <mat-icon>edit</mat-icon>
+              <span class="btn-text">Editar</span>
             </button>
+            
             <button
-              mat-icon-button
+              mat-button
+              class="action-btn favorite-btn"
+              [ngClass]="{ 'is-default': currency.isDefault }"
               (click)="toggleDefaultCurrency(currency)"
-              [matTooltip]="
-                currency.isDefault
-                  ? 'Quitar como predeterminada'
-                  : 'Marcar como predeterminada'
-              "
-              color="primary"
+              [matTooltip]="currency.isDefault ? 'Quitar como predeterminada' : 'Marcar como predeterminada'"
             >
-              <mat-icon>{{
-                currency.isDefault ? 'star' : 'star_border'
-              }}</mat-icon>
+              <mat-icon>{{ currency.isDefault ? 'star' : 'star_border' }}</mat-icon>
+              <span class="btn-text">{{ currency.isDefault ? 'Default' : 'Marcar' }}</span>
             </button>
+            
             <button
-              mat-icon-button
-              (click)="deleteFavoriteCurrency(currency)"
-              matTooltip="Eliminar divisa favorita"
-              color="warn"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-            <button
-              mat-icon-button
+              mat-button
+              class="action-btn convert-btn"
               (click)="useInQuickConversionCurrency(currency)"
               matTooltip="Usar en conversión rápida"
-              color="primary"
             >
               <mat-icon>swap_horiz</mat-icon>
+              <span class="btn-text">Convertir</span>
+            </button>
+            
+            <button
+              mat-button
+              class="action-btn remove-btn"
+              (click)="deleteFavoriteCurrency(currency)"
+              matTooltip="Eliminar divisa favorita"
+            >
+              <mat-icon>delete</mat-icon>
+              <span class="btn-text">Eliminar</span>
             </button>
           </div>
         </div>

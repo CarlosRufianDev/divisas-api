@@ -944,14 +944,74 @@ $spacing-xl: 2rem;
 }
 
 // ===============================
-// ⭐ GRID DE FAVORITOS Y COMPONENTES ESPECÍFICOS
+// ⭐ SECCIÓN FAVORITOS MEJORADA (ESTILO HISTORIAL)
 // ===============================
-.favoritos-grid,
-.currencies-grid {
+.favorites-section-card {
+  background: $gradient-card !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  overflow: hidden !important;
+  margin-bottom: 2rem !important;
+  animation: cardFloat 6s ease-in-out infinite;
+
+  .mat-mdc-card-header {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(59, 130, 246, 0.1)) !important;
+    color: white !important;
+    padding: 1.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+    .mat-mdc-card-title {
+      color: white !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 1.4rem !important;
+      margin: 0 !important;
+
+      mat-icon {
+        color: $warning-yellow !important;
+        margin-right: 0.8rem !important;
+        font-size: 1.6rem !important;
+        animation: gemPulse 3s ease-in-out infinite;
+      }
+    }
+
+    .header-action-btn {
+      background: linear-gradient(135deg, $info-blue, #2563eb) !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 12px !important;
+      font-weight: 600 !important;
+      transition: all 0.3s ease !important;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+
+      &:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+      }
+
+      mat-icon {
+        color: white !important;
+        margin-right: 0.5rem !important;
+      }
+    }
+  }
+
+  .mat-mdc-card-content {
+    padding: 1.5rem !important;
+    background: transparent !important;
+  }
+}
+
+.favorites-grid-enhanced {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 1.5rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -959,13 +1019,13 @@ $spacing-xl: 2rem;
   }
 }
 
-.favorito-item,
-.currency-item {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+.favorite-card-enhanced {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 0;
+  overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeIn 0.6s ease-out;
 
@@ -975,20 +1035,203 @@ $spacing-xl: 2rem;
     border-color: rgba(255, 255, 255, 0.3);
   }
 
-  // Estados de tendencia
+  // Estados de tendencia con bordes izquierdos como historial
   &.trending-up {
     border-left: 4px solid #10b981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
   }
 
   &.trending-down {
     border-left: 4px solid #ef4444;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
   }
 
   &.trending-neutral {
     border-left: 4px solid #6b7280;
-    background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+  }
+
+  .favorite-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .pair-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .pair-code {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        letter-spacing: 0.5px;
+      }
+
+      .pair-nickname {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+      }
+    }
+
+    .trend-indicator {
+      mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+
+        &.trend-up {
+          color: #10b981;
+        }
+
+        &.trend-down {
+          color: #ef4444;
+        }
+
+        &.trend-neutral {
+          color: #6b7280;
+        }
+      }
+    }
+  }
+
+  .favorite-main-info {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    text-align: center;
+
+    .current-rate {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .rate-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: white;
+      }
+
+      .rate-label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .change-display {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .change-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 1.2rem;
+
+        &.positive {
+          color: #10b981;
+        }
+
+        &.negative {
+          color: #ef4444;
+        }
+
+        &.neutral {
+          color: #6b7280;
+        }
+      }
+
+      .change-label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .favorite-actions {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+    }
+
+    .action-btn {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 0.3rem !important;
+      padding: 0.6rem 0.4rem !important;
+      border-radius: 8px !important;
+      font-size: 0.75rem !important;
+      font-weight: 600 !important;
+      transition: all 0.3s ease !important;
+      min-height: 60px !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+      .btn-text {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.7rem !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+
+        @media (max-width: 480px) {
+          font-size: 0.65rem !important;
+        }
+      }
+
+      mat-icon {
+        font-size: 1.1rem !important;
+        width: 1.1rem !important;
+        height: 1.1rem !important;
+        margin: 0 !important;
+      }
+
+      // 🎨 DISEÑO UNIFORME Y ELEGANTE - BOTONES SUTILES
+      &.edit-btn,
+      &.alert-btn,
+      &.convert-btn,
+      &.remove-btn {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.15) !important;
+          color: white !important;
+          border-color: rgba(255, 255, 255, 0.25) !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+        }
+      }
+
+      // Solo el botón de eliminar mantiene un sutil toque rojo en hover
+      &.remove-btn:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+        color: #ff6b6b !important;
+        border-color: rgba(239, 68, 68, 0.2) !important;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15) !important;
+      }
+    }
   }
 }
 
@@ -1406,4 +1649,270 @@ $spacing-xl: 2rem;
   overflow: hidden !important;
   margin-bottom: 2rem !important;
   animation: cardFloat 6s ease-in-out infinite;
+}
+
+// ===============================
+// ⭐ SECCIÓN DIVISAS FAVORITAS MEJORADA (ESTILO HISTORIAL)
+// ===============================
+.currencies-section-enhanced {
+  .mat-mdc-card-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.1)) !important;
+  }
+}
+
+.currencies-grid-enhanced {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.currency-card-enhanced {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.6s ease-out;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  // Estados de tendencia con bordes izquierdos
+  &.trending-up {
+    border-left: 4px solid #10b981;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+  }
+
+  &.trending-down {
+    border-left: 4px solid #ef4444;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+  }
+
+  &.trending-neutral {
+    border-left: 4px solid #6b7280;
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+  }
+
+  .currency-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .currency-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .currency-code {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        letter-spacing: 0.5px;
+      }
+
+      .currency-nickname {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+      }
+
+      ::ng-deep .default-chip {
+        align-self: flex-start !important;
+        background: linear-gradient(135deg, $warning-yellow, #f59e0b) !important;
+        color: white !important;
+        font-size: 0.7rem !important;
+        height: 20px !important;
+        font-weight: 600 !important;
+        margin-top: 0.2rem !important;
+      }
+    }
+
+    .trend-indicator {
+      mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+
+        &.trend-up {
+          color: #10b981;
+        }
+
+        &.trend-down {
+          color: #ef4444;
+        }
+
+        &.trend-neutral {
+          color: #6b7280;
+        }
+      }
+    }
+  }
+
+  .currency-main-info {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    text-align: center;
+
+    .exchange-rate {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .rate-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: white;
+      }
+
+      .rate-label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .change-display {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      .change-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 1.2rem;
+
+        &.positive {
+          color: #10b981;
+        }
+
+        &.negative {
+          color: #ef4444;
+        }
+
+        &.neutral {
+          color: #6b7280;
+        }
+      }
+
+      .change-label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .currency-actions {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+    }
+
+    .action-btn {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 0.3rem !important;
+      padding: 0.6rem 0.4rem !important;
+      border-radius: 8px !important;
+      font-size: 0.75rem !important;
+      font-weight: 600 !important;
+      transition: all 0.3s ease !important;
+      min-height: 60px !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+      .btn-text {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.7rem !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+
+        @media (max-width: 480px) {
+          font-size: 0.65rem !important;
+        }
+      }
+
+      mat-icon {
+        font-size: 1.1rem !important;
+        width: 1.1rem !important;
+        height: 1.1rem !important;
+        margin: 0 !important;
+      }
+
+      // 🎨 DISEÑO UNIFORME Y ELEGANTE - BOTONES SUTILES
+      &.edit-btn,
+      &.convert-btn,
+      &.remove-btn {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.15) !important;
+          color: white !important;
+          border-color: rgba(255, 255, 255, 0.25) !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+        }
+      }
+
+      &.favorite-btn {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+
+        &.is-default {
+          background: rgba(251, 191, 36, 0.15) !important;
+          color: $warning-yellow !important;
+          border-color: rgba(251, 191, 36, 0.25) !important;
+        }
+
+        &:hover {
+          background: rgba(251, 191, 36, 0.12) !important;
+          color: $warning-yellow !important;
+          border-color: rgba(251, 191, 36, 0.2) !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 16px rgba(251, 191, 36, 0.15) !important;
+        }
+      }
+
+      // Solo el botón de eliminar mantiene un sutil toque rojo en hover
+      &.remove-btn:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+        color: #ff6b6b !important;
+        border-color: rgba(239, 68, 68, 0.2) !important;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15) !important;
+      }
+    }
+  }
 }
