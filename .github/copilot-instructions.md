@@ -153,14 +153,18 @@ cd backend && npm run lint:fix  # Auto-fix issues
 - `alertJob.js`: Scheduled alerts (hourly) + critical alerts (every 15min)
 - `cleanupJob.js`: Auto-cleanup of old conversions (daily at 2 AM)
 
-**Email System**: Nodemailer with Gmail transport for alert notifications
+**Email System**: Nodemailer with flexible SMTP transport for alert notifications
 
 ```js
 const transporter = nodemailer.createTransporter({
-  service: 'gmail',
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT || 587),
+  secure: false,
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 ```
+
+Email can be disabled via `DISABLE_EMAIL=1` environment variable.
 
 ## 💡 Development Best Practices
 
@@ -286,6 +290,42 @@ $spacing-xl: 2rem; // 32px
 - **Frontend**: Karma/Jasmine with Angular Testing Library patterns
 - **Coverage**: Jest generates coverage reports in `backend/coverage/`
 
+**Test Environment Setup** (MongoDB Memory Server):
+
+```js
+// tests/setupMongo.js
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require('mongoose');
+
+let mongod;
+
+beforeAll(async () => {
+  mongod = await MongoMemoryServer.create();
+  const uri = mongod.getUri();
+  process.env.MONGODB_URI = uri;
+  await mongoose.connect(uri);
+});
+
+afterAll(async () => {
+  await mongoose.connection.dropDatabase();
+  await mongoose.connection.close();
+  if (mongod) await mongod.stop();
+});
+```
+
+**Test Command Pattern**:
+
+```cmd
+# Backend tests with coverage
+cd backend && npm test
+
+# Run specific test file
+cd backend && npx jest auth.spec.js
+
+# Frontend tests
+cd frontend && ng test
+```
+
 ### Environment Configuration
 
 **Required .env variables**:
@@ -293,8 +333,12 @@ $spacing-xl: 2rem; // 32px
 ```env
 MONGODB_URI=mongodb://localhost:27017/divisas-api
 JWT_SECRET=your_secure_secret
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+NODE_ENV=development
+DISABLE_EMAIL=0
 ```
 
 ## 🚨 Common Gotchas
@@ -318,9 +362,12 @@ EMAIL_PASS=your_app_password
 ```env
 MONGODB_URI=mongodb://localhost:27017/divisas-api
 JWT_SECRET=your_secure_secret_key_here
-EMAIL_USER=your_gmail_address@gmail.com
-EMAIL_PASS=your_gmail_app_password
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_gmail_address@gmail.com
+SMTP_PASS=your_gmail_app_password
 NODE_ENV=development
+DISABLE_EMAIL=0
 ```
 
 **Windows Development Setup**:

@@ -1,87 +1,107 @@
-# 💱 DivisasPro - API Profesional de Conversión de Divisas
+# 💱 DivisasPro - Plataforma Profesional de Conversión de Divisas
 
-> **🚧 PROYECTO EN DESARROLLO ACTIVO** - Aplicación full-stack para gestión profesional de divisas con funcionalidades avanzadas de trading, alertas automáticas y análisis en tiempo real.
+> **� PROYECTO EN PRODUCCIÓN** - Aplicación full-stack enterprise para gestión profesional de divisas con funcionalidades avanzadas de trading, alertas automáticas y análisis técnico en tiempo real.
 
-[![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Desarrollo-yellow.svg)](https://github.com/tuusuario/divisas-api)
-[![Versión](https://img.shields.io/badge/Versión-1.0.0--beta-blue.svg)](https://github.com/tuusuario/divisas-api)
-[![Licencia](https://img.shields.io/badge/Licencia-MIT-green.svg)](LICENSE)
+[![Estado del Proyecto](https://img.shields.io/badge/Estado-En%20Producci%C3%B3n-brightgreen.svg)](https://github.com/CarlosRufianDev/divisas-api)
+[![Versión](https://img.shields.io/badge/Versión-1.0.0-blue.svg)](https://github.com/CarlosRufianDev/divisas-api)
+[![Angular](https://img.shields.io/badge/Angular-20.1-red.svg)](https://angular.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-green.svg)](https://mongodb.com/)
 
 ---
 
 ## 📋 **Resumen del Proyecto**
 
-**DivisasPro** es una aplicación web profesional que permite gestionar conversiones de divisas con funcionalidades empresariales avanzadas. La plataforma está diseñada para traders, empresas y usuarios que necesitan herramientas robustas para el manejo de divisas internacionales.
+**DivisasPro** es una plataforma web profesional que permite gestionar conversiones de divisas con funcionalidades empresariales avanzadas. Diseñada para traders, empresas y usuarios que requieren herramientas robustas para el manejo de divisas internacionales con análisis técnico y alertas automatizadas.
 
 ### **🎯 Características Implementadas**
 
-- ✅ **Sistema de autenticación completo** (registro, login, roles)
-- ✅ **Conversor de divisas en tiempo real** (20 divisas globales)
-- ✅ **Gestión de favoritos** con actualización automática
-- ✅ **Sistema de alertas** (precio, porcentaje, programadas)
-- ✅ **Historial completo** con filtros avanzados
-- ✅ **Calculadora profesional** (conversiones múltiples)
-- ✅ **Dashboard administrativo** con estadísticas
-- ✅ **Auditoría completa** (logs de actividad)
-- ✅ **Sistema de notificaciones** por email
-- ✅ **API RESTful completa** con documentación
+- ✅ **Sistema de autenticación JWT** (registro, login, gestión de perfiles)
+- ✅ **Conversor dinámico ~40 divisas** (Frankfurter API + ExchangeRate API)
+- ✅ **Dashboard interactivo** con análisis técnico real
+- ✅ **Sistema dual de favoritos** (pares + divisas individuales)
+- ✅ **Alertas automatizadas** (programadas, porcentaje, precio objetivo)
+- ✅ **Historial avanzado** con filtros inteligentes
+- ✅ **Calculadora profesional** (conversiones múltiples, comparaciones)
+- ✅ **Análisis técnico completo** (RSI, SMA, volatilidad, recomendaciones IA)
+- ✅ **Auditoría completa** (logs de actividad detallados)
+- ✅ **Sistema de notificaciones** por email (SMTP configurable)
+- ✅ **Cron jobs automatizados** (alertas + limpieza datos)
 
 ---
 
 ## 🚀 **Características Principales**
 
-### 💱 **Conversor Avanzado**
+### 💱 **Conversor Dinámico Avanzado**
 
-- **20 divisas globales** soportadas (USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, MXN, BRL, KRW, INR, SEK, NOK, HKD, SGD, NZD, ZAR, TRY, PLN)
-- **Validaciones inteligentes** (previene conversiones EUR→EUR)
-- **Selects inteligentes** (no permite divisas duplicadas)
-- **Tipos de cambio en tiempo real** via Frankfurter API
-- **Tabla interactiva** con 19 pares de divisas actualizados
+- **~40 divisas globales** dinámicamente cargadas desde Frankfurter API + ExchangeRate API
+- **Frankfurter Base**: 31 divisas principales (USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, etc.)
+- **Divisas adicionales**: ARS, COP, CLP, PEN, UYU, RUB, EGP, VND, KWD via ExchangeRate API
+- **Modo limitado**: 8 divisas principales para usuarios no autenticados
+- **Validaciones inteligentes** (previene conversiones EUR→EUR, manejo de pares duplicados)
+- **Tipos de cambio en tiempo real** con actualización automática
+- **Market ticker** con tendencias visuales (↑↓ con colores dinámicos)
 
-### 📊 **Historial Profesional**
+### 📊 **Dashboard Profesional con Análisis Técnico**
 
-- **Filtros avanzados** por divisa origen/destino y rangos de cantidad
-- **Filtros inteligentes** que previenen combinaciones inválidas
-- **Paginación configurable** (5, 10, 20, 50 registros)
-- **Gestión completa** (eliminar individual/masivo, repetir conversiones)
-- **Búsqueda en tiempo real** con 11+ resultados totales
+- **4 secciones principales**: Conversor, Estadísticas, Favoritos, Rates Grid
+- **Análisis técnico real**: RSI, SMA, volatilidad calculada
+- **Recomendaciones IA**: Comprar/Vender/Mantener con nivel de confianza
+- **Filtrado inteligente** de divisas para usuarios registrados
+- **Glassmorphism UI** con efectos visuales avanzados
+- **Responsive design** móvil-first con Angular Material 20
 
-### ⭐ **Sistema de Favoritos**
+### 📈 **Sistema Dual de Favoritos**
 
-- **Gestión de pares favoritos** con dialog avanzado
-- **Conversión rápida** entre pares favoritos
-- **Auto-actualización** cada 30 segundos
-- **Indicadores visuales** de cambios (↑↓ con colores)
-- **Analytics integrados** (mejores/peores performers)
+- **Pares favoritos**: Gestión EUR/USD, GBP/USD con nicknames personalizados
+- **Divisas favoritas**: Seguimiento individual USD, EUR con prioridades
+- **Auto-actualización** cada 30 segundos con indicadores visuales
+- **Analytics integrados**: Top performers, trending pairs
+- **Conversión rápida** desde favoritos con un click
 
-### 🔔 **Alertas Automáticas**
+### 🔔 **Alertas Automatizadas Avanzadas**
 
-- **Alertas programadas** (diarias, semanales)
-- **Alertas por porcentaje** de cambio
-- **Alertas por precio objetivo**
-- **Notificaciones por email** automáticas
-- **Cron jobs** para ejecución puntual
+- **Alertas programadas**: Cada X días a hora específica
+- **Alertas por porcentaje**: ±X% cambio desde baseline
+- **Alertas por precio objetivo**: Mayor/menor que valor target
+- **Notificaciones email**: SMTP configurable (Gmail, Outlook, custom)
+- **Cron jobs**: Hourly scheduled + 15-min critical alerts
+- **Test de alertas**: Envío inmediato para verificar configuración
 
-### 🔐 **Seguridad Empresarial**
+### 📊 **Historial Inteligente**
 
-- **Autenticación JWT** con roles (user/admin)
-- **Guards avanzados** para rutas protegidas
-- **Interceptors automáticos** para tokens
-- **Manejo inteligente** de tokens expirados
-- **Logout automático** en errores 401
+- **Filtros avanzados**: Por divisa origen/destino, rangos de cantidad
+- **Filtros inteligentes**: Previenen combinaciones inválidas
+- **Paginación dinámica**: 5, 10, 20, 50 registros por página
+- **Gestión completa**: Eliminar individual/masivo, repetir conversiones
+- **Búsqueda en tiempo real** con resultados instantáneos
 
-### 📈 **Calculadora Profesional**
+### 🧮 **Calculadora Profesional Premium**
 
-- **Conversión múltiple** (1 divisa → varias)
-- **Conversión inversa** automática
-- **Comparación de pares** en tiempo real
-- **Tipos de cambio históricos** por fecha
+- **Conversión múltiple**: 1 divisa → múltiples destinos simultáneamente
+- **Conversión inversa**: Automática con cálculos bidireccionales
+- **Comparación de pares**: Side-by-side rate comparison
+- **Análisis histórico**: Tendencias de X días con gráficos
+- **Solo usuarios registrados**: Feature premium con validación
 
-### 📋 **Auditoría Completa**
+### � **Seguridad Enterprise**
 
-- **Logging automático** de todas las acciones
-- **Categorización de actividades** (auth, conversiones, alertas, favoritos)
-- **Estadísticas de uso** con filtros por periodo
-- **Metadata técnica** completa (IP, User-Agent, endpoints)
+- **JWT Authentication**: Tokens de 2 horas con auto-refresh
+- **Functional Guards**: Angular 20 CanActivateFn
+- **Interceptors automáticos**: Token injection + error handling
+- **Auto-logout**: En tokens expirados (401) y acceso denegado (403)
+- **Activity logging**: Tracking completo de acciones del usuario
+- **Rate limiting**: 5 intentos login/15 minutos por IP
+
+### 📋 **Sistema de Auditoría Completa**
+
+- **Activity Logs**: 20+ tipos de acciones tracked
+- **Filtros temporales**: Por días, acciones específicas
+- **Estadísticas de uso**: Dashboards de actividad del usuario
+- **Performance tracking**: Top pairs, volume de conversiones
+- **Error logging**: Captura de errores con contexto detallado
+
+---
 
 ---
 
@@ -90,64 +110,87 @@
 ### **Frontend (Angular 20)**
 
 ```typescript
-📱 Standalone Components Architecture
-🎨 Angular Material Design System
-⚡ RxJS para programación reactiva
-🔒 Guards y interceptors funcionales
-📊 Actualizaciones en tiempo real
-🎯 TypeScript con tipado estricto
+📱 Standalone Components Architecture (Angular 20)
+🎨 Angular Material 20.1 Design System
+⚡ RxJS 7.8 para programación reactiva
+🔒 Functional Guards y Interceptors (CanActivateFn)
+📊 Dashboard con análisis técnico en tiempo real
+🎯 TypeScript 5.8 con tipado estricto
+🎨 Glassmorphism UI con efectos visuales avanzados
 ```
 
 ### **Backend (Node.js + Express)**
 
 ```javascript
-🚀 API RESTful con Express.js
-🔐 Autenticación JWT con roles
-📊 MongoDB + Mongoose ODM
-📧 Sistema de emails (Nodemailer)
-⏰ Cron jobs para tareas automáticas
-🛡️ Validación y sanitización de datos
+🚀 API RESTful con Express.js 4.19
+🔐 JWT Authentication con tokens 2h (jsonwebtoken 9.0)
+📊 MongoDB 7.6 + Mongoose ODM
+📧 Sistema SMTP configurable (Nodemailer 7.0)
+⏰ Cron jobs automatizados (node-cron 3.0)
+🛡️ Validación y sanitización (express-validator 7.2)
+📈 Rate limiting 5 intentos/15min
 ```
 
 ### **Base de Datos (MongoDB)**
 
 ```javascript
-👤 Users - Sistema de usuarios y roles
-💱 Conversions - Historial completo de conversiones
-⭐ Favorites - Pares de divisas favoritos
-🔔 Alerts - Alertas automatizadas
-📋 ActivityLogs - Auditoría completa
-🎯 FavoriteCurrencies - Divisas preferidas
+👤 Users - Sistema de usuarios y autenticación JWT
+💱 Conversions - Historial completo con filtros avanzados
+⭐ Favorites - Pares de divisas favoritos con nicknames
+🎯 FavoriteCurrencies - Divisas individuales preferidas
+🔔 Alerts - Sistema de alertas (programadas/porcentaje/objetivo)
+📋 ActivityLogs - Auditoría completa (20+ tipos de acciones)
+```
+
+### **APIs Externas**
+
+```javascript
+🏛️ Frankfurter API - 31 divisas base (EUR, USD, GBP, etc.)
+🚀 ExchangeRate API - 9 divisas adicionales (ARS, COP, CLP, etc.)
+📊 Análisis técnico - RSI, SMA, volatilidad calculada
+📈 Tendencias históricas - Hasta 30 días de datos
 ```
 
 ---
 
-## 💱 **Divisas Soportadas (20 Globales)**
+## 💱 **Divisas Soportadas (~40 Dinámicas)**
 
-### **Divisas Principales**
+El sistema carga **dinámicamente** las divisas disponibles desde múltiples fuentes:
+
+### **🏛️ Frankfurter API (Base: ~31 divisas)**
 
 ```
-🇺🇸 USD - Dólar Estadounidense    🇪🇺 EUR - Euro
+🇺🇸 USD - Dólar Estadounidense    🇪🇺 EUR - Euro Europeo
 🇬🇧 GBP - Libra Esterlina         🇯🇵 JPY - Yen Japonés
 🇨🇭 CHF - Franco Suizo            🇨🇦 CAD - Dólar Canadiense
 🇦🇺 AUD - Dólar Australiano       🇨🇳 CNY - Yuan Chino
 ```
 
-### **Mercados Emergentes**
+### **🌎 Mercados Emergentes (Frankfurter)**
 
 ```
 🇲🇽 MXN - Peso Mexicano           🇧🇷 BRL - Real Brasileño
 🇰🇷 KRW - Won Surcoreano          🇮🇳 INR - Rupia India
 🇿🇦 ZAR - Rand Sudafricano        🇹🇷 TRY - Lira Turca
-```
-
-### **Divisas Regionales**
-
-```
 🇸🇪 SEK - Corona Sueca            🇳🇴 NOK - Corona Noruega
 🇭🇰 HKD - Dólar de Hong Kong      🇸🇬 SGD - Dólar de Singapur
 🇳🇿 NZD - Dólar Neozelandés       🇵🇱 PLN - Zloty Polaco
 ```
+
+### **🚀 ExchangeRate API (Adicionales: 9 divisas)**
+
+```
+🇦🇷 ARS - Peso Argentino          🇨🇴 COP - Peso Colombiano
+🇨🇱 CLP - Peso Chileno            🇵🇪 PEN - Sol Peruano
+🇺🇾 UYU - Peso Uruguayo           🇷🇺 RUB - Rublo Ruso
+🇪🇬 EGP - Libra Egipcia           🇻🇳 VND - Dong Vietnamita
+🇰🇼 KWD - Dinar Kuwaití
+```
+
+### **⚡ Modo de Acceso**
+
+- **👤 Usuarios no autenticados**: Solo 8 divisas principales (USD, EUR, JPY, GBP, CHF, CAD, AUD, CNY)
+- **🔐 Usuarios autenticados**: ~40 divisas completas con todas las funcionalidades
 
 ---
 
@@ -195,97 +238,165 @@ ng serve
 ### **4. Variables de Entorno Requeridas**
 
 ```env
+# Base de datos
 MONGODB_URI=mongodb://localhost:27017/divisas-api
-JWT_SECRET=tu_clave_secreta_muy_segura
-EMAIL_USER=tu_email@gmail.com
-EMAIL_PASS=tu_contraseña_de_aplicacion
-API_URL=https://api.frankfurter.app/latest
+
+# Autenticación
+JWT_SECRET=tu_secreto_super_seguro_aqui
+
+# Email SMTP (configurable para Gmail, Outlook, etc.)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu_email@gmail.com
+SMTP_PASS=tu_password_app_gmail
+
+# Configuración opcional
+NODE_ENV=development
+DISABLE_EMAIL=0
 ```
 
 ---
 
 ## 📡 **API Endpoints Principales**
 
-### **Autenticación**
+### **🔐 Autenticación**
 
 ```http
 POST /api/auth/register     # Registro de usuarios
-POST /api/auth/login        # Inicio de sesión
-GET  /api/auth/profile      # Perfil del usuario
+POST /api/auth/login        # Login con JWT (2h válido)
+DELETE /api/auth/me         # Eliminar cuenta propia
 ```
 
-### **Conversiones**
+### **💱 Conversión**
 
 ```http
-POST /api/convert           # Nueva conversión
-GET  /api/historial         # Historial con filtros
-DELETE /api/historial/:id   # Eliminar conversión
+POST /api/convert/convert   # Conversión individual
+GET  /api/convert/rates     # Obtener todos los tipos de cambio
+GET  /api/convert/historial # Historial del usuario
+GET  /api/convert/currencies # Lista de divisas estática (20)
 ```
 
-### **Tipos de Cambio**
+### **🌍 Exchange (Dinámico)**
 
 ```http
-GET /api/exchange/rates     # Tasas actuales
-GET /api/exchange/rates/:base # Tasas base específica
+GET /api/exchange/rates      # Tipos de cambio dinámicos (~31)
+GET /api/exchange/currencies # Lista divisas dinámicas Frankfurter
 ```
 
-### **Favoritos**
+### **⭐ Favoritos (Sistema Dual)**
 
 ```http
-GET  /api/favorites         # Obtener favoritos
-POST /api/favorites         # Crear favorito
-DELETE /api/favorites/:id   # Eliminar favorito
+# Pares favoritos (EUR/USD, etc.)
+GET  /api/favorites         # Listar pares favoritos
+POST /api/favorites         # Añadir par favorito
+PUT  /api/favorites/:id     # Actualizar nickname
+DELETE /api/favorites/:id   # Eliminar par
+
+# Divisas favoritas individuales
+GET  /api/favorite-currencies      # Listar divisas favoritas
+POST /api/favorite-currencies      # Añadir divisa favorita
+PUT  /api/favorite-currencies/:id  # Actualizar prioridad
 ```
 
-### **Alertas**
+### **🔔 Alertas Automatizadas**
 
 ```http
-GET  /api/alerts           # Obtener alertas
-POST /api/alerts/percentage # Crear alerta porcentual
-POST /api/alerts/target    # Crear alerta objetivo
+GET  /api/alerts                 # Listar alertas del usuario
+POST /api/alerts/scheduled       # Crear alerta programada
+POST /api/alerts/percentage      # Crear alerta por porcentaje
+POST /api/alerts/target          # Crear alerta precio objetivo
+POST /api/alerts/:id/test        # Enviar test inmediato
+DELETE /api/alerts/:id           # Eliminar alerta
 ```
 
-### **Calculadora**
+### **🧮 Calculadora Premium**
 
 ```http
-POST /api/calculator/multiple # Conversión múltiple
-POST /api/calculator/compare  # Comparación de pares
+POST /api/calculator/multiple       # Conversión múltiple
+POST /api/calculator/reverse        # Conversión inversa
+POST /api/calculator/compare        # Comparar pares
+POST /api/calculator/historical     # Análisis histórico
+POST /api/calculator/technical-analysis # Análisis técnico IA
+```
+
+### **📊 Dashboard & Analytics**
+
+```http
+GET /api/dashboard           # Datos principales del dashboard
+GET /api/dashboard/stats     # Estadísticas del usuario
+GET /api/dashboard/trends    # Tendencias de favoritos
+```
+
+### **📋 Auditoría**
+
+```http
+GET /api/activity-logs       # Logs de actividad con filtros
+GET /api/activity-logs/stats # Estadísticas de uso
+GET /api/activity-logs/actions # Tipos de acciones disponibles
+```
+
+### **👤 Perfil**
+
+```http
+GET  /api/profile               # Datos del perfil
+PUT  /api/profile/change-password  # Cambiar contraseña
+PUT  /api/profile/change-email     # Cambiar email
+PUT  /api/profile/change-username  # Cambiar nombre usuario
 ```
 
 ---
 
-## 🧪 **Testing y Calidad**
+## 🧪 **Testing y Desarrollo**
 
-### **Cobertura de Tests**
-
-- ✅ Tests unitarios para servicios principales
-- ✅ Tests de integración para API
-- ✅ Cobertura de código documentada
-- ✅ Validación de endpoints críticos
-
-### **Scripts de Testing**
+### **🔧 Scripts de Desarrollo**
 
 ```bash
-# Backend
+# Backend (Puerto 3000)
 cd backend
-npm test              # Ejecutar tests
-npm run test:coverage # Cobertura de código
+npm run dev              # Desarrollo con nodemon
+npm start               # Producción
+npm test                # Tests con Jest + MongoDB Memory Server
+npm run lint            # ESLint verificación
+npm run lint:fix        # ESLint auto-fix
 
-# Frontend
+# Frontend (Puerto 4200)
 cd frontend
-ng test               # Tests unitarios
-ng e2e                # Tests end-to-end
+ng serve                # Desarrollo
+ng build                # Build producción
+ng test                 # Tests con Karma/Jasmine
 ```
 
-### **Scripts de Mantenimiento**
+### **📊 Cobertura de Tests**
+
+- ✅ **Backend**: Jest con MongoDB Memory Server para aislamiento
+- ✅ **Frontend**: Karma/Jasmine con Angular Testing Library
+- ✅ **Cobertura**: Reportes automáticos en `backend/coverage/`
+- ✅ **CI/CD Ready**: Tests ejecutables en pipelines
+
+### **🔍 Testing Backend Pattern**
+
+```javascript
+// Patrón de setup para tests (setupMongo.js)
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+beforeAll(async () => {
+  mongod = await MongoMemoryServer.create();
+  const uri = mongod.getUri();
+  process.env.MONGODB_URI = uri;
+  await mongoose.connect(uri);
+});
+```
+
+### **⚙️ Scripts de Mantenimiento**
 
 ```bash
-# Limpieza manual de datos antiguos
-node scripts/test-borrado-antiguo.js
+# Limpieza manual de datos antiguos (>60 días)
+node backend/scripts/test-borrado-antiguo.js
 
-# Cron jobs automáticos:
-# - Limpieza diaria: 2:00 AM
-# - Verificación de alertas: 8:00 AM
+# Cron jobs automáticos en producción:
+# - Limpieza diaria: 2:00 AM (cleanupJob.js)
+# - Alertas programadas: cada hora (alertJob.js)
+# - Alertas críticas: cada 15 minutos
 ```
 
 ---
@@ -336,25 +447,133 @@ node scripts/test-borrado-antiguo.js
 - **Frontend**: Angular 20 con Standalone Components
 - **Backend**: Node.js con clustering habilitado
 - **Base de datos**: MongoDB con índices optimizados
-- **Cache**: Tipos de cambio cacheados (30 segundos)
-- **API Externa**: Frankfurter API (99.9% uptime)
+
+## 🚀 **Características Técnicas Destacadas**
+
+### **⚡ Performance & Escalabilidad**
+
+- **Debounced API calls**: 300-500ms para evitar spam de requests
+- **Smart caching**: Prevención de llamadas concurrentes duplicadas
+- **Compound indexes**: Optimización MongoDB para grandes datasets
+- **Rate limiting**: 5 intentos login/15min por IP
+- **Auto-cleanup**: Datos antiguos eliminados automáticamente (60+ días)
+
+### **🎨 UX/UI Avanzado**
+
+- **Glassmorphism Design**: Efectos visuales modernos con blur/gradients
+- **Responsive Mobile-First**: Optimizado para todos los dispositivos
+- **Material 3 Design**: Sistema de diseño consistente
+- **Staggered Animations**: Animaciones secuenciales de entrada
+- **Live Indicators**: Tendencias visuales (↑↓) con colores dinámicos
+
+### **🔒 Seguridad Enterprise**
+
+- **JWT 2h expiration**: Tokens automáticamente renovables
+- **Functional Guards**: Protección de rutas con Angular 20
+- **SMTP Configurable**: Soporte Gmail, Outlook, servidores custom
+- **Input Validation**: Express-validator en todas las entradas
+- **Error Handling**: Captura global con logging detallado
+
+### **📊 Business Intelligence**
+
+- **20+ Activity Types**: Tracking granular de acciones usuario
+- **Real Technical Analysis**: RSI, SMA, volatilidad con datos reales
+- **AI Recommendations**: Sugerencias Comprar/Vender/Mantener
+- **Performance Analytics**: Top pairs, volume trends, user patterns
+- **Historical Data**: Hasta 30 días de análisis técnico
 
 ---
 
-## 🚧 **Estado Actual y Roadmap**
+## � **Comandos Desarrollo Rápido**
 
-### **✅ Completado**
+### **🚀 Inicio Rápido (Windows)**
 
-- [x] Sistema de autenticación completo
-- [x] Conversor de divisas funcional
-- [x] Gestión de favoritos
-- [x] Sistema de alertas básico
-- [x] Historial con filtros
-- [x] API RESTful completa
-- [x] Dashboard administrativo
-- [x] Sistema de auditoría
+```cmd
+# Terminal 1: Backend
+cd backend && npm run dev
 
-### **🔄 En Desarrollo**
+# Terminal 2: Frontend
+cd frontend && ng serve
+
+# URLs de acceso:
+# Frontend: http://localhost:4200
+# Backend API: http://localhost:3000
+# Health Check: http://localhost:3000/health
+```
+
+### **📦 Dependencias Clave**
+
+```json
+{
+  "backend": {
+    "express": "4.19.2",
+    "mongoose": "7.6.0",
+    "jsonwebtoken": "9.0.2",
+    "nodemailer": "7.0.5",
+    "axios": "1.10.0",
+    "node-cron": "3.0.3"
+  },
+  "frontend": {
+    "@angular/core": "20.1.0",
+    "@angular/material": "20.1.5",
+    "rxjs": "7.8.0",
+    "typescript": "5.8.2"
+  }
+}
+```
+
+---
+
+## 🌟 **Estado del Proyecto**
+
+### **✅ Funcionalidades en Producción**
+
+- [x] **Sistema de autenticación JWT** completo con roles
+- [x] **Conversor dinámico ~40 divisas** (Frankfurter + ExchangeRate APIs)
+- [x] **Dashboard profesional** con análisis técnico IA
+- [x] **Sistema dual de favoritos** (pares + divisas individuales)
+- [x] **Alertas automatizadas** (programadas/porcentaje/objetivo)
+- [x] **Historial inteligente** con filtros avanzados
+- [x] **Calculadora premium** (multi-conversión, análisis histórico)
+- [x] **Auditoría completa** (20+ tipos de activity logs)
+- [x] **Cron jobs** automatizados (alertas + limpieza)
+- [x] **SMTP configurable** para notificaciones
+- [x] **Tests unitarios** con MongoDB Memory Server
+
+### **🎯 Arquitectura Enterprise Ready**
+
+- **Backend**: Node.js + Express + MongoDB (escalable horizontalmente)
+- **Frontend**: Angular 20 standalone + Material 3 (PWA ready)
+- **APIs**: Rate limiting, validation, error handling enterprise
+- **Database**: Compound indexes, cleanup automático, optimización queries
+- **Security**: JWT 2h, functional guards, input validation, CORS
+- **Monitoring**: Activity logs, performance tracking, error capturing
+
+---
+
+## 👨‍💻 **Sobre el Desarrollo**
+
+**DivisasPro** ha sido desarrollado siguiendo **best practices** de la industria:
+
+- **Clean Architecture**: Separación clara frontend/backend con APIs RESTful
+- **Modern Stack**: Angular 20 + Node.js con las últimas funcionalidades
+- **Security First**: JWT authentication, input validation, rate limiting
+- **Performance Optimized**: Debouncing, caching, database optimization
+- **Enterprise Ready**: Activity logging, automated cleanup, error handling
+- **Mobile First**: Responsive design con glassmorphism effects
+
+### **� Deployment Ready**
+
+- Variables de entorno configurables
+- Health check endpoints
+- Error handling robusto
+- Logs estructurados
+- Tests automatizados
+- Docker compatibility preparado
+
+---
+
+**💡 DivisasPro - La plataforma profesional de divisas que combina tecnología moderna con análisis financiero avanzado.**
 
 - [ ] Optimización de performance
 - [ ] Mejoras en la UI/UX
