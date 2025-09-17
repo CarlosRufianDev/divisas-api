@@ -8,7 +8,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,10 +21,6 @@ import { AuthService } from '../../services/auth';
 import { DivisasService } from '../../services/divisas';
 import { CURRENCY_FLAGS } from '../../shared/currency-flags';
 import { MaterialModule } from '../../shared/material.module';
-import { AddCurrencyDialogComponent } from './add-currency-dialog.component';
-import { AddFavoriteDialogComponent } from './add-favorite-dialog.component';
-import { EditCurrencyDialogComponent } from './edit-currency-dialog.component';
-import { EditPairDialogComponent } from './edit-pair-dialog.component';
 
 interface RateData {
   currency: string;
@@ -102,6 +102,63 @@ interface BaseCurrency {
   code: string;
   name: string;
   flag: string;
+}
+
+// ============================================================================
+// INTERFACES PARA COMPONENTES DE DIÁLOGO
+// ============================================================================
+
+interface Currency {
+  code: string;
+  name: string;
+  flag: string;
+}
+
+interface ExchangeRateResponse {
+  rates: Record<string, number>;
+  date: string;
+}
+
+interface DialogData {
+  availableCurrencies: string[];
+}
+
+interface FavoriteResponse {
+  message: string;
+  favorite: {
+    id: string;
+    from: string;
+    to: string;
+    nickname: string;
+  };
+  currentRate: number;
+  description: string;
+}
+
+interface EditCurrencyData {
+  currency: {
+    id: string;
+    currency: string;
+    nickname: string;
+    priority: number;
+    isDefault: boolean;
+  };
+}
+
+interface CurrencyUpdatePayload {
+  nickname?: string;
+  priority?: number;
+  isDefault?: boolean;
+}
+
+interface EditPairData {
+  pair: {
+    id: string;
+    from: string;
+    to: string;
+    nickname: string;
+    pair: string;
+  };
 }
 
 @Component({
@@ -2231,5 +2288,1240 @@ export class Favoritos implements OnInit, OnDestroy {
     } else {
       return 'unknown'; // No disponible en ninguna fuente conocida
     }
+  }
+}
+
+// ============================================================================
+// COMPONENTES DE DIÁLOGO INTEGRADOS
+// ============================================================================
+
+@Component({
+  selector: 'app-add-currency-dialog',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  template: `
+    <div class="dialog-container">
+      <h2 mat-dialog-title>
+        <mat-icon class="dialog-icon">monetization_on</mat-icon>
+        Añadir Divisa Favorita
+      </h2>
+
+      <mat-dialog-content class="dialog-content">
+        <p class="dialog-description">
+          Selecciona una divisa para monitorear su tipo de cambio vs EUR
+        </p>
+
+        <form [formGroup]="currencyForm" class="currency-form">
+          <!-- Selector de Divisa -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Divisa</mat-label>
+            <mat-select
+              formControlName="currency"
+              (selectionChange)="onCurrencyChange()"
+            >
+              <mat-option
+                *ngFor="let currency of currencies"
+                [value]="currency.code"
+              >
+                <span class="currency-option">
+                  <span class="flag">{{ currency.flag }}</span>
+                  <span class="code">{{ currency.code }}</span>
+                  <span class="name">{{ currency.name }}</span>
+                </span>
+              </mat-option>
+            </mat-select>
+            <mat-hint>Elige la divisa que quieres monitorear</mat-hint>
+          </mat-form-field>
+
+          <!-- Preview de la Divisa -->
+          <div
+            class="currency-preview"
+            *ngIf="currencyForm.get('currency')?.value"
+          >
+            <mat-icon class="preview-icon">trending_up</mat-icon>
+            <span class="preview-text">
+              {{ currencyForm.get('currency')?.value }}
+            </span>
+            <span class="preview-description">
+              Monitorearás
+              {{ getCurrencyName(currencyForm.get('currency')?.value) }}
+            </span>
+          </div>
+
+          <!-- Nickname (Opcional) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nickname (Opcional)</mat-label>
+            <input
+              matInput
+              formControlName="nickname"
+              placeholder="Ej: Mi divisa principal, Para viajes..."
+              maxlength="50"
+            />
+            <mat-hint>Dale un nombre personalizado a esta divisa</mat-hint>
+            <span matTextSuffix
+              >{{ currencyForm.get('nickname')?.value?.length || 0 }}/50</span
+            >
+          </mat-form-field>
+
+          <!-- Prioridad -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Prioridad</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option [value]="1">🌟 Alta (1)</mat-option>
+              <mat-option [value]="2">⭐ Media-Alta (2)</mat-option>
+              <mat-option [value]="3">🔸 Media (3)</mat-option>
+              <mat-option [value]="4">🔹 Media-Baja (4)</mat-option>
+              <mat-option [value]="5">⚪ Baja (5)</mat-option>
+            </mat-select>
+            <mat-hint>Orden de importancia para dropdowns</mat-hint>
+          </mat-form-field>
+
+          <!-- Marcar como predeterminada -->
+          <mat-slide-toggle formControlName="isDefault" class="default-toggle">
+            <span class="toggle-label">
+              <mat-icon>star</mat-icon>
+              Marcar como divisa predeterminada
+            </span>
+          </mat-slide-toggle>
+
+          <!-- Tasa Actual (Preview) -->
+          <div class="current-rate" *ngIf="currentRate">
+            <mat-icon class="rate-icon">attach_money</mat-icon>
+            <div class="rate-info">
+              <span class="rate-label">Tasa Actual:</span>
+              <span class="rate-value"
+                >1 EUR = {{ currentRate | number : '1.4-4' }}
+                {{ currencyForm.get('currency')?.value }}</span
+              >
+            </div>
+          </div>
+
+          <!-- Loading Rate -->
+          <div class="loading-rate" *ngIf="loadingRate">
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Obteniendo tasa actual...</span>
+          </div>
+        </form>
+      </mat-dialog-content>
+
+      <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onCancel()" color="warn">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onSave()"
+          [disabled]="currencyForm.invalid || saving"
+        >
+          <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+          <mat-icon *ngIf="!saving">monetization_on</mat-icon>
+          {{ saving ? 'Guardando...' : 'Añadir a Favoritas' }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  `,
+  styles: [
+    `
+      .dialog-container {
+        min-width: 500px;
+        max-width: 600px;
+      }
+
+      .dialog-icon {
+        color: #ff9800;
+        margin-right: 8px;
+      }
+
+      .dialog-content {
+        padding: 20px 0;
+      }
+
+      .dialog-description {
+        color: #666;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .currency-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      .currency-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .flag {
+        font-size: 1.2rem;
+        min-width: 24px;
+      }
+
+      .code {
+        font-weight: 600;
+        min-width: 40px;
+      }
+
+      .name {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .currency-preview {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px;
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+
+      .preview-icon {
+        color: #2196f3;
+      }
+
+      .preview-text {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #2196f3;
+      }
+
+      .preview-description {
+        color: #666;
+        font-size: 0.9rem;
+        flex: 1;
+        text-align: right;
+      }
+
+      .default-toggle {
+        margin: 16px 0;
+      }
+
+      .toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #333;
+      }
+
+      .current-rate {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        background: #f9f9f9;
+        border-radius: 6px;
+        border-left: 4px solid #4caf50;
+      }
+
+      .rate-icon {
+        color: #4caf50;
+      }
+
+      .rate-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .rate-label {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .rate-value {
+        font-weight: 600;
+        color: #4caf50;
+      }
+
+      .loading-rate {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        color: #666;
+        justify-content: center;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 0;
+        gap: 12px;
+      }
+
+      .dialog-actions button {
+        flex: 1;
+      }
+    `,
+  ],
+})
+export class AddCurrencyDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
+  private snackBar = inject(MatSnackBar);
+  public dialogRef = inject(MatDialogRef<AddCurrencyDialogComponent>);
+  private apiUrl = environment.apiUrl;
+
+  currencyForm: FormGroup;
+  saving = false;
+  loadingRate = false;
+  currentRate: number | null = null;
+
+  currencies: Currency[] = [
+    { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
+    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
+    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
+    { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
+    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
+    { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
+    { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
+    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳' },
+    { code: 'KRW', name: 'Won Surcoreano', flag: '🇰🇷' },
+    { code: 'INR', name: 'Rupia India', flag: '🇮🇳' },
+    { code: 'BRL', name: 'Real Brasileño', flag: '🇧🇷' },
+    { code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽' },
+    { code: 'SEK', name: 'Corona Sueca', flag: '🇸🇪' },
+    { code: 'NOK', name: 'Corona Noruega', flag: '🇳🇴' },
+    { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
+    { code: 'PLN', name: 'Złoty Polaco', flag: '🇵🇱' },
+    { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
+    { code: 'HUF', name: 'Forint Húngaro', flag: '🇭🇺' },
+    { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
+    { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
+    { code: 'SGD', name: 'Dólar Singapurense', flag: '🇸🇬' },
+    { code: 'HKD', name: 'Dólar Hong Kong', flag: '🇭🇰' },
+    { code: 'NZD', name: 'Dólar Neozelandés', flag: '🇳🇿' },
+    { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
+    { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
+    { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
+    { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
+    { code: 'ILS', name: 'Nuevo Shekel', flag: '🇮🇱' },
+    { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
+    { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
+    { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
+  ];
+
+  constructor() {
+    this.currencyForm = this.fb.group({
+      currency: ['', Validators.required],
+      nickname: ['', [Validators.maxLength(50)]],
+      priority: [
+        3,
+        [Validators.required, Validators.min(1), Validators.max(5)],
+      ],
+      isDefault: [false],
+    });
+  }
+
+  ngOnInit(): void {
+    // Inicialización del componente AddCurrencyDialogComponent
+    console.log('AddCurrencyDialogComponent inicializado');
+  }
+
+  onCurrencyChange(): void {
+    const currency = this.currencyForm.get('currency')?.value;
+    if (currency) {
+      this.loadCurrentRate(currency);
+    }
+  }
+
+  async loadCurrentRate(currency: string): Promise<void> {
+    this.loadingRate = true;
+    this.currentRate = null;
+
+    try {
+      const response = await this.http
+        .get<ExchangeRateResponse>(`${this.apiUrl}/exchange/latest?base=EUR`)
+        .toPromise();
+
+      if (response && response.rates[currency]) {
+        this.currentRate = response.rates[currency];
+      }
+    } catch (error) {
+      console.warn('Error obteniendo tasa actual:', error);
+    } finally {
+      this.loadingRate = false;
+    }
+  }
+
+  getCurrencyName(code: string): string {
+    const currency = this.currencies.find((c) => c.code === code);
+    return currency ? currency.name : code;
+  }
+
+  onSave(): void {
+    if (this.currencyForm.invalid) return;
+
+    this.saving = true;
+    const formValue = this.currencyForm.value;
+
+    // Simular guardado (el componente padre manejará la lógica real)
+    setTimeout(() => {
+      this.saving = false;
+      this.snackBar.open(
+        `✅ ${formValue.currency} añadida a favoritas`,
+        'Cerrar',
+        { duration: 2000, panelClass: ['success-snackbar'] }
+      );
+      this.dialogRef.close(formValue);
+    }, 500);
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+}
+
+// ============================================================================
+
+@Component({
+  selector: 'app-add-favorite-dialog',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  template: `
+    <div class="dialog-container">
+      <h2 mat-dialog-title>
+        <mat-icon class="dialog-icon">star</mat-icon>
+        Añadir Par Favorito
+      </h2>
+
+      <mat-dialog-content class="dialog-content">
+        <p class="dialog-description">
+          Selecciona un par de divisas para monitorear en tiempo real
+        </p>
+
+        <form [formGroup]="favoriteForm" class="favorite-form">
+          <!-- Moneda Base (FROM) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Moneda Base</mat-label>
+            <mat-select
+              formControlName="from"
+              (selectionChange)="onFromCurrencyChange()"
+            >
+              <mat-option
+                *ngFor="let currency of currencies"
+                [value]="currency.code"
+              >
+                <span class="currency-option">
+                  <span class="flag">{{ currency.flag }}</span>
+                  <span class="code">{{ currency.code }}</span>
+                  <span class="name">{{ currency.name }}</span>
+                </span>
+              </mat-option>
+            </mat-select>
+            <mat-hint>Moneda que quieres convertir</mat-hint>
+          </mat-form-field>
+
+          <!-- Swap Button -->
+          <div class="swap-container">
+            <button
+              mat-icon-button
+              type="button"
+              class="swap-btn"
+              color="primary"
+              (click)="swapCurrencies()"
+              matTooltip="Intercambiar monedas"
+            >
+              <mat-icon>swap_vert</mat-icon>
+            </button>
+          </div>
+
+          <!-- Moneda Destino (TO) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Moneda Destino</mat-label>
+            <mat-select formControlName="to">
+              <mat-option
+                *ngFor="let currency of getFilteredToCurrencies()"
+                [value]="currency.code"
+              >
+                <span class="currency-option">
+                  <span class="flag">{{ currency.flag }}</span>
+                  <span class="code">{{ currency.code }}</span>
+                  <span class="name">{{ currency.name }}</span>
+                </span>
+              </mat-option>
+            </mat-select>
+            <mat-hint>Moneda a la que quieres convertir</mat-hint>
+          </mat-form-field>
+
+          <!-- Preview del Par -->
+          <div
+            class="pair-preview"
+            *ngIf="
+              favoriteForm.get('from')?.value && favoriteForm.get('to')?.value
+            "
+          >
+            <mat-icon class="preview-icon">trending_up</mat-icon>
+            <span class="preview-text">
+              {{ favoriteForm.get('from')?.value }}/{{
+                favoriteForm.get('to')?.value
+              }}
+            </span>
+            <span class="preview-description">
+              Monitorearás
+              {{ getCurrencyName(favoriteForm.get('from')?.value) }} a
+              {{ getCurrencyName(favoriteForm.get('to')?.value) }}
+            </span>
+          </div>
+
+          <!-- Nickname (Opcional) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nickname (Opcional)</mat-label>
+            <input
+              matInput
+              formControlName="nickname"
+              placeholder="Ej: Mi inversión EUR, Gastos en UK..."
+              maxlength="50"
+            />
+            <mat-hint>Dale un nombre personalizado a este par</mat-hint>
+            <span matTextSuffix
+              >{{ favoriteForm.get('nickname')?.value?.length || 0 }}/50</span
+            >
+          </mat-form-field>
+
+          <!-- Tasa Actual (Preview) -->
+          <div class="current-rate" *ngIf="currentRate">
+            <mat-icon class="rate-icon">attach_money</mat-icon>
+            <div class="rate-info">
+              <span class="rate-label">Tasa Actual:</span>
+              <span class="rate-value"
+                >1 {{ favoriteForm.get('from')?.value }} =
+                {{ currentRate | number : '1.4-4' }}
+                {{ favoriteForm.get('to')?.value }}</span
+              >
+            </div>
+          </div>
+
+          <!-- Loading Rate -->
+          <div class="loading-rate" *ngIf="loadingRate">
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Obteniendo tasa actual...</span>
+          </div>
+        </form>
+      </mat-dialog-content>
+
+      <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onCancel()" color="warn">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onSave()"
+          [disabled]="favoriteForm.invalid || saving"
+        >
+          <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+          <mat-icon *ngIf="!saving">star</mat-icon>
+          {{ saving ? 'Guardando...' : 'Añadir a Favoritos' }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  `,
+  styles: [
+    `
+      .dialog-container {
+        min-width: 500px;
+        max-width: 600px;
+      }
+
+      .dialog-icon {
+        color: #ff9800;
+        margin-right: 8px;
+      }
+
+      .dialog-content {
+        padding: 20px 0;
+      }
+
+      .dialog-description {
+        color: #666;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .favorite-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      .swap-container {
+        display: flex;
+        justify-content: center;
+        margin: -8px 0;
+      }
+
+      .swap-btn {
+        background: #f5f5f5;
+        border: 2px dashed #ddd;
+      }
+
+      .currency-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .flag {
+        font-size: 1.2rem;
+        min-width: 24px;
+      }
+
+      .code {
+        font-weight: 600;
+        min-width: 40px;
+      }
+
+      .name {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .pair-preview {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px;
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+
+      .preview-icon {
+        color: #2196f3;
+      }
+
+      .preview-text {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #2196f3;
+      }
+
+      .preview-description {
+        color: #666;
+        font-size: 0.9rem;
+        flex: 1;
+        text-align: right;
+      }
+
+      .current-rate {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        background: #f9f9f9;
+        border-radius: 6px;
+        border-left: 4px solid #4caf50;
+      }
+
+      .rate-icon {
+        color: #4caf50;
+      }
+
+      .rate-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .rate-label {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .rate-value {
+        font-weight: 600;
+        color: #4caf50;
+      }
+
+      .loading-rate {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        color: #666;
+        justify-content: center;
+      }
+
+      .dialog-actions {
+        padding: 16px 0 0 0;
+        justify-content: space-between;
+      }
+
+      .dialog-actions button {
+        min-width: 120px;
+      }
+
+      @media (max-width: 600px) {
+        .dialog-container {
+          min-width: 300px;
+          max-width: 400px;
+        }
+      }
+    `,
+  ],
+})
+export class AddFavoriteDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
+  private snackBar = inject(MatSnackBar);
+  public dialogRef = inject(MatDialogRef<AddFavoriteDialogComponent>);
+  public data = inject<DialogData>(MAT_DIALOG_DATA);
+
+  favoriteForm: FormGroup;
+  currencies: Currency[] = [];
+  currentRate: number | null = null;
+  loadingRate = false;
+  saving = false;
+  private apiUrl = environment.apiUrl;
+
+  constructor() {
+    this.favoriteForm = this.fb.group({
+      from: ['', Validators.required],
+      to: ['', Validators.required],
+      nickname: ['', [Validators.maxLength(50)]],
+    });
+  }
+
+  ngOnInit(): void {
+    this.initializeCurrencies();
+    this.setupFormSubscriptions();
+  }
+
+  initializeCurrencies(): void {
+    // Lista completa de divisas con banderas
+    this.currencies = [
+      { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
+      { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
+      { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
+      { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
+      { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
+      { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
+      { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
+      { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳' },
+      { code: 'KRW', name: 'Won Surcoreano', flag: '🇰🇷' },
+      { code: 'INR', name: 'Rupia India', flag: '🇮🇳' },
+      { code: 'BRL', name: 'Real Brasileño', flag: '🇧🇷' },
+      { code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽' },
+      { code: 'SEK', name: 'Corona Sueca', flag: '🇸🇪' },
+      { code: 'NOK', name: 'Corona Noruega', flag: '🇳🇴' },
+      { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
+      { code: 'PLN', name: 'Złoty Polaco', flag: '🇵🇱' },
+      { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
+      { code: 'HUF', name: 'Forint Húngaro', flag: '🇭🇺' },
+      { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
+      { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
+      { code: 'SGD', name: 'Dólar Singapurense', flag: '🇸🇬' },
+      { code: 'HKD', name: 'Dólar Hong Kong', flag: '🇭🇰' },
+      { code: 'NZD', name: 'Dólar Neozelandés', flag: '🇳🇿' },
+      { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
+      { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
+      { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
+      { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
+      { code: 'ILS', name: 'Nuevo Shekel', flag: '🇮🇱' },
+      { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
+      { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
+      { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
+    ];
+  }
+
+  setupFormSubscriptions(): void {
+    this.favoriteForm.valueChanges.subscribe(() => {
+      this.getCurrentRate();
+    });
+  }
+
+  onFromCurrencyChange(): void {
+    const toValue = this.favoriteForm.get('to')?.value;
+    const fromValue = this.favoriteForm.get('from')?.value;
+
+    if (toValue === fromValue) {
+      this.favoriteForm.get('to')?.setValue('');
+    }
+  }
+
+  getFilteredToCurrencies(): Currency[] {
+    const fromValue = this.favoriteForm.get('from')?.value;
+    return this.currencies.filter((currency) => currency.code !== fromValue);
+  }
+
+  swapCurrencies(): void {
+    const fromValue = this.favoriteForm.get('from')?.value;
+    const toValue = this.favoriteForm.get('to')?.value;
+
+    this.favoriteForm.patchValue({
+      from: toValue,
+      to: fromValue,
+    });
+  }
+
+  getCurrencyName(code: string): string {
+    const currency = this.currencies.find((c) => c.code === code);
+    return currency ? currency.name : code;
+  }
+
+  getCurrentRate(): void {
+    const from = this.favoriteForm.get('from')?.value;
+    const to = this.favoriteForm.get('to')?.value;
+
+    if (!from || !to) {
+      this.currentRate = null;
+      return;
+    }
+
+    this.loadingRate = true;
+
+    this.http
+      .post<ConversionResponse>(`${this.apiUrl}/convert`, {
+        from,
+        to,
+        amount: 1,
+      })
+      .subscribe({
+        next: (response) => {
+          this.currentRate = response.result;
+          this.loadingRate = false;
+        },
+        error: (error) => {
+          console.error('Error obteniendo tasa:', error);
+          this.loadingRate = false;
+        },
+      });
+  }
+
+  onSave(): void {
+    if (this.favoriteForm.invalid) return;
+
+    this.saving = true;
+    const formValue = this.favoriteForm.value;
+
+    this.http
+      .post<FavoriteResponse>(`${this.apiUrl}/favorites`, formValue)
+      .subscribe({
+        next: (response) => {
+          this.saving = false;
+          this.snackBar.open(response.message, 'Cerrar', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+          });
+          this.dialogRef.close(response.favorite);
+        },
+        error: (error) => {
+          this.saving = false;
+          this.snackBar.open(
+            error.error?.message || 'Error al guardar el favorito',
+            'Cerrar',
+            { duration: 3000, panelClass: ['error-snackbar'] }
+          );
+        },
+      });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+}
+
+// ============================================================================
+
+@Component({
+  selector: 'app-edit-currency-dialog',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  template: `
+    <div class="dialog-container">
+      <h2 mat-dialog-title>
+        <mat-icon class="dialog-icon">edit</mat-icon>
+        Editar {{ data.currency.currency }}
+      </h2>
+
+      <mat-dialog-content class="dialog-content">
+        <form [formGroup]="editForm" class="edit-form">
+          <!-- Divisa (Solo lectura) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Divisa</mat-label>
+            <input matInput [value]="data.currency.currency" readonly />
+            <mat-hint>No se puede cambiar la divisa</mat-hint>
+          </mat-form-field>
+
+          <!-- Nickname -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nickname</mat-label>
+            <input
+              matInput
+              formControlName="nickname"
+              placeholder="Ej: Mi divisa principal, Para viajes..."
+              maxlength="50"
+            />
+            <mat-hint>Nombre personalizado para esta divisa</mat-hint>
+            <span matTextSuffix
+              >{{ editForm.get('nickname')?.value?.length || 0 }}/50</span
+            >
+          </mat-form-field>
+
+          <!-- Prioridad -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Prioridad</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option [value]="1">🌟 Alta (1)</mat-option>
+              <mat-option [value]="2">⭐ Media-Alta (2)</mat-option>
+              <mat-option [value]="3">🔸 Media (3)</mat-option>
+              <mat-option [value]="4">🔹 Media-Baja (4)</mat-option>
+              <mat-option [value]="5">⚪ Baja (5)</mat-option>
+            </mat-select>
+            <mat-hint>Orden de importancia para dropdowns</mat-hint>
+          </mat-form-field>
+
+          <!-- Marcar como predeterminada -->
+          <div class="toggle-section">
+            <mat-slide-toggle
+              formControlName="isDefault"
+              class="default-toggle"
+            >
+              <span class="toggle-label">
+                <mat-icon>star</mat-icon>
+                Marcar como divisa predeterminada
+              </span>
+            </mat-slide-toggle>
+            <p class="toggle-hint">
+              Solo una divisa puede ser predeterminada por usuario
+            </p>
+          </div>
+        </form>
+      </mat-dialog-content>
+
+      <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onCancel()" color="warn">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onSave()"
+          [disabled]="editForm.invalid || saving || !hasChanges()"
+        >
+          <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  `,
+  styles: [
+    `
+      .dialog-container {
+        min-width: 400px;
+        max-width: 500px;
+      }
+
+      .dialog-icon {
+        color: #2196f3;
+        margin-right: 8px;
+      }
+
+      .dialog-content {
+        padding: 20px 0;
+      }
+
+      .edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      .toggle-section {
+        margin: 16px 0;
+      }
+
+      .default-toggle {
+        width: 100%;
+      }
+
+      .toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #333;
+      }
+
+      .toggle-hint {
+        margin: 8px 0 0 0;
+        color: #666;
+        font-size: 0.8rem;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 0;
+        gap: 12px;
+      }
+
+      .dialog-actions button {
+        flex: 1;
+      }
+    `,
+  ],
+})
+export class EditCurrencyDialogComponent {
+  private fb = inject(FormBuilder);
+  private dialogRef = inject(MatDialogRef<EditCurrencyDialogComponent>);
+  private snackBar = inject(MatSnackBar);
+  public data = inject<EditCurrencyData>(MAT_DIALOG_DATA);
+
+  editForm: FormGroup;
+  saving = false;
+
+  constructor() {
+    this.editForm = this.fb.group({
+      nickname: [this.data.currency.nickname || '', [Validators.maxLength(50)]],
+      priority: [
+        this.data.currency.priority,
+        [Validators.required, Validators.min(1), Validators.max(5)],
+      ],
+      isDefault: [this.data.currency.isDefault],
+    });
+  }
+
+  hasChanges(): boolean {
+    const formValue = this.editForm.value;
+    return (
+      formValue.nickname !== this.data.currency.nickname ||
+      formValue.priority !== this.data.currency.priority ||
+      formValue.isDefault !== this.data.currency.isDefault
+    );
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onSave(): void {
+    if (this.editForm.invalid || !this.hasChanges()) return;
+
+    this.saving = true;
+    const formValue = this.editForm.value;
+
+    // Preparar solo los campos que cambiaron
+    const updates: CurrencyUpdatePayload = {};
+    if (formValue.nickname !== this.data.currency.nickname) {
+      updates.nickname = formValue.nickname;
+    }
+    if (formValue.priority !== this.data.currency.priority) {
+      updates.priority = formValue.priority;
+    }
+    if (formValue.isDefault !== this.data.currency.isDefault) {
+      updates.isDefault = formValue.isDefault;
+    }
+
+    // Simular respuesta exitosa (se conectará con el método updateFavoriteCurrency del componente padre)
+    setTimeout(() => {
+      this.saving = false;
+      this.snackBar.open(
+        `✅ ${this.data.currency.currency} actualizada`,
+        'Cerrar',
+        { duration: 2000, panelClass: ['success-snackbar'] }
+      );
+      this.dialogRef.close(updates);
+    }, 500);
+  }
+}
+
+// ============================================================================
+
+@Component({
+  selector: 'app-edit-pair-dialog',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  template: `
+    <div class="dialog-container">
+      <h2 mat-dialog-title>
+        <mat-icon class="dialog-icon">edit</mat-icon>
+        Editar {{ data.pair.pair }}
+      </h2>
+
+      <mat-dialog-content class="dialog-content">
+        <form [formGroup]="editForm" class="edit-form">
+          <!-- Par (Solo lectura) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Par de Divisas</mat-label>
+            <input matInput [value]="data.pair.pair" readonly />
+            <mat-hint>No se puede cambiar el par de divisas</mat-hint>
+          </mat-form-field>
+
+          <!-- Divisas individuales (Solo lectura) -->
+          <div class="currencies-display">
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>De</mat-label>
+              <input matInput [value]="data.pair.from" readonly />
+            </mat-form-field>
+
+            <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>A</mat-label>
+              <input matInput [value]="data.pair.to" readonly />
+            </mat-form-field>
+          </div>
+
+          <!-- Nickname -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nickname</mat-label>
+            <input
+              matInput
+              formControlName="nickname"
+              placeholder="Ej: Mi par principal, Para inversiones..."
+              maxlength="50"
+            />
+            <mat-hint>Nombre personalizado para este par</mat-hint>
+            <span matTextSuffix
+              >{{ editForm.get('nickname')?.value?.length || 0 }}/50</span
+            >
+          </mat-form-field>
+        </form>
+      </mat-dialog-content>
+
+      <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onCancel()" color="warn">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onSave()"
+          [disabled]="editForm.invalid || saving || !hasChanges()"
+        >
+          <mat-spinner *ngIf="saving" diameter="20"></mat-spinner>
+          <mat-icon *ngIf="!saving">save</mat-icon>
+          {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  `,
+  styles: [
+    `
+      .dialog-container {
+        min-width: 450px;
+        max-width: 550px;
+      }
+
+      .dialog-icon {
+        color: #ff9800;
+        margin-right: 8px;
+      }
+
+      .dialog-content {
+        padding: 20px 0;
+      }
+
+      .edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      .currencies-display {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 16px 0;
+      }
+
+      .currency-field {
+        flex: 1;
+      }
+
+      .arrow-icon {
+        color: #666;
+        font-size: 1.5rem;
+        margin-top: 8px;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 0;
+        gap: 12px;
+      }
+
+      .dialog-actions button {
+        flex: 1;
+      }
+    `,
+  ],
+})
+export class EditPairDialogComponent {
+  private fb = inject(FormBuilder);
+  private dialogRef = inject(MatDialogRef<EditPairDialogComponent>);
+  private snackBar = inject(MatSnackBar);
+  public data = inject<EditPairData>(MAT_DIALOG_DATA);
+
+  editForm: FormGroup;
+  saving = false;
+
+  constructor() {
+    this.editForm = this.fb.group({
+      nickname: [this.data.pair.nickname || '', [Validators.maxLength(50)]],
+    });
+  }
+
+  hasChanges(): boolean {
+    const formValue = this.editForm.value;
+    return formValue.nickname !== this.data.pair.nickname;
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onSave(): void {
+    if (this.editForm.invalid || !this.hasChanges()) return;
+
+    this.saving = true;
+    const formValue = this.editForm.value;
+
+    // El componente padre manejará la actualización real
+    const updates = {
+      nickname: formValue.nickname,
+    };
+
+    // Simular un delay para mostrar el loading
+    setTimeout(() => {
+      this.saving = false;
+      this.snackBar.open(`✅ ${this.data.pair.pair} actualizado`, 'Cerrar', {
+        duration: 2000,
+        panelClass: ['success-snackbar'],
+      });
+      this.dialogRef.close(updates);
+    }, 500);
   }
 }
