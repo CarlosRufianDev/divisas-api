@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -20,6 +20,26 @@ interface Currency {
 
 interface DialogData {
   availableCurrencies: string[];
+}
+
+interface FavoriteResponse {
+  message: string;
+  favorite: {
+    id: string;
+    from: string;
+    to: string;
+    nickname: string;
+  };
+  currentRate: number;
+  description: string;
+}
+
+interface ConversionResponse {
+  result: number;
+  rate: number;
+  from: string;
+  to: string;
+  amount: number;
 }
 
 @Component({
@@ -316,6 +336,12 @@ interface DialogData {
   ],
 })
 export class AddFavoriteDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
+  private snackBar = inject(MatSnackBar);
+  public dialogRef = inject(MatDialogRef<AddFavoriteDialogComponent>);
+  public data = inject<DialogData>(MAT_DIALOG_DATA);
+
   favoriteForm: FormGroup;
   currencies: Currency[] = [];
   currentRate: number | null = null;
@@ -323,13 +349,7 @@ export class AddFavoriteDialogComponent implements OnInit {
   saving = false;
   private apiUrl = environment.apiUrl;
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpClient,
-    private snackBar: MatSnackBar,
-    public dialogRef: MatDialogRef<AddFavoriteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
-  ) {
+  constructor() {
     this.favoriteForm = this.fb.group({
       from: ['', Validators.required],
       to: ['', Validators.required],
@@ -425,17 +445,19 @@ export class AddFavoriteDialogComponent implements OnInit {
 
     const payload = { from, to, amount: 1 };
 
-    this.http.post<any>(`${this.apiUrl}/convert`, payload).subscribe({
-      next: (response) => {
-        this.currentRate = response.rate;
-        this.loadingRate = false;
-      },
-      error: (error) => {
-        console.error('Error obteniendo tasa:', error);
-        this.loadingRate = false;
-        this.currentRate = null;
-      },
-    });
+    this.http
+      .post<ConversionResponse>(`${this.apiUrl}/convert`, payload)
+      .subscribe({
+        next: (response: ConversionResponse) => {
+          this.currentRate = response.rate;
+          this.loadingRate = false;
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error obteniendo tasa:', error);
+          this.loadingRate = false;
+          this.currentRate = null;
+        },
+      });
   }
 
   onSave(): void {
@@ -450,28 +472,30 @@ export class AddFavoriteDialogComponent implements OnInit {
       nickname: formValue.nickname || `${formValue.from}/${formValue.to}`,
     };
 
-    this.http.post<any>(`${this.apiUrl}/favorites`, payload).subscribe({
-      next: (response) => {
-        this.saving = false;
-        this.snackBar.open(
-          `✅ ${payload.from}/${payload.to} añadido a favoritos`,
-          'Cerrar',
-          { duration: 3000 }
-        );
-        this.dialogRef.close(response);
-      },
-      error: (error) => {
-        console.error('Error añadiendo favorito:', error);
-        this.saving = false;
+    this.http
+      .post<FavoriteResponse>(`${this.apiUrl}/favorites`, payload)
+      .subscribe({
+        next: (response: FavoriteResponse) => {
+          this.saving = false;
+          this.snackBar.open(
+            `✅ ${payload.from}/${payload.to} añadido a favoritos`,
+            'Cerrar',
+            { duration: 3000 }
+          );
+          this.dialogRef.close(response);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error añadiendo favorito:', error);
+          this.saving = false;
 
-        let errorMessage = '❌ Error al añadir favorito';
-        if (error.error?.message) {
-          errorMessage = error.error.message;
-        }
+          let errorMessage = '❌ Error al añadir favorito';
+          if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
 
-        this.snackBar.open(errorMessage, 'Cerrar', { duration: 4000 });
-      },
-    });
+          this.snackBar.open(errorMessage, 'Cerrar', { duration: 4000 });
+        },
+      });
   }
 
   onCancel(): void {

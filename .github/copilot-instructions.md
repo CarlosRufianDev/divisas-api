@@ -67,6 +67,26 @@ router.post('/register', registerValidator, handleValidation, register);
 })
 ```
 
+**Modern Dependency Injection**: Angular 20 supports both constructor and functional injection:
+
+```ts
+// Modern inject() pattern (preferred for new components)
+export class Historial implements OnInit, OnDestroy {
+  private historyService = inject(HistoryService);
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private snackBar = inject(MatSnackBar);
+}
+
+// Traditional constructor injection (still widely used)
+constructor(
+  private divisasService: DivisasService,
+  private authService: AuthService,
+  private snackBar: MatSnackBar,
+  public router: Router
+) {}
+```
+
 **Functional Guards & Interceptors**: Use new Angular functional approach:
 
 ```ts
@@ -173,6 +193,51 @@ Email can be disabled via `DISABLE_EMAIL=1` environment variable.
 - **Services**: Use RxJS BehaviorSubject for state management
 - **Auto-refresh**: Most components implement 30-second intervals with proper cleanup
 - **Error Handling**: Interceptor handles 401 (logout) and 403 (access denied) globally
+- **Shared Constants**: Currency data centralized in `shared/currency-flags.ts` with `CURRENCY_FLAGS`, `LIMITED_CURRENCIES`, and `ADDITIONAL_CURRENCIES` exports
+
+### Currency System
+
+**Supported Currencies**: Always validate against exactly **40 supported currencies** (dinamically fetched from Frankfurter API via `/api/exchange/currencies`):
+Dynamic list includes: `USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, MXN, BRL, KRW, INR, SEK, NOK, HKD, SGD, NZD, ZAR, TRY, PLN` + 20 more
+
+**Non-authenticated users** only see: `USD, EUR, JPY, GBP, CHF, CAD, AUD, CNY` (LIMITED_CURRENCIES)
+
+**Base Currency Dynamics**: Always use `this.baseCurrency` instead of hardcoded values:
+
+```ts
+// ❌ Wrong - hardcoded base currency in API calls
+const realChange = await this.getRealChangeForCurrency(currency, 'EUR');
+
+// ❌ Wrong - hardcoded base currency in templates
+<span>1 EUR = {{ rate }}</span>
+
+// ❌ Wrong - hardcoded base currency in methods
+getCurrentRate(currency, baseCurrency = 'EUR') { ... }
+
+// ✅ Correct - dynamic base currency
+const realChange = await this.getRealChangeForCurrency(
+  currency,
+  this.baseCurrency
+);
+
+// ✅ Correct - dynamic base currency in templates
+<span>1 {{ baseCurrency }} = {{ rate }}</span>
+
+// ✅ Correct - dynamic base currency in methods
+getCurrentRate(currency, baseCurrency?: string) {
+  const base = baseCurrency || this.baseCurrency;
+  // ...
+}
+```
+
+```ts
+// Import shared currency constants
+import {
+  CURRENCY_FLAGS,
+  LIMITED_CURRENCIES,
+  ADDITIONAL_CURRENCIES,
+} from '../../shared/currency-flags';
+```
 
 ### Styling Conventions
 
@@ -392,12 +457,12 @@ ng serve
 
 ## 🚨 Critical Project-Specific Patterns
 
-### Supported Currencies
+### Route Updates
 
-Always validate against exactly **40 supported currencies** (dinamically fetched from Frankfurter API via `/api/exchange/currencies`):
-Dynamic list includes: `USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, MXN, BRL, KRW, INR, SEK, NOK, HKD, SGD, NZD, ZAR, TRY, PLN` + 20 more
+Recent route additions:
 
-**Non-authenticated users** only see: `USD, EUR, JPY, GBP, CHF, CAD, AUD, CNY` (LIMITED_CURRENCIES)
+- `/api/historial` → maps to convert routes for backward compatibility
+- `/api/exchange/currencies` → dynamic currency fetching from Frankfurter
 
 ### JWT Token Management
 
