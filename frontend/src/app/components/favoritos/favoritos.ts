@@ -769,7 +769,7 @@ export class Favoritos implements OnInit, OnDestroy {
   constructor() {
     this.quickConversionForm = this.fb.group({
       amount: [1000, [Validators.required, Validators.min(0.01)]],
-      from: ['', Validators.required],
+      from: [this.baseCurrency, Validators.required], // ✅ Usar moneda base por defecto
       to: ['', Validators.required],
     });
 
@@ -793,6 +793,9 @@ export class Favoritos implements OnInit, OnDestroy {
       `🔄 Recargando favoritos con divisa base: ${this.baseCurrency}`
     );
 
+    // ✅ NUEVO: Actualizar conversión rápida con nueva moneda base
+    this.updateQuickConversionWithNewBaseCurrency();
+
     // Recargar divisas favoritas individuales con nueva base
     await this.loadFavoriteCurrencies(true); // Silent reload
 
@@ -801,6 +804,42 @@ export class Favoritos implements OnInit, OnDestroy {
       `💱 Divisa base cambiada a ${this.baseCurrency}`,
       'Cerrar',
       { duration: 3000, panelClass: ['success-snackbar'] }
+    );
+  }
+
+  /**
+   * ✅ NUEVO: Actualizar conversión rápida cuando cambia la moneda base
+   */
+  private updateQuickConversionWithNewBaseCurrency(): void {
+    const currentFrom = this.quickConversionForm.get('from')?.value;
+    const currentTo = this.quickConversionForm.get('to')?.value;
+
+    // Si el campo "from" era la moneda base anterior, actualizarlo
+    if (currentFrom && currentFrom !== this.baseCurrency) {
+      // Si "to" es la nueva moneda base, intercambiar
+      if (currentTo === this.baseCurrency) {
+        this.quickConversionForm.patchValue({
+          from: this.baseCurrency,
+          to: currentFrom,
+        });
+        console.log(
+          `🔄 Intercambiado conversión: ${this.baseCurrency}/${currentFrom}`
+        );
+      } else {
+        // Solo actualizar "from" a la nueva moneda base
+        this.quickConversionForm.patchValue({
+          from: this.baseCurrency,
+        });
+        console.log(`🔄 Actualizado "from" a: ${this.baseCurrency}`);
+      }
+    }
+
+    // Recalcular conversión con nuevos valores
+    this.calculateQuickConversion();
+
+    // Log de cambio
+    console.log(
+      `📊 Conversión rápida actualizada para base: ${this.baseCurrency}`
     );
   }
 
@@ -1740,9 +1779,28 @@ export class Favoritos implements OnInit, OnDestroy {
   }
 
   useInQuickConversion(favorite: FavoritePair): void {
+    // ✅ MEJORADO: Verificar si el par usa la moneda base actual
+    let fromCurrency = favorite.from;
+    let toCurrency = favorite.to;
+
+    // Si ninguna de las divisas del par es la moneda base actual,
+    // usar la moneda base como "from" y la primera divisa del par como "to"
+    if (
+      fromCurrency !== this.baseCurrency &&
+      toCurrency !== this.baseCurrency
+    ) {
+      fromCurrency = this.baseCurrency;
+      toCurrency = favorite.from; // Usar la primera divisa del par original
+    }
+    // Si "to" es la moneda base, intercambiar para que "from" sea la base
+    else if (toCurrency === this.baseCurrency) {
+      fromCurrency = this.baseCurrency;
+      toCurrency = favorite.from;
+    }
+
     this.quickConversionForm.patchValue({
-      from: favorite.from,
-      to: favorite.to,
+      from: fromCurrency,
+      to: toCurrency,
     });
 
     // Scroll al panel de conversión
@@ -1751,7 +1809,7 @@ export class Favoritos implements OnInit, OnDestroy {
     });
 
     this.snackBar.open(
-      `📊 Usando ${favorite.pair} en conversión rápida`,
+      `📊 Usando ${fromCurrency}/${toCurrency} en conversión rápida`,
       'Cerrar',
       {
         duration: 2000,
@@ -2149,9 +2207,9 @@ export class Favoritos implements OnInit, OnDestroy {
   }
 
   useInQuickConversionCurrency(currency: FavoriteCurrency): void {
-    // Si hay divisas favoritas, usar EUR como base
+    // ✅ MEJORADO: Usar la moneda base actual en lugar de EUR hardcodeado
     this.quickConversionForm.patchValue({
-      from: 'EUR',
+      from: this.baseCurrency, // ✅ Usa la moneda base seleccionada
       to: currency.currency,
     });
 
@@ -2161,7 +2219,7 @@ export class Favoritos implements OnInit, OnDestroy {
     });
 
     this.snackBar.open(
-      `📊 Usando EUR/${currency.currency} en conversión rápida`,
+      `📊 Usando ${this.baseCurrency}/${currency.currency} en conversión rápida`,
       'Cerrar',
       {
         duration: 2000,
