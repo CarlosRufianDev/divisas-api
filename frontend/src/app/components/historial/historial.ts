@@ -243,25 +243,6 @@ export class Historial implements OnInit, OnDestroy {
     }
   }
 
-  repeatConversion(conversion: ConversionHistory): void {
-    console.log('🔄 Repitiendo conversión:', conversion);
-
-    this.snackBar.open(
-      `Redirígiendo al conversor: ${conversion.amount} ${conversion.from} → ${conversion.to}`,
-      'Cerrar',
-      { duration: 3000, panelClass: ['success-snackbar'] }
-    );
-
-    // TODO: Implementar navegación con parámetros al dashboard
-    // this.router.navigate(['/dashboard'], {
-    //   queryParams: {
-    //     from: conversion.from,
-    //     to: conversion.to,
-    //     amount: conversion.amount
-    //   }
-    // });
-  }
-
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
