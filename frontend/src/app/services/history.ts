@@ -78,7 +78,7 @@ export class HistoryService {
 
   // Eliminar conversión específica
   deleteConversion(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/historial/${id}`, {
+    return this.http.delete(`${this.apiUrl}/historial/entry/${id}`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -91,7 +91,7 @@ export class HistoryService {
   }
 
   // Método helper para obtener las últimas conversiones (para dashboard)
-  getRecentConversions(limit: number = 5): Observable<HistoryResponse> {
+  getRecentConversions(limit = 5): Observable<HistoryResponse> {
     return this.getHistory({ limit, page: 1 });
   }
 }
