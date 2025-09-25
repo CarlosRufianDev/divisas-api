@@ -294,9 +294,9 @@ $spacing-xl: 2rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    flex: 1; // Permite que tome todo el espacio disponible
-    min-width: 0; // Evita overflow
-    width: 100%; // Asegura ancho completo
+    flex: 1; 
+    min-width: 0; 
+    width: 100%; 
 
     h1 {
       font-family: 'Inter', sans-serif;
@@ -309,8 +309,8 @@ $spacing-xl: 2rem;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      white-space: nowrap; // Evita que se rompa en múltiples líneas
-      overflow: visible; // Permite que el texto se muestre completamente
+      white-space: nowrap; 
+      overflow: visible; 
     }
 
     p {
@@ -329,75 +329,140 @@ $spacing-xl: 2rem;
     }
   }
 
-  // 🔍 SECCIÓN DE FILTROS INTEGRADA
-  .filters-section {
-    position: relative;
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 1.5rem;
-    backdrop-filter: blur(10px);
+  .header-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-shrink: 0;
 
-    .filters-header {
+    @media (max-width: 768px) {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .stat-item {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
+      text-align: center;
 
-      .filters-title {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        font-family: 'Inter', sans-serif;
+      .stat-number {
+        font-family: 'JetBrains Mono', monospace;
         font-weight: 700;
-        font-size: 1.2rem;
-        color: white;
-
-        mat-icon {
-          color: $warning-yellow;
-          font-size: 1.4rem;
-          width: 1.4rem;
-          height: 1.4rem;
-        }
+        font-size: 2rem;
+        color: $warning-yellow;
+        filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
       }
 
-      .clear-all-btn {
-        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 0.6rem 1.2rem !important;
-        font-weight: 600 !important;
-        font-size: 0.9rem !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-
-        &:hover:not([disabled]) {
-          background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4) !important;
-        }
-
-        &[disabled] {
-          opacity: 0.5 !important;
-          cursor: not-allowed !important;
-        }
-
-        mat-icon {
-          margin-right: 0.5rem;
-        }
+      .stat-label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.2rem;
       }
     }
   }
 }
 
 // ===============================
-// 🔍 FILTROS DE BÚSQUEDA INTEGRADOS
+// � TARJETA DE FILTROS Y RESULTADOS
 // ===============================
-.filters-form-integrated {
+.filters-and-results-card {
+  background: $gradient-card !important;
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(251, 191, 36, 0.4) !important;
+  border-radius: 20px !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(251, 191, 36, 0.1) !important;
+  overflow: hidden;
+  margin-bottom: $spacing-xl;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    border-color: rgba(251, 191, 36, 0.6) !important;
+    transform: translateY(-2px);
+    box-shadow: 
+      0 24px 48px rgba(0, 0, 0, 0.18),
+      0 12px 28px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 0 0 2px rgba(251, 191, 36, 0.2) !important;
+  }
+
+  mat-card-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(251, 191, 36, 0.1));
+    color: white !important;
+    padding: 1.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin: 0;
+      color: white !important;
+
+      mat-icon {
+        color: $warning-yellow;
+        font-size: 1.6rem;
+        width: 1.6rem;
+        height: 1.6rem;
+      }
+    }
+
+    .header-actions {
+      .clear-all-btn {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        color: white !important;
+        border: 2px solid rgba(239, 68, 68, 0.6) !important;
+        border-radius: 12px !important;
+        padding: 0.6rem 1.2rem !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+
+        &:hover:not([disabled]) {
+          background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4) !important;
+          border-color: rgba(239, 68, 68, 0.8) !important;
+        }
+
+        &[disabled] {
+          opacity: 0.5 !important;
+          cursor: not-allowed !important;
+          transform: none !important;
+        }
+
+        mat-icon {
+          margin-right: 0.5rem;
+          color: white !important;
+        }
+      }
+    }
+  }
+
+  mat-card-content {
+    padding: 1.5rem !important;
+    background: transparent;
+  }
+}
+
+// ===============================
+// 🔍 FORMULARIO DE FILTROS
+// ===============================
+.filters-form {
   // 🎯 FORZAR AMARILLO EN TODOS LOS LABELS (REGLA GLOBAL)
   mat-label,
   .mat-mdc-form-field-label,
@@ -531,7 +596,7 @@ $spacing-xl: 2rem;
     }
   }
 
-  .filters-actions-integrated {
+  .filters-actions {
     display: flex;
     gap: 1rem;
     justify-content: center;

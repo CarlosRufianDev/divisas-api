@@ -1,24 +1,36 @@
 <div class="historial-container">
   <div class="content-wrapper">
-    <!-- Header integrado como alertas -->
+    <!-- Header limpio como alertas -->  
     <div class="historial-header">
       <div class="header-content">
         <div class="header-info">
           <mat-icon class="header-icon">history</mat-icon>
           <div class="header-text">
             <h1>Historial de Conversiones</h1>
-            <p>Todas tus conversiones de divisas organizadas y filtradas</p>
+            <p>Todas tus conversiones de divisas organizadas y filtradas profesionalmente</p>
+          </div>
+        </div>
+        <div class="header-stats" *ngIf="conversions.length > 0">
+          <div class="stat-item">
+            <span class="stat-number">{{ conversions.length }}</span>
+            <span class="stat-label">Conversiones</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ pagination.total }}</span>
+            <span class="stat-label">Total</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Filtros integrados en el header -->
-      <div class="filters-section">
-        <div class="filters-header">
-          <div class="filters-title">
-            <mat-icon>filter_list</mat-icon>
-            <span>Filtros de Búsqueda</span>
-          </div>
+    <!-- Filtros y resultados juntos -->
+    <mat-card class="filters-and-results-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>filter_list</mat-icon>
+          Filtros de Búsqueda
+        </mat-card-title>
+        <div class="header-actions">
           <button
             mat-button
             class="clear-all-btn"
@@ -29,8 +41,10 @@
             Limpiar Todo
           </button>
         </div>
+      </mat-card-header>
 
-        <form [formGroup]="filtersForm" class="filters-form-integrated">
+      <mat-card-content>
+        <form [formGroup]="filtersForm" class="filters-form">
           <div class="filters-grid">
             <mat-form-field
               appearance="outline"
@@ -115,7 +129,7 @@
             </mat-form-field>
           </div>
 
-          <div class="filters-actions-integrated">
+          <div class="filters-actions">
             <button
               mat-raised-button
               class="apply-filters-btn"
@@ -136,8 +150,8 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
 
     <!-- Loading -->
     <div *ngIf="loading" class="loading-container">
