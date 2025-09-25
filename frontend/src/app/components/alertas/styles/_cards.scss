@@ -1,0 +1,429 @@
+// ============================================================================
+// 🃏 SISTEMA DE CARDS PARA ALERTAS
+// Cards especializados siguiendo el patrón de favoritos y dashboard
+// ============================================================================
+
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// ============================================================================
+// 🎴 CARDS PRINCIPALES
+// ============================================================================
+
+.create-alert-card {
+  @include mix.glass-card-dark();
+  margin-bottom: vars.$spacing-2xl;
+  overflow: hidden;
+  
+  .mat-mdc-card-header {
+    background: linear-gradient(
+      135deg,
+      vars.$alert-notification-10 0%,
+      vars.$alert-success-10 100%
+    );
+    padding: vars.$spacing-xl;
+    border-bottom: 1px solid vars.$glass-white-border;
+  }
+  
+  .mat-mdc-card-content {
+    padding: vars.$spacing-2xl;
+  }
+  
+  .mat-mdc-card-actions {
+    padding: vars.$spacing-xl vars.$spacing-2xl;
+    background: vars.$glass-white-subtle;
+    border-top: 1px solid vars.$glass-white-border;
+  }
+  
+  &:hover {
+    @include mix.hover-lift(-3px, 1.002);
+    box-shadow: vars.$shadow-xl;
+  }
+}
+
+.alerts-list-card {
+  @include mix.glass-card-dark();
+  margin-bottom: vars.$spacing-2xl;
+  
+  .mat-mdc-card-header {
+    background: linear-gradient(
+      135deg,
+      vars.$info-blue-10 0%,
+      vars.$success-green-10 100%
+    );
+    padding: vars.$spacing-xl;
+    border-bottom: 1px solid vars.$glass-white-border;
+  }
+  
+  .mat-mdc-card-content {
+    padding: vars.$spacing-xl;
+  }
+  
+  &:hover {
+    @include mix.hover-lift(-2px, 1.001);
+  }
+}
+
+.empty-state {
+  @include mix.glass-card-dark();
+  text-align: center;
+  padding: vars.$spacing-4xl vars.$spacing-2xl;
+  margin-bottom: vars.$spacing-2xl;
+  
+  .mat-mdc-card-content {
+    padding: vars.$spacing-2xl;
+  }
+  
+  .empty-content {
+    @include mix.flex-column(vars.$spacing-xl);
+    align-items: center;
+    
+    .empty-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: vars.$spacing-lg;
+    }
+    
+    h2 {
+      @include mix.heading-md();
+      color: white;
+      margin: 0 0 vars.$spacing-md 0;
+    }
+    
+    p {
+      @include mix.text-body();
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+      max-width: 400px;
+      line-height: 1.6;
+    }
+  }
+}
+
+// ============================================================================
+// 📋 CARD DE ALERTA INDIVIDUAL
+// ============================================================================
+
+.alert-item {
+  @include mix.glass-card();
+  padding: vars.$spacing-xl;
+  margin-bottom: vars.$spacing-lg;
+  transition: vars.$transition-normal;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: vars.$spacing-xl;
+  
+  &.active {
+    border-left: 4px solid vars.$alert-success;
+    background: linear-gradient(
+      135deg,
+      vars.$alert-success-10 0%,
+      rgba(255, 255, 255, 0.9) 100%
+    );
+    
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        vars.$alert-success-20 0%,
+        rgba(255, 255, 255, 0.95) 100%
+      );
+    }
+  }
+  
+  &.inactive {
+    border-left: 4px solid vars.$alert-disabled;
+    background: linear-gradient(
+      135deg,
+      rgba(158, 158, 158, 0.1) 0%,
+      rgba(255, 255, 255, 0.85) 100%
+    );
+    opacity: 0.7;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+  
+  &:hover {
+    @include mix.hover-lift(-2px, 1.001);
+    box-shadow: vars.$shadow-lg;
+  }
+  
+  @include mix.mobile-only {
+    flex-direction: column;
+    align-items: stretch;
+    gap: vars.$spacing-lg;
+  }
+}
+
+.alert-info {
+  flex: 1;
+  @include mix.flex-column(vars.$spacing-md);
+  min-width: 0; // Para que el texto se trunque correctamente
+}
+
+.alert-pair {
+  @include mix.flex-row(vars.$spacing-sm);
+  align-items: center;
+  margin-bottom: vars.$spacing-sm;
+  
+  .currency-badge {
+    @include mix.flex-row(0.3rem);
+    align-items: center;
+    padding: vars.$spacing-xs vars.$spacing-sm;
+    background: vars.$glass-white-subtle;
+    border-radius: vars.$radius-sm;
+    font-family: vars.$font-mono;
+    font-weight: 600;
+    font-size: 0.85rem;
+    
+    &.from {
+      color: vars.$info-blue;
+      background: vars.$info-blue-10;
+    }
+    
+    &.to {
+      color: vars.$success-green;
+      background: vars.$success-green-10;
+    }
+  }
+  
+  .arrow {
+    color: vars.$warning-yellow;
+    font-size: 1.2rem;
+  }
+}
+
+.alert-details {
+  @include mix.flex-column(vars.$spacing-xs);
+  
+  .alert-type {
+    @include mix.flex-row(vars.$spacing-xs);
+    align-items: center;
+    font-family: vars.$font-primary;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: vars.$alert-notification;
+    
+    mat-icon {
+      font-size: 1.1rem;
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+  
+  .alert-description {
+    @include mix.text-body(0.9rem);
+    color: rgba(0, 0, 0, 0.7);
+    margin: vars.$spacing-xs 0;
+    line-height: 1.5;
+  }
+  
+  .alert-email {
+    @include mix.flex-row(vars.$spacing-xs);
+    align-items: center;
+    font-family: vars.$font-mono;
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.6);
+    
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+      color: vars.$info-blue;
+    }
+  }
+  
+  .alert-dates {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.5);
+    font-style: italic;
+    margin-top: vars.$spacing-xs;
+    
+    .last-sent {
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      background: vars.$glass-white-subtle;
+      border-radius: vars.$radius-sm;
+      display: inline-block;
+    }
+  }
+}
+
+.alert-actions {
+  @include mix.flex-column(vars.$spacing-md);
+  align-items: flex-end;
+  flex-shrink: 0;
+  
+  @include mix.mobile-only {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.alert-status {
+  .mat-mdc-slide-toggle {
+    .mdc-switch__track {
+      &::before {
+        background-color: vars.$alert-disabled;
+      }
+      
+      &::after {
+        background-color: vars.$alert-success;
+      }
+    }
+    
+    .mdc-switch__handle {
+      &::before {
+        background-color: white;
+      }
+    }
+    
+    &.mat-checked .mdc-switch__track::after {
+      background-color: vars.$alert-success;
+    }
+  }
+}
+
+.action-buttons {
+  @include mix.flex-row(vars.$spacing-sm);
+  
+  button {
+    @include mix.button-base();
+    padding: vars.$spacing-sm vars.$spacing-md;
+    font-size: 0.8rem;
+    min-width: auto;
+    
+    &[color="accent"] {
+      background: vars.$warning-yellow-10;
+      color: vars.$warning-yellow;
+      border: 1px solid vars.$warning-yellow-20;
+      
+      &:hover {
+        background: vars.$warning-yellow;
+        color: white;
+      }
+    }
+    
+    &[color="warn"] {
+      background: vars.$error-red-10;
+      color: vars.$error-red;
+      border: 1px solid vars.$error-red-20;
+      
+      &:hover {
+        background: vars.$error-red;
+        color: white;
+      }
+    }
+    
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}
+
+// ============================================================================
+// 📊 CARDS DE ESTADÍSTICAS (HEADER)
+// ============================================================================
+
+.header-stats {
+  @include mix.flex-row(vars.$spacing-xl);
+  
+  @include mix.mobile-only {
+    justify-content: center;
+    margin-top: vars.$spacing-lg;
+  }
+}
+
+.stat-item {
+  @include mix.flex-column(vars.$spacing-xs);
+  align-items: center;
+  text-align: center;
+  padding: vars.$spacing-md vars.$spacing-lg;
+  background: vars.$glass-white-subtle;
+  border-radius: vars.$radius-md;
+  border: 1px solid vars.$glass-white-border;
+  
+  .stat-number {
+    @include mix.text-monospace(1.5rem, 700);
+    color: vars.$alert-notification;
+    text-shadow: 0 2px 4px rgba(255, 87, 34, 0.3);
+  }
+  
+  .stat-label {
+    @include mix.text-body(0.8rem);
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+  
+  &:hover {
+    @include mix.hover-lift(-1px, 1.02);
+    background: vars.$glass-white-border;
+  }
+}
+
+// ============================================================================
+// 🎨 FORM SECTIONS CARDS
+// ============================================================================
+
+.form-section {
+  margin-bottom: vars.$spacing-2xl;
+  padding: vars.$spacing-xl;
+  background: vars.$glass-white-subtle;
+  border-radius: vars.$radius-lg;
+  border: 1px solid vars.$glass-white-border;
+  
+  h3 {
+    @include mix.heading-md();
+    color: white;
+    margin: 0 0 vars.$spacing-lg 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-sm;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: vars.$alert-notification;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: vars.$glass-white-border;
+  }
+}
+
+// ============================================================================
+// 🔄 LOADING STATES
+// ============================================================================
+
+.loading-container {
+  @include mix.flex-column(vars.$spacing-lg);
+  align-items: center;
+  justify-content: center;
+  padding: vars.$spacing-4xl;
+  text-align: center;
+  
+  mat-spinner {
+    --mdc-circular-progress-active-indicator-color: #{vars.$alert-notification} !important;
+  }
+  
+  p {
+    @include mix.text-body();
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    font-style: italic;
+  }
+}

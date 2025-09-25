@@ -1,0 +1,346 @@
+// ============================================================================
+// 🎭 SISTEMA DE ANIMACIONES PARA ALERTAS
+// Animaciones fluidas y profesionales siguiendo el patrón establecido
+// ============================================================================
+
+@use 'variables' as vars;
+
+// ============================================================================
+// 🎬 KEYFRAMES PRINCIPALES
+// ============================================================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes bellPulse {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 4px 8px vars.$alert-notification-20);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.05);
+    filter: drop-shadow(0 6px 12px vars.$alert-notification-30);
+  }
+  75% {
+    transform: rotate(10deg) scale(1.05);
+    filter: drop-shadow(0 6px 12px vars.$alert-notification-30);
+  }
+}
+
+@keyframes cardFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes notificationBlink {
+  0%, 50%, 100% {
+    opacity: 1;
+    background-color: vars.$alert-notification;
+  }
+  25%, 75% {
+    opacity: 0.6;
+    background-color: vars.$warning-orange;
+  }
+}
+
+// ============================================================================
+// 🎨 CLASES DE ANIMACIÓN UTILITARIAS
+// ============================================================================
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-bell-pulse {
+  animation: bellPulse 1.5s ease-in-out infinite;
+}
+
+.animate-card-float {
+  animation: cardFloat 6s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+.animate-notification-blink {
+  animation: notificationBlink 1s ease-in-out infinite;
+}
+
+// ============================================================================
+// 📱 ANIMACIONES ESCALONADAS (STAGGER)
+// ============================================================================
+
+.stagger-animation {
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+  }
+  
+  > *:nth-child(1) { animation-delay: 0.1s; }
+  > *:nth-child(2) { animation-delay: 0.2s; }
+  > *:nth-child(3) { animation-delay: 0.3s; }
+  > *:nth-child(4) { animation-delay: 0.4s; }
+  > *:nth-child(5) { animation-delay: 0.5s; }
+  > *:nth-child(6) { animation-delay: 0.6s; }
+  > *:nth-child(7) { animation-delay: 0.7s; }
+  > *:nth-child(8) { animation-delay: 0.8s; }
+}
+
+// ============================================================================
+// 🔔 ANIMACIONES ESPECÍFICAS PARA ALERTAS
+// ============================================================================
+
+.alert-notification-icon {
+  @extend .animate-bell-pulse;
+  color: vars.$alert-notification;
+  filter: drop-shadow(0 0 8px vars.$alert-notification-20);
+}
+
+.alert-success-icon {
+  color: vars.$alert-success;
+  filter: drop-shadow(0 0 6px vars.$alert-success-10);
+  
+  &:hover {
+    @extend .animate-pulse;
+  }
+}
+
+.alert-pending-icon {
+  color: vars.$alert-pending;
+  @extend .animate-shimmer;
+}
+
+.alert-card-enter {
+  @extend .animate-scale-in;
+}
+
+.alert-form-section {
+  @extend .animate-fade-in-up;
+}
+
+// ============================================================================
+// 🎯 ANIMACIONES DE ESTADOS
+// ============================================================================
+
+.loading-state {
+  .loading-spinner {
+    @extend .animate-pulse;
+  }
+  
+  .loading-text {
+    animation: fadeIn 0.3s ease-out 0.2s both;
+  }
+}
+
+.success-state {
+  .success-icon {
+    animation: scaleIn 0.4s ease-out;
+    color: vars.$success-green;
+  }
+  
+  .success-message {
+    animation: slideInRight 0.5s ease-out 0.2s both;
+  }
+}
+
+.error-state {
+  .error-icon {
+    animation: scaleIn 0.4s ease-out;
+    color: vars.$error-red;
+  }
+  
+  .error-message {
+    animation: slideInLeft 0.5s ease-out 0.2s both;
+  }
+}
+
+// ============================================================================
+// 🎨 TRANSICIONES SUAVES
+// ============================================================================
+
+.smooth-transition {
+  transition: all vars.$transition-normal;
+}
+
+.hover-lift {
+  transition: transform vars.$transition-normal, box-shadow vars.$transition-normal;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.hover-scale {
+  transition: transform vars.$transition-fast;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// ============================================================================
+// 📊 ANIMACIONES DE ENTRADA DE CONTENIDO
+// ============================================================================
+
+.content-enter {
+  .header-section {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  .form-section {
+    animation: fadeInUp 0.6s ease-out 0.1s both;
+  }
+  
+  .alerts-list {
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+  }
+  
+  .empty-state {
+    animation: scaleIn 0.6s ease-out 0.3s both;
+  }
+}
+
+// ============================================================================
+// 🔄 ANIMACIONES DE INTERACCIÓN
+// ============================================================================
+
+.toggle-animation {
+  transition: all vars.$transition-normal;
+  
+  &.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px vars.$alert-success-20;
+  }
+  
+  &.inactive {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+}
+
+.button-press {
+  transition: transform vars.$transition-fast;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ============================================================================
+// 🌟 ANIMACIONES DE FEEDBACK
+// ============================================================================
+
+.feedback-success {
+  animation: pulse 0.3s ease-out, fadeIn 0.5s ease-out;
+  background: linear-gradient(135deg, vars.$success-green-10, vars.$success-green-20);
+  border: 1px solid vars.$success-green;
+}
+
+.feedback-error {
+  animation: pulse 0.3s ease-out, fadeIn 0.5s ease-out;
+  background: linear-gradient(135deg, vars.$error-red-10, vars.$error-red-20);
+  border: 1px solid vars.$error-red;
+}
+
+.feedback-warning {
+  animation: pulse 0.3s ease-out, fadeIn 0.5s ease-out;
+  background: linear-gradient(135deg, vars.$warning-yellow-10, vars.$warning-yellow-20);
+  border: 1px solid vars.$warning-yellow;
+}
