@@ -1,6 +1,11 @@
 @use './variables' as vars;
 
-// Layout mixins
+// ============================================================================
+// 🎨 SISTEMA DE MIXINS PARA FAVORITOS
+// Siguiendo el patrón del dashboard con mejoras específicas
+// ============================================================================
+
+// 📐 LAYOUT MIXINS
 @mixin flex-center($direction: row, $gap: 0) {
   display: flex;
   justify-content: center;
@@ -15,34 +20,85 @@
   align-items: $align;
 }
 
-// Glassmorphism card effect
-@mixin glass-card() {
-  background: vars.$glass-white;
-  backdrop-filter: blur(10px);
-  border-radius: vars.$radius-md;
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin grid-responsive($min-width: 280px, $gap: 1.5rem) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+// 🌫️ GLASSMORPHISM SYSTEM
+@mixin glass-card($opacity: 0.9, $blur: 10px) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  border-radius: vars.$radius-lg;
   box-shadow: vars.$shadow-md;
-  border: 1px solid rgba(226, 232, 240, 0.6);
+  border: 1px solid vars.$glass-white-border;
   transition: vars.$transition-normal;
 }
 
-// Interactive hover effect
+@mixin glass-card-dark($opacity: 0.1, $blur: 20px) {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, $opacity) 0%, 
+    rgba(255, 255, 255, $opacity * 0.5) 100%
+  );
+  backdrop-filter: blur($blur);
+  border: 1px solid vars.$glass-white-border;
+  border-radius: vars.$radius-xl;
+  box-shadow: vars.$shadow-glassmorphism;
+}
+
+@mixin glass-header() {
+  background: vars.$favorites-header-bg;
+  color: white;
+  padding: 1.5rem;
+  border-bottom: 1px solid vars.$glass-white-border;
+}
+
+// 🎭 INTERACTIVE EFFECTS
 @mixin hover-lift($translateY: -2px, $scale: 1.002) {
+  transition: vars.$transition-normal;
+  
   &:hover {
     transform: translateY($translateY) scale($scale);
-    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25), 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: vars.$shadow-lg;
   }
 }
 
-// Button system
+@mixin hover-glow($color: vars.$info-blue, $intensity: 0.4) {
+  transition: vars.$transition-normal;
+  
+  &:hover {
+    box-shadow: 0 6px 16px rgba($color, $intensity);
+    border-color: rgba($color, 0.6);
+  }
+}
+
+@mixin card-hover-effect() {
+  &:hover {
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: vars.$shadow-lg;
+    border-color: vars.$info-blue;
+    background: vars.$gradient-card-white-hover;
+  }
+}
+
+// 🔘 BUTTON SYSTEM MEJORADO
 @mixin button-base() {
   padding: 0.75rem 1.5rem;
-  border-radius: vars.$radius-sm;
+  border-radius: vars.$radius-md;
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0.025em;
   transition: vars.$transition-normal;
   border: none;
   cursor: pointer;
+  font-family: 'Inter', sans-serif;
 }
 
 @mixin button-gradient($color1, $color2) {
@@ -51,8 +107,8 @@
   color: white;
   box-shadow: 0 4px 12px rgba($color1, 0.3);
 
-  &:hover {
-    transform: translateY(-1px);
+  &:hover:not([disabled]) {
+    transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba($color1, 0.4);
   }
 
@@ -61,38 +117,200 @@
   }
 }
 
-// Form inputs
-@mixin input-field() {
-  .mat-mdc-form-field {
-    width: 100%;
-    
-    .mat-mdc-text-field-wrapper {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: vars.$radius-sm;
-      backdrop-filter: blur(5px);
-    }
-
-    .mat-mdc-form-field-focus-overlay {
-      background: rgba(vars.$primary-blue, 0.1);
-    }
+@mixin button-subtle($bg-opacity: 0.08, $border-opacity: 0.15) {
+  background: rgba(255, 255, 255, $bg-opacity);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, $border-opacity);
+  border-radius: vars.$radius-sm;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: vars.$transition-normal;
+  min-height: 60px;
+  
+  &:hover:not([disabled]) {
+    background: rgba(255, 255, 255, $bg-opacity * 2);
+    color: white;
+    border-color: rgba(255, 255, 255, $border-opacity * 2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 }
 
-// Responsive design
+@mixin button-danger-hover() {
+  &:hover:not([disabled]) {
+    background: vars.$error-red-10;
+    color: #ff6b6b;
+    border-color: vars.$error-red-20;
+    box-shadow: 0 4px 16px vars.$error-red-15;
+  }
+}
+
+// 📊 CARD SYSTEM ESPECÍFICO
+@mixin favorite-card-base() {
+  background: vars.$gradient-card-white;
+  backdrop-filter: blur(15px);
+  border: 1px solid vars.$glass-dark-border-strong;
+  border-radius: vars.$radius-lg;
+  padding: 0;
+  overflow: hidden;
+  transition: vars.$transition-normal;
+  box-shadow: vars.$shadow-md;
+  animation: fadeIn 0.6s ease-out;
+  
+  @include card-hover-effect();
+}
+
+@mixin trend-card-border($color, $gradient) {
+  border-left: 4px solid $color;
+  background: $gradient !important;
+}
+
+@mixin card-header-section() {
+  background: vars.$glass-white-subtle;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid vars.$glass-dark-border;
+  @include flex-between();
+}
+
+@mixin card-main-info() {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.904);
+  border-radius: vars.$radius-sm;
+  margin: 0.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+@mixin card-actions-grid($columns: 4) {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid vars.$glass-dark-border;
+  background: vars.$glass-white-subtle;
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: 0.5rem;
+
+  @media (max-width: vars.$mobile) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+}
+
+// 📝 FORM INPUTS MEJORADOS
+@mixin input-field($bg-opacity: 0.12) {
+  .mat-mdc-form-field {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background: rgba(255, 255, 255, $bg-opacity);
+    border: 1px solid vars.$glass-white-border;
+    border-radius: vars.$radius-md;
+    transition: vars.$transition-normal;
+
+    &:hover {
+      background: rgba(255, 255, 255, $bg-opacity * 1.25);
+      border-color: vars.$glass-white-border-light;
+    }
+
+    &.mdc-text-field--focused {
+      background: rgba(255, 255, 255, $bg-opacity * 1.5);
+      border-color: vars.$info-blue;
+      box-shadow: 0 0 0 2px vars.$info-blue-20;
+    }
+  }
+
+  input,
+  .mat-mdc-select-value {
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+
+  mat-label {
+    color: vars.$warning-yellow;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+}
+
+// 📱 RESPONSIVE DESIGN SYSTEM
 @mixin mobile-only {
-  @media (max-width: 768px) {
+  @media (max-width: vars.$mobile) {
+    @content;
+  }
+}
+
+@mixin tablet-only {
+  @media (min-width: calc(vars.$mobile + 1px)) and (max-width: vars.$tablet) {
     @content;
   }
 }
 
 @mixin tablet-up {
-  @media (min-width: 769px) {
+  @media (min-width: calc(vars.$tablet + 1px)) {
     @content;
   }
 }
 
 @mixin desktop-up {
-  @media (min-width: 1024px) {
+  @media (min-width: calc(vars.$desktop + 1px)) {
     @content;
+  }
+}
+
+@mixin wide-up {
+  @media (min-width: calc(vars.$wide + 1px)) {
+    @content;
+  }
+}
+
+// 🎯 TYPOGRAPHY SYSTEM
+@mixin heading-xl() {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: -0.05em;
+}
+
+@mixin heading-lg() {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+
+@mixin text-monospace($size: 1rem, $weight: 600) {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: $weight;
+  font-size: $size;
+}
+
+@mixin text-body($size: 0.9rem) {
+  font-family: 'Poppins', sans-serif;
+  font-size: $size;
+  line-height: 1.6;
+}
+
+// 📊 ESTADOS DE TENDENCIA
+@mixin trend-indicator($type: 'neutral') {
+  mat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+
+    @if $type == 'up' {
+      color: vars.$trend-up-color;
+    } @else if $type == 'down' {
+      color: vars.$trend-down-color;
+    } @else {
+      color: vars.$trend-neutral-color;
+    }
   }
 }

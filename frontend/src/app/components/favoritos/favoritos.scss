@@ -1,10 +1,25 @@
-// 🎨 IMPORTS Y FUENTES
+// ============================================================================
+// 🎨 FAVORITOS - ARQUITECTURA SCSS MODULAR COMPLETA
+// Siguiendo el patrón del dashboard con estructura optimizada
+// ============================================================================
+
+// 📦 IMPORTS MODULARES
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
+@use './styles/cards' as cards;
+
+// 🎨 FUENTES TIPOGRÁFICAS ESTÁNDAR
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-// 🚨 FORZAR ESTILOS GLOBALES PARA ANGULAR MATERIAL
+// ============================================================================
+// 🚨 ANGULAR MATERIAL GLOBAL OVERRIDES
+// Configuración específica para el componente favoritos
+// ============================================================================
 ::ng-deep {
   .favoritos-container {
+    // 🎯 FORZAR COLORES EN FORM FIELDS
     .mat-mdc-select-value,
     .mat-mdc-select-value-text, 
     .mat-mdc-select-min-line {
@@ -15,112 +30,37 @@
     .mdc-floating-label,
     .mat-mdc-floating-label,
     mat-label {
-      color: #fbbf24 !important;
+      color: vars.$warning-yellow !important;
     }
 
-    // 🎯 ÍCONOS EN AMARILLO - TODOS LOS ÍCONOS DE LOS FILTROS
+    // ÍCONOS EN AMARILLO
     .mat-mdc-form-field-icon-suffix,
     .mat-icon,
     mat-icon {
-      color: #fbbf24 !important;
+      color: vars.$warning-yellow !important;
     }
 
-    // Íconos específicos de select (flechas dropdown)
     .mat-mdc-select-arrow,
     .mat-mdc-select-arrow svg {
-      color: #fbbf24 !important;
-      fill: #fbbf24 !important;
+      color: vars.$warning-yellow !important;
+      fill: vars.$warning-yellow !important;
     }
-  }
-}
 
-// 🎨 VARIABLES DE COLORES (Basadas en el dashboard)
-$primary-blue: #667eea;
-$primary-purple: #764ba2;
-$success-green: #4caf50;
-$warning-orange: #ff9800;
-$warning-yellow: #fbbf24;
-$error-red: #f44336;
-$info-blue: #3b82f6;
-
-// Transparencias del azul
-$info-blue-03: rgba(59, 130, 246, 0.03);
-$info-blue-05: rgba(59, 130, 246, 0.05);
-$info-blue-08: rgba(59, 130, 246, 0.08);
-$info-blue-10: rgba(59, 130, 246, 0.1);
-$info-blue-15: rgba(59, 130, 246, 0.15);
-$info-blue-20: rgba(59, 130, 246, 0.2);
-$info-blue-30: rgba(59, 130, 246, 0.3);
-
-// Gradientes
-$gradient-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%);
-$gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-
-// Espaciado
-$spacing-xs: 0.5rem;
-$spacing-sm: 0.75rem;
-$spacing-md: 1rem;
-$spacing-lg: 1.5rem;
-$spacing-xl: 2rem;
-
-// 🎯 ANIMACIONES
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes gemPulse {
-  0%, 100% {
-    filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 6px 12px rgba(251, 191, 36, 0.5));
-    transform: scale(1.02);
-  }
-}
-
-@keyframes cardFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-2px);
-  }
-}
-
-// ===============================
-// � MATERIAL CARDS ESPECÍFICAS PARA FAVORITOS
-// ===============================
-::ng-deep {
-  .favoritos-container {
-    // FORZAR ESTILOS EN MAT-CARD
+    // 🃏 CARDS GLOBALES (usando nueva estructura)
     .mat-mdc-card,
     mat-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
-      backdrop-filter: blur(20px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-radius: 20px !important;
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.1),
-        0 8px 24px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-      overflow: hidden !important;
-      margin-bottom: 2rem !important;
+      @include mix.glass-card-dark();
+      margin-bottom: vars.$spacing-2xl !important;
     }
 
-    // HEADERS DE CARDS
     .mat-mdc-card-header,
     mat-card-header {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(251, 191, 36, 0.1)) !important;
-      color: white !important;
-      padding: 1.5rem !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      @include mix.glass-header();
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: wrap !important;
+      gap: vars.$spacing-lg !important;
 
       .mat-mdc-card-title,
       mat-card-title {
@@ -129,15 +69,40 @@ $spacing-xl: 2rem;
         font-weight: 700 !important;
         font-size: 1.4rem !important;
         margin: 0 !important;
+        flex: 1 !important;
+        display: flex !important;
+        align-items: center !important;
 
         mat-icon {
-          color: #fbbf24 !important;
+          color: vars.$warning-yellow !important;
           margin-right: 0.8rem !important;
+        }
+      }
+
+      // Forzar posicionamiento del botón a la derecha
+      button {
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
+      }
+
+      @include mix.mobile-only {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: vars.$spacing-md !important;
+
+        .mat-mdc-card-title,
+        mat-card-title {
+          justify-content: center !important;
+          text-align: center !important;
+        }
+
+        button {
+          margin-left: 0 !important;
+          align-self: stretch !important;
         }
       }
     }
 
-    // CONTENT DE CARDS
     .mat-mdc-card-content,
     mat-card-content {
       padding: 1.5rem !important;
@@ -145,150 +110,76 @@ $spacing-xl: 2rem;
       color: white !important;
     }
 
-    // BOTONES EN HEADERS
     .mat-mdc-card-header button,
     mat-card-header button {
-      background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 12px !important;
-      font-weight: 600 !important;
-      transition: all 0.3s ease !important;
-
-      &:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-      }
-
+      // Los estilos están definidos en la sección de botones unificados
+      // Fuerza aplicación de estilos sobre Angular Material
+      @include mix.button-base();
+      
       mat-icon {
         color: white !important;
-        margin-right: 0.5rem !important;
+      }
+    }
+  }
+
+  // LAYOUT ESPECÍFICO PARA HEADERS DE FAVORITOS
+  .favorites-section-card,
+  .currencies-section-enhanced,
+  .section-card {
+    .mat-mdc-card-header,
+    mat-card-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: vars.$spacing-lg vars.$spacing-xl !important;
+      min-height: 60px !important;
+
+      .mat-mdc-card-title,
+      mat-card-title {
+        flex: 1 !important;
+        margin-right: vars.$spacing-lg !important;
+      }
+
+      .header-action-btn {
+        flex-shrink: 0 !important;
+        margin-left: auto !important;
       }
     }
   }
 }
 
-// ===============================
-// �📊 ESTADOS DE CARGA Y VACÍO
-// ===============================
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 2rem 0;
-
-  mat-spinner {
-    margin-bottom: 1rem;
-  }
-
-  p {
-    color: rgba(255, 255, 255, 0.8);
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
-    margin: 0;
-  }
-}
-
-.empty-state {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 20px !important;
-  margin: 2rem 0;
-
-  .empty-content {
-    text-align: center;
-    padding: 2rem;
-    color: white;
-
-    .empty-icon {
-      font-size: 4rem;
-      width: 4rem;
-      height: 4rem;
-      color: $warning-yellow;
-      margin-bottom: 1rem;
-      filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
-    }
-
-    h2 {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1.8rem;
-      margin: 1rem 0;
-      color: white;
-    }
-
-    p {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.6;
-      margin: 1.5rem 0;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      background: linear-gradient(135deg, $primary-blue, $primary-purple) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 12px !important;
-      padding: 0.8rem 1.5rem !important;
-      font-weight: 600 !important;
-      font-family: 'Inter', sans-serif !important;
-      transition: all 0.3s ease !important;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
-      }
-
-      mat-icon {
-        margin-right: 0.5rem;
-      }
-    }
-  }
-}
-
-// ===============================
+// ============================================================================
 // 🏠 CONTENEDOR PRINCIPAL
-// ===============================
+// ============================================================================
 .favoritos-container {
-  animation: fadeIn 0.3s ease-out;
-  background: $gradient-primary;
+  @extend .animate-fade-in;
+  background: vars.$gradient-primary;
   min-height: 100vh;
-  padding: $spacing-md;
+  padding: vars.$spacing-lg;
   
   .content-wrapper {
-    max-width: 1400px;
+    max-width: vars.$wide;
     margin: 0 auto;
-    padding: $spacing-lg;
+    padding: vars.$spacing-xl;
+
+    @include mix.mobile-only {
+      padding: vars.$spacing-lg;
+    }
   }
 }
 
-// ===============================
-// 📋 HEADER DE FAVORITOS INTEGRADO (IGUAL QUE HISTORIAL)
-// ===============================
+// ============================================================================
+// 📋 HEADER DE FAVORITOS INTEGRADO
+// ============================================================================
 .favoritos-header {
-  background: linear-gradient(135deg, 
-    #0f172a 0%, 
-    #1e293b 25%, 
-    #334155 50%, 
-    #1e293b 75%, 
-    #0f172a 100%);
+  background: vars.$gradient-primary;
   color: white;
-  padding: 2.5rem 2rem 3rem;
-  border-radius: 24px;
+  padding: vars.$spacing-3xl vars.$spacing-2xl vars.$spacing-4xl;
+  border-radius: vars.$radius-2xl;
   position: relative;
   overflow: hidden;
-  margin-bottom: $spacing-xl;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.15),
-    0 8px 24px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  margin-bottom: vars.$spacing-xl;
+  box-shadow: vars.$shadow-xl;
 
   // Patrón de fondo sutil
   &::before {
@@ -299,96 +190,81 @@ $spacing-xl: 2rem;
     right: 0;
     bottom: 0;
     background: 
-      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 40% 80%, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
+      radial-gradient(circle at 20% 50%, vars.$info-blue-10 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, vars.$success-green-10 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, vars.$warning-yellow-10 0%, transparent 50%);
     pointer-events: none;
   }
 
-  // ✨ TÍTULO SIMPLE COMO HISTORIAL
   .title-container {
-    display: flex;
-    flex-direction: column;
+    @include mix.flex-column(vars.$spacing-lg);
     align-items: center;
     text-align: center;
     position: relative;
-    z-index: 2;
-    margin-bottom: 2.5rem;
+    z-index: vars.$z-header;
+    margin-bottom: 30px !important;
 
     .simple-title {
-      font-family: 'Inter', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      letter-spacing: -0.05em;
-      margin: 0 0 0.5rem 0;
+      @include mix.heading-xl();
+      margin: 0 0 0 0;
       background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
+      @include mix.flex-center(row, 1rem);
 
       .favorite-symbol {
-        color: $warning-yellow;
+        color: vars.$warning-yellow;
         font-size: clamp(2.5rem, 5vw, 4rem);
         width: clamp(2.5rem, 5vw, 4rem);
         height: clamp(2.5rem, 5vw, 4rem);
-        animation: gemPulse 3s ease-in-out infinite;
-        filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+        @extend .animate-gem-pulse;
+        filter: drop-shadow(0 4px 8px vars.$warning-yellow-30);
       }
     }
 
     .title-tagline {
       .tagline-text {
-        font-family: 'Poppins', sans-serif;
-        font-size: clamp(1rem, 2vw, 1.2rem);
+        @include mix.text-body(clamp(1rem, 2vw, 1.2rem));
         color: rgba(255, 255, 255, 0.8);
         margin: 0;
         font-weight: 400;
-        line-height: 1.6;
         max-width: 600px;
         text-align: center;
-        padding: 0 1rem;
+        padding: 0 vars.$spacing-lg;
 
-        @media (max-width: 768px) {
+        @include mix.mobile-only {
           font-size: 1rem;
           line-height: 1.5;
-          padding: 0 0.5rem;
+          padding: 0 vars.$spacing-sm;
         }
       }
     }
   }
 
-  // 🔧 SECCIÓN DE GESTIÓN RÁPIDA INTEGRADA
   .filters-section {
     position: relative;
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 1.5rem;
+    z-index: vars.$z-header;
+    background: vars.$glass-white-subtle;
+    border-radius: vars.$radius-xl;
+    border: 1px solid vars.$glass-white-border;
+    padding: vars.$spacing-xl;
     backdrop-filter: blur(10px);
 
     .filters-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      @include mix.flex-between();
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: vars.$spacing-lg;
 
       .filters-title {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
+        @include mix.flex-center(row, 0.8rem);
         font-family: 'Inter', sans-serif;
         font-weight: 700;
         font-size: 1.2rem;
         color: white;
 
         mat-icon {
-          color: $warning-yellow;
+          color: vars.$warning-yellow;
           font-size: 1.4rem;
           width: 1.4rem;
           height: 1.4rem;
@@ -396,1589 +272,751 @@ $spacing-xl: 2rem;
       }
 
       .quick-actions {
-        display: flex;
-        gap: 1rem;
+        @include mix.flex-center(row, vars.$spacing-lg);
         flex-wrap: wrap;
 
-        .quick-action-btn {
-          border-radius: 12px !important;
-          padding: 0.6rem 1.2rem !important;
-          font-weight: 600 !important;
-          font-size: 0.9rem !important;
-          transition: all 0.3s ease !important;
-          font-family: 'Inter', sans-serif !important;
-
-          &[color="primary"] {
-            background: linear-gradient(135deg, $info-blue, #2563eb) !important;
-            color: white !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-
-            &:hover:not([disabled]) {
-              background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-              transform: translateY(-2px);
-              box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-            }
-          }
-
-          &[color="accent"] {
-            background: linear-gradient(135deg, $warning-yellow, #f59e0b) !important;
-            color: white !important;
-            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3) !important;
-
-            &:hover:not([disabled]) {
-              background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-              transform: translateY(-2px);
-              box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4) !important;
-            }
-          }
-
-          mat-icon {
-            margin-right: 0.5rem;
-            font-size: 1.1rem;
-          }
-
-          @media (max-width: 768px) {
-            flex: 1;
-            min-width: 120px;
-          }
-        }
+        // Los estilos de .quick-action-btn están definidos globalmente
       }
     }
   }
 }
 
-// ===============================
-// 🔍 FILTROS DE BÚSQUEDA INTEGRADOS
-// ===============================
+// ============================================================================
+// 🔍 FILTROS Y FORMULARIOS
+// ============================================================================
 .filters-form-integrated {
-  // 🎯 FORZAR AMARILLO EN TODOS LOS LABELS (REGLA GLOBAL)
   mat-label,
   .mat-mdc-form-field-label,
   .mdc-floating-label,
   .mat-mdc-floating-label {
-    color: $warning-yellow !important;
+    color: vars.$warning-yellow !important;
     font-family: 'Inter', sans-serif !important;
     font-weight: 500 !important;
   }
 
   .filters-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.2rem;
-    margin-bottom: 1.5rem;
+    @include mix.grid-responsive(250px, 1.2rem);
+    margin-bottom: vars.$spacing-xl;
 
-    @media (max-width: 768px) {
+    @include mix.mobile-only {
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: vars.$spacing-lg;
     }
   }
 
   .filter-field {
-    .mat-mdc-form-field {
-      width: 100%;
-      font-family: 'Poppins', sans-serif !important;
-      font-weight: 500 !important;
-      font-size: 0.95rem !important;
-    }
-
-    .mat-mdc-text-field-wrapper {
-      background: rgba(255, 255, 255, 0.12) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-radius: 12px !important;
-      transition: all 0.3s ease !important;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-      }
-
-      &.mdc-text-field--focused {
-        background: rgba(255, 255, 255, 0.18) !important;
-        border-color: $info-blue !important;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
-      }
-    }
-
-    // 🎯 LABELS EN AMARILLO - REGLAS ESPECÍFICAS PARA ANGULAR MATERIAL
-    .mat-mdc-form-field-label,
-    .mdc-floating-label,
-    .mat-mdc-floating-label,
-    mat-label {
-      color: $warning-yellow !important;
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 500 !important;
-    }
-
-    // Estados específicos del label
-    .mat-mdc-form-field-label.mdc-floating-label--float-above,
-    .mdc-floating-label--float-above,
-    .mat-mdc-floating-label.mdc-floating-label--float-above {
-      color: $warning-yellow !important;
-    }
-
-    // Para asegurar que el mat-label dentro también sea amarillo
-    .mat-mdc-form-field mat-label {
-      color: $warning-yellow !important;
-    }
-
-    input {
-      color: white !important;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-weight: 500 !important;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.5) !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        font-style: italic;
-      }
-    }
-
-    // 🎯 TEXTO "TODAS LAS DIVISAS" EN BLANCO - FORZADO
-    .mat-mdc-select-value,
-    .mat-mdc-select-value-text,
-    .mat-mdc-select-min-line {
-      color: white !important;
-      font-family: 'Poppins', sans-serif !important;
-      font-weight: 500 !important;
-    }
-
-    // Para el texto cuando no hay selección (placeholder)
-    .mat-mdc-select-placeholder {
-      color: rgba(255, 255, 255, 0.7) !important;
-      font-family: 'Poppins', sans-serif !important;
-    }
-
-    // 🚨 FORZAR USANDO ::ng-deep PARA MAYOR ESPECIFICIDAD
-    ::ng-deep {
-      .mat-mdc-select-value,
-      .mat-mdc-select-value-text,
-      .mat-mdc-select-min-line {
-        color: white !important;
-      }
-    }
-
-    .mat-mdc-form-field-icon-suffix {
-      color: $warning-yellow !important;
-    }
-
-    // 🚨 FORZAR ÍCONOS CON ::ng-deep
-    ::ng-deep {
-      .mat-mdc-form-field-icon-suffix,
-      .mat-icon,
-      mat-icon {
-        color: $warning-yellow !important;
-      }
-
-      // Flecha específica del select
-      .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow,
-      .mat-mdc-select-arrow svg,
-      .mat-mdc-select-arrow svg path {
-        color: $warning-yellow !important;
-        fill: $warning-yellow !important;
-      }
-    }
+    @include mix.input-field();
   }
 
   .filters-actions-integrated {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
+    @include mix.flex-center(row, vars.$spacing-lg);
     flex-wrap: wrap;
-    margin-top: 1rem;
 
-    .apply-filters-btn {
-      background: linear-gradient(135deg, $info-blue, #2563eb) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 12px !important;
-      padding: 0.8rem 1.5rem !important;
-      font-weight: 600 !important;
-      font-size: 0.95rem !important;
-      transition: all 0.3s ease !important;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-      font-family: 'Inter', sans-serif !important;
+    .action-btn {
+      @include mix.button-base();
 
-      &:hover:not([disabled]) {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+      &.primary {
+        @include mix.button-gradient(vars.$info-blue, #2563eb);
       }
 
-      &[disabled] {
-        opacity: 0.5 !important;
-        cursor: not-allowed !important;
-      }
-
-      mat-icon {
-        margin-right: 0.5rem;
-      }
-    }
-
-    .clear-filters-btn {
-      background: rgba(255, 255, 255, 0.1) !important;
-      color: rgba(255, 255, 255, 0.9) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-radius: 12px !important;
-      padding: 0.8rem 1.5rem !important;
-      font-weight: 500 !important;
-      font-size: 0.95rem !important;
-      transition: all 0.3s ease !important;
-      font-family: 'Inter', sans-serif !important;
-
-      &:hover:not([disabled]) {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
-        transform: translateY(-1px);
-      }
-
-      &[disabled] {
-        opacity: 0.5 !important;
-        cursor: not-allowed !important;
-      }
-
-      mat-icon {
-        margin-right: 0.5rem;
+      &.secondary {
+        @include mix.button-gradient(vars.$warning-yellow, #f59e0b);
       }
     }
   }
 }
 
-// ===============================
-// 📊 TARJETA DE TABLA DE HISTORIAL
-// ===============================
+// ============================================================================
+// 📊 TABLAS Y PAGINADORES
+// ============================================================================
 .history-table-card {
-  background: $gradient-card !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 20px !important;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  overflow: hidden;
+  @include mix.glass-card-dark();
   animation: cardFloat 6s ease-in-out infinite;
 
-  mat-card-header {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(251, 191, 36, 0.1));
-    color: white !important;
-    padding: 1.5rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-    mat-card-title {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 1.4rem;
-      margin: 0;
-      color: white !important;
-
-      mat-icon {
-        color: $warning-yellow;
-        font-size: 1.6rem;
-        width: 1.6rem;
-        height: 1.6rem;
-      }
-    }
-  }
-
-  mat-card-content {
-    padding: 0 !important;
+  .history-table {
+    width: 100%;
     background: transparent;
-  }
-}
 
-// ===============================
-// 📋 TABLA DE HISTORIAL
-// ===============================
-.table-container {
-  overflow-x: auto;
-}
-
-.history-table {
-  width: 100%;
-  background: transparent !important;
-
-  // Headers de la tabla
-  .mat-mdc-header-row {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-    .mat-mdc-header-cell {
-      color: white !important;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700 !important;
-      font-size: 0.9rem !important;
-      padding: 1rem !important;
-      border-bottom: none !important;
-
-      mat-icon {
-        color: $warning-yellow;
-        margin-right: 0.5rem;
-        font-size: 1.2rem;
-        vertical-align: middle;
-      }
-    }
-  }
-
-  // Filas de datos
-  .mat-mdc-row {
-    background: transparent !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08) !important;
-      transform: translateY(-1px);
-    }
-
-    .mat-mdc-cell {
-      color: white !important;
-      padding: 1.2rem 1rem !important;
-      border-bottom: none !important;
-      font-family: 'Poppins', sans-serif;
-    }
-  }
-
-  // Estilos específicos de celdas
-  .date-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-
-    .date {
-      font-weight: 600;
-      font-size: 0.95rem;
+    .mat-mdc-header-row {
+      background: vars.$glass-white-subtle;
       color: white;
+      font-weight: 700;
     }
 
-    .time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-  }
+    .mat-mdc-row {
+      background: transparent;
+      border-bottom: 1px solid vars.$glass-white-border;
+      transition: vars.$transition-normal;
 
-  .conversion-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-
-    .conversion-text {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      font-size: 1rem;
-      color: white;
-
-      .arrow-icon {
-        color: $warning-yellow;
-        font-size: 1.2rem;
-        transform: translateY(3.5px);
-        margin-left: 5px;
+      &:hover {
+        background: vars.$glass-white-subtle;
       }
     }
 
-    .rate {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-  }
+    .date-cell {
+      @include mix.flex-column(0.2rem);
 
-  // Botones de acciones
-  button {
-    margin: 0 0.2rem !important;
-    border-radius: 8px !important;
-    transition: all 0.3s ease !important;
-    padding: 0.4rem 0.6rem !important;
-    font-size: 0.9rem !important;
-    margin-left: 40px !important;
+      .date {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: white;
+      }
 
-    &[color="primary"] {
-      background: rgba(59, 130, 246, 0.2) !important;
-      color: $info-blue !important;
-
-      &:hover:not([disabled]) {
-        background: rgba(59, 130, 246, 0.3) !important;
-        transform: scale(1.1);
+      .time {
+        @include mix.text-monospace(0.8rem, 400);
+        color: rgba(255, 255, 255, 0.7);
       }
     }
 
-    &[color="warn"] {
-      background: rgba(239, 68, 68, 0.2) !important;
-      color: #ef4444 !important;
+    .conversion-cell {
+      @include mix.flex-column(0.4rem);
 
-      &:hover:not([disabled]) {
-        background: rgba(239, 68, 68, 0.3) !important;
-        transform: scale(1.1);
+      .conversion-text {
+        @include mix.flex-center(row, 0.5rem);
+        @include mix.text-monospace(1rem, 600);
+        color: white;
+
+        .arrow-icon {
+          color: vars.$warning-yellow;
+          font-size: 1.2rem;
+        }
+      }
+
+      .rate {
+        @include mix.text-monospace(0.8rem, 400);
+        color: rgba(255, 255, 255, 0.6);
       }
     }
 
-    &[disabled] {
-      opacity: 0.4 !important;
-      cursor: not-allowed !important;
+    button {
+      @include mix.button-base();
+      margin: 0 0.2rem;
+      border-radius: vars.$radius-sm;
+      font-size: 0.9rem;
+
+      &[color="primary"] {
+        background: vars.$info-blue-20;
+        color: vars.$info-blue;
+
+        &:hover {
+          background: vars.$info-blue-30;
+          @include mix.hover-lift(-1px, 1.1);
+        }
+      }
+
+      &[color="warn"] {
+        background: vars.$error-red-20;
+        color: vars.$error-red;
+
+        &:hover {
+          background: vars.$error-red-30;
+          @include mix.hover-lift(-1px, 1.1);
+        }
+      }
     }
   }
 }
 
-// ===============================
-// 📄 PAGINADOR - ESTILO GLASSMORPHIC
-// ===============================
+// PAGINADOR GLASSMORPHIC
 ::ng-deep {
   .history-table-card {
     .mat-mdc-paginator {
-      background: rgba(255, 255, 255, 0.08) !important;
-      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      background: vars.$glass-white-subtle;
+      border-top: 1px solid vars.$glass-white-border;
       backdrop-filter: blur(10px);
-      border-radius: 0 0 20px 20px !important;
-      color: white !important;
+      border-radius: 0 0 vars.$radius-xl vars.$radius-xl;
+      color: white;
       
-      // Texto del paginador
       .mat-mdc-paginator-range-label {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 500 !important;
+        color: rgba(255, 255, 255, 0.9);
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
       }
 
-      // Select de items por página
       .mat-mdc-select {
-        color: white !important;
+        color: white;
         
         .mat-mdc-select-value {
-          color: white !important;
+          color: white;
         }
         
         .mat-mdc-select-arrow {
-          color: $warning-yellow !important;
-          fill: $warning-yellow !important;
+          color: vars.$warning-yellow;
+          fill: vars.$warning-yellow;
         }
       }
 
-      // Botones de navegación
       .mat-mdc-icon-button {
-        color: $warning-yellow !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-radius: 8px !important;
-        transition: all 0.3s ease !important;
-        margin: 0 0.2rem !important;
+        color: vars.$warning-yellow;
+        background: vars.$glass-white-subtle;
+        border-radius: vars.$radius-sm;
+        transition: vars.$transition-normal;
+        margin: 0 0.2rem;
 
         &:hover:not([disabled]) {
-          background: rgba(255, 255, 255, 0.2) !important;
-          color: $warning-yellow !important;
-          transform: translateY(-1px);
+          background: vars.$glass-white-border;
+          color: vars.$warning-yellow;
+          @include mix.hover-lift(-1px, 1);
         }
 
         &[disabled] {
-          opacity: 0.4 !important;
-          background: rgba(255, 255, 255, 0.05) !important;
+          opacity: 0.4;
+          background: vars.$glass-dark-subtle;
           
           .mat-icon {
-            color: rgba(251, 191, 36, 0.4) !important;
+            color: rgba(251, 191, 36, 0.4);
           }
         }
 
-        &:not([disabled]) {
-          .mat-icon {
-            color: $warning-yellow !important;
-          }
-        }
-
-        // Forzar color del icono con máxima especificidad
         .mat-icon,
-        mat-icon {
-          color: $warning-yellow !important;
-        }
-
-        // Para los iconos SVG específicos
+        mat-icon,
         svg {
-          fill: $warning-yellow !important;
-          color: $warning-yellow !important;
-        }
-      }
-
-      // Texto "items per page"
-      .mat-mdc-paginator-page-size-label {
-        color: rgba(255, 255, 255, 0.8) !important;
-        font-family: 'Inter', sans-serif !important;
-      }
-    }
-  }
-}
-
-// ===============================
-// 🚨 FORZAR ICONOS AMARILLOS EN PAGINADOR (ESPECIFICIDAD MÁXIMA)
-// ===============================
-::ng-deep {
-  .favoritos-container {
-    .mat-mdc-paginator {
-      .mat-mdc-icon-button {
-        .mat-icon,
-        mat-icon {
-          color: #fbbf24 !important;
-        }
-        
-        svg,
-        svg path {
-          fill: #fbbf24 !important;
-          color: #fbbf24 !important;
-        }
-        
-        &[disabled] {
-          .mat-icon,
-          mat-icon {
-            color: rgba(251, 191, 36, 0.4) !important;
-          }
-          
-          svg,
-          svg path {
-            fill: rgba(251, 191, 36, 0.4) !important;
-          }
+          color: vars.$warning-yellow;
+          fill: vars.$warning-yellow;
         }
       }
     }
   }
 }
 
-// ===============================
-// ⭐ SECCIÓN FAVORITOS MEJORADA (ESTILO HISTORIAL)
-// ===============================
-.favorites-section-card {
-  background: $gradient-card !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 20px !important;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  overflow: hidden !important;
-  margin-bottom: 2rem !important;
-  animation: cardFloat 6s ease-in-out infinite;
-
-  .mat-mdc-card-header {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(59, 130, 246, 0.1)) !important;
-    color: white !important;
-    padding: 1.5rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-
-    .mat-mdc-card-title {
-      color: white !important;
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 700 !important;
-      font-size: 1.4rem !important;
-      margin: 0 !important;
-
-      mat-icon {
-        color: $warning-yellow !important;
-        margin-right: 0.8rem !important;
-        font-size: 1.6rem !important;
-        animation: gemPulse 3s ease-in-out infinite;
-      }
-    }
-
-    .header-action-btn {
-      background: linear-gradient(135deg, $info-blue, #2563eb) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 12px !important;
-      font-weight: 600 !important;
-      transition: all 0.3s ease !important;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-
-      &:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-      }
-
-      mat-icon {
-        color: white !important;
-        margin-right: 0.5rem !important;
-      }
-    }
-  }
-
-  .mat-mdc-card-content {
-    padding: 1.5rem !important;
-    background: transparent !important;
-  }
-}
-
-.favorites-grid-enhanced {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
-
-.favorite-card-enhanced {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.98) 0%, 
-    rgba(248, 250, 252, 0.95) 100%
-  );
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(43, 43, 43, 0.281);
-  border-radius: 16px;
-  padding: 0;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeIn 0.6s ease-out;
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-
-  &:hover {
-    transform: translateY(-4px) scale(1.005);
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.18),
-      0 4px 12px rgba(0, 0, 0, 0.12);
-    border-color: $info-blue;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 1) 0%, 
-      rgba(248, 250, 252, 0.98) 100%
-    );
-  }
-
-  // Estados de tendencia con bordes izquierdos como dashboard
-  &.trending-up {
-    border-left: 4px solid #22c55e;
-    background: linear-gradient(135deg, 
-      rgba(34, 197, 94, 0.45) 0%,
-      rgba(74, 222, 128, 0.50) 75%, 
-      rgba(134, 239, 173, 0.40) 100%
-    ) !important;
-  }
-
-  &.trending-down {
-    border-left: 4px solid #ef4444;
-    background: linear-gradient(135deg, 
-      rgba(239, 68, 68, 0.45) 0%,
-      rgba(248, 113, 113, 0.50) 50%, 
-      rgba(252, 165, 165, 0.40) 100%
-    ) !important;
-  }
-
-  &.trending-neutral {
-    border-left: 4px solid #f59e0b;
-    background: linear-gradient(135deg, 
-      rgba(245, 158, 11, 0.45) 0%,
-      rgba(251, 191, 36, 0.50) 50%, 
-      rgba(253, 224, 71, 0.40) 100%
-    ) !important;
-  }
-
-  .favorite-header {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .pair-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .pair-code {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: #1e293b;
-        letter-spacing: 0.5px;
-      }
-
-      .pair-nickname {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.85rem;
-        color: $warning-yellow;
-        font-style: italic;
-        font-weight: 500;
-      }
-    }
-
-    .trend-indicator {
-      mat-icon {
-        font-size: 1.5rem;
-        width: 1.5rem;
-        height: 1.5rem;
-
-        &.trend-up {
-          color: #22c55e;
-        }
-
-        &.trend-down {
-          color: #ef4444;
-        }
-
-        &.trend-neutral {
-          color: #f59e0b;
-        }
-      }
-    }
-  }
-
-  .favorite-main-info {
-    padding: 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.904);
-    border-radius: 8px;
-    margin: 0.5rem;
-    border: 1px solid rgba(226, 232, 240, 0.5);
-
-    .current-rate {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .rate-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        font-size: 1.4rem;
-        color: #171a20;
-      }
-
-      .rate-label {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.8rem;
-        color: #090a0c;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-      }
-    }
-
-    .change-display {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .change-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        font-size: 1.2rem;
-
-        &.positive {
-          color: #2e7d32;
-        }
-
-        &.negative {
-          color: #c62828;
-        }
-
-        &.neutral {
-          color: #ef6c00;
-        }
-      }
-
-      .change-label {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.8rem;
-        color: #090a0c;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-      }
-    }
-  }
-
-  .favorite-actions {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.1);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-
-    @media (max-width: 480px) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.8rem;
-    }
-
-    .action-btn {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      gap: 0.3rem !important;
-      padding: 0.6rem 0.4rem !important;
-      border-radius: 8px !important;
-      font-size: 0.75rem !important;
-      font-weight: 600 !important;
-      transition: all 0.3s ease !important;
-      min-height: 60px !important;
-      border: 1px solid rgba(0, 0, 0, 0.1) !important;
-
-      .btn-text {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 0.7rem !important;
-        font-weight: 500 !important;
-        white-space: nowrap !important;
-        color: $warning-yellow !important;
-
-        @media (max-width: 480px) {
-          font-size: 0.65rem !important;
-        }
-      }
-
-      mat-icon {
-        font-size: 1.1rem !important;
-        width: 1.1rem !important;
-        height: 1.1rem !important;
-        margin: 0 !important;
-        color: $warning-yellow !important;
-      }
-
-      // 🎨 DISEÑO UNIFORME Y ELEGANTE - BOTONES SUTILES
-      &.edit-btn,
-      &.alert-btn,
-      &.convert-btn,
-      &.remove-btn {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-        
-        &:hover {
-          background: rgba(255, 255, 255, 0.15) !important;
-          color: white !important;
-          border-color: rgba(255, 255, 255, 0.25) !important;
-          transform: translateY(-2px) !important;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-        }
-      }
-
-      // Solo el botón de eliminar mantiene un sutil toque rojo en hover
-      &.remove-btn:hover {
-        background: rgba(239, 68, 68, 0.1) !important;
-        color: #ff6b6b !important;
-        border-color: rgba(239, 68, 68, 0.2) !important;
-        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15) !important;
-      }
-    }
-  }
-}
-
-.par-info,
-.currency-info {
-  margin-bottom: 1rem;
-
-  .par-name,
-  .currency-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: white;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .par-description {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-  }
-}
-
-.rate-info {
-  margin-bottom: 1rem;
-  text-align: center;
-
-  .current-rate {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: white;
-    margin-bottom: 0.5rem;
-  }
-
-  .change-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
-    font-size: 0.9rem;
-
-    &.positive {
-      color: #10b981;
-    }
-
-    &.negative {
-      color: #ef4444;
-    }
-
-    &.neutral {
-      color: #6b7280;
-    }
-
-    mat-icon {
-      font-size: 1rem;
-    }
-  }
-}
-
-.par-actions,
-.currency-actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-top: 1rem;
-
-  button {
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 0.85rem !important;
-    transition: all 0.3s ease !important;
-    flex: 1;
-
-    &.convert-btn {
-      background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-      color: white !important;
-
-      &:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-      }
-    }
-
-    &.alert-btn {
-      background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
-      color: white !important;
-
-      &:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4) !important;
-      }
-    }
-
-    &.remove-btn {
-      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-      color: white !important;
-
-      &:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4) !important;
-      }
-    }
-
-    mat-icon {
-      margin-right: 0.3rem !important;
-      font-size: 1rem !important;
-    }
-  }
-}
-
-// ===============================
+// ============================================================================
 // 💱 CONVERSIÓN RÁPIDA
-// ===============================
+// ============================================================================
+
+// Overrides básicos para form fields de conversión (sin forzar posicionamiento)
+::ng-deep {
+  .conversion-panel {
+    .mat-mdc-form-field {
+      .mat-mdc-floating-label,
+      .mdc-floating-label,
+      .mat-mdc-form-field-label,
+      mat-label {
+        color: vars.$warning-yellow !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
+      }
+
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text {
+        color: white !important;
+      }
+
+      .mat-mdc-select-arrow {
+        color: vars.$warning-yellow !important;
+        fill: vars.$warning-yellow !important;
+      }
+
+      mat-icon {
+        color: vars.$warning-yellow !important;
+      }
+    }
+  }
+}
 .conversion-panel {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
+  grid-template-columns: 2fr 1fr auto 1fr 2fr;
   align-items: end;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: vars.$spacing-lg;
+  margin-top: vars.$spacing-lg;
 
-  @media (max-width: 768px) {
+  @include mix.mobile-only {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: vars.$spacing-lg;
 
     .swap-btn {
       justify-self: center;
+      order: 2;
+    }
+
+    .currency-field:first-of-type {
+      order: 1;
+    }
+
+    .currency-field:last-of-type {
+      order: 3;
+    }
+
+    .result-panel {
+      order: 4;
     }
   }
 
-  .amount-field,
+  .amount-field {
+    @include mix.input-field();
+    grid-column: 1;
+  }
+
   .currency-field {
-    .mat-mdc-form-field {
-      width: 100% !important;
+    @include mix.input-field();
+    
+    &:first-of-type {
+      grid-column: 2; // Campo "De"
     }
-
-    .mat-mdc-text-field-wrapper {
-      background: rgba(255, 255, 255, 0.12) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-radius: 12px !important;
-    }
-
-    input,
-    .mat-mdc-select-value {
-      color: white !important;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-weight: 600 !important;
-    }
-
-    mat-label {
-      color: #fbbf24 !important;
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 500 !important;
+    
+    &:last-of-type {
+      grid-column: 4; // Campo "A"
     }
   }
 
   .swap-btn {
-    background: linear-gradient(135deg, #10b981, #059669) !important;
-    color: white !important;
-    border-radius: 50% !important;
-    width: 48px !important;
-    height: 48px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    @include mix.button-gradient(vars.$success-green, #059669);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    @include mix.flex-center();
+    grid-column: 3; 
+    justify-self: center;
+    align-self: center;
+    margin-top: -25px; 
+    transition: vars.$transition-normal;
 
     &:hover {
-      transform: rotate(180deg) scale(1.1) !important;
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+      transform: rotate(180deg) scale(1.1);
+      box-shadow: 0 6px 16px vars.$success-green-40;
+    }
+
+    &:active {
+      transform: rotate(180deg) scale(1.05);
     }
 
     mat-icon {
-      font-size: 1.2rem !important;
+      font-size: 1.2rem;
+      color: white !important;
+      transform: translateY(4px) !important;
     }
   }
 
   .result-panel {
     grid-column: 1 / -1;
-    margin-top: 1rem;
+    margin-top: vars.$spacing-xl;
     text-align: center;
+    padding: vars.$spacing-lg;
+    background: vars.$glass-white-subtle;
+    border-radius: vars.$radius-md;
+    border: 1px solid vars.$glass-white-border;
+    backdrop-filter: blur(8px);
 
     .result-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
+      @include mix.flex-center(row, vars.$spacing-lg);
       color: rgba(255, 255, 255, 0.8);
-      font-family: 'Poppins', sans-serif;
+      @include mix.text-body();
+
+      mat-spinner {
+        --mdc-circular-progress-active-indicator-color: #{vars.$warning-yellow} !important;
+      }
     }
 
     .result-success {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 12px;
-      padding: 1rem;
+      background: linear-gradient(135deg, vars.$success-green-10, vars.$info-blue-10);
+      border: 1px solid vars.$success-green-30;
+      border-radius: vars.$radius-md;
+      padding: vars.$spacing-lg;
       color: white;
 
-      .result-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: #10b981;
-        margin-bottom: 0.5rem;
-      }
-
-      .result-details {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
+      .result-label {
+        @include mix.text-body(0.9rem);
         color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
       }
+
+      .result-value {
+        @include mix.text-monospace(1.8rem, 700);
+        color: vars.$success-green;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+      }
+
+      .result-rate {
+        @include mix.text-body(0.85rem);
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+      }
+    }
+
+    .result-empty {
+      color: rgba(255, 255, 255, 0.6);
+      @include mix.text-body(0.9rem);
+      font-style: italic;
     }
   }
 }
 
-// ===============================
-// 📊 RESUMEN DEL DÍA
-// ===============================
-.summary-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+// ============================================================================
+// 🎯 GRIDS Y LAYOUTS ESPECÍFICOS
+// ============================================================================
+.favorites-grid-enhanced {
+  @include mix.grid-responsive(380px, 1.5rem);
+  margin-top: vars.$spacing-lg;
 
-  @media (max-width: 768px) {
+  @include mix.mobile-only {
     grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
-
-.summary-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
-  backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 16px !important;
-  transition: all 0.3s ease !important;
-
-  &:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  mat-card-header {
-    background: transparent !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-
-    mat-card-title {
-      display: flex !important;
-      align-items: center !important;
-      gap: 0.5rem !important;
-      font-size: 1rem !important;
-
-      &.trending-up-icon mat-icon {
-        color: #10b981 !important;
-      }
-
-      &.trending-down-icon mat-icon {
-        color: #ef4444 !important;
-      }
-
-      &.star-icon mat-icon {
-        color: #fbbf24 !important;
-      }
-
-      &.analytics-icon mat-icon {
-        color: #3b82f6 !important;
-      }
-
-      &.market-icon mat-icon {
-        color: #8b5cf6 !important;
-      }
-
-      &.base-currency-icon mat-icon {
-        color: #10b981 !important;
-      }
-    }
-  }
-
-  mat-card-content {
-    color: white !important;
-
-    .performer-value,
-    .total-count,
-    .metric-value,
-    .market-status {
-      font-family: 'JetBrains Mono', monospace !important;
-      font-weight: 700 !important;
-      font-size: 1.2rem !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .performer-description,
-    .total-description,
-    .metric-description,
-    .market-description,
-    .base-currency-description {
-      font-family: 'Poppins', sans-serif !important;
-      font-size: 0.85rem !important;
-      color: rgba(255, 255, 255, 0.7) !important;
-      margin: 0 !important;
-    }
-
-    .breakdown-info,
-    .metric-details,
-    .volatility-info {
-      font-family: 'Inter', sans-serif !important;
-      font-size: 0.9rem !important;
-      color: rgba(255, 255, 255, 0.8) !important;
-      margin-bottom: 0.5rem !important;
-    }
-
-    .no-performer {
-      font-family: 'Poppins', sans-serif !important;
-      color: rgba(255, 255, 255, 0.6) !important;
-      font-style: italic !important;
-    }
-  }
-
-  &.base-currency-card {
-    .base-currency-selector {
-      .mat-mdc-form-field {
-        width: 100% !important;
-      }
-
-      .mat-mdc-text-field-wrapper {
-        background: rgba(255, 255, 255, 0.12) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 8px !important;
-      }
-
-      .mat-mdc-select-value {
-        color: white !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        font-weight: 600 !important;
-      }
-
-      mat-label {
-        color: #fbbf24 !important;
-      }
-    }
-  }
-}
-
-// ===============================
-// 🚫 ESTADOS VACÍOS
-// ===============================
-.empty-favorites {
-  text-align: center;
-  padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  .empty-icon {
-    font-size: 4rem !important;
-    width: 4rem !important;
-    height: 4rem !important;
-    color: rgba(255, 255, 255, 0.4) !important;
-    margin-bottom: 1rem !important;
-  }
-
-  h3 {
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 1.5rem !important;
-    color: white !important;
-    margin-bottom: 1rem !important;
-  }
-
-  p {
-    font-family: 'Poppins', sans-serif !important;
-    color: rgba(255, 255, 255, 0.7) !important;
-    margin-bottom: 2rem !important;
-    line-height: 1.6 !important;
-  }
-
-  button {
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 12px !important;
-    padding: 0.8rem 1.5rem !important;
-    font-weight: 600 !important;
-    transition: all 0.3s ease !important;
-
-    &:hover {
-      transform: translateY(-2px) !important;
-      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-    }
-
-    mat-icon {
-      margin-right: 0.5rem !important;
-    }
-  }
-}
-
-// ===============================
-// 🔧 SECCIÓN ESPECÍFICA (SECTION-CARD)
-// ===============================
-.section-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 20px !important;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  overflow: hidden !important;
-  margin-bottom: 2rem !important;
-  animation: cardFloat 6s ease-in-out infinite;
-}
-
-// ===============================
-// ⭐ SECCIÓN DIVISAS FAVORITAS MEJORADA (ESTILO HISTORIAL)
-// ===============================
-.currencies-section-enhanced {
-  .mat-mdc-card-header {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.1)) !important;
+    gap: vars.$spacing-lg;
   }
 }
 
 .currencies-grid-enhanced {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  @extend .favorites-grid-enhanced;
+}
 
-  @media (max-width: 768px) {
+.summary-row {
+  @include mix.grid-responsive(280px, 1.5rem);
+  margin-top: vars.$spacing-2xl;
+
+  @include mix.mobile-only {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: vars.$spacing-lg;
   }
 }
 
+// ============================================================================
+// 🎨 CLASES ESPECÍFICAS QUE NO ESTÁN EN CARDS.SCSS
+// ============================================================================
+
+// Estados de carga personalizados para favoritos
+.no-data-message {
+  text-align: center;
+  padding: vars.$spacing-4xl vars.$spacing-2xl;
+  background: vars.$glass-white-subtle;
+  border-radius: vars.$radius-lg;
+  border: 1px solid vars.$glass-white-border;
+
+  .no-data-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: vars.$spacing-lg;
+  }
+
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: vars.$spacing-lg;
+  }
+
+  p {
+    @include mix.text-body();
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: vars.$spacing-2xl;
+    line-height: 1.6;
+  }
+
+  .action-btn {
+    @include mix.button-gradient(vars.$info-blue, #2563eb);
+    padding: 0.8rem 1.5rem;
+    border-radius: vars.$radius-md;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px vars.$info-blue-40;
+    }
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Información específica de rendimiento
+.performer-info,
+.total-info,
+.metric-info,
+.market-info {
+  @include mix.flex-column(0.3rem);
+  text-align: center;
+
+  .performer-pair,
+  .total-count,
+  .metric-value,
+  .market-status {
+    @include mix.text-monospace(1.2rem, 700);
+    margin-bottom: 0.5rem;
+
+    &.positive {
+      color: vars.$trend-up-color;
+    }
+
+    &.negative {
+      color: vars.$trend-down-color;
+    }
+  }
+
+  .performer-change {
+    @include mix.text-monospace(1rem, 600);
+    
+    &.positive {
+      color: vars.$trend-up-color;
+    }
+
+    &.negative {
+      color: vars.$trend-down-color;
+    }
+  }
+
+  .total-label,
+  .metric-label,
+  .market-time {
+    @include mix.text-body(0.8rem);
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+}
+
+.breakdown-info,
+.metric-details,
+.volatility-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+// ============================================================================
+// 🎭 ANIMACIONES Y ESTADOS FINALES
+// ============================================================================
+
+// Aplicar animaciones de entrada escalonadas
+.content-wrapper {
+  @extend .stagger-animation;
+}
+
+// Estados de hover mejorados para favoritos
+.favorite-card-enhanced,
 .currency-card-enhanced {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.98) 0%, 
-    rgba(248, 250, 252, 0.95) 100%
-  );
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(43, 43, 43, 0.281);
-  border-radius: 16px;
-  padding: 0;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeIn 0.6s ease-out;
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-
   &:hover {
-    transform: translateY(-4px) scale(1.005);
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.18),
-      0 4px 12px rgba(0, 0, 0, 0.12);
-    border-color: $info-blue;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 1) 0%, 
-      rgba(248, 250, 252, 0.98) 100%
-    );
+    .favorite-symbol,
+    .currency-info mat-icon {
+      @extend .animate-pulse;
+    }
   }
+}
 
-  // Estados de tendencia con bordes izquierdos como dashboard
-  &.trending-up {
-    border-left: 4px solid #22c55e;
-    background: linear-gradient(135deg, 
-      rgba(34, 197, 94, 0.45) 0%,
-      rgba(74, 222, 128, 0.50) 75%, 
-      rgba(134, 239, 173, 0.40) 100%
-    ) !important;
-  }
+// ============================================================================
+// 🎯 BOTONES UNIFICADOS - MISMA APARIENCIA EN TODA LA APLICACIÓN
+// ============================================================================
 
-  &.trending-down {
-    border-left: 4px solid #ef4444;
-    background: linear-gradient(135deg, 
-      rgba(239, 68, 68, 0.45) 0%,
-      rgba(248, 113, 113, 0.50) 50%, 
-      rgba(252, 165, 165, 0.40) 100%
-    ) !important;
-  }
+.quick-action-btn,
+.header-action-btn,
+.action-btn {
+  @include mix.button-base();
+  border-radius: vars.$radius-md !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  height: auto !important;
+  min-height: 42px !important;
+  transition: vars.$transition-normal !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
 
-  &.trending-neutral {
-    border-left: 4px solid #f59e0b;
-    background: linear-gradient(135deg, 
-      rgba(245, 158, 11, 0.45) 0%,
-      rgba(251, 191, 36, 0.50) 50%, 
-      rgba(253, 224, 71, 0.40) 100%
-    ) !important;
-  }
-
-  .currency-header {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .currency-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .currency-code {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: #1e293b;
-        letter-spacing: 0.5px;
-      }
-
-      .currency-nickname {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.85rem;
-        color: $warning-yellow;
-        font-style: italic;
-        font-weight: 500;
-      }
-
-      ::ng-deep .default-chip {
-        align-self: flex-start !important;
-        background: linear-gradient(135deg, $warning-yellow, #f59e0b) !important;
-        color: white !important;
-        font-size: 0.7rem !important;
-        height: 20px !important;
-        font-weight: 600 !important;
-        margin-top: 0.2rem !important;
-      }
+  &[color="primary"] {
+    @include mix.button-gradient(vars.$info-blue, #2563eb);
+    box-shadow: 0 4px 12px vars.$info-blue-30 !important;
+    color: white !important;
+    border: none !important;
+    
+    &:hover:not([disabled]) {
+      box-shadow: 0 6px 16px vars.$info-blue-40 !important;
+      @include mix.hover-lift(-2px, 1.02);
     }
 
-    .trend-indicator {
-      mat-icon {
-        font-size: 1.5rem;
-        width: 1.5rem;
-        height: 1.5rem;
-
-        &.trend-up {
-          color: #22c55e;
-        }
-
-        &.trend-down {
-          color: #ef4444;
-        }
-
-        &.trend-neutral {
-          color: #f59e0b;
-        }
-      }
+    // Override Material Design states
+    .mat-ripple-element {
+      background-color: rgba(255, 255, 255, 0.2) !important;
     }
   }
 
-  .currency-main-info {
-    padding: 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.904);
-    border-radius: 8px;
-    margin: 0.5rem;
-    border: 1px solid rgba(226, 232, 240, 0.5);
-
-    .exchange-rate {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .rate-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        font-size: 1.4rem;
-        color: #171a20;
-      }
-
-      .rate-label {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.8rem;
-        color: #090a0c;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-      }
+  &[color="accent"] {
+    @include mix.button-gradient(vars.$warning-yellow, #f59e0b);
+    box-shadow: 0 4px 12px vars.$warning-yellow-30 !important;
+    color: white !important;
+    border: none !important;
+    
+    &:hover:not([disabled]) {
+      box-shadow: 0 6px 16px vars.$warning-yellow-40 !important;
+      @include mix.hover-lift(-2px, 1.02);
     }
 
-    .change-display {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-
-      .change-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        font-size: 1.2rem;
-
-        &.positive {
-          color: #2e7d32;
-        }
-
-        &.negative {
-          color: #c62828;
-        }
-
-        &.neutral {
-          color: #ef6c00;
-        }
-      }
-
-      .change-label {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.8rem;
-        color: #090a0c;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-      }
+    // Override Material Design states
+    .mat-ripple-element {
+      background-color: rgba(255, 255, 255, 0.2) !important;
     }
   }
 
-  .currency-actions {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.1);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
+  mat-icon {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
+    font-size: 1.1rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    color: white !important;
+  }
 
-    @media (max-width: 480px) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.8rem;
+  // Efectos de activación
+  &:active {
+    @extend .animate-scale-in;
+    transform: scale(0.98) !important;
+  }
+
+  &:focus {
+    outline: 2px solid vars.$info-blue-40 !important;
+    outline-offset: 2px !important;
+  }
+
+  @include mix.mobile-only {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.8rem 1.2rem !important;
+    font-size: 0.85rem !important;
+    
+    mat-icon {
+      font-size: 1rem !important;
+      width: 1rem !important;
+      height: 1rem !important;
     }
+  }
+}
 
+// Forzar override específico para Angular Material en favoritos
+::ng-deep {
+  .favoritos-container {
+    .quick-action-btn,
+    .header-action-btn,
     .action-btn {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      gap: 0.3rem !important;
-      padding: 0.6rem 0.4rem !important;
-      border-radius: 8px !important;
-      font-size: 0.75rem !important;
-      font-weight: 600 !important;
-      transition: all 0.3s ease !important;
-      min-height: 60px !important;
-      border: 1px solid rgba(0, 0, 0, 0.1) !important;
-
-      .btn-text {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 0.7rem !important;
-        font-weight: 500 !important;
+      // Fuerza los estilos sobre cualquier especificidad de Material
+      .mdc-button__label {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         white-space: nowrap !important;
-        color: $warning-yellow !important;
-
-        @media (max-width: 480px) {
-          font-size: 0.65rem !important;
-        }
       }
 
+      .mat-mdc-button-base {
+        background: none !important;
+        border: none !important;
+      }
+
+      // Estados de Material Design personalizados
+      &.mat-mdc-raised-button {
+        box-shadow: 0 4px 12px vars.$info-blue-30 !important;
+
+        &:hover {
+          box-shadow: 0 6px 16px vars.$info-blue-40 !important;
+        }
+
+        &[color="accent"] {
+          box-shadow: 0 4px 12px vars.$warning-yellow-30 !important;
+
+          &:hover {
+            box-shadow: 0 6px 16px vars.$warning-yellow-40 !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 📱 RESPONSIVE OVERRIDES FINALES
+// ============================================================================
+@include mix.mobile-only {
+  .favoritos-header {
+    padding: vars.$spacing-2xl vars.$spacing-lg vars.$spacing-3xl;
+    border-radius: vars.$radius-lg;
+
+    .title-container .simple-title .favorite-symbol {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  .conversion-panel {
+    .swap-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .summary-row {
+    gap: vars.$spacing-lg;
+  }
+
+  // HEADERS RESPONSIVE ESPECÍFICOS
+  ::ng-deep .favoritos-container {
+    .favorites-section-card,
+    .currencies-section-enhanced,
+    .section-card {
+      .mat-mdc-card-header,
+      mat-card-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: vars.$spacing-md !important;
+        padding: vars.$spacing-lg !important;
+
+        .mat-mdc-card-title,
+        mat-card-title {
+          justify-content: center !important;
+          text-align: center !important;
+          margin-right: 0 !important;
+          margin-bottom: vars.$spacing-sm !important;
+        }
+
+        .header-action-btn {
+          margin-left: 0 !important;
+          align-self: stretch !important;
+          justify-self: center !important;
+        }
+      }
+    }
+  }
+
+  // CONVERSIÓN PANEL RESPONSIVE
+  .conversion-panel {
+    .amount-field {
+      order: 0;
+    }
+    
+    .currency-field:first-of-type {
+      order: 1;
+    }
+    
+    .swap-btn {
+      order: 2;
+      width: 44px !important;
+      height: 44px !important;
+      margin: vars.$spacing-md 0 !important;
+      
       mat-icon {
         font-size: 1.1rem !important;
-        width: 1.1rem !important;
-        height: 1.1rem !important;
-        margin: 0 !important;
-        color: $warning-yellow !important;
       }
-
-      // 🎨 DISEÑO UNIFORME Y ELEGANTE - BOTONES SUTILES
-      &.edit-btn,
-      &.convert-btn,
-      &.remove-btn {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-        
-        &:hover {
-          background: rgba(255, 255, 255, 0.15) !important;
-          color: white !important;
-          border-color: rgba(255, 255, 255, 0.25) !important;
-          transform: translateY(-2px) !important;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-        }
-      }
-
-      &.favorite-btn {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(255, 255, 255, 0.15) !important;
-
-        &.is-default {
-          background: rgba(251, 191, 36, 0.15) !important;
-          color: $warning-yellow !important;
-          border-color: rgba(251, 191, 36, 0.25) !important;
-        }
-
-        &:hover {
-          background: rgba(251, 191, 36, 0.12) !important;
-          color: $warning-yellow !important;
-          border-color: rgba(251, 191, 36, 0.2) !important;
-          transform: translateY(-2px) !important;
-          box-shadow: 0 4px 16px rgba(251, 191, 36, 0.15) !important;
-        }
-      }
-
-      // Solo el botón de eliminar mantiene un sutil toque rojo en hover
-      &.remove-btn:hover {
-        background: rgba(239, 68, 68, 0.1) !important;
-        color: #ff6b6b !important;
-        border-color: rgba(239, 68, 68, 0.2) !important;
-        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15) !important;
-      }
+    }
+    
+    .currency-field:last-of-type {
+      order: 3;
+    }
+    
+    .result-panel {
+      order: 4;
+      margin-top: vars.$spacing-lg !important;
     }
   }
 }
+
+@include mix.tablet-only {
+  .favorites-grid-enhanced,
+  .currencies-grid-enhanced {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ============================================================================
+// 🔚 FIN DE ARCHIVO - ESTRUCTURA MODULAR COMPLETA
+// ============================================================================

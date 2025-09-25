@@ -1,0 +1,517 @@
+// ============================================================================
+// 🃏 SISTEMA DE CARDS PARA FAVORITOS
+// Componentes reutilizables siguiendo el patrón del dashboard
+// ============================================================================
+
+@use './variables' as vars;
+@use './mixins' as mix;
+
+// 🏷️ CARD BASE SYSTEM
+.favorite-card-base {
+  @include mix.favorite-card-base();
+}
+
+.currency-card-base {
+  @include mix.favorite-card-base();
+}
+
+// 🎨 CARD VARIANTS CON TENDENCIAS
+.favorite-card-enhanced {
+  @include mix.favorite-card-base();
+
+  // Estados de tendencia con bordes específicos
+  &.trending-up {
+    @include mix.trend-card-border(vars.$trend-up-color, vars.$trend-up-bg);
+  }
+
+  &.trending-down {
+    @include mix.trend-card-border(vars.$trend-down-color, vars.$trend-down-bg);
+  }
+
+  &.trending-neutral {
+    @include mix.trend-card-border(vars.$trend-neutral-color, vars.$trend-neutral-bg);
+  }
+
+  .favorite-header {
+    @include mix.card-header-section();
+
+    .pair-info {
+      @include mix.flex-column(0.3rem);
+
+      .pair-code {
+        @include mix.heading-lg();
+      }
+
+      .pair-nickname {
+        @include mix.text-body(0.85rem);
+        color: vars.$warning-yellow;
+        font-style: italic;
+        font-weight: 500;
+      }
+    }
+
+    .trend-indicator {
+      @include mix.trend-indicator();
+    }
+  }
+
+  .favorite-main-info {
+    @include mix.card-main-info();
+
+    .current-rate {
+      @include mix.flex-column(0.3rem);
+
+      .rate-value {
+        @include mix.text-monospace(1.4rem, 700);
+        color: #171a20;
+      }
+
+      .rate-label {
+        @include mix.text-body(0.8rem);
+        color: #090a0c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+    }
+
+    .change-display {
+      @include mix.flex-column(0.3rem);
+
+      .change-value {
+        @include mix.text-monospace(1.2rem, 700);
+
+        &.positive {
+          color: #2e7d32;
+        }
+
+        &.negative {
+          color: #c62828;
+        }
+
+        &.neutral {
+          color: #ef6c00;
+        }
+      }
+
+      .change-label {
+        @include mix.text-body(0.8rem);
+        color: #090a0c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .favorite-actions {
+    @include mix.card-actions-grid(4);
+
+    .action-btn {
+      @include mix.button-subtle();
+      @include mix.flex-column(0.3rem);
+      align-items: center;
+
+      .btn-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 500;
+        white-space: nowrap;
+        color: vars.$warning-yellow;
+
+        @include mix.mobile-only {
+          font-size: 0.65rem;
+        }
+      }
+
+      mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        margin: 0;
+        color: vars.$warning-yellow;
+      }
+
+      // Solo el botón de eliminar tiene hover especial
+      &.remove-btn {
+        @include mix.button-danger-hover();
+      }
+    }
+  }
+}
+
+// 💰 CURRENCY CARD ESPECÍFICA
+.currency-card-enhanced {
+  @include mix.favorite-card-base();
+
+  &.trending-up {
+    @include mix.trend-card-border(vars.$trend-up-color, vars.$trend-up-bg);
+  }
+
+  &.trending-down {
+    @include mix.trend-card-border(vars.$trend-down-color, vars.$trend-down-bg);
+  }
+
+  &.trending-neutral {
+    @include mix.trend-card-border(vars.$trend-neutral-color, vars.$trend-neutral-bg);
+  }
+
+  .currency-header {
+    @include mix.card-header-section();
+
+    .currency-info {
+      @include mix.flex-column(0.3rem);
+
+      .currency-code {
+        @include mix.heading-lg();
+      }
+
+      .currency-nickname {
+        @include mix.text-body(0.85rem);
+        color: vars.$warning-yellow;
+        font-style: italic;
+        font-weight: 500;
+      }
+
+      .default-chip {
+        align-self: flex-start;
+        background: linear-gradient(135deg, vars.$warning-yellow, #f59e0b);
+        color: white;
+        font-size: 0.7rem;
+        height: 20px;
+        font-weight: 600;
+        margin-top: 0.2rem;
+      }
+    }
+
+    .trend-indicator {
+      @include mix.trend-indicator();
+    }
+  }
+
+  .currency-main-info {
+    @include mix.card-main-info();
+
+    .exchange-rate {
+      @include mix.flex-column(0.3rem);
+
+      .rate-value {
+        @include mix.text-monospace(1.4rem, 700);
+        color: #171a20;
+      }
+
+      .rate-label {
+        @include mix.text-body(0.8rem);
+        color: #090a0c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+    }
+
+    .change-display {
+      @include mix.flex-column(0.3rem);
+
+      .change-value {
+        @include mix.text-monospace(1.2rem, 700);
+
+        &.positive {
+          color: #2e7d32;
+        }
+
+        &.negative {
+          color: #c62828;
+        }
+
+        &.neutral {
+          color: #ef6c00;
+        }
+      }
+
+      .change-label {
+        @include mix.text-body(0.8rem);
+        color: #090a0c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .currency-actions {
+    @include mix.card-actions-grid(4);
+
+    .action-btn {
+      @include mix.button-subtle();
+      @include mix.flex-column(0.3rem);
+      align-items: center;
+
+      .btn-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 500;
+        white-space: nowrap;
+        color: vars.$warning-yellow;
+
+        @include mix.mobile-only {
+          font-size: 0.65rem;
+        }
+      }
+
+      mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        margin: 0;
+        color: vars.$warning-yellow;
+      }
+
+      &.favorite-btn {
+        &.is-default {
+          background: vars.$warning-yellow-15;
+          color: vars.$warning-yellow;
+          border-color: vars.$warning-yellow-25;
+        }
+
+        &:hover {
+          background: vars.$warning-yellow-15;
+          color: vars.$warning-yellow;
+          border-color: vars.$warning-yellow-20;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px vars.$warning-yellow-15;
+        }
+      }
+
+      &.remove-btn {
+        @include mix.button-danger-hover();
+      }
+    }
+  }
+}
+
+// 📊 SUMMARY CARDS
+.summary-card {
+  @include mix.glass-card-dark();
+  transition: vars.$transition-normal;
+
+  &:hover {
+    @include mix.hover-lift(-2px, 1);
+    border-color: vars.$glass-white-border-light;
+  }
+
+  .mat-mdc-card-header {
+    background: transparent;
+    border-bottom: 1px solid vars.$glass-white-border;
+
+    .mat-mdc-card-title {
+      @include mix.flex-center(row, 0.5rem);
+      font-size: 1rem;
+
+      &.trending-up-icon mat-icon {
+        color: vars.$trend-up-color;
+      }
+
+      &.trending-down-icon mat-icon {
+        color: vars.$trend-down-color;
+      }
+
+      &.star-icon mat-icon {
+        color: vars.$warning-yellow;
+      }
+
+      &.analytics-icon mat-icon {
+        color: vars.$info-blue;
+      }
+
+      &.market-icon mat-icon {
+        color: #8b5cf6;
+      }
+
+      &.base-currency-icon mat-icon {
+        color: vars.$trend-up-color;
+      }
+    }
+  }
+
+  .mat-mdc-card-content {
+    color: white;
+
+    .performer-value,
+    .total-count,
+    .metric-value,
+    .market-status {
+      @include mix.text-monospace(1.2rem, 700);
+      margin-bottom: 0.5rem;
+    }
+
+    .performer-description,
+    .total-description,
+    .metric-description,
+    .market-description,
+    .base-currency-description {
+      @include mix.text-body(0.85rem);
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+    }
+
+    .breakdown-info,
+    .metric-details,
+    .volatility-info {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 0.5rem;
+    }
+
+    .no-performer {
+      @include mix.text-body();
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+    }
+  }
+
+  &.base-currency-card {
+    .base-currency-selector {
+      .mat-mdc-form-field {
+        width: 100%;
+      }
+
+      .mat-mdc-text-field-wrapper {
+        background: vars.$glass-white-semi;
+        border: 1px solid vars.$glass-white-border;
+        border-radius: vars.$radius-sm;
+      }
+
+      .mat-mdc-select-value {
+        color: white;
+        @include mix.text-monospace(1rem, 600);
+      }
+
+      mat-label {
+        color: vars.$warning-yellow;
+      }
+    }
+  }
+}
+
+// 🔧 SECTION CARDS (CONTENEDORES PRINCIPALES)
+.section-card {
+  @include mix.glass-card-dark();
+  margin-bottom: vars.$spacing-2xl;
+  animation: cardFloat 6s ease-in-out infinite;
+}
+
+.favorites-section-card {
+  @extend .section-card;
+
+  .mat-mdc-card-header {
+    @include mix.glass-header();
+    background: vars.$favorites-header-bg;
+
+    .mat-mdc-card-title {
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin: 0;
+      @include mix.flex-center(row, 0.8rem);
+
+      mat-icon {
+        color: vars.$warning-yellow;
+      }
+    }
+
+    .header-action-btn {
+      @include mix.button-gradient(vars.$info-blue, #2563eb);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px vars.$info-blue-40;
+      }
+
+      mat-icon {
+        color: white;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .mat-mdc-card-content {
+    padding: 1.5rem;
+    background: transparent;
+    color: white;
+  }
+}
+
+.currencies-section-enhanced {
+  @extend .section-card;
+
+  .mat-mdc-card-header {
+    @include mix.glass-header();
+    background: vars.$currencies-header-bg;
+  }
+}
+
+// 🔄 LOADING & EMPTY STATES
+.loading-container {
+  @include mix.flex-column(1rem);
+  align-items: center;
+  justify-content: center;
+  padding: vars.$spacing-4xl;
+  background: vars.$glass-white-subtle;
+  border-radius: vars.$radius-lg;
+  border: 1px solid vars.$glass-white-border;
+  margin: vars.$spacing-2xl 0;
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    @include mix.text-body(1.1rem);
+    margin: 0;
+  }
+}
+
+.empty-favorites {
+  text-align: center;
+  padding: vars.$spacing-4xl vars.$spacing-2xl;
+  background: vars.$glass-white-subtle;
+  border-radius: vars.$radius-lg;
+  border: 1px solid vars.$glass-white-border;
+
+  .empty-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: vars.$spacing-lg;
+  }
+
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: vars.$spacing-lg;
+  }
+
+  p {
+    @include mix.text-body();
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: vars.$spacing-2xl;
+    line-height: 1.6;
+  }
+
+  button {
+    @include mix.button-gradient(vars.$info-blue, #2563eb);
+    padding: 0.8rem 1.5rem;
+    border-radius: vars.$radius-md;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px vars.$info-blue-40;
+    }
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}

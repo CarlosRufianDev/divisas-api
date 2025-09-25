@@ -10,7 +10,8 @@
 
         <div class="title-tagline">
           <p class="tagline-text">
-            Gestiona y monitorea tus pares favoritos con herramientas profesionales
+            Gestiona y monitorea tus favorritos de divisas y pares en tiempo real
+            <br />
           </p>
         </div>
       </div>
@@ -46,145 +47,7 @@
       </div>
     </div>
 
-  <!-- SECCIÓN 1: FAVORITOS ACTIVOS MEJORADA -->
-  <mat-card class="section-card favorites-section-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>star</mat-icon>
-        Pares Favoritos ({{ favoritePairs.length }})
-      </mat-card-title>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="openAddFavoriteDialog()"
-        class="header-action-btn"
-      >
-        <mat-icon>add</mat-icon>
-        Añadir Par
-      </button>
-    </mat-card-header>
-
-    <mat-card-content>
-      <!-- Loading -->
-      <div
-        *ngIf="loading && favoritePairs.length === 0"
-        class="loading-container"
-      >
-        <mat-spinner diameter="40"></mat-spinner>
-        <p>Cargando favoritos...</p>
-      </div>
-
-      <!-- Sin favoritos -->
-      <div
-        *ngIf="!loading && favoritePairs.length === 0"
-        class="empty-favorites"
-      >
-        <mat-icon class="empty-icon">star_border</mat-icon>
-        <h3>No tienes pares favoritos</h3>
-        <p>
-          Añade tus pares de divisas favoritos para monitorearlos en tiempo
-          real
-        </p>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="openAddFavoriteDialog()"
-        >
-          <mat-icon>add</mat-icon>
-          Añadir Primer Favorito
-        </button>
-      </div>
-
-      <!-- Grid de favoritos mejorado -->
-      <div *ngIf="favoritePairs.length > 0" class="favorites-grid-enhanced">
-        <div
-          *ngFor="let favorite of favoritePairs; trackBy: trackByFavorite"
-          class="favorite-card-enhanced"
-          [class.trending-up]="(favorite.change || 0) > 0"
-          [class.trending-down]="(favorite.change || 0) < 0"
-          [class.trending-neutral]="(favorite.change || 0) === 0"
-        >
-          <!-- Header del par -->
-          <div class="favorite-header">
-            <div class="pair-info">
-              <span class="pair-code">
-                {{ favorite.pair }}
-              </span>
-              <span class="pair-nickname" *ngIf="favorite.nickname">
-                {{ favorite.nickname }}
-              </span>
-            </div>
-            <div class="trend-indicator">
-              <mat-icon *ngIf="(favorite.change || 0) > 0" class="trend-up">trending_up</mat-icon>
-              <mat-icon *ngIf="(favorite.change || 0) < 0" class="trend-down">trending_down</mat-icon>
-              <mat-icon *ngIf="(favorite.change || 0) === 0" class="trend-neutral">trending_flat</mat-icon>
-            </div>
-          </div>
-
-          <!-- Información principal -->
-          <div class="favorite-main-info">
-            <div class="current-rate">
-              <span class="rate-value">{{ favorite.currentRate | number : '1.4-4' }}</span>
-              <span class="rate-label">Tasa actual</span>
-            </div>
-            <div class="change-display">
-              <span 
-                class="change-value"
-                [class.positive]="(favorite.change || 0) > 0"
-                [class.negative]="(favorite.change || 0) < 0"
-                [class.neutral]="(favorite.change || 0) === 0"
-              >
-                {{ favorite.changeText || formatPercentageChange(favorite.change || 0) }}
-              </span>
-              <span class="change-label">Cambio 24h</span>
-            </div>
-          </div>
-
-          <!-- Acciones -->
-          <div class="favorite-actions">
-            <button
-              mat-button
-              class="action-btn edit-btn"
-              (click)="editFavorite(favorite)"
-              matTooltip="Editar nickname"
-            >
-              <mat-icon>edit</mat-icon>
-              <span class="btn-text">Editar</span>
-            </button>
-            <button
-              mat-button
-              class="action-btn alert-btn"
-              (click)="navigateToAlerts(favorite.from, favorite.to)"
-              matTooltip="Crear alerta"
-            >
-              <mat-icon>notifications</mat-icon>
-              <span class="btn-text">Alerta</span>
-            </button>
-            <button
-              mat-button
-              class="action-btn convert-btn"
-              (click)="useInQuickConversion(favorite)"
-              matTooltip="Usar en conversión rápida"
-            >
-              <mat-icon>swap_horiz</mat-icon>
-              <span class="btn-text">Convertir</span>
-            </button>
-            <button
-              mat-button
-              class="action-btn remove-btn"
-              (click)="deleteFavorite(favorite)"
-              matTooltip="Eliminar favorito"
-            >
-              <mat-icon>delete</mat-icon>
-              <span class="btn-text">Eliminar</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- ⭐ SECCIÓN DIVISAS FAVORITAS (ESTILO HISTORIAL) -->
+  <!-- ⭐ SECCIÓN 1: DIVISAS FAVORITAS (AHORA PRIMERA) -->
   <mat-card class="favorites-section-card currencies-section-enhanced">
     <mat-card-header>
       <mat-card-title>
@@ -335,7 +198,145 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- SECCIÓN 2: CONVERSIÓN RÁPIDA -->
+  <!-- SECCIÓN 2: PARES FAVORITOS (AHORA SEGUNDA) -->
+  <mat-card class="section-card favorites-section-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>star</mat-icon>
+        Pares Favoritos ({{ favoritePairs.length }})
+      </mat-card-title>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openAddFavoriteDialog()"
+        class="header-action-btn"
+      >
+        <mat-icon>add</mat-icon>
+        Añadir Par
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading -->
+      <div
+        *ngIf="loading && favoritePairs.length === 0"
+        class="loading-container"
+      >
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Cargando favoritos...</p>
+      </div>
+
+      <!-- Sin favoritos -->
+      <div
+        *ngIf="!loading && favoritePairs.length === 0"
+        class="empty-favorites"
+      >
+        <mat-icon class="empty-icon">star_border</mat-icon>
+        <h3>No tienes pares favoritos</h3>
+        <p>
+          Añade tus pares de divisas favoritos para monitorearlos en tiempo
+          real
+        </p>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openAddFavoriteDialog()"
+        >
+          <mat-icon>add</mat-icon>
+          Añadir Primer Favorito
+        </button>
+      </div>
+
+      <!-- Grid de favoritos mejorado -->
+      <div *ngIf="favoritePairs.length > 0" class="favorites-grid-enhanced">
+        <div
+          *ngFor="let favorite of favoritePairs; trackBy: trackByFavorite"
+          class="favorite-card-enhanced"
+          [class.trending-up]="(favorite.change || 0) > 0"
+          [class.trending-down]="(favorite.change || 0) < 0"
+          [class.trending-neutral]="(favorite.change || 0) === 0"
+        >
+          <!-- Header del par -->
+          <div class="favorite-header">
+            <div class="pair-info">
+              <span class="pair-code">
+                {{ favorite.pair }}
+              </span>
+              <span class="pair-nickname" *ngIf="favorite.nickname">
+                {{ favorite.nickname }}
+              </span>
+            </div>
+            <div class="trend-indicator">
+              <mat-icon *ngIf="(favorite.change || 0) > 0" class="trend-up">trending_up</mat-icon>
+              <mat-icon *ngIf="(favorite.change || 0) < 0" class="trend-down">trending_down</mat-icon>
+              <mat-icon *ngIf="(favorite.change || 0) === 0" class="trend-neutral">trending_flat</mat-icon>
+            </div>
+          </div>
+
+          <!-- Información principal -->
+          <div class="favorite-main-info">
+            <div class="current-rate">
+              <span class="rate-value">{{ favorite.currentRate | number : '1.4-4' }}</span>
+              <span class="rate-label">Tasa actual</span>
+            </div>
+            <div class="change-display">
+              <span 
+                class="change-value"
+                [class.positive]="(favorite.change || 0) > 0"
+                [class.negative]="(favorite.change || 0) < 0"
+                [class.neutral]="(favorite.change || 0) === 0"
+              >
+                {{ favorite.changeText || formatPercentageChange(favorite.change || 0) }}
+              </span>
+              <span class="change-label">Cambio 24h</span>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="favorite-actions">
+            <button
+              mat-button
+              class="action-btn edit-btn"
+              (click)="editFavorite(favorite)"
+              matTooltip="Editar nickname"
+            >
+              <mat-icon>edit</mat-icon>
+              <span class="btn-text">Editar</span>
+            </button>
+            <button
+              mat-button
+              class="action-btn alert-btn"
+              (click)="navigateToAlerts(favorite.from, favorite.to)"
+              matTooltip="Crear alerta"
+            >
+              <mat-icon>notifications</mat-icon>
+              <span class="btn-text">Alerta</span>
+            </button>
+            <button
+              mat-button
+              class="action-btn convert-btn"
+              (click)="useInQuickConversion(favorite)"
+              matTooltip="Usar en conversión rápida"
+            >
+              <mat-icon>swap_horiz</mat-icon>
+              <span class="btn-text">Convertir</span>
+            </button>
+            <button
+              mat-button
+              class="action-btn remove-btn"
+              (click)="deleteFavorite(favorite)"
+              matTooltip="Eliminar favorito"
+            >
+              <mat-icon>delete</mat-icon>
+              <span class="btn-text">Eliminar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- SECCIÓN 3: CONVERSIÓN RÁPIDA -->
   <mat-card class="section-card">
     <mat-card-header>
       <mat-card-title>
@@ -355,7 +356,6 @@
             min="0"
             step="0.01"
           />
-          <span matPrefix>💰 </span>
         </mat-form-field>
 
         <mat-form-field class="currency-field" appearance="outline">
@@ -432,7 +432,7 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- SECCIÓN 3: RESUMEN DEL DÍA -->
+  <!-- SECCIÓN 4: RESUMEN DEL DÍA -->
   <div
     class="summary-row"
     *ngIf="favoritePairs.length > 0 || favoriteCurrencies.length > 0"

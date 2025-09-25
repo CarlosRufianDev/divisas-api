@@ -1,0 +1,305 @@
+// ============================================================================
+// 🔧 UTILIDADES ESPECÍFICAS PARA FAVORITOS
+// Complemento al sistema modular principal
+// ============================================================================
+
+@use 'variables' as vars;
+
+// ============================================================================
+// 🎯 RESPONSIVE UTILITIES
+// ============================================================================
+
+// Container queries para favoritos
+@container style(--container-type: inline-size) {
+  .favorites-grid-enhanced {
+    container-type: inline-size;
+    
+    // En contenedores pequeños, usar una columna
+    @container (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+    
+    // En contenedores medianos, usar dos columnas
+    @container (min-width: 601px) and (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    // En contenedores grandes, usar auto-fit
+    @container (min-width: 901px) {
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    }
+  }
+}
+
+// ============================================================================
+// 🎨 SPECIFIC CARD STATES
+// ============================================================================
+
+// Estados específicos para cards de favoritos
+.favorite-card-states {
+  &.recently-added {
+    border: 2px solid vars.$success-green;
+    box-shadow: 0 0 20px vars.$success-green-20;
+    
+    &::after {
+      content: 'NUEVO';
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      background: vars.$success-green;
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: vars.$radius-sm;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  &.high-volatility {
+    border-left: 4px solid vars.$warning-yellow;
+    background: linear-gradient(135deg, 
+      vars.$glass-white, 
+      rgba(251, 191, 36, 0.05)
+    );
+    
+    .volatility-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: vars.$warning-yellow;
+      color: vars.$dark-surface;
+      padding: 0.2rem 0.5rem;
+      border-radius: vars.$radius-full;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+  
+  &.trending-up {
+    .trend-indicator {
+      background: linear-gradient(135deg, vars.$trend-up-color, #059669);
+      
+      &:after {
+        content: '↗';
+        margin-left: 0.3rem;
+        font-weight: 900;
+      }
+    }
+  }
+  
+  &.trending-down {
+    .trend-indicator {
+      background: linear-gradient(135deg, vars.$trend-down-color, #dc2626);
+      
+      &:after {
+        content: '↘';
+        margin-left: 0.3rem;
+        font-weight: 900;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🔄 LOADING STATES ESPECÍFICOS
+// ============================================================================
+
+.favorites-loading {
+  .skeleton-card {
+    background: vars.$glass-white-subtle;
+    border-radius: vars.$radius-lg;
+    padding: vars.$spacing-lg;
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      animation: shimmer 1.5s infinite;
+    }
+    
+    .skeleton-line {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: vars.$radius-sm;
+      
+      &.title {
+        height: 1.2rem;
+        width: 70%;
+        margin-bottom: 0.8rem;
+      }
+      
+      &.subtitle {
+        height: 0.9rem;
+        width: 50%;
+        margin-bottom: 0.5rem;
+      }
+      
+      &.content {
+        height: 0.8rem;
+        width: 90%;
+        margin-bottom: 0.3rem;
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// ============================================================================
+// 🎯 PERFORMANCE OPTIMIZATIONS
+// ============================================================================
+
+// Usar contain para optimizar renderizado
+.favoritos-container {
+  contain: layout style paint;
+}
+
+.favorites-grid-enhanced,
+.currencies-grid-enhanced {
+  contain: layout;
+}
+
+.favorite-card-enhanced,
+.currency-card-enhanced {
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 280px;
+}
+
+// ============================================================================
+// 🔧 DEBUG UTILITIES (solo en desarrollo)
+// ============================================================================
+
+@if (vars.$debug-mode) {
+  .debug-grid {
+    .favorites-grid-enhanced,
+    .currencies-grid-enhanced {
+      outline: 2px dashed vars.$info-blue;
+      
+      > * {
+        outline: 1px solid vars.$warning-yellow;
+        position: relative;
+        
+        &::before {
+          content: attr(class);
+          position: absolute;
+          top: -20px;
+          left: 0;
+          background: vars.$dark-surface;
+          color: vars.$warning-yellow;
+          padding: 0.2rem 0.4rem;
+          font-size: 0.7rem;
+          border-radius: vars.$radius-sm;
+          white-space: nowrap;
+          z-index: 1000;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🎨 TEMA OSCURO ESPECÍFICO
+// ============================================================================
+
+@media (prefers-color-scheme: dark) {
+  .favoritos-container {
+    .favorite-card-enhanced,
+    .currency-card-enhanced,
+    .summary-card-enhanced {
+      background: linear-gradient(135deg, 
+        rgba(30, 41, 59, 0.8) 0%, 
+        rgba(51, 65, 85, 0.6) 100%
+      );
+      border: 1px solid rgba(71, 85, 105, 0.3);
+      
+      &:hover {
+        background: linear-gradient(135deg, 
+          rgba(30, 41, 59, 0.9) 0%, 
+          rgba(51, 65, 85, 0.7) 100%
+        );
+        border-color: rgba(71, 85, 105, 0.5);
+      }
+    }
+    
+    .no-data-message {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(30, 41, 59, 0.5);
+    }
+  }
+}
+
+// ============================================================================
+// 📱 ACCESSIBILITY IMPROVEMENTS
+// ============================================================================
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .favorite-card-enhanced,
+  .currency-card-enhanced,
+  .quick-action-btn,
+  .swap-btn {
+    transition: none;
+    animation: none;
+  }
+  
+  .animate-gem-pulse,
+  .animate-pulse,
+  .animate-scale-in {
+    animation: none;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .favoritos-container {
+    .favorite-card-enhanced,
+    .currency-card-enhanced {
+      border: 2px solid white;
+      background: var(--sys-color-surface);
+    }
+    
+    .trend-up {
+      color: #00ff00 !important;
+    }
+    
+    .trend-down {
+      color: #ff0000 !important;
+    }
+  }
+}
+
+// Focus indicators mejorados
+.favorite-card-enhanced,
+.currency-card-enhanced,
+.quick-action-btn,
+.action-btn {
+  &:focus-visible {
+    outline: 3px solid vars.$info-blue;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px vars.$info-blue-20;
+  }
+}
+
+// ============================================================================
+// 🔚 FIN DEL ARCHIVO DE UTILIDADES
+// ============================================================================

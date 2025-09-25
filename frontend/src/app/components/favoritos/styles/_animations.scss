@@ -1,4 +1,9 @@
-// Component entry animation
+// ============================================================================
+// 🎭 SISTEMA DE ANIMACIONES PARA FAVORITOS
+// Optimizado para mejor experiencia visual
+// ============================================================================
+
+// 🎬 ANIMACIONES DE ENTRADA
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -7,6 +12,36 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// 🎨 CLASES DE ANIMACIÓN REUTILIZABLES
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-gem-pulse {
+  animation: gemPulse 2s ease-in-out infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+.stagger-animation {
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
+    &:nth-child(6) { animation-delay: 0.6s; }
   }
 }
 
@@ -21,19 +56,28 @@
   }
 }
 
-// Gem pulse animation for star icon
-@keyframes gemPulse {
-  0%, 100% {
-    filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
-    transform: scale(1);
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
   }
-  50% {
-    filter: drop-shadow(0 6px 12px rgba(251, 191, 36, 0.5));
-    transform: scale(1.02);
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
-// Pulse animation for market status
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -45,7 +89,43 @@
   }
 }
 
-// Floating animation
+// ⭐ ANIMACIONES ESPECÍFICAS DE FAVORITOS
+@keyframes gemPulse {
+  0%, 100% {
+    filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 6px 12px rgba(251, 191, 36, 0.5));
+    transform: scale(1.02);
+  }
+}
+
+@keyframes starGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
+    transform: rotate(0deg);
+  }
+  25% {
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+    transform: rotate(5deg);
+  }
+  75% {
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+    transform: rotate(-5deg);
+  }
+}
+
+// 🌊 ANIMACIONES DE FLOTACIÓN
+@keyframes cardFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -78,4 +158,76 @@
     &:nth-child(5) { animation-delay: 0.5s; }
     &:nth-child(6) { animation-delay: 0.6s; }
   }
+}
+
+// 💫 ANIMACIONES ADICIONALES DE ESTADO
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.1);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+@keyframes buttonPush {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes iconSpin {
+  from {
+    transform: rotate(0deg);
+  } 
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 🎨 UTILITY ANIMATION CLASSES
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.4s ease-out;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-gem-pulse {
+  animation: gemPulse 3s ease-in-out infinite;
 }

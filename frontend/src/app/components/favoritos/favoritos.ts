@@ -202,8 +202,8 @@ export class Favoritos implements OnInit, OnDestroy {
 
   constructor() {
     this.quickConversionForm = this.fb.group({
-      amount: [1000, [Validators.required, Validators.min(0.01)]],
-      from: [this.baseCurrency, Validators.required], // ✅ Usar moneda base por defecto
+      amount: ['', [Validators.required, Validators.min(0.01)]],
+      from: ['', Validators.required], // ✅ Campos vacíos por defecto
       to: ['', Validators.required],
     });
 

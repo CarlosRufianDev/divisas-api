@@ -1,33 +1,66 @@
-// Color system
+// ============================================================================
+// 🎨 SISTEMA DE VARIABLES PARA FAVORITOS
+// Basado en el patrón del dashboard con mejoras específicas
+// ============================================================================
+
+// 🌈 SISTEMA DE COLORES PRINCIPAL
 $primary-blue: #667eea;
 $primary-purple: #764ba2;
-$info-blue: #3b82f6;
-$success-green: #10b981;
-$danger-red: #ef4444;
+$success-green: #4caf50;
+$warning-orange: #ff9800;
 $warning-yellow: #fbbf24;
+$error-red: #f44336;
+$info-blue: #3b82f6;
 
-// Color variants with transparency
+// 🎯 SISTEMA DE TRANSPARENCIAS DEL AZUL (MEJORADO)
 $info-blue-03: rgba(59, 130, 246, 0.03);
+$info-blue-05: rgba(59, 130, 246, 0.05);
+$info-blue-08: rgba(59, 130, 246, 0.08);
 $info-blue-10: rgba(59, 130, 246, 0.1);
+$info-blue-15: rgba(59, 130, 246, 0.15);
 $info-blue-20: rgba(59, 130, 246, 0.2);
-$info-blue-60: rgba(59, 130, 246, 0.6);
+$info-blue-25: rgba(59, 130, 246, 0.25);
+$info-blue-30: rgba(59, 130, 246, 0.3);
+$info-blue-40: rgba(59, 130, 246, 0.4);
 
-$success-green-10: rgba(16, 185, 129, 0.1);
-$success-green-20: rgba(16, 185, 129, 0.2);
+// 🟡 SISTEMA DE TRANSPARENCIAS DEL AMARILLO
+$warning-yellow-03: rgba(251, 191, 36, 0.03);
+$warning-yellow-05: rgba(251, 191, 36, 0.05);
+$warning-yellow-10: rgba(251, 191, 36, 0.1);
+$warning-yellow-15: rgba(251, 191, 36, 0.15);
+$warning-yellow-20: rgba(251, 191, 36, 0.2);
+$warning-yellow-25: rgba(251, 191, 36, 0.25);
+$warning-yellow-30: rgba(251, 191, 36, 0.3);
+$warning-yellow-40: rgba(251, 191, 36, 0.4);
 
-$danger-red-10: rgba(239, 68, 68, 0.1);
-$danger-red-20: rgba(239, 68, 68, 0.2);
+// 🟢 SISTEMA DE TRANSPARENCIAS DEL VERDE
+$success-green-10: rgba(76, 175, 80, 0.1);
+$success-green-15: rgba(76, 175, 80, 0.15);
+$success-green-20: rgba(76, 175, 80, 0.2);
+$success-green-30: rgba(76, 175, 80, 0.3);
+$success-green-40: rgba(76, 175, 80, 0.4);
 
-// Text colors
-$text-primary: #1e293b;
-$text-secondary: #475569;
-$text-muted: #64748b;
+// 🔴 SISTEMA DE TRANSPARENCIAS DEL ROJO
+$error-red-10: rgba(244, 67, 54, 0.1);
+$error-red-15: rgba(244, 67, 54, 0.15);
+$error-red-20: rgba(244, 67, 54, 0.2);
+$error-red-30: rgba(244, 67, 54, 0.3);
+$error-red-40: rgba(244, 67, 54, 0.4);
 
-// Glassmorphism backgrounds
+// 🌫️ COLORES GLASSMORPHISM
 $glass-white: rgba(255, 255, 255, 0.9);
-$glass-dark: rgba(30, 41, 59, 0.6);
+$glass-white-light: rgba(255, 255, 255, 0.95);
+$glass-white-semi: rgba(255, 255, 255, 0.12);
+$glass-white-subtle: rgba(255, 255, 255, 0.08);
+$glass-white-border: rgba(255, 255, 255, 0.2);
+$glass-white-border-light: rgba(255, 255, 255, 0.3);
 
-// Gradients
+$glass-dark: rgba(30, 41, 59, 0.6);
+$glass-dark-subtle: rgba(0, 0, 0, 0.05);
+$glass-dark-border: rgba(0, 0, 0, 0.1);
+$glass-dark-border-strong: rgba(43, 43, 43, 0.281);
+
+// 🎨 GRADIENTES PRINCIPALES
 $gradient-primary: linear-gradient(
   135deg,
   #0f172a 0%,
@@ -37,24 +70,102 @@ $gradient-primary: linear-gradient(
   #0f172a 100%
 );
 
-// Spacing system
-$spacing-xs: 0.25rem; // 4px
-$spacing-sm: 0.5rem; // 8px
-$spacing-md: 1rem; // 16px
-$spacing-lg: 1.5rem; // 24px
-$spacing-xl: 2rem; // 32px
+$gradient-card: linear-gradient(
+  135deg,
+  rgba(255, 255, 255, 0.1) 0%,
+  rgba(255, 255, 255, 0.05) 100%
+);
 
-// Border radius
+$gradient-card-white: linear-gradient(
+  135deg,
+  rgba(255, 255, 255, 0.98) 0%,
+  rgba(248, 250, 252, 0.95) 100%
+);
+
+$gradient-card-white-hover: linear-gradient(
+  135deg,
+  rgba(255, 255, 255, 1) 0%,
+  rgba(248, 250, 252, 0.98) 100%
+);
+
+// 📐 SISTEMA DE ESPACIADO CONSISTENTE
+$spacing-xs: 0.25rem; // 4px
+$spacing-sm: 0.5rem;  // 8px
+$spacing-md: 0.75rem; // 12px
+$spacing-lg: 1rem;    // 16px
+$spacing-xl: 1.5rem;  // 24px
+$spacing-2xl: 2rem;   // 32px
+$spacing-3xl: 2.5rem; // 40px
+$spacing-4xl: 3rem;   // 48px
+
+// 🌀 SISTEMA DE BORDER RADIUS
 $radius-sm: 8px;
-$radius-md: 16px;
-$radius-lg: 24px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 24px;
+$radius-full: 50px;
 
 // Shadows
 $shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
 $shadow-md: 0 8px 32px rgba(31, 38, 135, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
 $shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12);
+$shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.25), 0 12px 30px rgba(0, 0, 0, 0.15);
+$shadow-glassmorphism: 0 8px 32px rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 // Transitions
 $transition-fast: all 0.15s ease;
 $transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+// 📱 BREAKPOINTS RESPONSIVOS
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+$wide: 1400px;
+
+// 🎯 COLORES DE TENDENCIAS (PARA CARDS)
+$trend-up-color: #22c55e;
+$trend-down-color: #ef4444;
+$trend-neutral-color: #f59e0b;
+
+$trend-up-bg: linear-gradient(135deg, 
+  rgba(34, 197, 94, 0.45) 0%,
+  rgba(74, 222, 128, 0.50) 75%, 
+  rgba(134, 239, 173, 0.40) 100%
+);
+
+$trend-down-bg: linear-gradient(135deg, 
+  rgba(239, 68, 68, 0.45) 0%,
+  rgba(248, 113, 113, 0.50) 50%, 
+  rgba(252, 165, 165, 0.40) 100%
+);
+
+$trend-neutral-bg: linear-gradient(135deg, 
+  rgba(245, 158, 11, 0.45) 0%,
+  rgba(251, 191, 36, 0.50) 50%, 
+  rgba(253, 224, 71, 0.40) 100%
+);
+
+// 🎨 COLORES ESPECÍFICOS DE FAVORITOS
+$favorites-header-bg: linear-gradient(135deg, 
+  rgba(59, 130, 246, 0.1), 
+  rgba(251, 191, 36, 0.1)
+);
+
+$currencies-header-bg: linear-gradient(135deg, 
+  rgba(59, 130, 246, 0.15), 
+  rgba(16, 185, 129, 0.1)
+);
+
+// 🎨 VARIABLES ADICIONALES
+$dark-surface: #1e293b;
+
+// 🔧 DEBUG MODE
+$debug-mode: false;
+
+// 📊 Z-INDEX SYSTEM
+$z-header: 100;
+$z-modal: 1000;
+$z-dropdown: 500;
+$z-overlay: 200;
