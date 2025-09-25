@@ -1,51 +1,60 @@
 <div class="favoritos-container">
   <div class="content-wrapper">
-    <!-- Header integrado como en historial -->
+    <!-- Header limpio como alertas e historial -->
     <div class="favoritos-header">
-      <div class="title-container">
-        <h1 class="simple-title">
-          <mat-icon class="favorite-symbol">star</mat-icon>
-          Tu Centro de Control de Divisas
-        </h1>
-
-        <div class="title-tagline">
-          <p class="tagline-text">
-            Gestiona y monitorea tus favorritos de divisas y pares en tiempo real
-            <br />
-          </p>
-        </div>
-      </div>
-
-      <!-- Sección de gestión rápida integrada en el header -->
-      <div class="filters-section">
-        <div class="filters-header">
-          <div class="filters-title">
-            <mat-icon>dashboard</mat-icon>
-            <span>Gestión Rápida</span>
+      <div class="header-content">
+        <div class="header-info">
+          <mat-icon class="header-icon">star</mat-icon>
+          <div class="header-text">
+            <h1>Favoritos</h1>
+            <p>Gestiona y monitorea tus favoritos de divisas y pares en tiempo real</p>
           </div>
-          <div class="quick-actions">
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="openAddFavoriteDialog()"
-              class="quick-action-btn"
-            >
-              <mat-icon>add</mat-icon>
-              Añadir Par
-            </button>
-            <button
-              mat-raised-button
-              color="accent"
-              (click)="openAddCurrencyDialog()"
-              class="quick-action-btn"
-            >
-              <mat-icon>monetization_on</mat-icon>
-              Añadir Divisa
-            </button>
+        </div>
+        <div class="header-stats" *ngIf="favoriteCurrencies.length > 0 || favoritePairs.length > 0">
+          <div class="stat-item">
+            <span class="stat-number">{{ favoriteCurrencies.length }}</span>
+            <span class="stat-label">Divisas</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ favoritePairs.length }}</span>
+            <span class="stat-label">Pares</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Gestión rápida separada -->
+    <mat-card class="quick-management-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>dashboard</mat-icon>
+          Gestión Rápida
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="quick-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="openAddFavoriteDialog()"
+            class="quick-action-btn"
+          >
+            <mat-icon>add</mat-icon>
+            Añadir Par Favorito
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="openAddCurrencyDialog()"
+            class="quick-action-btn"
+          >
+            <mat-icon>monetization_on</mat-icon>
+            Añadir Divisa Favorita
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
   <!-- ⭐ SECCIÓN 1: DIVISAS FAVORITAS (AHORA PRIMERA) -->
   <mat-card class="favorites-section-card currencies-section-enhanced">
