@@ -169,6 +169,9 @@ export class Dashboard implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
   public router = inject(Router);
 
+  // Expose Math to template
+  Math = Math;
+
   constructor() {
     // Configurar reactive forms - SOLO resetear resultado al cambiar divisas
     this.monedaOrigen.valueChanges
@@ -217,6 +220,11 @@ export class Dashboard implements OnInit, OnDestroy {
 
     // 🆕 DETERMINAR MODO DE OPERACIÓN
     this.isLimitedMode = !this.authService.isAuthenticated();
+
+    console.log(
+      `🔥 DEBUG: ngOnInit - isAuthenticated = ${this.authService.isAuthenticated()}`
+    );
+    console.log(`🔥 DEBUG: ngOnInit - isLimitedMode = ${this.isLimitedMode}`);
 
     if (this.isLimitedMode) {
       console.log('⚠️ Modo limitado activado para usuario no autenticado');
@@ -730,6 +738,21 @@ export class Dashboard implements OnInit, OnDestroy {
         return 'trending_down';
       default:
         return 'trending_flat';
+    }
+  }
+
+  getRecommendationIcon(action: string): string {
+    switch (action?.toUpperCase()) {
+      case 'COMPRAR':
+        return 'shopping_cart';
+      case 'VENDER':
+        return 'sell';
+      case 'MANTENER':
+        return 'pause';
+      case 'ESPERAR':
+        return 'schedule';
+      default:
+        return 'help_outline';
     }
   }
 

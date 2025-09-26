@@ -559,7 +559,8 @@
                   mat-raised-button 
                   [color]="isAuthenticated ? 'accent' : 'warn'"
                   (click)="handleDetalles(rate.code)"
-                  class="action-button">
+                  class="action-button"
+                  [attr.data-currency]="rate.code">
                   <mat-icon>{{ isAuthenticated ? 'analytics' : 'lock' }}</mat-icon>
                   {{ isAuthenticated ? 'Ver Detalles' : 'Análisis Premium' }}
                 </button>
@@ -602,8 +603,8 @@
 
   </div>
 
-  <!-- MODAL PARA DETALLES DE DIVISA -->
-  <div class="currency-detail-modal" 
+  <!-- MODAL PARA ANÁLISIS TÉCNICO - USUARIOS AUTENTICADOS -->
+  <div class="currency-detail-modal technical-analysis-modal" 
        *ngIf="showCurrencyDetail" 
        (click)="closeCurrencyModal()"
        (keydown.escape)="closeCurrencyModal()"
@@ -615,228 +616,211 @@
          (keydown)="$event.stopPropagation()"
          tabindex="0">
       
-      <!-- Header del Modal (visible para todos) -->
+      <!-- Botón de cerrar moderno -->
+      <button class="modal-close-btn" (click)="closeCurrencyModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+      
+      <!-- Header mejorado del Modal -->
       <div class="modal-header">
-        <div class="currency-header">
-          <span class="currency-flag-large">{{ selectedCurrency?.flag }}</span>
-          <div class="currency-title">
+        <div class="header-content">
+          <span class="currency-flag">{{ selectedCurrency?.flag }}</span>
+          <div class="currency-info">
             <h2>{{ selectedCurrency?.name }}</h2>
-            <span class="currency-code-subtitle">{{ selectedCurrency?.code }}</span>
+            <span class="currency-subtitle">Análisis Técnico - {{ selectedCurrency?.code }}</span>
+          </div>
+          <div class="current-rate">
+            <div class="rate-value">{{ selectedRate?.rate | number:'1.4-6' }}</div>
+            <div class="rate-label">1 {{ monedaBase.value }} = {{ selectedRate?.rate | number:'1.4-6' }} {{ selectedCurrency?.code }}</div>
           </div>
         </div>
-        
-        <button mat-icon-button (click)="closeCurrencyModal()" class="close-button">
-          <mat-icon>close</mat-icon>
-        </button>
       </div>
 
       <!-- Contenido del Modal -->
       <div class="modal-body">
         
-        <!-- Información básica (visible para todos) -->
-        <div class="currency-main-info">
-          <div class="info-card primary">
-            <mat-icon>trending_up</mat-icon>
-            <div class="info-content">
-              <span class="info-label">Tasa Actual</span>
-              <span class="info-value">{{ selectedRate?.rate | number:'1.4-6' }}</span>
-              <span class="info-description">1 {{ monedaBase.value }} = {{ selectedRate?.rate | number:'1.4-6' }} {{ selectedCurrency?.code }}</span>
-            </div>
+        <!-- SECCIÓN 1: MÉTRICAS PRINCIPALES -->
+        <div class="analysis-section">
+          <div class="section-title">
+            <mat-icon>analytics</mat-icon>
+            <h3>Métricas de Mercado</h3>
           </div>
+          
+          <div class="metrics-grid">
+            <!-- Precio y Tendencia -->
+            <div class="metric-card price-card">
+              <div class="metric-header">
+                <mat-icon>trending_up</mat-icon>
+                <span class="metric-title">Cotización</span>
+              </div>
+              <div class="metric-content">
+                <div class="primary-value">{{ selectedRate?.rate | number:'1.4-6' }}</div>
+                <div class="secondary-info">1 {{ monedaBase.value }} = {{ selectedRate?.rate | number:'1.4-6' }} {{ selectedCurrency?.code }}</div>
+                <div class="trend-indicator" [ngClass]="{
+                  'trend-up': tendenciaReal !== null && tendenciaReal > 0,
+                  'trend-down': tendenciaReal !== null && tendenciaReal < 0,
+                  'trend-neutral': tendenciaReal === null || tendenciaReal === 0
+                }">
+                  <mat-icon>{{ getTrendIcon() }}</mat-icon>
+                  <span>{{ tendenciaReal !== null ? (tendenciaReal | number:'1.2-2') + '%' : 'Sin datos' }}</span>
+                </div>
+              </div>
+            </div>
 
-          <div class="info-card secondary">
-            <mat-icon>swap_horiz</mat-icon>
-            <div class="info-content">
-              <span class="info-label">Tasa Inversa</span>
-              <span class="info-value">{{ getInverseRate() | number:'1.4-6' }}</span>
-              <span class="info-description">1 {{ selectedCurrency?.code }} = {{ getInverseRate() | number:'1.4-6' }} {{ monedaBase.value }}</span>
+            <!-- Volatilidad -->
+            <div class="metric-card volatility-card">
+              <div class="metric-header">
+                <mat-icon>show_chart</mat-icon>
+                <span class="metric-title">Volatilidad</span>
+              </div>
+              <div class="metric-content">
+                <div class="primary-value">{{ volatilidadReal !== null ? (volatilidadReal | number:'1.4-4') : '—' }}</div>
+                <div class="secondary-info">Desviación estándar</div>
+                <div class="volatility-level" [ngClass]="getVolatilityLevel(volatilidadReal || 0).toLowerCase()">
+                  {{ getVolatilityLevel(volatilidadReal || 0) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Fuerza Relativa -->
+            <div class="metric-card strength-card">
+              <div class="metric-header">
+                <mat-icon>balance</mat-icon>
+                <span class="metric-title">Fuerza Relativa</span>
+              </div>
+              <div class="metric-content">
+                <div class="primary-value" [ngClass]="{
+                  'strong': (selectedRate?.rate || 1) > 1,
+                  'weak': (selectedRate?.rate || 1) < 1
+                }">{{ (selectedRate?.rate || 1) > 1 ? 'FUERTE' : 'DÉBIL' }}</div>
+                <div class="secondary-info">vs {{ monedaBase.value }}</div>
+                <div class="strength-bar">
+                  <div class="strength-fill" [style.width.%]="Math.min(((selectedRate?.rate || 1) / 2) * 100, 100)"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Contenido Premium -->
-        <div class="analysis-recommendation-wrapper" *ngIf="isAuthenticated">
-          <!-- Columna izquierda: Análisis Técnico -->
-          <div class="analysis-column">
-            <div class="currency-analysis">
-              <div class="analysis-card">
-                <div class="analysis-header">
-                  
-                  <h3>Análisis Técnico</h3>
+        <!-- SECCIÓN 2: INDICADORES TÉCNICOS -->
+        <div class="analysis-section">
+          <div class="section-title">
+            <mat-icon>speed</mat-icon>
+            <h3>Indicadores Técnicos</h3>
+          </div>
+          
+          <div class="indicators-grid">
+            <!-- RSI -->
+            <div class="indicator-card rsi-card">
+              <div class="indicator-header">
+                <span class="indicator-name">RSI</span>
+                <span class="indicator-period">(14 días)</span>
+              </div>
+              <div class="indicator-value" [ngClass]="{
+                'oversold': rsi !== null && rsi < 30,
+                'normal': rsi !== null && rsi >= 30 && rsi <= 70,
+                'overbought': rsi !== null && rsi > 70
+              }">
+                {{ rsi !== null ? (rsi | number:'1.1-1') : '—' }}
+              </div>
+              <div class="indicator-status">
+                <span *ngIf="rsi === null">Sin datos</span>
+                <span *ngIf="rsi !== null && rsi < 30" class="oversold">Sobrevendido</span>
+                <span *ngIf="rsi !== null && rsi >= 30 && rsi <= 70" class="normal">Normal</span>
+                <span *ngIf="rsi !== null && rsi > 70" class="overbought">Sobrecomprado</span>
+              </div>
+              <div class="rsi-bar">
+                <div class="rsi-fill" [style.width.%]="rsi || 0"></div>
+                <span class="rsi-marker oversold-mark">30</span>
+                <span class="rsi-marker overbought-mark">70</span>
+              </div>
+            </div>
 
-                  <mat-icon [ngClass]="{
-                    'trending-up': getTrendDirection() === 'up',
-                    'trending-down': getTrendDirection() === 'down',
-                    'trending-flat': getTrendDirection() === 'stable'
-                  }">
-                    {{ getTrendIcon() }}
-                  </mat-icon>
+            <!-- SMA -->
+            <div class="indicator-card sma-card">
+              <div class="indicator-header">
+                <span class="indicator-name">SMA</span>
+                <span class="indicator-period">(7 días)</span>
+              </div>
+              <div class="indicator-value">
+                {{ sma !== null ? (sma | number:'1.4-6') : '—' }}
+              </div>
+              <div class="indicator-status" *ngIf="getSmaComparison() as smaComp" [ngClass]="smaComp.class">
+                {{ smaComp.text }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 3: RECOMENDACIÓN IA (DESTACADA) -->
+        <div class="recommendation-section" *ngIf="recomendacionReal">
+          <div class="recommendation-card" [ngClass]="'rec-' + recomendacionReal.accion.toLowerCase()">
+            <div class="recommendation-header">
+              <div class="rec-icon-container">
+                <mat-icon class="rec-icon">{{ getRecommendationIcon(recomendacionReal.accion) }}</mat-icon>
+              </div>
+              <div class="rec-title">
+                <h3>Recomendación de Inversión</h3>
+                <span class="rec-subtitle">Análisis basado en IA</span>
+              </div>
+              <div class="rec-action">
+                <span class="action-badge" [ngClass]="'badge-' + recomendacionReal.accion.toLowerCase()">
+                  {{ recomendacionReal.accion }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="recommendation-content">
+              <div class="rec-message">
+                <mat-icon>psychology</mat-icon>
+                <p>{{ recomendacionReal.mensaje }}</p>
+              </div>
+              
+              <div class="rec-details" *ngIf="recomendacionReal.confianza || recomendacionReal.senales">
+                <div class="confidence-meter" *ngIf="recomendacionReal.confianza">
+                  <span class="confidence-label">Nivel de confianza</span>
+                  <div class="confidence-bar">
+                    <div class="confidence-fill" [style.width.%]="recomendacionReal.confianza"></div>
+                  </div>
+                  <span class="confidence-value">{{ recomendacionReal.confianza }}%</span>
                 </div>
-
-                <div class="trend-info">
-                  <div class="trend-item" matTooltip="Calculado con datos reales del BCE">
-                    <span class="trend-label">Tendencia (30 días):</span>
-                    <div class="trend-value-container">
-                      <div class="trend-icons">
-                        <mat-icon *ngIf="tendenciaReal !== null && tendenciaReal > 0" color="primary">trending_up</mat-icon>
-                        <mat-icon *ngIf="tendenciaReal !== null && tendenciaReal < 0" color="warn">trending_down</mat-icon>
-                        <mat-icon *ngIf="tendenciaReal === null || tendenciaReal === 0">trending_flat</mat-icon>
-                      </div>
-                      <span *ngIf="tendenciaReal !== null; else cargandoTendencia" class="trend-percentage">
-                        {{ tendenciaReal | number:'1.2-2' }}%
-                      </span>
-                      <ng-template #cargandoTendencia>
-                        <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
-                      </ng-template>
-                    </div>
-                  </div>
-
-                  <div class="trend-item">
-                    <span class="trend-label">Volatilidad:</span>
-                    <span *ngIf="volatilidadReal !== null; else cargandoVol">
-                      {{ volatilidadReal | number:'1.4-4' }}
-                    </span>
-                    <ng-template #cargandoVol>
-                      <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
-                    </ng-template>
-                  </div>
-
-                  <div class="trend-item">
-                    <span class="trend-label">Fuerza:</span>
-                    <span class="trend-value" [ngClass]="{
-                      'positive': (selectedRate?.rate || 1) > 1,
-                      'negative': (selectedRate?.rate || 1) < 1,
-                      'neutral': (selectedRate?.rate || 1) === 1
-                    }">
-                      {{ (selectedRate?.rate || 1) > 1 ? 'Fuerte vs ' + monedaBase.value : (selectedRate?.rate || 1) < 1 ? 'Débil vs ' + monedaBase.value : 'Equilibrado' }}
-                    </span>
+                
+                <div class="signals-list" *ngIf="recomendacionReal.senales?.length">
+                  <span class="signals-title">Señales detectadas:</span>
+                  <div class="signals-chips">
+                    <span class="signal-chip" *ngFor="let senal of recomendacionReal.senales">{{ senal }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Columna derecha: Recomendación -->
-          <div class="recommendation-column">
-            @if (recomendacionReal) {
-              <div class="recommendation-horizontal-card" [ngClass]="recomendacionReal.accion.toLowerCase()">
-                <div class="horizontal-icon-area" [ngClass]="recomendacionReal.accion.toLowerCase()">
-                  <i class="fa-solid"
-                     [ngClass]="{
-                       'fa-cart-shopping': recomendacionReal.accion === 'COMPRAR',
-                       'fa-tag': recomendacionReal.accion === 'VENDER',
-                       'fa-hand': recomendacionReal.accion === 'MANTENER',
-                       'fa-hourglass-half': recomendacionReal.accion === 'ESPERAR'
-                     }"
-                     style="font-size: 3.2rem; color: #fff;">
-                  </i>
-                </div>
-                <div class="horizontal-tip-content">
-                  <div class="horizontal-tip-title" [ngClass]="recomendacionReal.accion.toLowerCase()">
-                    {{ recomendacionReal.accion }}
-                  </div>
-                  <div class="horizontal-tip-message">
-                    {{ recomendacionReal.mensaje }}
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
         </div>
 
-        <!-- NUEVA RECOMENDACIÓN (TIP) -->
-      
-
-        <!-- Breakdown de señales de la recomendación -->
-        <div class="recommendation-breakdown" *ngIf="getRecommendationBreakdown().length">
-          <h4>¿Por qué esta recomendación?</h4>
-          <div class="breakdown-list">
-            <div class="breakdown-item"
-                 *ngFor="let ind of getRecommendationBreakdown()"
-                 [ngClass]="{
-                   'breakdown-positive': ind.positive,
-                   'breakdown-negative': ind.negative,
-                   'breakdown-warn': !ind.positive && !ind.negative
-                 }">
-              <mat-icon *ngIf="ind.positive">check_circle</mat-icon>
-              <mat-icon *ngIf="ind.negative">cancel</mat-icon>
-              <mat-icon *ngIf="!ind.positive && !ind.negative">info</mat-icon>
-              <span class="breakdown-label">{{ ind.label }}:</span>
-              <span class="breakdown-value">{{ ind.value }}</span>
-              <span class="breakdown-desc">{{ ind.descripcion }}</span>
-            </div>
+        <!-- SECCIÓN 4: ACCIONES RÁPIDAS -->
+        <div class="actions-section">
+          <div class="quick-actions">
+            <button class="action-btn primary-action" (click)="convertirA(selectedCurrency?.code || '')">
+              <mat-icon>currency_exchange</mat-icon>
+              <span>Convertir a {{ selectedCurrency?.code }}</span>
+            </button>
+            
+            <button class="action-btn secondary-action" (click)="addToFavorites()" *ngIf="isAuthenticated">
+              <mat-icon>favorite_border</mat-icon>
+              <span>Añadir a Favoritos</span>
+            </button>
+            
+            <button class="action-btn tertiary-action" (click)="compartirResultado()">
+              <mat-icon>share</mat-icon>
+              <span>Compartir Análisis</span>
+            </button>
           </div>
         </div>
-
-        <!-- NUEVO: Indicadores Adicionales (RSI, SMA) -->
-        <div class="indicator-info">
-          <div>
-            <b>RSI (14 días):</b> {{ rsi !== null ? rsi : '—' }}
-            <span *ngIf="rsi !== null && rsi < 30" class="rsi-label sobreventa">(Sobreventa)</span>
-            <span *ngIf="rsi !== null && rsi > 70" class="rsi-label sobrecompra">(Sobrecompra)</span>
-            <span *ngIf="rsi !== null && rsi >= 30 && rsi <= 70" class="rsi-label neutro">(Neutro)</span>
-          </div>
-          <div>
-            <b>SMA (7 días):</b> {{ sma !== null ? sma : '—' }}
-            <span *ngIf="getSmaComparison()" 
-                  [class]="'sma-label ' + getSmaComparison()!.class">{{ getSmaComparison()!.text }}</span>
-          </div>
-          <div>
-            <b>Tendencia (30 días):</b> {{ tendenciaReal !== null ? (tendenciaReal | number:'1.2-2') + '%' : '—' }}
-          </div>
-          <div>
-            <b>Volatilidad (30 días):</b> {{ volatilidadReal !== null ? (volatilidadReal | number:'1.4-4') : '—' }}
-          </div>
-        </div>
-
-        <!-- NUEVA SECCIÓN: Explicación de la Recomendación -->
-        <div class="recommendation-explanation">
-          <b>¿Cómo se calcula la recomendación?</b>
-          <p>
-            Analizamos indicadores técnicos reales:<br><br>
-            - <b>RSI:</b> mide sobrecompra/sobreventa.<br>
-            - <b>SMA:</b> compara el precio actual con la media de 7 días.<br>
-            - <b>Tendencia:</b> dirección del precio en 30 días.<br>
-            - <b>Volatilidad:</b> variación de precios.<br><br>
-            Si la mayoría de señales son positivas, recomendamos <b>COMPRAR</b>.<br> Si son negativas, <b>VENDER</b>.<br> Si no hay señales claras, <b>MANTENER</b> o <b>ESPERAR</b>.
-          </p>
-        </div>
-      </div>
-
-      <!-- Acciones del Modal -->
-      <div class="modal-actions">
-        <button mat-raised-button color="primary" (click)="convertirA(selectedCurrency?.code || '')">
-          <mat-icon>currency_exchange</mat-icon>
-          Convertir a {{ selectedCurrency?.code }}
-        </button>
-        
-        <button mat-stroked-button 
-                color="accent" 
-                (click)="addToFavorites()"
-                *ngIf="isAuthenticated">
-          <mat-icon>favorite_border</mat-icon>
-          Añadir a Favoritos
-        </button>
-
-        <!-- Mostrar botón de registro si NO está autenticado -->
-        <button mat-stroked-button 
-                color="primary" 
-                (click)="goToRegister()"
-                *ngIf="!isAuthenticated">
-          <mat-icon>person_add</mat-icon>
-          Regístrate para añadir a Favoritos
-        </button>
-        
-        <button mat-stroked-button (click)="closeCurrencyModal()">
-          <mat-icon>close</mat-icon>
-          Cerrar
-        </button>
       </div>
     </div>
   </div>
 
   <!-- MODAL PREMIUM PARA USUARIOS NO REGISTRADOS -->
-  <div class="currency-detail-modal premium" 
+  <div class="currency-detail-modal premium-modal premium-promotion-modal" 
        *ngIf="showPremiumModal" 
        (click)="onPremiumModalBackground($event)"
        (keydown.escape)="closePremiumModal()"
@@ -844,86 +828,83 @@
        role="dialog"
        aria-modal="true">
     
-    <div class="modal-content simple-premium-modal" 
+    <div class="modal-content" 
          (click)="$event.stopPropagation()"
          (keydown)="$event.stopPropagation()"
          tabindex="0">
       
-      <!-- Botón de cerrar -->
-      <button mat-icon-button (click)="closePremiumModal()" class="close-button">
+      <!-- Botón de cerrar moderno -->
+      <button class="modal-close-btn" (click)="closePremiumModal()">
         <mat-icon>close</mat-icon>
       </button>
 
-      <!-- Banner principal -->
-      <div class="premium-register-banner">
+      <!-- Header premium -->
+      <div class="modal-header">
+        <div class="premium-lock-icon">
+          <mat-icon>lock</mat-icon>
+        </div>
         
-        <!-- Icono del candado mejorado -->
-        <mat-icon class="premium-lock-icon">lock</mat-icon>
-        
-        <!-- Header del contenido -->
         <div class="premium-header-content">
           <h2>🌟 Análisis Premium de {{ premiumCurrency?.code }}</h2>
           <p>Desbloquea análisis técnico avanzado y recomendaciones de inversión personalizadas</p>
         </div>
+      </div>
 
+      <!-- Contenido del modal -->
+      <div class="modal-body">
         <!-- Lista de características -->
-        <ul class="premium-features">
-          <li>
+        <div class="premium-features">
+          <div class="feature-item">
             <mat-icon>trending_up</mat-icon>
-            Análisis técnico en tiempo real
-          </li>
-          <li>
+            <span class="feature-text">Análisis técnico en tiempo real</span>
+          </div>
+          <div class="feature-item">
             <mat-icon>insights</mat-icon>
-            Indicadores RSI, SMA y volatilidad
-          </li>
-          <li>
+            <span class="feature-text">Indicadores RSI, SMA y volatilidad</span>
+          </div>
+          <div class="feature-item">
             <mat-icon>psychology</mat-icon>
-            Recomendaciones de inversión IA
-          </li>
-          <li>
+            <span class="feature-text">Recomendaciones de inversión IA</span>
+          </div>
+          <div class="feature-item">
             <mat-icon>history</mat-icon>
-            Históricos de 30 días
-          </li>
-          <li>
+            <span class="feature-text">Históricos de 30 días</span>
+          </div>
+          <div class="feature-item">
             <mat-icon>favorite</mat-icon>
-            Seguimiento de favoritos
-          </li>
-          <li>
+            <span class="feature-text">Seguimiento de favoritos</span>
+          </div>
+          <div class="feature-item">
             <mat-icon>notifications</mat-icon>
-            Alertas personalizadas
-          </li>
-        </ul>
+            <span class="feature-text">Alertas personalizadas</span>
+          </div>
+        </div>
 
         <!-- Botones de acción -->
         <div class="premium-actions">
-          <button mat-raised-button 
-                  color="primary" 
-                  (click)="goToRegister()">
+          <button class="premium-btn" (click)="goToRegister()">
             <mat-icon>person_add</mat-icon>
             Crear Cuenta Gratis
           </button>
           
-          <button mat-stroked-button 
-                  color="primary"
-                  (click)="goToLogin()">
+          <button class="premium-btn secondary" (click)="goToLogin()">
             <mat-icon>login</mat-icon>
             Ya tengo cuenta
           </button>
         </div>
-
       </div>
     </div>
-    
-    <!-- BANNER DE INFORMACIÓN - MOVIDO AL FINAL -->
-    <div class="update-info-banner">
-      <mat-icon>info</mat-icon>
-      <div class="update-info-content">
-        <span class="update-timestamp">Datos actualizados: {{ ultimaActualizacion }}</span>
-        <div class="update-details">
-          <small class="update-note"> • Tipos de cambio oficiales del Banco Central Europeo</small>
-          <small class="update-note"> • Tendencias calculadas con datos de 30 días</small>
-          <small class="update-note"> • Actualización diaria a las 16:00 CET</small>
-        </div>
+  </div>
+
+  <!-- BANNER DE INFORMACIÓN - MOVIDO FUERA DE LOS MODALES -->
+  <div class="update-info-banner" *ngIf="!showCurrencyDetail && !showPremiumModal">
+    <mat-icon>info</mat-icon>
+    <div class="update-info-content">
+      <span class="update-timestamp">Datos actualizados: {{ ultimaActualizacion }}</span>
+      <div class="update-details">
+        <small class="update-note"> • Tipos de cambio oficiales del Banco Central Europeo</small>
+        <small class="update-note"> • Tendencias calculadas con datos de 30 días</small>
+        <small class="update-note"> • Actualización diaria a las 16:00 CET</small>
       </div>
     </div>
   </div>
