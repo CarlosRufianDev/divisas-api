@@ -1,5 +1,5 @@
 // 🌍 MAPEO COMPLETO DE FLAGS PARA TODAS LAS DIVISAS DE FRANKFURTER + ADICIONALES
-export const CURRENCY_FLAGS: { [key: string]: string } = {
+export const CURRENCY_FLAGS: Record<string, string> = {
   ARS: '🇦🇷', // Argentine Peso (agregado manualmente - no está en Frankfurter)
   AUD: '🇦🇺', // Australian Dollar
   BGN: '🇧🇬', // Bulgarian Lev
@@ -44,15 +44,15 @@ export const CURRENCY_FLAGS: { [key: string]: string } = {
 
 // 🌟 DIVISAS ADICIONALES NO DISPONIBLES EN FRANKFURTER
 export const ADDITIONAL_CURRENCIES = [
-  { code: 'ARS', name: 'Argentine Peso', flag: '🇦🇷' },
-  { code: 'COP', name: 'Colombian Peso', flag: '🇨🇴' },
-  { code: 'CLP', name: 'Chilean Peso', flag: '🇨🇱' },
-  { code: 'PEN', name: 'Peruvian Sol', flag: '🇵🇪' },
-  { code: 'UYU', name: 'Uruguayan Peso', flag: '🇺🇾' },
-  { code: 'RUB', name: 'Russian Ruble', flag: '🇷🇺' },
-  { code: 'EGP', name: 'Egyptian Pound', flag: '🇪🇬' },
-  { code: 'VND', name: 'Vietnamese Dong', flag: '🇻🇳' },
-  { code: 'KWD', name: 'Kuwaiti Dinar', flag: '🇰🇼' },
+  { code: 'ARS', name: 'Argentine Peso', flag: '🇦🇷', symbol: '$' },
+  { code: 'COP', name: 'Colombian Peso', flag: '🇨🇴', symbol: '$' },
+  { code: 'CLP', name: 'Chilean Peso', flag: '🇨🇱', symbol: '$' },
+  { code: 'PEN', name: 'Peruvian Sol', flag: '🇵🇪', symbol: 'S/' },
+  { code: 'UYU', name: 'Uruguayan Peso', flag: '🇺🇾', symbol: '$U' },
+  { code: 'RUB', name: 'Russian Ruble', flag: '🇷🇺', symbol: '₽' },
+  { code: 'EGP', name: 'Egyptian Pound', flag: '🇪🇬', symbol: '£' },
+  { code: 'VND', name: 'Vietnamese Dong', flag: '🇻🇳', symbol: '₫' },
+  { code: 'KWD', name: 'Kuwaiti Dinar', flag: '🇰🇼', symbol: 'د.ك' },
 ];
 
 // 🌟 DIVISAS PRINCIPALES PARA USUARIOS NO AUTENTICADOS (TOP 8)

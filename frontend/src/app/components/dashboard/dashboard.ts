@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth';
 import {
   ConversionRequest,
   ConversionResponse,
+  Currency,
   DivisasService,
   TechnicalAnalysis,
 } from '../../services/divisas';
@@ -19,6 +20,60 @@ import {
 } from '../../shared/currency-flags';
 import { MaterialModule } from '../../shared/material.module';
 
+// Dashboard interfaces
+interface DashboardResult {
+  amount: number;
+  result: number;
+  from: string;
+  to: string;
+  rate: number;
+  date: string;
+}
+
+interface ExchangeRate {
+  code: string;
+  name: string;
+  rate: number;
+  tendencia: number; // Matches backend response
+  volume?: string;
+  flag: string;
+  cambio: string; // Change text from backend
+  trendStatus: string; // CSS class name
+  changeText: string; // Display text for change
+  isBaseCurrency: boolean;
+}
+
+interface UserStats {
+  totalConversions: number;
+  favoriteVolume: string;
+  topPair: string;
+  activeAlerts: number;
+  weeklyTrend: string; // Changed to string to support includes()
+  totalVolume: string;
+  totalAlerts: number;
+  trends?: { length: number }; // For trends data access
+}
+
+interface TickerRate {
+  pair: string;
+  rate: string;
+  change: string;
+  trend: 'up' | 'down' | 'stable';
+}
+
+interface FavoriteTrend {
+  pair: string;
+  currentRate: string;
+  change: string;
+  trend: 'up' | 'down' | 'stable';
+}
+
+interface FavoriteTrendsResponse {
+  trends?: FavoriteTrend[];
+  success?: boolean;
+  [key: string]: unknown;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -27,7 +82,7 @@ import { MaterialModule } from '../../shared/material.module';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit, OnDestroy {
-  resultado: any = null;
+  resultado: DashboardResult | null = null;
   cargando = false;
 
   // Form Controls
@@ -36,26 +91,26 @@ export class Dashboard implements OnInit, OnDestroy {
   monedaDestino = new FormControl('EUR');
 
   // PROPIEDADES PARA LA TABLA
-  tiposCambio: any[] = [];
+  tiposCambio: ExchangeRate[] = [];
   cargandoTabla = false;
   monedaBase = new FormControl('USD');
-  ultimaActualizacion: string = '';
+  ultimaActualizacion = '';
 
   // FILTRO DE DIVISAS PARA USUARIOS REGISTRADOS
   currencyFilter = new FormControl('');
-  filteredTiposCambio: any[] = [];
+  filteredTiposCambio: ExchangeRate[] = [];
 
   // PROPIEDADES PARA ANALYTICS
-  userStats: any = null;
-  favoriteTrends: any = null;
+  userStats: UserStats | null = null;
+  favoriteTrends: FavoriteTrendsResponse | null = null;
   loadingStats = false;
 
   // PROPIEDADES PARA MODALES
   showCurrencyDetail = false;
-  selectedCurrency: any = null;
-  selectedRate: any = null;
+  selectedCurrency: Currency | null = null;
+  selectedRate: ExchangeRate | null = null;
   showPremiumModal = false;
-  premiumCurrency: any = null;
+  premiumCurrency: Currency | null = null;
 
   // PROPIEDADES PARA ANÁLISIS TÉCNICO
   cargandoAnalisis = false;
@@ -93,27 +148,28 @@ export class Dashboard implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Lista de divisas disponibles (se cargará dinámicamente desde Frankfurter)
-  divisas: any[] = [];
+  divisas: Currency[] = [];
 
   // 🆕 PROPIEDADES PARA MARKET TICKER
-  tickerRates: any[] = [];
+  tickerRates: TickerRate[] = [];
   tickerPairs = [
     { pair: 'EUR/USD', from: 'EUR', to: 'USD' },
     { pair: 'GBP/USD', from: 'GBP', to: 'USD' },
     { pair: 'USD/JPY', from: 'USD', to: 'JPY' },
   ];
-  tickerUpdateInterval: any = null;
+  tickerUpdateInterval: ReturnType<typeof setInterval> | null = null;
 
   // 🆕 NUEVAS PROPIEDADES PARA MODO LIMITADO
   isLimitedMode = false;
-  limitedCurrencies: any[] = [];
+  limitedCurrencies: Currency[] = [];
 
-  constructor(
-    private divisasService: DivisasService,
-    private authService: AuthService,
-    private snackBar: MatSnackBar,
-    public router: Router
-  ) {
+  // Modern Angular 20 inject pattern
+  private divisasService = inject(DivisasService);
+  private authService = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
+  public router = inject(Router);
+
+  constructor() {
     // Configurar reactive forms - SOLO resetear resultado al cambiar divisas
     this.monedaOrigen.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
@@ -212,6 +268,7 @@ export class Dashboard implements OnInit, OnDestroy {
           code,
           name: currenciesData[code],
           flag: CURRENCY_FLAGS[code] || '🏳️', // Fallback si no tenemos flag
+          symbol: code, // Using code as symbol fallback
         }));
 
         // 🆕 AGREGAR DIVISAS ADICIONALES (como ARS) que no están en Frankfurter
@@ -244,6 +301,7 @@ export class Dashboard implements OnInit, OnDestroy {
         code,
         name: this.getCurrencyNameFallback(code),
         flag: CURRENCY_FLAGS[code],
+        symbol: code, // Using code as symbol fallback
       }));
 
       this.limitedCurrencies = this.divisas.filter((d) =>
@@ -258,7 +316,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // 🔧 HELPER: Nombres de divisas como fallback
   private getCurrencyNameFallback(code: string): string {
-    const names: { [key: string]: string } = {
+    const names: Record<string, string> = {
       ARS: 'Argentine Peso', // ✅ AGREGADO
       COP: 'Colombian Peso', // ✅ AGREGADO
       CLP: 'Chilean Peso', // ✅ AGREGADO
@@ -484,7 +542,7 @@ export class Dashboard implements OnInit, OnDestroy {
         next: () => {
           // Log silencioso - no mostrar nada al usuario
         },
-        error: (error: any) => {
+        error: (error: Error) => {
           console.warn('📊 No se pudo registrar el uso del filtro:', error);
         },
       });
@@ -555,7 +613,7 @@ export class Dashboard implements OnInit, OnDestroy {
         console.log('✅ Conversión desde tu backend:', response);
         this.resultado = {
           amount: response.amount,
-          result: response.result,
+          result: parseFloat(response.result),
           from: response.from,
           to: response.to,
           rate: response.rate,
@@ -563,7 +621,7 @@ export class Dashboard implements OnInit, OnDestroy {
         };
         this.cargando = false;
       },
-      error: (error: any) => {
+      error: (error: { status: number }) => {
         console.error('❌ Error en conversión:', error);
         this.cargando = false;
 
@@ -631,6 +689,28 @@ export class Dashboard implements OnInit, OnDestroy {
       : 'stable';
   }
 
+  // Helper methods for template null safety
+  hasFavoriteTrends(): boolean {
+    return !!(
+      this.isAuthenticated &&
+      this.favoriteTrends?.trends &&
+      this.favoriteTrends.trends.length > 0
+    );
+  }
+
+  getSmaComparison(): { text: string; class: string } | null {
+    if (!this.sma || !this.selectedRate?.rate) return null;
+
+    const rate = this.selectedRate.rate;
+    const smaValue = this.sma;
+
+    if (rate > smaValue)
+      return { text: '(Por encima de la media)', class: 'sma-up' };
+    if (rate < smaValue)
+      return { text: '(Por debajo de la media)', class: 'sma-down' };
+    return { text: '(En la media)', class: 'neutro' };
+  }
+
   getTrendIcon(): string {
     const direction = this.getTrendDirection();
     switch (direction) {
@@ -693,6 +773,8 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   compartirResultado(): void {
+    if (!this.resultado) return;
+
     const texto = `💰 ${this.cantidad.value} ${
       this.monedaOrigen.value
     } = ${this.resultado.result.toLocaleString('es-ES', {
@@ -745,7 +827,8 @@ export class Dashboard implements OnInit, OnDestroy {
   // 🆕 MÉTODO MEJORADO: Ver detalles con análisis real
   async verDetalle(currencyCode: string): Promise<void> {
     if (!this.authService.isAuthenticated()) {
-      this.premiumCurrency = this.divisas.find((d) => d.code === currencyCode);
+      this.premiumCurrency =
+        this.divisas.find((d) => d.code === currencyCode) || null;
       this.showPremiumModal = true;
       document.body.style.overflow = 'hidden';
       return;
@@ -753,8 +836,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
     console.log(`🔍 Cargando análisis técnico real para ${currencyCode}`);
 
-    this.selectedCurrency = this.divisas.find((d) => d.code === currencyCode);
-    this.selectedRate = this.tiposCambio.find((r) => r.code === currencyCode);
+    this.selectedCurrency =
+      this.divisas.find((d) => d.code === currencyCode) || null;
+    this.selectedRate =
+      this.tiposCambio.find((r) => r.code === currencyCode) || null;
     this.showCurrencyDetail = true;
     document.body.style.overflow = 'hidden';
 
@@ -917,7 +1002,8 @@ export class Dashboard implements OnInit, OnDestroy {
       this.verDetalle(currencyCode);
     } else {
       this.showPremiumModal = true;
-      this.premiumCurrency = this.divisas.find((d) => d.code === currencyCode);
+      this.premiumCurrency =
+        this.divisas.find((d) => d.code === currencyCode) || null;
       document.body.style.overflow = 'hidden';
     }
   }
@@ -1045,7 +1131,7 @@ export class Dashboard implements OnInit, OnDestroy {
       (item) => item.pair === pair
     );
 
-    const tickerItem = {
+    const tickerItem: TickerRate = {
       pair: pair,
       rate: rate.toFixed(4),
       change:

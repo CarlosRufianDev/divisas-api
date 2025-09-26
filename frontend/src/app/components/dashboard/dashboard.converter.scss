@@ -1,0 +1,742 @@
+// ============================================================================
+// 💱 DASHBOARD CONVERTER - ESTILOS MODULARES
+// Sistema completo de conversión de divisas con resultados y analytics
+// ============================================================================
+
+// ============================================================================
+// 💱 SECCIÓN CONVERSOR + RESULTADO (2 COLUMNAS)
+// ============================================================================
+.converter-result-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: vars.$spacing-xl;
+  margin-bottom: vars.$spacing-xl;
+
+  @include mix.mobile-only {
+    grid-template-columns: 1fr;
+    gap: vars.$spacing-lg;
+  }
+
+  // 💱 TARJETA DEL CONVERSOR
+  .currency-converter-card {
+    @include mix.glass-card();
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    
+    &:hover {
+      @include mix.hover-lift(-4px, 1.005);
+    }
+
+    .converter-card-header {
+      position: relative;
+      padding: vars.$spacing-xl;
+      
+      .converter-card-title {
+        display: flex;
+        align-items: center;
+        gap: vars.$spacing-md;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin: 0;
+
+        mat-icon {
+          font-size: 2rem;
+          animation: rotate 4s linear infinite;
+        }
+      }
+
+      .converter-card-subtitle {
+        margin-top: vars.$spacing-sm !important;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        opacity: 0.8;
+      }
+    }
+
+    .converter-card-content {
+      padding: vars.$spacing-xl;
+      
+      // Sección de cantidad
+      .amount-input-section {
+        margin-bottom: vars.$spacing-lg;
+        
+        .input-label {
+          display: block;
+          font-family: 'Inter', sans-serif;
+          font-weight: 600;
+          font-size: 0.875rem;
+          margin-bottom: vars.$spacing-sm;
+          color: vars.$warning-yellow;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .amount-input-field {
+          width: 100%;
+          
+          input {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+          }
+        }
+      }
+
+      // Grid de selectores de moneda
+      .currency-selector-grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: vars.$spacing-lg;
+        align-items: end;
+        margin-bottom: vars.$spacing-xl;
+
+        @include mix.mobile-only {
+          grid-template-columns: 1fr;
+          gap: vars.$spacing-md;
+
+          .swap-button-container {
+            order: 3;
+            justify-self: center;
+          }
+        }
+      }
+
+      .conversion-form {
+        @include mix.flex-column(vars.$spacing-lg);
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
+          gap: vars.$spacing-md;
+          align-items: end;
+
+          @include mix.mobile-only {
+            grid-template-columns: 1fr;
+            gap: vars.$spacing-sm;
+
+            .swap-button {
+              order: 3;
+              justify-self: center;
+            }
+          }
+
+          .amount-field,
+          .currency-field {
+            .mat-mdc-form-field {
+              width: 100%;
+            }
+
+            input,
+            .mat-mdc-select-value {
+              font-family: 'JetBrains Mono', monospace;
+              font-size: 1.1rem;
+              font-weight: 600;
+            }
+          }
+
+          .swap-button {
+            margin-bottom: 8px;
+            
+            button {
+              @include mix.button-base();
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, vars.$info-blue, vars.$primary-purple);
+              color: white;
+              transition: vars.$transition-normal;
+
+              &:hover {
+                transform: rotate(180deg) scale(1.1);
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+              }
+
+              mat-icon {
+                font-size: 1.5rem;
+                animation: none;
+              }
+            }
+          }
+        }
+
+        // Estilos para elementos específicos del HTML
+        .currency-selector-card {
+          background: rgba(255, 255, 255, 0.8);
+          border: 2px solid rgba(251, 191, 36, 0.2);
+          border-radius: 16px;
+          padding: vars.$spacing-lg;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: rgba(251, 191, 36, 0.4);
+            transform: translateY(-2px);
+          }
+
+          .selector-label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: vars.$warning-yellow;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: vars.$spacing-sm;
+          }
+
+          &.from-card {
+            border-color: rgba(251, 191, 36, 0.4);
+          }
+
+          &.to-card {
+            border-color: rgba(34, 197, 94, 0.4);
+          }
+        }
+
+        .swap-button-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: vars.$spacing-md 0;
+
+          .currency-swap-button {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, vars.$info-blue 0%, vars.$info-blue-light 100%);
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+            &:hover {
+              transform: scale(1.1) rotate(180deg);
+              box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+            }
+
+            mat-icon {
+              font-size: 1.5rem;
+              color: white;
+            }
+          }
+        }
+
+        .convert-button-section {
+          margin-top: vars.$spacing-xl;
+
+          .convert-action-button {
+            width: 100%;
+            background: linear-gradient(135deg, vars.$warning-yellow 0%, vars.$warning-orange 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: vars.$spacing-lg vars.$spacing-xl;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+
+            &:hover:not([disabled]) {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+            }
+
+            &[disabled] {
+              background: vars.$slate-300;
+              color: vars.$slate-500;
+              box-shadow: none;
+              cursor: not-allowed;
+            }
+
+            .button-content-wrapper {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: vars.$spacing-sm;
+            }
+          }
+        }
+
+        .service-info-section {
+          display: flex;
+          justify-content: center;
+          gap: vars.$spacing-md;
+          margin-top: vars.$spacing-lg;
+
+          .info-badge {
+            display: flex;
+            align-items: center;
+            gap: vars.$spacing-xs;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 20px;
+            padding: vars.$spacing-sm vars.$spacing-md;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: vars.$slate-700;
+
+            mat-icon {
+              font-size: 1rem;
+              color: vars.$warning-yellow;
+            }
+          }
+        }
+
+        .convert-button {
+          margin-top: vars.$spacing-lg;
+
+          button {
+            @include mix.button-gradient(vars.$success-green, #059669);
+            width: 100%;
+            padding: vars.$spacing-lg;
+            font-size: 1.1rem;
+            font-weight: 700;
+
+            &:disabled {
+              background: rgba(255, 255, 255, 0.1) !important;
+              color: rgba(255, 255, 255, 0.4) !important;
+            }
+
+            mat-spinner {
+              margin-right: vars.$spacing-sm;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 📊 TARJETA DE RESULTADO
+  .conversion-result-card {
+    @include mix.glass-card();
+    background: linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.05) 0%,
+      rgba(16, 185, 129, 0.05) 50%,
+      rgba(34, 197, 94, 0.05) 100%
+    );
+    border: 2px solid rgba(34, 197, 94, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      @include mix.hover-lift(-4px, 1.005);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .result-card-header {
+      padding: vars.$spacing-xl;
+      background: linear-gradient(135deg, 
+        rgba(34, 197, 94, 0.1) 0%,
+        rgba(16, 185, 129, 0.1) 50%,
+        rgba(34, 197, 94, 0.1) 100%);
+
+      .result-card-title {
+        display: flex;
+        align-items: center;
+        gap: vars.$spacing-md;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin: 0;
+        color: vars.$success-green;
+
+        mat-icon {
+          font-size: 2rem;
+          color: vars.$success-green;
+          animation: gemPulse 3s ease-in-out infinite;
+        }
+      }
+    }
+
+    .result-card-content {
+      padding: vars.$spacing-xl;
+
+      // Estado vacío
+      .welcome-state {
+        text-align: center;
+        padding: vars.$spacing-xl 0;
+
+        .welcome-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.5rem;
+          color: vars.$slate-700;
+          margin-bottom: vars.$spacing-md;
+        }
+
+        .welcome-steps {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            display: flex;
+            align-items: center;
+            gap: vars.$spacing-sm;
+            margin-bottom: vars.$spacing-sm;
+            font-family: 'Inter', sans-serif;
+            color: vars.$slate-600;
+
+            mat-icon {
+              color: vars.$warning-yellow;
+              font-size: 1.25rem;
+            }
+          }
+        }
+      }
+
+      .conversion-result-display {
+        @include mix.flex-column(vars.$spacing-lg);
+        text-align: center;
+
+        // Ecuación de conversión
+        .conversion-equation {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: vars.$spacing-md;
+          margin-bottom: vars.$spacing-lg;
+
+          .original-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: vars.$slate-700;
+          }
+
+          .equals-sign {
+            color: vars.$info-blue;
+            font-size: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+          }
+        }
+
+        // Resultado principal
+        .main-result-section {
+          margin-bottom: vars.$spacing-xl;
+
+          .converted-amount-display {
+            margin-bottom: vars.$spacing-lg;
+
+            .result-number {
+              font-family: 'JetBrains Mono', monospace;
+              font-size: clamp(2.5rem, 6vw, 4rem);
+              font-weight: 900;
+              color: vars.$success-green;
+              margin: 0;
+              line-height: 1;
+              text-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+              display: block;
+            }
+
+            .result-currency {
+              font-family: 'Poppins', sans-serif;
+              font-weight: 600;
+              font-size: 1.5rem;
+              color: vars.$slate-600;
+              margin-left: vars.$spacing-sm;
+            }
+          }
+
+          .exchange-rate-info {
+            .rate-display-box {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: vars.$spacing-sm;
+              background: rgba(34, 197, 94, 0.1);
+              border: 1px solid rgba(34, 197, 94, 0.3);
+              border-radius: 12px;
+              padding: vars.$spacing-md vars.$spacing-lg;
+              margin: 0 auto;
+              max-width: fit-content;
+
+              mat-icon {
+                color: vars.$success-green;
+                font-size: 1.25rem;
+              }
+
+              span {
+                font-family: 'Inter', sans-serif;
+                font-weight: 500;
+                color: vars.$slate-700;
+              }
+            }
+          }
+        }
+
+        // Grid de detalles
+        .result-details-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: vars.$spacing-md;
+
+          .detail-item {
+            display: flex;
+            align-items: center;
+            gap: vars.$spacing-sm;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 10px;
+            padding: vars.$spacing-md;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.8);
+              border-color: rgba(34, 197, 94, 0.3);
+              transform: translateY(-2px);
+            }
+
+            .detail-icon {
+              color: vars.$success-green;
+              font-size: 1.5rem;
+              flex-shrink: 0;
+
+              &.trending {
+                &.trend-up {
+                  color: vars.$success-green;
+                  animation: bounce 2s ease-in-out infinite;
+                }
+
+                &.trend-down {
+                  color: vars.$error-red;
+                }
+
+                &.trend-neutral {
+                  color: vars.$slate-500;
+                }
+              }
+            }
+
+            .detail-content {
+              display: flex;
+              flex-direction: column;
+              min-width: 0;
+
+              .detail-label {
+                font-family: 'Inter', sans-serif;
+                font-weight: 500;
+                font-size: 0.75rem;
+                color: vars.$slate-600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 2px;
+              }
+
+              .detail-value {
+                font-family: 'JetBrains Mono', monospace;
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: vars.$slate-800;
+                word-break: break-all;
+
+                &.strong {
+                  color: vars.$success-green;
+                  font-weight: 700;
+                }
+
+                &.weak {
+                  color: vars.$error-red;
+                  font-weight: 700;
+                }
+              }
+            }
+          }
+        }
+
+        .result-main {
+          .result-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            color: vars.$success-green;
+            margin: 0;
+            line-height: 1.1;
+            text-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+          }
+
+          .result-currency {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: vars.$warning-yellow;
+            margin-top: vars.$spacing-sm;
+          }
+        }
+
+        .result-details {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: vars.$radius-lg;
+          padding: vars.$spacing-lg;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          .rate-info {
+            @include mix.flex-between();
+            margin-bottom: vars.$spacing-md;
+
+            .rate-label {
+              font-family: 'Inter', sans-serif;
+              color: rgba(255, 255, 255, 0.7);
+            }
+
+            .rate-value {
+              font-family: 'JetBrains Mono', monospace;
+              font-weight: 600;
+              color: white;
+            }
+          }
+
+          .conversion-meta {
+            @include mix.flex-between();
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: vars.$spacing-md;
+
+            .meta-item {
+              @include mix.flex-column(vars.$spacing-xs);
+              align-items: center;
+
+              .meta-label {
+                font-weight: 500;
+              }
+
+              .meta-value {
+                font-family: 'JetBrains Mono', monospace;
+              }
+            }
+          }
+        }
+
+        .result-actions {
+          @include mix.flex-center();
+          gap: vars.$spacing-md;
+          margin-top: vars.$spacing-lg;
+
+          button {
+            @include mix.button-base();
+            padding: vars.$spacing-sm vars.$spacing-lg;
+            border-radius: vars.$radius-md;
+            font-weight: 600;
+
+            &.share-btn {
+              background: linear-gradient(135deg, vars.$info-blue, vars.$primary-purple);
+            }
+
+            &.copy-btn {
+              background: linear-gradient(135deg, vars.$warning-yellow, #f59e0b);
+              color: vars.$slate-900;
+            }
+          }
+        }
+      }
+
+      .welcome-message-display {
+        @include mix.flex-column(vars.$spacing-lg);
+        align-items: center;
+        text-align: center;
+        padding: vars.$spacing-2xl;
+
+        .welcome-icon {
+          font-size: 4rem;
+          color: vars.$info-blue;
+          animation: gemPulse 3s ease-in-out infinite;
+          margin-bottom: vars.$spacing-lg;
+        }
+
+        .welcome-title {
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: white;
+          margin: 0 0 vars.$spacing-md 0;
+        }
+
+        .welcome-text {
+          font-family: 'Inter', sans-serif;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        .feature-highlights {
+          @include mix.flex-column(vars.$spacing-sm);
+          margin-top: vars.$spacing-lg;
+
+          .highlight-item {
+            @include mix.flex-row(vars.$spacing-sm);
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+
+            mat-icon {
+              color: vars.$success-green !important;
+              font-size: 1.2rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 📊 ANALYTICS COMPACTOS (4 CARDS HORIZONTALES)
+// ============================================================================
+.analytics-compact {
+  margin-bottom: vars.$spacing-xl;
+
+  .stats-grid-horizontal {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: vars.$spacing-lg;
+
+    @include mix.tablet-only {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mix.mobile-only {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-card-compact {
+      @include mix.glass-card();
+      padding: vars.$spacing-lg;
+      text-align: center;
+      transition: vars.$transition-normal;
+
+      &:hover {
+        @include mix.hover-lift(-4px, 1.02);
+      }
+
+      .stat-icon {
+        font-size: 2rem;
+        margin-bottom: vars.$spacing-sm;
+        animation: gemPulse 3s ease-in-out infinite;
+
+        &.conversions { color: vars.$info-blue; }
+        &.volume { color: vars.$success-green; }
+        &.pair { color: vars.$warning-yellow; }
+        &.alerts { color: vars.$primary-purple; }
+      }
+
+      .stat-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: white;
+        margin: 0;
+      }
+
+      .stat-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: vars.$spacing-xs;
+      }
+    }
+  }
+}
