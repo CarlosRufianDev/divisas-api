@@ -5,9 +5,10 @@
 **Full-stack currency conversion platform** with real-time exchange rates, automated alerts, and professional trading features.
 
 - **Backend**: Node.js/Express API with MongoDB (Mongoose ODM)
-- **Frontend**: Angular 20 with standalone components + Angular Material
-- **External API**: Frankfurter API for real exchange rates
-- **Infrastructure**: JWT auth, automated cron jobs, email notifications
+- **Frontend**: Angular 20.1 with standalone components + Angular Material 20.1
+- **External APIs**: Frankfurter API + ExchangeRate API for ~40 currencies
+- **Infrastructure**: JWT auth (2h expiration), automated cron jobs, SMTP email notifications
+- **Testing**: Jest with MongoDB Memory Server, Karma/Jasmine frontend
 
 ## 🎯 Key Development Patterns
 
@@ -16,8 +17,10 @@
 **Route Structure**: All API routes are prefixed with `/api/` and organized by feature:
 
 ```js
+// Core API routes in app.js
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/convert', require('./routes/convert'));
+app.use('/api/historial', require('./routes/convert')); // Backward compatibility
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/exchange', require('./routes/exchange'));
 app.use('/api/calculator', require('./routes/calculator'));
@@ -517,6 +520,168 @@ activityLogSchema.index({ user: 1, action: 1, createdAt: -1 });
 ```
 
 When implementing new features, follow the established patterns: use middleware for cross-cutting concerns, implement proper error handling, add activity logging for user actions, and ensure responsive design with Material components.
+
+## 🎨 SCSS Architecture Guidelines
+
+### Component Style Structure
+
+Each component follows the **Dashboard SCSS Pattern** (already applied in historial):
+
+```scss
+// Required structure for all components
+Component-name/
+  ├── component-name.scss           // Main component styles
+  └── styles/                       // Style modules folder
+      ├── _variables.scss           // Component-specific variables
+      ├── _mixins.scss              // Reusable mixins
+      ├── _animations.scss          // Component animations
+      └── section-specific.scss     // Additional style modules
+```
+
+### Standard Typography Stack
+
+All components must include these font imports:
+
+```scss
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+```
+
+**Font Usage Guidelines:**
+
+- **Inter**: Main UI text, buttons, labels (modern, clean)
+- **Poppins**: Headlines, taglines, marketing text (friendly, rounded)
+- **JetBrains Mono**: Code, numbers, technical data (monospace, precise)
+
+### Glassmorphism Design System
+
+**Header Pattern** (consistent across all sections):
+
+```scss
+.section-header {
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1e293b 25%,
+    #334155 50%,
+    #1e293b 75%,
+    #0f172a 100%
+  );
+  color: white;
+  padding: 2.5rem 2rem 2rem;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  // Subtle background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 50%,
+        rgba(59, 130, 246, 0.1) 0%,
+        transparent 50%
+      ), radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent
+          50%);
+    pointer-events: none;
+  }
+}
+```
+
+**Card Pattern** (for content sections):
+
+```scss
+.content-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25), 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+```
+
+### Animation Standards
+
+**Required animations** (from `_animations.scss`):
+
+```scss
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gemPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 6px 12px rgba(251, 191, 36, 0.5));
+    transform: scale(1.02);
+  }
+}
+```
+
+**Component Entry Animation:**
+
+```scss
+.component-container {
+  animation: fadeIn 0.3s ease-out;
+}
+```
+
+### Responsive Design Rules
+
+**Mobile-first breakpoints:**
+
+```scss
+// Mixins for responsive design
+@mixin mobile-only {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+@mixin tablet-up {
+  @media (min-width: 769px) {
+    @content;
+  }
+}
+@mixin desktop-up {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+```
+
+**Typography scaling with clamp():**
+
+```scss
+.main-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+```
 
 ## 🎨 SCSS Architecture Guidelines
 
