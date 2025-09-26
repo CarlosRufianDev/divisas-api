@@ -51,18 +51,6 @@
         </div>
       </mat-card-content>
     </mat-card>
-
-    <div class="update-info-banner">
-      <mat-icon>info</mat-icon>
-      <div class="update-info-content">
-        <span class="update-timestamp">Datos actualizados: {{ ultimaActualizacion }}</span>
-        <div class="update-details">
-          <small class="update-note"> • Tipos de cambio oficiales del Banco Central Europeo</small>
-          <small class="update-note"> • Tendencias calculadas con datos de 30 días</small>
-          <small class="update-note"> • Actualización diaria a las 16:00 CET</small>
-        </div>
-      </div>
-    </div>
     
     <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas SIEMPRE visibles) -->
     <div class="converter-result-section">
@@ -104,9 +92,7 @@
                               (selectionChange)="limpiarResultado()">
                     <mat-option *ngFor="let currency of divisas" [value]="currency.code">
                       <div class="currency-option-content">
-                        <span class="currency-flag">{{ currency.flag }}</span>
-                        <span class="currency-code">{{ currency.code }}</span>
-                        <span class="currency-name">{{ currency.name }}</span>
+                        <span class="currency-display">{{ currency.code }} - {{ currency.name }}</span>
                       </div>
                     </mat-option>
                   </mat-select>
@@ -133,9 +119,7 @@
                               (selectionChange)="limpiarResultado()">
                     <mat-option *ngFor="let currency of divisas" [value]="currency.code">
                       <div class="currency-option-content">
-                        <span class="currency-flag">{{ currency.flag }}</span>
-                        <span class="currency-code">{{ currency.code }}</span>
-                        <span class="currency-name">{{ currency.name }}</span>
+                        <span class="currency-display">{{ currency.code }} - {{ currency.name }}</span>
                       </div>
                     </mat-option>
                   </mat-select>
@@ -161,18 +145,6 @@
                   <span>{{ cargando ? 'Convirtiendo...' : 'Convertir' }}</span>
                 </div>
               </button>
-            </div>
-
-            <!-- Info del servicio -->
-            <div class="service-info-section">
-              <div class="info-badge">
-                <mat-icon>verified</mat-icon>
-                <span>Datos BCE</span>
-              </div>
-              <div class="info-badge">
-                <mat-icon>schedule</mat-icon>
-                <span>Tiempo Real</span>
-              </div>
             </div>
 
           </form>
@@ -305,10 +277,6 @@
               </div>
 
               <div class="welcome-features">
-                <div class="feature-chip">
-                  <mat-icon>verified</mat-icon>
-                  <span>Datos BCE</span>
-                </div>
                 <div class="feature-chip">
                   <mat-icon>speed</mat-icon>
                   <span>Instantáneo</span>
@@ -466,9 +434,7 @@
                               [value]="divisa.code"
                               class="base-option">
                     <div class="option-content">
-                      <span class="option-flag">{{ divisa.flag }}</span>
-                      <span class="option-code">{{ divisa.code }}</span>
-                      <span class="option-name">{{ divisa.name }}</span>
+                      <span class="option-display">{{ divisa.code }} - {{ divisa.name }}</span>
                     </div>
                   </mat-option>
                 </mat-select>
@@ -945,6 +911,19 @@
           </button>
         </div>
 
+      </div>
+    </div>
+    
+    <!-- BANNER DE INFORMACIÓN - MOVIDO AL FINAL -->
+    <div class="update-info-banner">
+      <mat-icon>info</mat-icon>
+      <div class="update-info-content">
+        <span class="update-timestamp">Datos actualizados: {{ ultimaActualizacion }}</span>
+        <div class="update-details">
+          <small class="update-note"> • Tipos de cambio oficiales del Banco Central Europeo</small>
+          <small class="update-note"> • Tendencias calculadas con datos de 30 días</small>
+          <small class="update-note"> • Actualización diaria a las 16:00 CET</small>
+        </div>
       </div>
     </div>
   </div>

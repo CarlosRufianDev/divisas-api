@@ -274,10 +274,15 @@ export class Dashboard implements OnInit, OnDestroy {
         // 🆕 AGREGAR DIVISAS ADICIONALES (como ARS) que no están en Frankfurter
         this.divisas = [...this.divisas, ...ADDITIONAL_CURRENCIES];
 
+        // 🔤 ORDENAR ALFABÉTICAMENTE POR CÓDIGO DE MONEDA
+        this.divisas.sort((a, b) => a.code.localeCompare(b.code));
+
         // Configurar divisas limitadas para usuarios no autenticados
         this.limitedCurrencies = this.divisas.filter((d) =>
           LIMITED_CURRENCIES.includes(d.code)
         );
+        // 🔤 ORDENAR TAMBIÉN LAS DIVISAS LIMITADAS
+        this.limitedCurrencies.sort((a, b) => a.code.localeCompare(b.code));
 
         console.log(
           `✅ Cargadas dinámicamente ${this.divisas.length} divisas (${
@@ -304,9 +309,14 @@ export class Dashboard implements OnInit, OnDestroy {
         symbol: code, // Using code as symbol fallback
       }));
 
+      // 🔤 ORDENAR ALFABÉTICAMENTE POR CÓDIGO DE MONEDA (FALLBACK)
+      this.divisas.sort((a, b) => a.code.localeCompare(b.code));
+
       this.limitedCurrencies = this.divisas.filter((d) =>
         LIMITED_CURRENCIES.includes(d.code)
       );
+      // 🔤 ORDENAR TAMBIÉN LAS DIVISAS LIMITADAS (FALLBACK)
+      this.limitedCurrencies.sort((a, b) => a.code.localeCompare(b.code));
 
       console.log(
         `🔄 Fallback aplicado: ${this.divisas.length} divisas desde mapeo local`
@@ -1056,17 +1066,21 @@ export class Dashboard implements OnInit, OnDestroy {
   // 🆕 MÉTODO MODIFICADO: Filtrar divisas origen según el modo
   getDivisasOrigen() {
     const disponibles = this.getDivisasDisponibles();
-    return disponibles.filter(
+    const filtered = disponibles.filter(
       (divisa) => divisa.code !== this.monedaDestino.value
     );
+    // 🔤 MANTENER ORDEN ALFABÉTICO DESPUÉS DEL FILTRO
+    return filtered.sort((a, b) => a.code.localeCompare(b.code));
   }
 
   // 🆕 MÉTODO MODIFICADO: Filtrar divisas destino según el modo
   getDivisasDestino() {
     const disponibles = this.getDivisasDisponibles();
-    return disponibles.filter(
+    const filtered = disponibles.filter(
       (divisa) => divisa.code !== this.monedaOrigen.value
     );
+    // 🔤 MANTENER ORDEN ALFABÉTICO DESPUÉS DEL FILTRO
+    return filtered.sort((a, b) => a.code.localeCompare(b.code));
   }
 
   // 🆕 MÉTODO PARA CARGAR TICKER EN TIEMPO REAL

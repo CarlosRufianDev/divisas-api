@@ -42,27 +42,27 @@ export const CURRENCY_FLAGS: Record<string, string> = {
   ZAR: '🇿🇦', // South African Rand
 };
 
-// 🌟 DIVISAS ADICIONALES NO DISPONIBLES EN FRANKFURTER
+// 🌟 DIVISAS ADICIONALES NO DISPONIBLES EN FRANKFURTER (ORDENADAS ALFABÉTICAMENTE)
 export const ADDITIONAL_CURRENCIES = [
   { code: 'ARS', name: 'Argentine Peso', flag: '🇦🇷', symbol: '$' },
-  { code: 'COP', name: 'Colombian Peso', flag: '🇨🇴', symbol: '$' },
-  { code: 'CLP', name: 'Chilean Peso', flag: '🇨🇱', symbol: '$' },
-  { code: 'PEN', name: 'Peruvian Sol', flag: '🇵🇪', symbol: 'S/' },
-  { code: 'UYU', name: 'Uruguayan Peso', flag: '🇺🇾', symbol: '$U' },
-  { code: 'RUB', name: 'Russian Ruble', flag: '🇷🇺', symbol: '₽' },
-  { code: 'EGP', name: 'Egyptian Pound', flag: '🇪🇬', symbol: '£' },
-  { code: 'VND', name: 'Vietnamese Dong', flag: '🇻🇳', symbol: '₫' },
-  { code: 'KWD', name: 'Kuwaiti Dinar', flag: '🇰🇼', symbol: 'د.ك' },
+  { code: 'CLP', name: 'Chilean Peso', flag: '🇨�', symbol: '$' },
+  { code: 'COP', name: 'Colombian Peso', flag: '🇨�', symbol: '$' },
+  { code: 'EGP', name: 'Egyptian Pound', flag: '🇬', symbol: '£' },
+  { code: 'KWD', name: 'Kuwaiti Dinar', flag: '��', symbol: 'د.ك' },
+  { code: 'PEN', name: 'Peruvian Sol', flag: '��', symbol: 'S/' },
+  { code: 'RUB', name: 'Russian Ruble', flag: '��', symbol: '₽' },
+  { code: 'UYU', name: 'Uruguayan Peso', flag: '��', symbol: '$U' },
+  { code: 'VND', name: 'Vietnamese Dong', flag: '��', symbol: '₫' },
 ];
 
-// 🌟 DIVISAS PRINCIPALES PARA USUARIOS NO AUTENTICADOS (TOP 8)
+// 🌟 DIVISAS PRINCIPALES PARA USUARIOS NO AUTENTICADOS (TOP 8 - ORDENADAS ALFABÉTICAMENTE)
 export const LIMITED_CURRENCIES = [
-  'USD',
-  'EUR',
-  'JPY',
-  'GBP',
-  'CHF',
-  'CAD',
   'AUD',
+  'CAD',
+  'CHF',
   'CNY',
+  'EUR',
+  'GBP',
+  'JPY',
+  'USD',
 ];
