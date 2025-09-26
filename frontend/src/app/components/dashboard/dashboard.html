@@ -1,40 +1,22 @@
 <div class="dashboard-container">
-  <!-- Header Consistente con Otras Secciones -->
+  <!-- Header con título -->
   <div class="dashboard-header">
     <div class="header-content">
       <div class="header-info">
-        <mat-icon class="header-icon">💎</mat-icon>
         <div class="header-text">
-          <h1 class="main-title">Dashboard</h1>
-          <p class="subtitle">{{ isAuthenticated ? 'Suite Profesional de Trading de Divisas' : 'Plataforma Líder en Conversión de Divisas • Únete Gratis' }}</p>
+          <h1>Dashboard</h1>
+          <p>{{ isAuthenticated ? 'Suite Profesional de Trading de Divisas' : 'Plataforma Líder en Conversión de Divisas • Únete Gratis' }}</p>
         </div>
       </div>
-      
-      <!-- Estadísticas del Usuario -->
-      <div class="stats-section" *ngIf="isAuthenticated && userStats">
+      <div class="header-stats" *ngIf="isAuthenticated && userStats">
         <div class="stat-item">
-          <div class="stat-number">{{ userStats.totalConversions || 0 }}</div>
-          <div class="stat-label">Conversiones</div>
+          <span class="stat-number">{{ userStats.totalConversions || 0 }}</span>
+          <span class="stat-label">Conversiones</span>
         </div>
         <div class="stat-item">
-          <div class="stat-number">{{ userStats.totalAlerts || 0 }}</div>
-          <div class="stat-label">Alertas</div>
+          <span class="stat-number">{{ userStats.totalAlerts || 0 }}</span>
+          <span class="stat-label">Alertas</span>
         </div>
-      </div>
-    </div>
-    
-    <!-- Indicador Live -->
-    <div class="live-indicator" *ngIf="isAuthenticated">
-      <span class="pulse-dot"></span>
-      <span class="live-text">EN VIVO</span>
-    </div>
-    
-    <!-- Market Ticker (Solo para usuarios autenticados) -->
-    <div class="market-ticker" *ngIf="isAuthenticated && tickerRates.length > 0">
-      <div class="ticker-item" *ngFor="let ticker of tickerRates">
-        <span class="ticker-pair">{{ ticker.pair }}</span>
-        <span class="ticker-value" [ngClass]="ticker.trend">{{ ticker.rate }}</span>
-        <span class="ticker-change">{{ ticker.change }}</span>
       </div>
     </div>
   </div>
