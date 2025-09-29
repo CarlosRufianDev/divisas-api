@@ -585,10 +585,15 @@
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
+                padding: 8px !important;
+                flex-shrink: 0 !important;
                 
                 .rec-icon {
-                  font-size: 2rem !important;
+                  font-size: 1.75rem !important;
+                  width: 1.75rem !important;
+                  height: 1.75rem !important;
                   color: #fbbf24 !important;
+                  line-height: 1 !important;
                 }
               }
               
@@ -631,6 +636,12 @@
                   background: rgba(251, 191, 36, 0.2) !important;
                   color: #fbbf24 !important;
                   border: 1px solid rgba(251, 191, 36, 0.4) !important;
+                }
+                
+                &.badge-esperar {
+                  background: rgba(148, 163, 184, 0.2) !important;
+                  color: #94a3b8 !important;
+                  border: 1px solid rgba(148, 163, 184, 0.4) !important;
                 }
               }
             }
@@ -717,7 +728,168 @@
           }
         }
         
-        // 🚀 SECCIÓN DE ACCIONES
+        // � SECCIÓN DE EXPLICACIÓN TÉCNICA
+        .technical-explanation-section {
+          padding: 2rem !important;
+          background: linear-gradient(
+            135deg,
+            rgba(51, 65, 85, 0.1) 0%,
+            rgba(75, 85, 99, 0.1) 100%
+          ) !important;
+          border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+          
+          .section-title {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            margin-bottom: 2rem !important;
+            
+            mat-icon {
+              color: #60a5fa !important;
+              font-size: 1.5rem !important;
+            }
+            
+            h3 {
+              font-family: 'Inter', sans-serif !important;
+              font-size: 1.25rem !important;
+              font-weight: 600 !important;
+              color: #ffffff !important;
+              margin: 0 !important;
+            }
+          }
+          
+          .explanation-content {
+            .methodology-grid {
+              display: grid !important;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+              gap: 1.5rem !important;
+              margin-bottom: 2rem !important;
+              
+              @media (max-width: 768px) {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+              }
+            }
+            
+            .method-card {
+              background: linear-gradient(
+                135deg,
+                rgba(30, 41, 59, 0.3) 0%,
+                rgba(51, 65, 85, 0.2) 100%
+              ) !important;
+              backdrop-filter: blur(10px) !important;
+              border: 1px solid rgba(255, 255, 255, 0.1) !important;
+              border-radius: 12px !important;
+              padding: 1.5rem !important;
+              transition: all 0.3s ease !important;
+              
+              &:hover {
+                border-color: rgba(96, 165, 250, 0.3) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 16px rgba(96, 165, 250, 0.1) !important;
+              }
+              
+              .method-header {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.75rem !important;
+                margin-bottom: 1rem !important;
+                
+                mat-icon {
+                  color: #60a5fa !important;
+                  font-size: 1.25rem !important;
+                }
+                
+                h4 {
+                  font-family: 'Inter', sans-serif !important;
+                  font-size: 1rem !important;
+                  font-weight: 600 !important;
+                  color: #ffffff !important;
+                  margin: 0 !important;
+                }
+              }
+              
+              .method-description {
+                p {
+                  font-size: 0.875rem !important;
+                  color: rgba(255, 255, 255, 0.8) !important;
+                  margin: 0 0 0.5rem !important;
+                  line-height: 1.5 !important;
+                  
+                  strong {
+                    color: #fbbf24 !important;
+                    font-weight: 600 !important;
+                  }
+                }
+                
+                ul {
+                  margin: 0.5rem 0 0 1rem !important;
+                  padding: 0 !important;
+                  
+                  li {
+                    font-size: 0.8rem !important;
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    margin-bottom: 0.25rem !important;
+                    line-height: 1.4 !important;
+                  }
+                }
+              }
+            }
+            
+            .disclaimer-section {
+              .disclaimer-card {
+                background: linear-gradient(
+                  135deg,
+                  rgba(239, 68, 68, 0.1) 0%,
+                  rgba(220, 38, 38, 0.1) 100%
+                ) !important;
+                border: 1px solid rgba(239, 68, 68, 0.3) !important;
+                border-radius: 12px !important;
+                padding: 1.5rem !important;
+                display: flex !important;
+                gap: 1rem !important;
+                align-items: flex-start !important;
+                
+                .warning-icon {
+                  color: #fbbf24 !important;
+                  font-size: 1.5rem !important;
+                  flex-shrink: 0 !important;
+                }
+                
+                .disclaimer-content {
+                  flex: 1 !important;
+                  
+                  h4 {
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 1rem !important;
+                    font-weight: 600 !important;
+                    color: #ffffff !important;
+                    margin: 0 0 0.75rem !important;
+                  }
+                  
+                  p {
+                    font-size: 0.875rem !important;
+                    color: rgba(255, 255, 255, 0.8) !important;
+                    margin: 0 0 0.75rem !important;
+                    line-height: 1.5 !important;
+                    
+                    &:last-child {
+                      margin-bottom: 0 !important;
+                    }
+                    
+                    strong {
+                      color: #fbbf24 !important;
+                      font-weight: 600 !important;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        // �🚀 SECCIÓN DE ACCIONES
         .actions-section {
           padding: 2rem !important;
           border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -848,19 +1020,24 @@
         ) !important;
         
         .premium-lock-icon {
-          width: 60px !important;
-          height: 60px !important;
-          background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+          width: 55px !important;
+          height: 55px !important;
+          background: linear-gradient(135deg, #ef4444, #dc2626) !important;
           border-radius: 50% !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
           margin: 0 auto 1rem !important;
-          box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4) !important;
+          box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4) !important;
+          border: 2px solid rgba(255, 255, 255, 0.2) !important;
+          padding: 6px !important;
           
           mat-icon {
-            font-size: 2rem !important;
-            color: #000000 !important;
+            font-size: 1.75rem !important;
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+            color: #ffffff !important;
+            line-height: 1 !important;
           }
         }
         

@@ -796,7 +796,94 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 4: ACCIONES RÁPIDAS -->
+        <!-- SECCIÓN 4: EXPLICACIÓN TÉCNICA Y METODOLOGÍA -->
+        <div class="technical-explanation-section">
+          <div class="section-title">
+            <mat-icon>info</mat-icon>
+            <h3>Metodología y Cálculos</h3>
+          </div>
+          
+          <div class="explanation-content">
+            <div class="methodology-grid">
+              <!-- RSI Explicación -->
+              <div class="method-card">
+                <div class="method-header">
+                  <mat-icon>timeline</mat-icon>
+                  <h4>Índice de Fuerza Relativa (RSI)</h4>
+                </div>
+                <div class="method-description">
+                  <p><strong>Período:</strong> 14 días</p>
+                  <p><strong>Fórmula:</strong> RSI = 100 - (100 / (1 + RS))</p>
+                  <p><strong>Interpretación:</strong></p>
+                  <ul>
+                    <li>RSI &lt; 30: Sobrevendido (señal de compra)</li>
+                    <li>RSI &gt; 70: Sobrecomprado (señal de venta)</li>
+                    <li>30-70: Rango normal</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- SMA Explicación -->
+              <div class="method-card">
+                <div class="method-header">
+                  <mat-icon>show_chart</mat-icon>
+                  <h4>Media Móvil Simple (SMA)</h4>
+                </div>
+                <div class="method-description">
+                  <p><strong>Período:</strong> 7 días</p>
+                  <p><strong>Cálculo:</strong> Promedio aritmético de los últimos 7 precios de cierre</p>
+                  <p><strong>Uso:</strong> Identifica la tendencia direccional y niveles de soporte/resistencia</p>
+                </div>
+              </div>
+
+              <!-- Volatilidad Explicación -->
+              <div class="method-card">
+                <div class="method-header">
+                  <mat-icon>equalizer</mat-icon>
+                  <h4>Volatilidad</h4>
+                </div>
+                <div class="method-description">
+                  <p><strong>Medida:</strong> Desviación estándar de los rendimientos diarios</p>
+                  <p><strong>Período:</strong> 30 días</p>
+                  <p><strong>Clasificación:</strong></p>
+                  <ul>
+                    <li>Baja: &lt; 1% diario</li>
+                    <li>Media: 1% - 3% diario</li>
+                    <li>Alta: &gt; 3% diario</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Fuentes de Datos -->
+              <div class="method-card">
+                <div class="method-header">
+                  <mat-icon>cloud</mat-icon>
+                  <h4>Fuentes de Datos</h4>
+                </div>
+                <div class="method-description">
+                  <p><strong>Proveedor:</strong> Frankfurter API</p>
+                  <p><strong>Frecuencia:</strong> Actualizaciones diarias</p>
+                  <p><strong>Cobertura:</strong> 40+ divisas principales</p>
+                  <p><strong>Base:</strong> Banco Central Europeo (BCE)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer-section">
+              <div class="disclaimer-card">
+                <mat-icon class="warning-icon">warning</mat-icon>
+                <div class="disclaimer-content">
+                  <h4>Aviso Importante</h4>
+                  <p>Este análisis es únicamente informativo y no constituye asesoramiento financiero. Las recomendaciones se basan en análisis técnico automatizado y no garantizan resultados futuros. Consulte con un asesor financiero profesional antes de tomar decisiones de inversión.</p>
+                  <p><strong>Los mercados financieros conllevan riesgos y las inversiones pueden fluctuar en valor.</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 5: ACCIONES RÁPIDAS -->
         <div class="actions-section">
           <div class="quick-actions">
             <button class="action-btn primary-action" (click)="convertirA(selectedCurrency?.code || '')">
@@ -841,12 +928,12 @@
       <!-- Header premium -->
       <div class="modal-header">
         <div class="premium-lock-icon">
-          <mat-icon>lock</mat-icon>
+          <mat-icon>block</mat-icon>
         </div>
         
         <div class="premium-header-content">
-          <h2>🌟 Análisis Premium de {{ premiumCurrency?.code }}</h2>
-          <p>Desbloquea análisis técnico avanzado y recomendaciones de inversión personalizadas</p>
+          <h2>Análisis Premium de {{ premiumCurrency?.code }}</h2>
+          <p>Regístrate gratis y desbloquea análisis técnico avanzado y recomendaciones de inversión personalizadas</p>
         </div>
       </div>
 
