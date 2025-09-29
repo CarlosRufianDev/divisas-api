@@ -119,8 +119,8 @@ const convertCurrency = async (req, res) => {
         // Registrar actividad
         await ActivityLog.create({
           user: req.user.userId,
-          action: 'CONVERT_CURRENCY',
-          details: `Convertir ${amount} ${from} a ${to}`,
+          action: 'CONVERSION_SINGLE',
+          details: { from, to, amount, result, apiUsed },
           metadata: { from, to, amount, rate, result, apiUsed }
         });
 

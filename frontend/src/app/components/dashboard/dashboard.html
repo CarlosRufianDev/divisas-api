@@ -23,35 +23,6 @@
 
   <div class="content-wrapper">
 
-    <!-- 🆕 BANNER DE INFORMACIÓN PARA USUARIOS NO AUTENTICADOS -->
-    <mat-card class="limited-mode-banner" *ngIf="isLimitedMode">
-      <mat-card-content>
-        <div class="banner-content">
-          <div class="banner-icon">
-            <mat-icon>info</mat-icon>
-          </div>
-          <div class="banner-text">
-            <h3>Modo de Prueba Activado</h3>
-            <p>Estás usando DivisasPro en modo limitado. Puedes convertir entre las 8 divisas principales con USD como base.</p>
-            <ul class="limitations-list">
-              <li>• Solo 8 divisas principales disponibles ---- • Moneda base fija en USD</li>
-              <li>• Sin seguimiento de favoritos ---- • Sin análisis técnico ni recomendaciones</li>
-            </ul>
-          </div>
-          <div class="banner-actions">
-            <button mat-raised-button color="primary" (click)="router.navigate(['/register'])">
-              <mat-icon>person_add</mat-icon>
-              Crear Cuenta Gratis
-            </button>
-            <button mat-raised-button color="primary" (click)="router.navigate(['/login'])">
-              <mat-icon>login</mat-icon>
-              Iniciar Sesión
-            </button>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-    
     <!-- SECCIÓN 1: CONVERSOR + RESULTADO (2 columnas SIEMPRE visibles) -->
     <div class="converter-result-section">
       <!-- Conversor (Izquierda) - ADAPTADO AL TYPESCRIPT ACTUAL -->
@@ -378,6 +349,35 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- 🆕 BANNER DE INFORMACIÓN PARA USUARIOS NO AUTENTICADOS -->
+    <mat-card class="limited-mode-banner" *ngIf="isLimitedMode">
+      <mat-card-content>
+        <div class="banner-content">
+          <div class="banner-icon">
+            <mat-icon>info</mat-icon>
+          </div>
+          <div class="banner-text">
+            <h3>Modo de Prueba Activado</h3>
+            <p>Estás usando DivisasPro en modo limitado. Puedes convertir entre las 8 divisas principales con USD como base.</p>
+            <ul class="limitations-list">
+              <li>• Solo 8 divisas principales disponibles ---- • Moneda base fija en USD</li>
+              <li>• Sin seguimiento de favoritos ---- • Sin análisis técnico ni recomendaciones</li>
+            </ul>
+          </div>
+          <div class="banner-actions">
+            <button mat-raised-button color="primary" (click)="router.navigate(['/register'])">
+              <mat-icon>person_add</mat-icon>
+              Crear Cuenta Gratis
+            </button>
+            <button mat-raised-button color="primary" (click)="router.navigate(['/login'])">
+              <mat-icon>login</mat-icon>
+              Iniciar Sesión
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
     <!-- SECCIÓN 4: Mercado de Divisas -->
     <mat-card class="rates-section-improved">
       <mat-card-header>
@@ -417,8 +417,9 @@
               </div>
             </div>
 
-            <!-- SELECTOR DE MONEDA BASE -->
+            <!-- SELECTOR DE MONEDA BASE (solo usuarios registrados) -->
             <div class="currency-base-selector-modern" 
+                 *ngIf="isAuthenticated"
                  [class.disabled]="isLimitedMode">
               <div class="selector-header">
                 <mat-icon class="selector-icon">settings</mat-icon>
@@ -883,7 +884,195 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 5: ACCIONES RÁPIDAS -->
+        <!-- SECCIÓN 5: GUÍA DE RECOMENDACIONES -->
+        <div class="recommendations-guide-section">
+          <div class="section-title">
+            <mat-icon>lightbulb</mat-icon>
+            <h3>Guía de Recomendaciones</h3>
+          </div>
+          
+          <div class="guide-content">
+            <div class="recommendations-grid">
+              
+              <!-- COMPRAR -->
+              <div class="recommendation-guide-card comprar-card">
+                <div class="guide-header">
+                  <div class="action-badge badge-comprar">COMPRAR</div>
+                  <div class="confidence-range">Confianza: 80-95%</div>
+                </div>
+                <div class="guide-description">
+                  <h4>Señales Alcistas Convergentes</h4>
+                  <p><strong>Significado:</strong> Múltiples indicadores apuntan hacia una subida del precio.</p>
+                  <div class="example-signals">
+                    <p><strong>Ejemplos de señales:</strong></p>
+                    <ul>
+                      <li>• Tendencia alcista fuerte (+3% o más)</li>
+                      <li>• RSI en sobreventa (&lt; 30)</li>
+                      <li>• Precio por encima de medias móviles</li>
+                      <li>• Baja volatilidad (estabilidad)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- MANTENER -->
+              <div class="recommendation-guide-card mantener-card">
+                <div class="guide-header">
+                  <div class="action-badge badge-mantener">MANTENER</div>
+                  <div class="confidence-range">Confianza: 65-75%</div>
+                </div>
+                <div class="guide-description">
+                  <h4>Conserva tu Posición</h4>
+                  <p><strong>Alcista:</strong> Señales moderadamente positivas - mantén si tienes la moneda.</p>
+                  <p><strong>Bajista:</strong> Señales moderadamente negativas - mantén posición defensiva.</p>
+                  <div class="scenario-examples">
+                    <p><strong>Cuándo aparece:</strong></p>
+                    <ul>
+                      <li>• Tendencia definida pero no extrema</li>
+                      <li>• RSI en rango 35-65</li>
+                      <li>• Señales mixtas pero con dirección clara</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ESPERAR -->
+              <div class="recommendation-guide-card esperar-card">
+                <div class="guide-header">
+                  <div class="action-badge badge-esperar">ESPERAR</div>
+                  <div class="confidence-range">Confianza: 45-55%</div>
+                </div>
+                <div class="guide-description">
+                  <h4>No Hagas Nada (Mercado Indeciso)</h4>
+                  <p><strong>Si NO tienes:</strong> No compres - señales confusas.</p>
+                  <p><strong>Si tienes:</strong> Considera vender - falta de claridad.</p>
+                  <div class="wait-signals">
+                    <p><strong>Características típicas:</strong></p>
+                    <ul>
+                      <li>• RSI neutral (40-60)</li>
+                      <li>• Tendencia lateral o mixta</li>
+                      <li>• Medias móviles cruzadas</li>
+                      <li>• Volatilidad moderada</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VENDER -->
+              <div class="recommendation-guide-card vender-card">
+                <div class="guide-header">
+                  <div class="action-badge badge-vender">VENDER</div>
+                  <div class="confidence-range">Confianza: 80-95%</div>
+                </div>
+                <div class="guide-description">
+                  <h4>Señales Bajistas Convergentes</h4>
+                  <p><strong>Significado:</strong> Múltiples indicadores apuntan hacia una caída del precio.</p>
+                  <div class="example-signals">
+                    <p><strong>Ejemplos de señales:</strong></p>
+                    <ul>
+                      <li>• Tendencia bajista fuerte (-3% o más)</li>
+                      <li>• RSI en sobrecompra (&gt; 75)</li>
+                      <li>• Precio por debajo de medias móviles</li>
+                      <li>• Alta volatilidad (riesgo extremo)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Sistema de Puntuación -->
+            <div class="scoring-system-section">
+              <div class="scoring-card">
+                <div class="scoring-header">
+                  <mat-icon>calculate</mat-icon>
+                  <h4>Sistema de Puntuación Inteligente</h4>
+                </div>
+                <div class="scoring-description">
+                  <p>Nuestro algoritmo evalúa múltiples indicadores técnicos y asigna puntos:</p>
+                  <div class="scoring-breakdown">
+                    <div class="score-item">
+                      <span class="score-label">Tendencia:</span>
+                      <span class="score-value">+3 a -3 puntos</span>
+                      <span class="score-desc">(Dirección del precio)</span>
+                    </div>
+                    <div class="score-item">
+                      <span class="score-label">RSI:</span>
+                      <span class="score-value">+2 a -2 puntos</span>
+                      <span class="score-desc">(Sobrecompra/sobreventa)</span>
+                    </div>
+                    <div class="score-item">
+                      <span class="score-label">Medias Móviles:</span>
+                      <span class="score-value">+2 a -2 puntos</span>
+                      <span class="score-desc">(Cruces alcistas/bajistas)</span>
+                    </div>
+                    <div class="score-item">
+                      <span class="score-label">Volatilidad:</span>
+                      <span class="score-value">+1 a -2 puntos</span>
+                      <span class="score-desc">(Control de riesgo)</span>
+                    </div>
+                    <div class="score-item">
+                      <span class="score-label">Momentum:</span>
+                      <span class="score-value">+1 a -1 puntos</span>
+                      <span class="score-desc">(Impulso direccional)</span>
+                    </div>
+                  </div>
+                  <div class="final-recommendation">
+                    <p><strong>Resultado Final:</strong></p>
+                    <ul>
+                      <li><strong>Score ≥ 4:</strong> COMPRAR (80-95% confianza)</li>
+                      <li><strong>Score 2-3:</strong> MANTENER Alcista (65-75% confianza)</li>
+                      <li><strong>Score -1 a 1:</strong> ESPERAR (45-55% confianza)</li>
+                      <li><strong>Score -2 a -3:</strong> MANTENER Bajista (65-75% confianza)</li>
+                      <li><strong>Score ≤ -4:</strong> VENDER (80-95% confianza)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Diferencias clave -->
+            <div class="key-differences-section">
+              <div class="differences-card">
+                <div class="differences-header">
+                  <mat-icon>help_outline</mat-icon>
+                  <h4>¿ESPERAR vs MANTENER?</h4>
+                </div>
+                <div class="differences-content">
+                  <div class="comparison-grid">
+                    <div class="comparison-item esperar-comparison">
+                      <div class="comparison-title">🟠 ESPERAR</div>
+                      <div class="comparison-desc">
+                        <p><strong>"NO HAGAS NADA"</strong></p>
+                        <ul>
+                          <li>• Si NO tienes: No compres</li>
+                          <li>• Si tienes: Considera vender</li>
+                          <li>• Mercado indeciso/confuso</li>
+                          <li>• Falta de señales claras</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="comparison-item mantener-comparison">
+                      <div class="comparison-title">🔵 MANTENER</div>
+                      <div class="comparison-desc">
+                        <p><strong>"CONSERVA POSICIÓN"</strong></p>
+                        <ul>
+                          <li>• Si tienes: Manténla</li>
+                          <li>• Si NO tienes: Considera comprar</li>
+                          <li>• Tendencia definida</li>
+                          <li>• Señales moderadas pero claras</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECCIÓN 6: ACCIONES RÁPIDAS -->
         <div class="actions-section">
           <div class="quick-actions">
             <button class="action-btn primary-action" (click)="convertirA(selectedCurrency?.code || '')">

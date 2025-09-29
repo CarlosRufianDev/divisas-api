@@ -1,722 +1,2768 @@
-// ===============================
-// 🎨 CALCULADORA - DivisasPro
-// ===============================
+// ============================================================================
+// 🎨 FAVORITOS - ARQUITECTURA SCSS MODULAR COMPLETA
+// Siguiendo el patrón del dashboard con estructura optimizada
+// ============================================================================
 
-@use '../../../styles/shared' as shared;
+// 📦 IMPORTS MODULARES
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
 
-// Contenedor principal con el mismo estilo del dashboard
+// 🎨 FUENTES TIPOGRÁFICAS ESTÁNDAR
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+// ============================================================================
+// 🚨 ANGULAR MATERIAL GLOBAL OVERRIDES
+// Configuración específica para el componente favoritos
+// ============================================================================
+::ng-deep {
+  .favoritos-container {
+    // 🎯 FORZAR COLORES EN FORM FIELDS
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text, 
+    .mat-mdc-select-min-line {
+      color: white !important;
+    }
+    
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: vars.$warning-yellow !important;
+    }
+
+    // ÍCONOS EN AMARILLO
+    .mat-mdc-form-field-icon-suffix,
+    .mat-icon,
+    mat-icon {
+      color: vars.$warning-yellow !important;
+    }
+
+    .mat-mdc-select-arrow,
+    .mat-mdc-select-arrow svg {
+      color: vars.$warning-yellow !important;
+      fill: vars.$warning-yellow !important;
+    }
+
+    // 🃏 CARDS GLOBALES (usando nueva estructura)
+    .mat-mdc-card,
+    mat-card {
+      @include mix.glass-card-dark();
+      margin-bottom: vars.$spacing-2xl !important;
+    }
+
+    .mat-mdc-card-header,
+    mat-card-header {
+      @include mix.glass-header();
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: wrap !important;
+      gap: vars.$spacing-lg !important;
+
+      .mat-mdc-card-title,
+      mat-card-title {
+        color: white !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 1.4rem !important;
+        margin: 0 !important;
+        flex: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+
+        mat-icon {
+          color: vars.$warning-yellow !important;
+          margin-right: 0.8rem !important;
+        }
+      }
+
+      // Forzar posicionamiento del botón a la derecha
+      button {
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
+      }
+
+      @include mix.mobile-only {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: vars.$spacing-md !important;
+
+        .mat-mdc-card-title,
+        mat-card-title {
+          justify-content: center !important;
+          text-align: center !important;
+        }
+
+        button {
+          margin-left: 0 !important;
+          align-self: stretch !important;
+        }
+      }
+    }
+
+    .mat-mdc-card-content,
+    mat-card-content {
+      padding: 1.5rem !important;
+      background: transparent !important;
+      color: white !important;
+    }
+
+    .mat-mdc-card-header button,
+    mat-card-header button {
+      // Los estilos están definidos en la sección de botones unificados
+      // Fuerza aplicación de estilos sobre Angular Material
+      @include mix.button-base();
+      
+      mat-icon {
+        color: white !important;
+      }
+    }
+
+    // ============================================================================
+    // 🎨 SOBRESCRITURAS MATERIAL DESIGN - FORM FIELDS (FORZADO GLOBAL)
+    // Forzar estilos glassmorphism sobre Material Design con máxima especificidad
+    // ============================================================================
+  }
+}
+
+
 .calculator-container {
+  mat-card {
+      .mat-mdc-text-field-wrapper {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        backdrop-filter: blur(8px) !important;
+        transition: all 0.3s ease !important;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15) !important;
+          border-color: rgba(251, 191, 36, 0.5) !important;
+        }
+
+        &.mdc-text-field--focused {
+          background: rgba(255, 255, 255, 0.2) !important;
+          border-color: vars.$warning-yellow !important;
+          box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2) !important;
+        }
+      }
+
+      // 🏷️ LABELS
+      .mat-mdc-floating-label,
+      .mdc-floating-label,
+      .mat-mdc-form-field-label,
+      mat-label {
+        color: rgba(255, 255, 255, 0.8) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
+
+        &.mdc-floating-label--float-above,
+        &.mat-mdc-floating-label-floating {
+          color: vars.$warning-yellow !important;
+        }
+      }
+
+      // ⌨️ INPUT TEXT
+      .mat-mdc-input-element,
+      .mdc-text-field__input {
+        color: white !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+        caret-color: vars.$warning-yellow !important;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5) !important;
+        }
+      }
+
+      // 🔽 SELECT FIELDS  
+      .mat-mdc-select-trigger {
+        background: transparent !important;
+        color: white !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
+      }
+
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text {
+        color: white !important;
+        font-family: 'Inter', sans-serif !important;
+      }
+
+      .mat-mdc-select-arrow {
+        color: vars.$warning-yellow !important;
+        
+        svg {
+          fill: vars.$warning-yellow !important;
+        }
+      }
+
+      // ✨ ICONS
+      .mat-mdc-form-field-icon-prefix mat-icon,
+      .mat-mdc-form-field-icon-suffix mat-icon {
+        color: vars.$warning-yellow !important;
+        font-size: 1.2rem !important;
+      }
+
+      // 📋 HINTS & ERRORS
+      .mat-mdc-form-field-hint,
+      .mat-mdc-form-field-error {
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.8rem !important;
+      }
+
+      // 📏 OUTLINE
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: rgba(255, 255, 255, 0.2) !important;
+          border-width: 1px !important;
+        }
+
+        &.mdc-notched-outline--notched {
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: vars.$warning-yellow !important;
+          }
+        }
+      }
+
+      // 🎯 REQUIRED MARKER
+      .mat-mdc-form-field-required-marker {
+        color: #ef4444 !important;
+      }
+    }
+
+    // 🎨 FORM ACTIONS BUTTONS
+    .form-actions {
+      display: flex !important;
+      gap: 1rem !important;
+      margin-top: 2rem !important;
+      flex-wrap: wrap !important;
+
+      @include mix.mobile-only {
+        flex-direction: column !important;
+        gap: 0.8rem !important;
+      }
+
+      button {
+        flex: 1 !important;
+        min-height: 48px !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+        &[color="primary"] {
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+          color: white !important;
+          border: none !important;
+
+          &:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4) !important;
+          }
+
+          mat-icon {
+            color: white !important;
+          }
+        }
+
+        &.mat-mdc-outlined-button {
+          background: rgba(255, 255, 255, 0.1) !important;
+          border: 1px solid rgba(255, 255, 255, 0.3) !important;
+          color: white !important;
+          backdrop-filter: blur(8px) !important;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            transform: translateY(-1px) !important;
+          }
+
+          mat-icon {
+            color: rgba(255, 255, 255, 0.8) !important;
+          }
+        }
+      }
+    }
+  }
+
+// ============================================================================
+// 🏠 CONTENEDOR PRINCIPAL
+// ============================================================================
+.calculator-container {
+  @extend .animate-fade-in;
+  background: vars.$gradient-primary;
   min-height: 100vh;
-  @include shared.background-gradient;
-  @include shared.particle-background;
-  padding: shared.$spacing-xl;
-  position: relative;
-  overflow: hidden;
-  max-width: shared.$large-desktop;
-  margin: 0 auto;
+  padding: vars.$spacing-lg;
+  
+  .content-wrapper {
+    max-width: vars.$wide;
+    margin: 0 auto;
+    padding: vars.$spacing-xl;
 
-  // Contenido por encima del fondo
-  > * {
-    position: relative;
-    z-index: 1;
+    @include mix.mobile-only {
+      padding: vars.$spacing-lg;
+    }
   }
 }
 
-// Header premium mejorado
+// ============================================================================
+// 📋 HEADER DE CALCULATOR LIMPIO
+// ============================================================================
 .calculator-header {
-  text-align: center;
-  margin-bottom: shared.$spacing-2xl;
-  
-  .premium-badge {
-    @include shared.premium-badge;
-    font-size: 0.9rem;
-    
-    mat-icon {
-      color: #333;
-      font-size: 1.2rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%) !important;
+  color: white !important;
+  padding: 2.5rem 2rem 3rem !important;
+  border-radius: 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+
+  // Patrón de fondo sutil específico para favoritos (igual que alertas)
+  &::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255, 87, 34, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(76, 139, 245, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(251, 191, 36, 0.1) 0%, transparent 50%) !important;
+    pointer-events: none !important;
+  }
+
+  .header-content {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 2rem !important;
+    position: relative !important;
+    z-index: 20 !important;
+
+    @media (max-width: 768px) {
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
     }
   }
 
-  h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 0 0 12px 0;
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 2.8rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
-    mat-icon {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 2.8rem;
-      width: 2.8rem;
-      height: 2.8rem;
+  .header-info {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    flex: 1 !important;
+
+    @media (max-width: 768px) {
+      flex-direction: column !important;
+      text-align: center !important;
+      gap: 0.75rem !important;
     }
   }
 
-  p {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.2rem;
-    margin: 0;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-}
+  .header-text {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
 
-// Tarjeta del formulario con glassmorphism
-.calculator-form-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 25px;
-  animation: slideInUp 0.6s ease-out;
-  
-  .mat-mdc-card-header {
-    padding: 25px 25px 0;
-    
-    .mat-mdc-card-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #333;
-      
-      mat-icon {
-        color: #667eea;
-        font-size: 1.8rem;
-        width: 1.8rem;
-        height: 1.8rem;
-      }
+    h1 {
+      font-family: 'Inter', sans-serif !important;
+      font-size: clamp(2.5rem, 5vw, 4rem) !important;
+      font-weight: 900 !important;
+      line-height: 1.1 !important;
+      letter-spacing: -0.05em !important;
+      margin: 0 !important;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
     }
-  }
-  
-  .mat-mdc-card-content {
-    padding: 20px 25px 25px;
-  }
-}
 
-// Formulario de calculadora
-.calculator-form {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.currencies-selector {
-  width: 100%;
-  
-  .mat-mdc-form-field {
-    .mat-mdc-text-field-wrapper {
-      border-radius: 12px;
-    }
-  }
-}
-
-// Botones de acción mejorados
-.form-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  margin-top: 20px;
-  
-  .mat-mdc-raised-button {
-    border-radius: 12px;
-    font-weight: 600;
-    padding: 0 30px;
-    height: 48px;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    
-    &[color="primary"] {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-      
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
-      }
-      
-      &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
-      }
-    }
-  }
-  
-  .mat-mdc-button {
-    border-radius: 12px;
-    font-weight: 600;
-    color: #667eea;
-    
-    &:hover {
-      background-color: rgba(102, 126, 234, 0.1);
-    }
-  }
-}
-
-// Loading state mejorado
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 20px;
-  gap: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  animation: slideInUp 0.6s ease-out;
-  
-  mat-spinner {
-    circle {
-      stroke: #667eea;
-    }
-  }
-  
-  p {
-    color: #666;
-    font-size: 1.1rem;
-    margin: 0;
-    text-align: center;
-  }
-}
-
-// Contenedor de resultados
-.results-container {
-  margin-top: 25px;
-  animation: slideInUp 0.6s ease-out;
-}
-
-// Header de resultados con gradiente
-.results-header-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-  margin-bottom: 25px;
-  
-  .mat-mdc-card-content {
-    padding: 25px;
-  }
-}
-
-.results-summary {
-  h2 {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0 0 20px 0;
-    font-size: 1.8rem;
-    font-weight: 600;
-    
-    mat-icon {
-      font-size: 2rem;
-      width: 2rem;
-      height: 2rem;
-    }
-  }
-}
-
-.base-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 1.2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  
-  .base-amount {
-    font-size: 1.6rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .base-currency {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-  
-  .conversions-count {
-    background: rgba(255, 255, 255, 0.15);
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-  
-  mat-icon {
-    font-size: 1.4rem;
-    width: 1.4rem;
-    height: 1.4rem;
-  }
-}
-
-// Grid de resultados mejorado
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-// Tarjetas de conversión mejoradas
-.conversion-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  transition: all 0.3s ease;
-  border-left: 4px solid #ddd;
-  overflow: hidden;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  }
-  
-  &.positive {
-    border-left-color: #4caf50;
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.02) 0%, rgba(255, 255, 255, 0.95) 50%);
-    
-    &::after {
-      content: '📈';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 1.2rem;
-      opacity: 0.6;
-    }
-  }
-  
-  &.negative {
-    border-left-color: #f44336;
-    background: linear-gradient(135deg, rgba(244, 67, 54, 0.02) 0%, rgba(255, 255, 255, 0.95) 50%);
-    
-    &::after {
-      content: '📉';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 1.2rem;
-      opacity: 0.6;
-    }
-  }
-  
-  .mat-mdc-card-header {
-    padding: 20px 20px 0;
-  }
-  
-  .mat-mdc-card-content {
-    padding: 15px 20px;
-  }
-  
-  .mat-mdc-card-actions {
-    padding: 0 20px 15px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-}
-
-// Header de moneda
-.currency-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  
-  .currency-flag {
-    font-size: 2rem;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  }
-  
-  .currency-info {
-    h3 {
-      margin: 0;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #333;
-      letter-spacing: 0.5px;
-    }
-    
     p {
-      margin: 0;
-      color: #666;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-  }
-}
+      font-family: 'Inter', sans-serif !important;
+      font-size: clamp(1rem, 2vw, 1.2rem) !important;
+      font-weight: 400 !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      margin: 0 !important;
+      max-width: 500px !important;
+      line-height: 1.6 !important;
 
-// Resultado de conversión
-.conversion-result {
-  text-align: center;
-  padding: 20px 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(255, 255, 255, 0.1) 100%);
-  border-radius: 12px;
-  margin: 10px 0;
-  border: 1px solid rgba(102, 126, 234, 0.1);
-  
-  .result-amount {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 8px;
-    font-family: 'Roboto Mono', monospace;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  .conversion-rate {
-    color: #666;
-    font-size: 0.9rem;
-    font-weight: 500;
-    font-style: italic;
-  }
-}
-
-// Indicador de tasa
-.rate-indicator {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
-  .positive-icon {
-    color: #4caf50;
-    font-size: 1.4rem;
-  }
-  
-  .negative-icon {
-    color: #f44336;
-    font-size: 1.4rem;
-  }
-  
-  .neutral-icon {
-    color: #ff9800;
-    font-size: 1.4rem;
-  }
-}
-
-// Botones de acción en tarjetas
-.mat-mdc-icon-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.1);
-    background-color: rgba(102, 126, 234, 0.1);
-  }
-  
-  mat-icon {
-    color: #667eea;
-  }
-}
-
-// Tarjeta de acciones de resultados
-.results-actions-card {
-  background: rgba(248, 249, 250, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  
-  .mat-mdc-card-content {
-    padding: 25px;
-  }
-}
-
-.results-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-  
-  .mat-mdc-raised-button {
-    border-radius: 12px;
-    font-weight: 600;
-    padding: 0 25px;
-    height: 44px;
-    transition: all 0.3s ease;
-    
-    &[color="accent"] {
-      background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+      @media (max-width: 768px) {
+        text-align: center !important;
+        padding: 0 0.5rem !important;
       }
     }
-    
-    &[color="primary"] {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .header-stats {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    flex-shrink: 0 !important;
+
+    @media (max-width: 768px) {
+      justify-content: center !important;
+      width: 100% !important;
+    }
+
+    .stat-item {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
+      min-width: 80px !important;
+      gap: 0.25rem !important;
+
+      .stat-number {
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+        color: #fbbf24 !important;
+        margin: 0 !important;
+        text-shadow: 0 2px 8px rgba(251, 191, 36, 0.4) !important;
+        line-height: 1 !important;
+
+        @media (max-width: 768px) {
+          font-size: 1.5rem !important;
+        }
+      }
+
+      .stat-label {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+
+        @media (max-width: 768px) {
+          font-size: 0.7rem !important;
+        }
       }
     }
-    
-    &:not([color]) {
-      background: rgba(255, 255, 255, 0.9);
-      color: #667eea;
-      border: 2px solid #667eea;
-      
-      &:hover {
-        background: #667eea;
+  }
+}
+
+  .filters-section {
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: vars.$radius-xl;
+    border: 1px solid vars.$glass-white-border;
+    padding: vars.$spacing-xl;
+    backdrop-filter: blur(10px);
+
+    .filters-header {
+      @include mix.flex-between();
+      flex-wrap: wrap;
+      gap: vars.$spacing-lg;
+
+      .filters-title {
+        @include mix.flex-center(row, 0.8rem);
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
         color: white;
-        transform: translateY(-2px);
+
+        mat-icon {
+          color: vars.$warning-yellow;
+          font-size: 1.4rem;
+          width: 1.4rem;
+          height: 1.4rem;
+        }
+      }
+
+      .quick-actions {
+        @include mix.flex-center(row, vars.$spacing-lg);
+        flex-wrap: wrap;
+
+        // Los estilos de .quick-action-btn están definidos globalmente
       }
     }
   }
-}
 
-// Estado vacío mejorado
-.empty-state {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin: 40px 0;
-  animation: slideInUp 0.6s ease-out;
-  
-  .mat-mdc-card-content {
-    padding: 40px 20px;
-  }
-}
+// ============================================================================
+// � TARJETA DE GESTIÓN RÁPIDA
+// ============================================================================
+.configuration-section-enhanced {
+  background: vars.$gradient-card !important;
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(251, 191, 36, 0.4) !important;
+  border-radius: vars.$radius-xl !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(251, 191, 36, 0.1) !important;
+  overflow: hidden;
+  margin-bottom: vars.$spacing-xl;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-.empty-content {
-  text-align: center;
-  
-  .empty-icon {
-    font-size: 80px;
-    width: 80px;
-    height: 80px;
-    color: #ddd;
-    margin-bottom: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  h2 {
-    color: #666;
-    margin: 20px 0 12px 0;
-    font-size: 1.8rem;
-    font-weight: 600;
-  }
-  
-  p {
-    color: #999;
-    margin: 0;
-    font-size: 1.1rem;
-    line-height: 1.5;
-  }
-}
-
-// Form fields mejorados (mismo estilo que dashboard)
-.mat-mdc-form-field {
-  .mat-mdc-text-field-wrapper {
-    border-radius: 12px;
-  }
-  
-  &.mat-focused {
-    .mat-mdc-form-field-outline-thick {
-      color: #667eea;
-    }
-  }
-  
   &:hover {
-    .mat-mdc-text-field-wrapper {
-      .mdc-notched-outline__leading,
-      .mdc-notched-outline__notch,
-      .mdc-notched-outline__trailing {
-        border-color: #667eea;
-      }
-    }
+    border-color: rgba(251, 191, 36, 0.6) !important;
+    transform: translateY(-2px);
+    box-shadow: 
+      0 24px 48px rgba(0, 0, 0, 0.18),
+      0 12px 28px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 0 0 2px rgba(251, 191, 36, 0.2) !important;
   }
-}
 
-// Responsive design
-@media (max-width: 1024px) {
-  .calculator-container {
-    padding: 15px;
-  }
-  
-  .results-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-}
+  mat-card-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(251, 191, 36, 0.1));
+    color: white !important;
+    padding: vars.$spacing-lg !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-@media (max-width: 768px) {
-  .calculator-container {
-    padding: 10px;
-  }
-  
-  .calculator-header {
-    margin-bottom: 20px;
-    
-    h1 {
-      font-size: 2.2rem;
-      flex-direction: column;
-      gap: 10px;
-      
+    mat-card-title {
+      @include mix.flex-center(row, vars.$spacing-sm);
+      align-items: center;
+      @include mix.heading-lg();
+      color: white !important;
+      margin: 0;
+
       mat-icon {
-        font-size: 2.2rem;
-        width: 2.2rem;
-        height: 2.2rem;
-      }
-    }
-    
-    p {
-      font-size: 1rem;
-    }
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .results-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .form-actions,
-  .results-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .base-info {
-    flex-direction: column;
-    gap: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .calculator-header {
-    .premium-badge {
-      padding: 8px 16px;
-      font-size: 0.8rem;
-    }
-    
-    h1 {
-      font-size: 1.8rem;
-    }
-  }
-  
-  .conversion-card {
-    .currency-header {
-      flex-direction: column;
-      text-align: center;
-      gap: 10px;
-    }
-    
-    .conversion-result {
-      .result-amount {
+        color: vars.$warning-yellow !important;
         font-size: 1.6rem;
+        width: 1.6rem;
+        height: 1.6rem;
       }
     }
   }
-  
-  .results-actions {
-    gap: 10px;
-    
-    .mat-mdc-raised-button {
-      width: 100%;
-      max-width: 200px;
+
+  mat-card-content {
+    padding: vars.$spacing-xl !important;
+
+    .calculator-form {
+      .config-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: vars.$spacing-lg;
+        margin-bottom: vars.$spacing-lg;
+
+        @include mix.mobile-only {
+          grid-template-columns: 1fr;
+          gap: vars.$spacing-md;
+        }
+      }
+
+      .currencies-selector {
+        width: 100%;
+        margin-bottom: vars.$spacing-lg;
+      }
+
+      .calculate-button {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+        color: white !important;
+        padding: 1rem 2rem !important;
+        font-size: 1.1rem !important;
+        width: 100% !important;
+        margin-top: vars.$spacing-lg !important;
+        border-radius: 12px !important;
+        border: none !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+
+        &:hover {
+          transform: translateY(-1px) !important;
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+        }
+      }
+    }
+
+    .loading-container {
+      @include mix.flex-center(column, vars.$spacing-md);
+      padding: vars.$spacing-4xl;
+      text-align: center;
+
+      p {
+        color: rgba(255, 255, 255, 0.8);
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+      }
     }
   }
 }
 
-// Animaciones
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+// ============================================================================
+// 📊 SECCIÓN DE RESULTADOS
+// ============================================================================
+.results-section-enhanced {
+  @include mix.glass-card-dark();
+
+  .results-summary-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: vars.$radius-lg;
+    padding: vars.$spacing-lg;
+    margin-bottom: vars.$spacing-xl;
+    text-align: center;
+
+    .base-conversion {
+      @include mix.flex-center(row, 1rem);
+      flex-wrap: wrap;
+      margin-bottom: vars.$spacing-sm;
+
+      .base-amount {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: vars.$warning-yellow;
+      }
+
+      .base-currency {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      mat-icon {
+        color: vars.$info-blue;
+      }
+
+      .conversions-count {
+        font-family: 'Inter', sans-serif;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+      }
+    }
+
+    .summary-timestamp small {
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .results-grid-enhanced {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: vars.$spacing-lg;
+    margin-bottom: vars.$spacing-xl;
+
+    @include mix.mobile-only {
+      grid-template-columns: 1fr;
+      gap: vars.$spacing-md;
+    }
+
+    .result-card-enhanced {
+      background: rgba(255, 255, 255, 0.9) !important;
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: vars.$spacing-lg;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+      }
+
+      .result-header {
+        @include mix.flex-between();
+        margin-bottom: vars.$spacing-md;
+
+        .currency-info {
+          @include mix.flex-center(row, vars.$spacing-sm);
+
+          .currency-flag {
+            font-size: 1.5rem;
+          }
+
+          .currency-details {
+            .currency-code {
+              font-family: 'JetBrains Mono', monospace;
+              font-weight: 700;
+              font-size: 1.1rem;
+              color: rgb(17, 24, 39);
+              margin: 0;
+            }
+
+            .currency-name {
+              font-family: 'Inter', sans-serif;
+              font-size: 0.8rem;
+              color: rgba(17, 24, 39, 0.7);
+              margin: 0;
+            }
+          }
+        }
+      }
+
+      .result-main-info {
+        @include mix.flex-between();
+        margin-bottom: vars.$spacing-md;
+
+        .converted-amount {
+          .amount-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: vars.$info-blue;
+            margin: 0;
+          }
+
+          .amount-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(17, 24, 39, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+          }
+        }
+
+        .exchange-rate {
+          text-align: right;
+
+          .rate-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: rgb(17, 24, 39);
+            margin: 0;
+          }
+
+          .rate-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: rgba(17, 24, 39, 0.6);
+            margin: 0;
+          }
+        }
+      }
+
+      .result-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: vars.$spacing-sm;
+
+        .action-btn {
+          background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+          color: white !important;
+          border: none !important;
+          border-radius: 8px !important;
+          padding: 0.5rem 1rem !important;
+          font-size: 0.9rem !important;
+          min-width: auto !important;
+
+          mat-icon {
+            color: white !important;
+          }
+        }
+      }
+    }
+  }
+
+  .results-actions-enhanced {
+    @include mix.flex-center(row, vars.$spacing-lg);
+    flex-wrap: wrap;
+    padding: vars.$spacing-lg;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: vars.$radius-lg;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    @include mix.mobile-only {
+      flex-direction: column;
+      gap: vars.$spacing-md;
+    }
+
+    .result-action-btn {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+      color: white !important;
+      padding: 1rem 1.5rem !important;
+      min-width: 150px !important;
+      border-radius: 12px !important;
+      border: none !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 600 !important;
+
+      mat-icon {
+        margin-right: 0.5rem !important;
+        color: white !important;
+      }
+
+      @include mix.mobile-only {
+        width: 100% !important;
+        min-width: unset !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🚫 ESTADO VACÍO
+// ============================================================================
+.empty-state-enhanced {
+  @include mix.glass-card-dark();
+
+  .no-data-message {
+    @include mix.flex-center(column, vars.$spacing-lg);
+    padding: vars.$spacing-4xl;
+    text-align: center;
+
+    .no-data-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      color: vars.$warning-yellow;
+      margin-bottom: vars.$spacing-lg;
+      opacity: 0.8;
+    }
+
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 vars.$spacing-sm 0;
+    }
+
+    p {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0 0 vars.$spacing-xl 0;
+      max-width: 400px;
+      line-height: 1.6;
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, #3b82f6, #764ba2) !important;
+      color: white !important;
+      padding: 1rem 2rem !important;
+      font-size: 1rem !important;
+      border-radius: 12px !important;
+      border: none !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 600 !important;
+
+      mat-icon {
+        margin-right: 0.5rem !important;
+        color: white !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 📊 TABLAS Y PAGINADORES (LEGACY - MANTENER PARA COMPATIBILIDAD)
+// ============================================================================
+.history-table-card {
+  @include mix.glass-card-dark();
+  animation: cardFloat 6s ease-in-out infinite;
+
+  .history-table {
+    width: 100%;
+    background: transparent;
+
+    .mat-mdc-header-row {
+      background: rgba(255, 255, 255, 0.8);
+      color: white;
+      font-weight: 700;
+    }
+
+    .mat-mdc-row {
+      background: transparent;
+      border-bottom: 1px solid vars.$glass-white-border;
+      transition: vars.$transition-normal;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+    }
+
+    .date-cell {
+      @include mix.flex-column(0.2rem);
+
+      .date {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: white;
+      }
+
+      .time {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    .conversion-cell {
+      @include mix.flex-column(0.4rem);
+
+      .conversion-text {
+        @include mix.flex-center(row, 0.5rem);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+
+        .arrow-icon {
+          color: vars.$warning-yellow;
+          font-size: 1.2rem;
+        }
+      }
+
+      .rate {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    button {
+      @include mix.button-base();
+      margin: 0 0.2rem;
+      border-radius: vars.$radius-sm;
+      font-size: 0.9rem;
+
+      &[color="primary"] {
+        background: vars.$info-blue-20;
+        color: vars.$info-blue;
+
+        &:hover {
+          background: vars.$info-blue-30;
+          @include mix.hover-lift(-1px, 1.1);
+        }
+      }
+
+      &[color="warn"] {
+        background: vars.$error-red-20;
+        color: vars.$error-red;
+
+        &:hover {
+          background: vars.$error-red-30;
+          @include mix.hover-lift(-1px, 1.1);
+        }
+      }
+    }
+  }
+}
+
+// PAGINADOR GLASSMORPHIC
+::ng-deep {
+  .history-table-card {
+    .mat-mdc-paginator {
+      background: rgba(255, 255, 255, 0.8);
+      border-top: 1px solid vars.$glass-white-border;
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 vars.$radius-xl vars.$radius-xl;
+      color: white;
+      
+      .mat-mdc-paginator-range-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+      }
+
+      .mat-mdc-select {
+        color: white;
+        
+        .mat-mdc-select-value {
+          color: white;
+        }
+        
+        .mat-mdc-select-arrow {
+          color: vars.$warning-yellow;
+          fill: vars.$warning-yellow;
+        }
+      }
+
+      .mat-mdc-icon-button {
+        color: vars.$warning-yellow;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: vars.$radius-sm;
+        transition: vars.$transition-normal;
+        margin: 0 0.2rem;
+
+        &:hover:not([disabled]) {
+          background: vars.$glass-white-border;
+          color: vars.$warning-yellow;
+          @include mix.hover-lift(-1px, 1);
+        }
+
+        &[disabled] {
+          opacity: 0.4;
+          background: rgba(30, 41, 59, 0.3);
+          
+          .mat-icon {
+            color: rgba(251, 191, 36, 0.4);
+          }
+        }
+
+        .mat-icon,
+        mat-icon,
+        svg {
+          color: vars.$warning-yellow;
+          fill: vars.$warning-yellow;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 💱 CONVERSIÓN RÁPIDA
+// ============================================================================
+
+// Overrides básicos para form fields de conversión (sin forzar posicionamiento)
+::ng-deep {
+  .conversion-panel {
+    .mat-mdc-form-field {
+      .mat-mdc-floating-label,
+      .mdc-floating-label,
+      .mat-mdc-form-field-label,
+      mat-label {
+        color: vars.$warning-yellow !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
+      }
+
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text {
+        color: white !important;
+      }
+
+      .mat-mdc-select-arrow {
+        color: vars.$warning-yellow !important;
+        fill: vars.$warning-yellow !important;
+      }
+
+      mat-icon {
+        color: vars.$warning-yellow !important;
+      }
+    }
+  }
+}
+.conversion-panel {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto 1fr 2fr;
+  align-items: end;
+  gap: vars.$spacing-lg;
+  margin-top: vars.$spacing-lg;
+
+  @include mix.mobile-only {
+    grid-template-columns: 1fr;
+    gap: vars.$spacing-lg;
+
+    .swap-btn {
+      justify-self: center;
+      order: 2;
+    }
+
+    .currency-field:first-of-type {
+      order: 1;
+    }
+
+    .currency-field:last-of-type {
+      order: 3;
+    }
+
+    .result-panel {
+      order: 4;
+    }
+  }
+
+  .amount-field {
+    @include mix.input-field();
+    grid-column: 1;
+  }
+
+  .currency-field {
+    @include mix.input-field();
+    
+    &:first-of-type {
+      grid-column: 2; // Campo "De"
+    }
+    
+    &:last-of-type {
+      grid-column: 4; // Campo "A"
+    }
+  }
+
+  .swap-btn {
+    @include mix.button-gradient(vars.$success-green, #059669);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    @include mix.flex-center();
+    grid-column: 3; 
+    justify-self: center;
+    align-self: center;
+    margin-top: -25px; 
+    transition: vars.$transition-normal;
+
+    &:hover {
+      transform: rotate(180deg) scale(1.1);
+      box-shadow: 0 6px 16px vars.$success-green-40;
+    }
+
+    &:active {
+      transform: rotate(180deg) scale(1.05);
+    }
+
+    mat-icon {
+      font-size: 1.2rem;
+      color: white !important;
+      transform: translateY(4px) !important;
+    }
+  }
+
+  .result-panel {
+    grid-column: 1 / -1;
+    margin-top: vars.$spacing-xl;
+    text-align: center;
+    padding: vars.$spacing-lg;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: vars.$radius-md;
+    border: 1px solid vars.$glass-white-border;
+    backdrop-filter: blur(8px);
+
+    .result-loading {
+      @include mix.flex-center(row, vars.$spacing-lg);
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 400;
+
+      mat-spinner {
+        --mdc-circular-progress-active-indicator-color: #{vars.$warning-yellow} !important;
+      }
+    }
+
+    .result-success {
+      background: linear-gradient(135deg, vars.$success-green-10, vars.$info-blue-10);
+      border: 1px solid vars.$success-green-30;
+      border-radius: vars.$radius-md;
+      padding: vars.$spacing-lg;
+      color: white;
+
+      .result-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
+
+      .result-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: vars.$success-green;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+      }
+
+      .result-rate {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+      }
+    }
+
+    .result-empty {
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      font-style: italic;
+    }
+  }
+}
+
+// ============================================================================
+// 🎯 GRIDS Y LAYOUTS ESPECÍFICOS
+// ============================================================================
+.favorites-grid-enhanced {
+  @include mix.grid-responsive(380px, 1.5rem);
+  margin-top: vars.$spacing-lg;
+
+  @include mix.mobile-only {
+    grid-template-columns: 1fr;
+    gap: vars.$spacing-lg;
+  }
+}
+
+.currencies-grid-enhanced {
+  @extend .favorites-grid-enhanced;
+}
+
+.summary-row {
+  @include mix.grid-responsive(280px, 1.5rem);
+  margin-top: vars.$spacing-2xl;
+
+  @include mix.mobile-only {
+    grid-template-columns: 1fr;
+    gap: vars.$spacing-lg;
+  }
+}
+
+// ============================================================================
+// 🎨 CLASES ESPECÍFICAS QUE NO ESTÁN EN CARDS.SCSS
+// ============================================================================
+
+// Estados de carga personalizados para favoritos
+.no-data-message {
+  text-align: center;
+  padding: vars.$spacing-4xl vars.$spacing-2xl;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: vars.$radius-lg;
+  border: 1px solid vars.$glass-white-border;
+
+  .no-data-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: vars.$spacing-lg;
+  }
+
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: vars.$spacing-lg;
+  }
+
+  p {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: vars.$spacing-2xl;
+    line-height: 1.6;
+  }
+
+  .action-btn {
+    @include mix.button-gradient(vars.$info-blue, #2563eb);
+    padding: 0.8rem 1.5rem;
+    border-radius: vars.$radius-md;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px vars.$info-blue-40;
+    }
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Información específica de rendimiento
+.performer-info,
+.total-info,
+.metric-info,
+.market-info {
+  @include mix.flex-column(0.3rem);
+  text-align: center;
+
+  .performer-pair,
+  .total-count,
+  .metric-value,
+  .market-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+
+    &.positive {
+      color: vars.$trend-up-color;
+    }
+
+    &.negative {
+      color: vars.$trend-down-color;
+    }
+  }
+
+  .performer-change {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    
+    &.positive {
+      color: vars.$trend-up-color;
+    }
+
+    &.negative {
+      color: vars.$trend-down-color;
+    }
+  }
+
+  .total-label,
+  .metric-label,
+  .market-time {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+}
+
+.breakdown-info,
+.metric-details,
+.volatility-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+// ============================================================================
+// 🎭 ANIMACIONES Y ESTADOS FINALES
+// ============================================================================
+
+// Aplicar animaciones de entrada escalonadas
+.content-wrapper {
+  @extend .stagger-animation;
+}
+
+// Estados de hover mejorados para favoritos
+.favorite-card-enhanced,
+.currency-card-enhanced {
+  &:hover {
+    .favorite-symbol,
+    .currency-info mat-icon {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
   }
 }
 
 @keyframes pulse {
   0%, 100% {
-    transform: scale(1);
+    opacity: 1;
   }
   50% {
-    transform: scale(1.05);
+    opacity: 0.5;
   }
 }
 
-// Tooltips
-.mat-mdc-tooltip {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-size: 0.85rem;
+// ============================================================================
+// 🚀 SOBRESCRITURAS ULTRA FORZADAS DE MATERIAL DESIGN
+// NIVEL MÁXIMO DE ESPECIFICIDAD PARA SOBRESCRIBIR COMPLETAMENTE
+// ============================================================================
+
+// 🎯 NIVEL 1: SOBRESCRITURA QUIRÚRGICA ULTRA ESPECÍFICA
+::ng-deep .calculator-container mat-card .mat-mdc-form-field,
+::ng-deep .calculator-container .configuration-section-enhanced .mat-mdc-form-field,
+::ng-deep app-calculator .calculator-container .mat-mdc-form-field,
+::ng-deep app-calculator mat-card .mat-mdc-form-field,
+::ng-deep [data-calculator] .mat-mdc-form-field {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border-radius: 16px !important;
+  border: 2px solid rgba(251, 191, 36, 0.4) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  margin-bottom: 1.5rem !important;
+  padding: 0.75rem 1rem !important;
+  position: relative !important;
+  overflow: visible !important;
+
+  &:hover {
+    border-color: rgba(251, 191, 36, 0.7) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  &.mat-focused,
+  &.mat-form-field-focused,
+  &.mat-mdc-form-field-focused {
+    border-color: #fbbf24 !important;
+    box-shadow: 
+      0 0 0 4px rgba(251, 191, 36, 0.2),
+      0 12px 40px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  // 🎯 QUIRÚRGICO: WRAPPER INTERNO COMPLETAMENTE TRANSPARENTE
+  .mat-mdc-text-field-wrapper.mat-mdc-text-field-wrapper.mat-mdc-text-field-wrapper {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    
+    &:hover {
+      background-color: transparent !important;
+    }
+    
+    &.mdc-text-field--focused {
+      background-color: transparent !important;
+    }
+  }
+
+  // 🎯 QUIRÚRGICO: OUTLINE COMPLETAMENTE ELIMINADO
+  .mdc-notched-outline.mdc-notched-outline.mdc-notched-outline {
+    border: none !important;
+    display: none !important;
+    opacity: 0 !important;
+    
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border: none !important;
+      display: none !important;
+    }
+  }
 }
 
-// Snackbar personalizado
-::ng-deep {
-  .success-snackbar {
-    background: #4caf50 !important;
+// 🎯 NIVEL 2: SOBRESCRITURA EXTREMA DE ELEMENTOS INTERNOS
+::ng-deep .calculator-container {
+  .mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field {
+    // 🎨 WRAPPER COMPLETAMENTE TRANSPARENTE
+    .mat-mdc-text-field-wrapper.mat-mdc-text-field-wrapper.mat-mdc-text-field-wrapper {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    // 📏 OUTLINE OCULTO COMPLETAMENTE
+    .mdc-notched-outline.mdc-notched-outline.mdc-notched-outline {
+      display: none !important;
+      opacity: 0 !important;
+    }
+
+    // 🏷️ LABELS QUIRÚRGICAMENTE FORZADOS
+    .mat-mdc-floating-label.mat-mdc-floating-label.mat-mdc-floating-label,
+    .mdc-floating-label.mdc-floating-label.mdc-floating-label,
+    mat-label,
+    label {
+      color: #fbbf24 !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 600 !important;
+      font-size: 1rem !important;
+      position: absolute !important;
+      top: -0.5rem !important;
+      left: 0.75rem !important;
+      transform: translateY(0) scale(0.85) !important;
+      transform-origin: left top !important;
+      background: rgba(30, 41, 59, 0.9) !important;
+      padding: 0.25rem 0.5rem !important;
+      border-radius: 4px !important;
+      z-index: 10 !important;
+      pointer-events: none !important;
+      transition: all 0.2s ease !important;
+
+      &.mdc-floating-label--float-above,
+      &.mat-mdc-floating-label-floating,
+      &.mat-form-field-label-floating {
+        color: #fbbf24 !important;
+        font-weight: 700 !important;
+        top: -0.75rem !important;
+        transform: translateY(0) scale(0.8) !important;
+        background: rgba(30, 41, 59, 1) !important;
+      }
+
+      &.mat-mdc-form-field-required-marker::after,
+      &::after {
+        color: #ef4444 !important;
+      }
+    }
+
+    // ⌨️ INPUT QUIRÚRGICAMENTE FORZADO
+    .mat-mdc-input-element.mat-mdc-input-element.mat-mdc-input-element,
+    .mdc-text-field__input.mdc-text-field__input.mdc-text-field__input,
+    input.mat-mdc-input-element,
+    input.mdc-text-field__input,
+    input[matInput],
+    input {
+      color: #ffffff !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 1.1rem !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      background: transparent !important;
+      caret-color: #fbbf24 !important;
+      padding: 1.25rem 0.75rem 0.5rem 0.75rem !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 3rem !important;
+      line-height: 1.5 !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 400 !important;
+        opacity: 1 !important;
+      }
+
+      &:focus,
+      &:focus-visible,
+      &.mat-mdc-input-element:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: transparent !important;
+        color: #ffffff !important;
+      }
+
+      &:hover {
+        background: transparent !important;
+        color: #ffffff !important;
+      }
+
+      &:disabled {
+        color: rgba(255, 255, 255, 0.5) !important;
+        background: transparent !important;
+      }
+
+      // Para números específicos
+      &[type="number"] {
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 600 !important;
+        text-align: left !important;
+      }
+    }
+
+    // 🔽 SELECT QUIRÚRGICAMENTE ULTRA FORZADO
+    .mat-mdc-select.mat-mdc-select.mat-mdc-select {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      min-height: 3rem !important;
+      width: 100% !important;
+    }
+
+    .mat-mdc-select-trigger.mat-mdc-select-trigger.mat-mdc-select-trigger {
+      background: transparent !important;
+      background-color: transparent !important;
+      color: #ffffff !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 1.1rem !important;
+      padding: 1.25rem 2rem 0.5rem 0.75rem !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      min-height: 3rem !important;
+      line-height: 1.5 !important;
+      display: flex !important;
+      align-items: center !important;
+
+      &:hover {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+
+      &:focus {
+        background: transparent !important;
+        background-color: transparent !important;
+        outline: none !important;
+      }
+    }
+
+    .mat-mdc-select-value.mat-mdc-select-value.mat-mdc-select-value,
+    .mat-mdc-select-value-text.mat-mdc-select-value-text.mat-mdc-select-value-text,
+    .mat-mdc-select-min-line.mat-mdc-select-min-line.mat-mdc-select-min-line {
+      color: #ffffff !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 1.1rem !important;
+      line-height: 1.5 !important;
+    }
+
+    .mat-mdc-select-placeholder.mat-mdc-select-placeholder.mat-mdc-select-placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 400 !important;
+    }
+
+    .mat-mdc-select-arrow-wrapper.mat-mdc-select-arrow-wrapper.mat-mdc-select-arrow-wrapper {
+      position: absolute !important;
+      right: 0.75rem !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+    }
+
+    .mat-mdc-select-arrow.mat-mdc-select-arrow.mat-mdc-select-arrow {
+      color: #fbbf24 !important;
+      font-size: 1.5rem !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      
+      svg {
+        fill: #fbbf24 !important;
+        color: #fbbf24 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+
+    // ✨ ICONS ULTRA FORZADOS
+    .mat-mdc-form-field-icon-prefix mat-icon,
+    .mat-mdc-form-field-icon-suffix mat-icon {
+      color: #fbbf24 !important;
+      font-size: 1.25rem !important;
+    }
+
+    // 📋 HINTS & ERRORS
+    .mat-mdc-form-field-hint,
+    .mat-mdc-form-field-error {
+      color: rgba(255, 255, 255, 0.7) !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+
+    // 📏 OUTLINE (ocultar)
+    .mdc-notched-outline {
+      opacity: 0 !important;
+    }
+  }
+
+  // 🎨 BOTONES ULTRA FORZADOS
+  button.mat-mdc-raised-button[color="primary"] {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
     color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    min-height: 56px !important;
+    padding: 1rem 2.5rem !important;
+    font-size: 1rem !important;
+    letter-spacing: 0.02em !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    &:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4) !important;
+      background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+    }
+
+    &:active {
+      transform: translateY(-2px) scale(0.98) !important;
+    }
+
+    mat-icon {
+      color: white !important;
+      margin-right: 0.5rem !important;
+      font-size: 1.25rem !important;
+    }
+
+    .mat-ripple-element {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+    }
   }
-  
-  .error-snackbar {
-    background: #f44336 !important;
+
+  button.mat-mdc-outlined-button {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
     color: white !important;
-  }
-  
-  .warning-snackbar {
-    background: #ff9800 !important;
-    color: white !important;
+    border-radius: 16px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    min-height: 56px !important;
+    backdrop-filter: blur(15px) !important;
+    padding: 1rem 2.5rem !important;
+    font-size: 1rem !important;
+    letter-spacing: 0.02em !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+
+    &:hover {
+      background: rgba(30, 41, 59, 0.9) !important;
+      border-color: rgba(251, 191, 36, 0.7) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    &:active {
+      transform: translateY(-1px) scale(0.98) !important;
+    }
+
+    mat-icon {
+      color: #fbbf24 !important;
+      margin-right: 0.5rem !important;
+      font-size: 1.25rem !important;
+    }
+
+    .mat-ripple-element {
+      background-color: rgba(251, 191, 36, 0.2) !important;
+    }
   }
 }
 
-// Mejoras adicionales para accesibilidad
-.conversion-card {
-  &:focus-within {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
+// 🎯 MAT-CARD ULTRA FORZADAS - GLASSMORPHISM COMPLETO
+::ng-deep .calculator-container mat-card,
+::ng-deep .calculator-container .mat-mdc-card,
+::ng-deep app-calculator mat-card {
+  background: rgba(30, 41, 59, 0.6) !important;
+  border-radius: 24px !important;
+  border: 2px solid rgba(251, 191, 36, 0.3) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  margin-bottom: 2rem !important;
+  overflow: hidden !important;
+
+  &:hover {
+    border-color: rgba(251, 191, 36, 0.5) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 
+      0 24px 48px rgba(0, 0, 0, 0.2),
+      0 12px 32px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  }
+
+  // 🎨 CARD HEADER FORZADO
+  .mat-mdc-card-header,
+  mat-card-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(251, 191, 36, 0.1)) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px 24px 0 0 !important;
+    margin: 0 !important;
+
+    .mat-mdc-card-title,
+    mat-card-title {
+      color: white !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 1.5rem !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.75rem !important;
+
+      mat-icon {
+        color: #fbbf24 !important;
+        font-size: 1.75rem !important;
+        width: 1.75rem !important;
+        height: 1.75rem !important;
+      }
+    }
+
+    .mat-mdc-card-subtitle,
+    mat-card-subtitle {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 400 !important;
+      margin-top: 0.5rem !important;
+    }
+  }
+
+  // 🎨 CARD CONTENT FORZADO
+  .mat-mdc-card-content,
+  mat-card-content {
+    padding: 2rem !important;
+    background: transparent !important;
+    color: white !important;
+
+    p, span, div {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+  }
+
+  // 🎨 CARD ACTIONS FORZADO
+  .mat-mdc-card-actions,
+  mat-card-actions {
+    padding: 1rem 2rem 2rem !important;
+    background: transparent !important;
   }
 }
 
-// Select panels mejorados
+// 🎯 SELECT PANELS ULTRA FORZADOS
 ::ng-deep .mat-mdc-select-panel {
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  background: rgba(30, 41, 59, 0.95) !important;
+  backdrop-filter: blur(25px) !important;
+  border: 2px solid rgba(251, 191, 36, 0.4) !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2) !important;
+  padding: 0.5rem 0 !important;
+  max-height: 300px !important;
+
+  .mat-mdc-option {
+    color: white !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+    padding: 1rem 1.5rem !important;
+    font-size: 1rem !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+      background: rgba(251, 191, 36, 0.2) !important;
+      color: #fbbf24 !important;
+      font-weight: 600 !important;
+    }
+
+    &.mdc-list-item--selected,
+    &.mat-mdc-option-active {
+      background: rgba(251, 191, 36, 0.3) !important;
+      color: #fbbf24 !important;
+      font-weight: 700 !important;
+    }
+
+    &:focus {
+      background: rgba(251, 191, 36, 0.15) !important;
+    }
+
+    .mdc-list-item__primary-text {
+      color: inherit !important;
+    }
+  }
 }
+
+// 🎯 LOADING SPINNERS Y PROGRESS INDICATORS
+::ng-deep .calculator-container {
+  .mat-mdc-progress-spinner,
+  .mat-spinner {
+    circle {
+      stroke: #fbbf24 !important;
+    }
+  }
+
+  .mat-mdc-progress-bar {
+    .mdc-linear-progress__bar-inner {
+      border-color: #fbbf24 !important;
+    }
+  }
+}
+
+// 🎯 TOOLTIPS ULTRA FORZADOS
+::ng-deep .mat-mdc-tooltip {
+  background: rgba(30, 41, 59, 0.95) !important;
+  color: white !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+// 🎯 SNACKBARS ULTRA FORZADOS
+::ng-deep .mat-mdc-snack-bar-container {
+  background: rgba(30, 41, 59, 0.95) !important;
+  color: white !important;
+  border-radius: 16px !important;
+  border: 2px solid rgba(251, 191, 36, 0.4) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+
+  .mat-mdc-snack-bar-label {
+    color: white !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+  }
+
+  .mat-mdc-button {
+    color: #fbbf24 !important;
+    font-weight: 600 !important;
+  }
+}
+
+// 🎯 ELEMENTOS ESPECÍFICOS DE CALCULATOR ULTRA FORZADOS
+::ng-deep .calculator-container {
+  // 📊 RESULTS CARDS
+  .result-card-enhanced,
+  .results-section-enhanced .result-card {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border: 2px solid rgba(251, 191, 36, 0.3) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(15px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    &:hover {
+      border-color: rgba(251, 191, 36, 0.6) !important;
+      transform: translateY(-4px) !important;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .currency-code {
+      color: #fbbf24 !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-weight: 700 !important;
+      font-size: 1.25rem !important;
+    }
+
+    .converted-amount {
+      color: white !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-weight: 600 !important;
+      font-size: 1.5rem !important;
+    }
+
+    .currency-name {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 400 !important;
+    }
+  }
+
+  // 🎯 LOADING STATES
+  .loading-container {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border-radius: 16px !important;
+    border: 2px solid rgba(251, 191, 36, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+    padding: 2rem !important;
+    text-align: center !important;
+
+    .loading-text {
+      color: white !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      margin-top: 1rem !important;
+    }
+  }
+
+  // 🚫 EMPTY STATES
+  .empty-state-enhanced,
+  .no-data-message {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border: 2px solid rgba(251, 191, 36, 0.2) !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(15px) !important;
+    padding: 3rem 2rem !important;
+    text-align: center !important;
+
+    h3 {
+      color: white !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 1.5rem !important;
+      margin-bottom: 1rem !important;
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 400 !important;
+      line-height: 1.6 !important;
+    }
+
+    mat-icon {
+      color: #fbbf24 !important;
+      font-size: 4rem !important;
+      width: 4rem !important;
+      height: 4rem !important;
+      margin-bottom: 1.5rem !important;
+    }
+  }
+
+  // 📋 HINTS Y LABELS ADICIONALES
+  .form-hint,
+  .field-label,
+  .section-description {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 400 !important;
+  }
+
+  // ⚡ ACCENT ELEMENTS
+  .accent-text,
+  .highlight {
+    color: #fbbf24 !important;
+    font-weight: 600 !important;
+  }
+
+  // 🔢 NUMERIC VALUES
+  .amount-display,
+  .rate-value,
+  .numeric-value {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 600 !important;
+    color: white !important;
+  }
+}
+
+// ============================================================================
+// 🎯 BOTONES UNIFICADOS - MISMA APARIENCIA EN TODA LA APLICACIÓN
+// ============================================================================
+
+.quick-action-btn,
+.header-action-btn,
+.action-btn {
+  @include mix.button-base();
+  border-radius: vars.$radius-md !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  height: auto !important;
+  min-height: 42px !important;
+  transition: vars.$transition-normal !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+
+  &[color="primary"] {
+    @include mix.button-gradient(vars.$info-blue, #2563eb);
+    box-shadow: 0 4px 12px vars.$info-blue-30 !important;
+    color: white !important;
+    border: none !important;
+    
+    &:hover:not([disabled]) {
+      box-shadow: 0 6px 16px vars.$info-blue-40 !important;
+      @include mix.hover-lift(-2px, 1.02);
+    }
+
+    // Override Material Design states
+    .mat-ripple-element {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+  }
+
+  &[color="accent"] {
+    @include mix.button-gradient(vars.$warning-yellow, #f59e0b);
+    box-shadow: 0 4px 12px vars.$warning-yellow-30 !important;
+    color: white !important;
+    border: none !important;
+    
+    &:hover:not([disabled]) {
+      box-shadow: 0 6px 16px vars.$warning-yellow-40 !important;
+      @include mix.hover-lift(-2px, 1.02);
+    }
+
+    // Override Material Design states
+    .mat-ripple-element {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+  }
+
+  mat-icon {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
+    font-size: 1.1rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    color: white !important;
+  }
+
+  // Efectos de activación
+  &:active {
+    @extend .animate-scale-in;
+    transform: scale(0.98) !important;
+  }
+
+  &:focus {
+    outline: 2px solid vars.$info-blue-40 !important;
+    outline-offset: 2px !important;
+  }
+
+  @include mix.mobile-only {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.8rem 1.2rem !important;
+    font-size: 0.85rem !important;
+    
+    mat-icon {
+      font-size: 1rem !important;
+      width: 1rem !important;
+      height: 1rem !important;
+    }
+  }
+}
+
+// Forzar override específico para Angular Material en favoritos
+::ng-deep {
+  .favoritos-container {
+    .quick-action-btn,
+    .header-action-btn,
+    .action-btn {
+      // Fuerza los estilos sobre cualquier especificidad de Material
+      .mdc-button__label {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+      }
+
+      .mat-mdc-button-base {
+        background: none !important;
+        border: none !important;
+      }
+
+      // Estados de Material Design personalizados
+      &.mat-mdc-raised-button {
+        box-shadow: 0 4px 12px vars.$info-blue-30 !important;
+
+        &:hover {
+          box-shadow: 0 6px 16px vars.$info-blue-40 !important;
+        }
+
+        &[color="accent"] {
+          box-shadow: 0 4px 12px vars.$warning-yellow-30 !important;
+
+          &:hover {
+            box-shadow: 0 6px 16px vars.$warning-yellow-40 !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 📱 RESPONSIVE OVERRIDES FINALES
+// ============================================================================
+@include mix.mobile-only {
+  .favoritos-header {
+    padding: vars.$spacing-2xl vars.$spacing-lg vars.$spacing-3xl;
+    border-radius: vars.$radius-lg;
+
+    .title-container .simple-title .favorite-symbol {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  .conversion-panel {
+    .swap-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .summary-row {
+    gap: vars.$spacing-lg;
+  }
+
+  // HEADERS RESPONSIVE ESPECÍFICOS
+  ::ng-deep .favoritos-container {
+    .configuration-section-enhanced,
+    .results-section-enhanced,
+    .empty-state-enhanced,
+    .section-card {
+      .mat-mdc-card-header,
+      mat-card-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: vars.$spacing-md !important;
+        padding: vars.$spacing-lg !important;
+
+        .mat-mdc-card-title,
+        mat-card-title {
+          justify-content: center !important;
+          text-align: center !important;
+          margin-right: 0 !important;
+          margin-bottom: vars.$spacing-sm !important;
+        }
+
+        .header-action-btn {
+          margin-left: 0 !important;
+          align-self: stretch !important;
+          justify-self: center !important;
+        }
+      }
+    }
+  }
+
+  // CONVERSIÓN PANEL RESPONSIVE
+  .conversion-panel {
+    .amount-field {
+      order: 0;
+    }
+    
+    .currency-field:first-of-type {
+      order: 1;
+    }
+    
+    .swap-btn {
+      order: 2;
+      width: 44px !important;
+      height: 44px !important;
+      margin: vars.$spacing-md 0 !important;
+      
+      mat-icon {
+        font-size: 1.1rem !important;
+      }
+    }
+    
+    .currency-field:last-of-type {
+      order: 3;
+    }
+    
+    .result-panel {
+      order: 4;
+      margin-top: vars.$spacing-lg !important;
+    }
+  }
+}
+
+@include mix.tablet-up {
+  .favorites-grid-enhanced,
+  .currencies-grid-enhanced {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ============================================================================
+// 🎯 OVERRIDES GLOBALES DE ANGULAR MATERIAL PARA CALCULATOR
+// ============================================================================
+
+::ng-deep {
+  app-calculator {
+    .calculator-header {
+      h1 {
+        font-family: 'Inter', sans-serif !important;
+        font-size: clamp(2.5rem, 5vw, 4rem) !important;
+        font-weight: 900 !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.05em !important;
+        margin: 0 !important;
+        background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+      }
+
+      p {
+        font-family: 'Inter', sans-serif !important;
+        font-size: clamp(1rem, 2vw, 1.2rem) !important;
+        font-weight: 400 !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        margin: 0 !important;
+        line-height: 1.6 !important;
+      }
+
+      .stat-number {
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+        color: #fbbf24 !important;
+        text-shadow: 0 2px 8px rgba(251, 191, 36, 0.4) !important;
+      }
+
+      .stat-label {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🎯 SOBRESCRITURAS QUIRÚRGICAS ESPECÍFICAS PARA CALCULATOR
+// ============================================================================
+
+// 🎯 QUIRÚRGICO: ELEMENTOS ESPECÍFICOS IDENTIFICADOS EN LAS IMÁGENES
+::ng-deep .calculator-container {
+  // 🏷️ TEXTOS DESCRIPTIVOS Y HINTS
+  .form-hint,
+  .field-description,
+  .helper-text,
+  .mat-mdc-form-field-hint,
+  small:not(.mat-mdc-button-label) {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 0.875rem !important;
+  }
+
+  // 🎯 ICONOS DE CURRENCY Y ELEMENTOS ESPECÍFICOS
+  .currency-icon,
+  .amount-icon,
+  .calculator-icon {
+    color: #fbbf24 !important;
+    font-size: 1.25rem !important;
+  }
+
+  // 🔢 VALORES Y CÓDIGOS ESPECÍFICOS
+  .currency-value,
+  .amount-input,
+  .rate-value {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+  }
+
+  // 🎨 ELEMENTOS CON TEXTO DE ACCENT
+  .currency-symbol,
+  .converter-symbol,
+  .form-prefix {
+    color: #fbbf24 !important;
+    font-weight: 700 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+  }
+}
+
+// 🎯 QUIRÚRGICO: MAT-FORM-FIELD CONTAINERS ESPECÍFICOS
+::ng-deep .calculator-container mat-card mat-form-field,
+::ng-deep .calculator-container .configuration-section-enhanced mat-form-field {
+  // Fondo glassmorphic específico para containers
+  &::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(30, 41, 59, 0.9) !important;
+    border-radius: 16px !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
+    backdrop-filter: blur(20px) !important;
+    z-index: -1 !important;
+  }
+
+  // Hover effect para el pseudo-elemento
+  &:hover::before {
+    border-color: rgba(251, 191, 36, 0.7) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+// 🎯 QUIRÚRGICO: SELECT ESPECÍFICO CON MÚLTIPLES SELECTORES
+::ng-deep .calculator-container mat-select,
+::ng-deep .calculator-container .mat-mdc-select,
+::ng-deep app-calculator mat-select,
+::ng-deep [data-calculator] mat-select {
+  background: transparent !important;
+  
+  .mat-mdc-select-trigger {
+    background: transparent !important;
+    color: #ffffff !important;
+    padding: 1.25rem 2.5rem 0.5rem 0.75rem !important;
+    min-height: 3rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: #fbbf24 !important;
+    right: 0.75rem !important;
+    
+    svg {
+      fill: #fbbf24 !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+    }
+  }
+}
+
+// ============================================================================
+// 🚨 MÁXIMA FUERZA - SOBRESCRITURAS ABSOLUTAS PARA CALCULATOR
+// ============================================================================
+
+// 🎯 NIVEL MÁXIMO: SOBRESCRITURA DE CUALQUIER ELEMENTO MATERIAL RESTANTE
+::ng-deep app-calculator,
+::ng-deep [data-calculator],
+::ng-deep .calculator-page {
+  // FORZAR TODOS LOS FORM FIELDS SIN EXCEPCIÓN
+  .mat-mdc-form-field,
+  .mat-form-field,
+  mat-form-field {
+    background: rgba(30, 41, 59, 0.9) !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    padding: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+
+    * {
+      color: white !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label,
+    mat-label,
+    label {
+      color: #fbbf24 !important;
+      font-weight: 600 !important;
+    }
+
+    .mat-mdc-input-element,
+    .mdc-text-field__input,
+    input,
+    textarea {
+      color: white !important;
+      caret-color: #fbbf24 !important;
+      background: transparent !important;
+    }
+
+    .mat-mdc-select-trigger,
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text {
+      color: white !important;
+    }
+
+    .mat-mdc-select-arrow svg,
+    .mat-mdc-select-arrow {
+      fill: #fbbf24 !important;
+      color: #fbbf24 !important;
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: #fbbf24 !important;
+    }
+
+    .mdc-notched-outline {
+      display: none !important;
+    }
+  }
+
+  // FORZAR TODOS LOS BOTONES SIN EXCEPCIÓN
+  button,
+  .mat-mdc-button,
+  .mat-button,
+  .mat-mdc-raised-button,
+  .mat-raised-button,
+  .mat-mdc-outlined-button,
+  .mat-outlined-button {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    border-radius: 16px !important;
+    min-height: 56px !important;
+    padding: 1rem 2rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    &[color="primary"] {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+      color: white !important;
+      border: none !important;
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+
+      &:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4) !important;
+      }
+    }
+
+    &:not([color="primary"]) {
+      background: rgba(30, 41, 59, 0.8) !important;
+      border: 2px solid rgba(251, 191, 36, 0.4) !important;
+      color: white !important;
+      backdrop-filter: blur(15px) !important;
+
+      &:hover {
+        border-color: rgba(251, 191, 36, 0.7) !important;
+        transform: translateY(-2px) !important;
+      }
+    }
+
+    mat-icon,
+    .mat-icon {
+      color: inherit !important;
+    }
+  }
+
+  // FORZAR TODAS LAS CARDS SIN EXCEPCIÓN
+  mat-card,
+  .mat-mdc-card,
+  .mat-card {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border: 2px solid rgba(251, 191, 36, 0.3) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden !important;
+
+    &:hover {
+      border-color: rgba(251, 191, 36, 0.5) !important;
+      transform: translateY(-4px) !important;
+    }
+
+    * {
+      color: white !important;
+    }
+
+    mat-card-header,
+    .mat-mdc-card-header,
+    .mat-card-header {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(251, 191, 36, 0.1)) !important;
+      padding: 1.5rem 2rem !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+      mat-card-title,
+      .mat-mdc-card-title,
+      .mat-card-title {
+        color: white !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 1.5rem !important;
+
+        mat-icon,
+        .mat-icon {
+          color: #fbbf24 !important;
+        }
+      }
+    }
+
+    mat-card-content,
+    .mat-mdc-card-content,
+    .mat-card-content {
+      padding: 2rem !important;
+      background: transparent !important;
+    }
+  }
+
+  // FORZAR TODOS LOS TEXTOS E ICONOS
+  * {
+    &:not(input):not(textarea):not(button) {
+      font-family: 'Inter', sans-serif !important;
+    }
+  }
+
+  mat-icon,
+  .mat-icon {
+    &:not(.mat-mdc-form-field *):not(.mat-form-field *) {
+      color: #fbbf24 !important;
+    }
+  }
+
+  // NÚMEROS Y CÓDIGOS MONOSPACE
+  .currency-code,
+  .amount,
+  .rate,
+  .numeric,
+  [class*="amount"],
+  [class*="rate"],
+  [class*="currency"] {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 600 !important;
+  }
+}
+
+// 🎯 SOBRESCRITURA FINAL DE PANELES GLOBALES
+::ng-deep .cdk-overlay-container {
+  .mat-mdc-select-panel {
+    background: rgba(30, 41, 59, 0.95) !important;
+    backdrop-filter: blur(25px) !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+
+    .mat-mdc-option {
+      color: white !important;
+      font-family: 'Inter', sans-serif !important;
+
+      &:hover {
+        background: rgba(251, 191, 36, 0.2) !important;
+        color: #fbbf24 !important;
+      }
+    }
+  }
+
+  .mat-mdc-tooltip {
+    background: rgba(30, 41, 59, 0.95) !important;
+    color: white !important;
+    border: 1px solid rgba(251, 191, 36, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .mat-mdc-snack-bar-container {
+    background: rgba(30, 41, 59, 0.95) !important;
+    color: white !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(20px) !important;
+  }
+}
+
+// ============================================================================
+// 🔬 SOBRESCRITURAS ULTRA QUIRÚRGICAS - NIVEL MICROSCÓPICO
+// ============================================================================
+
+// 🎯 ULTRA QUIRÚRGICO: CADA ELEMENTO ESPECÍFICO IDENTIFICADO
+::ng-deep .calculator-container,
+::ng-deep app-calculator,
+::ng-deep [class*="calculator"] {
+  
+  // 🎨 FORZAR CUALQUIER ELEMENTO MAT-FORM-FIELD RESTANTE
+  * [class*="mat-mdc-form-field"],
+  * [class*="mat-form-field"],
+  *:has(.mat-mdc-form-field),
+  div:has(mat-form-field) {
+    mat-form-field,
+    .mat-mdc-form-field,
+    .mat-form-field {
+      background: rgba(30, 41, 59, 0.9) !important;
+      border: 2px solid rgba(251, 191, 36, 0.4) !important;
+      border-radius: 16px !important;
+      backdrop-filter: blur(20px) !important;
+      padding: 0.75rem 1rem !important;
+      
+      * {
+        background: transparent !important;
+        color: white !important;
+        font-family: 'Inter', sans-serif !important;
+      }
+    }
+  }
+
+  // 🎯 FORZAR INPUTS SIN IMPORTAR ANIDAMIENTO
+  input,
+  textarea,
+  select,
+  * input,
+  * textarea,
+  * select,
+  *[type="text"],
+  *[type="number"],
+  *[type="email"],
+  *[matInput] {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #ffffff !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+    caret-color: #fbbf24 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+  }
+
+  // 🏷️ FORZAR LABELS SIN IMPORTAR ANIDAMIENTO
+  label,
+  mat-label,
+  * label,
+  * mat-label,
+  .mat-mdc-floating-label,
+  .mdc-floating-label,
+  * .mat-mdc-floating-label,
+  * .mdc-floating-label {
+    color: #fbbf24 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    background: rgba(30, 41, 59, 0.9) !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 4px !important;
+  }
+
+  // 🔽 FORZAR SELECTS Y DROPDOWNS
+  mat-select,
+  select,
+  * mat-select,
+  * select,
+  .mat-mdc-select,
+  * .mat-mdc-select {
+    background: transparent !important;
+    color: #ffffff !important;
+    
+    .mat-mdc-select-trigger,
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text {
+      color: #ffffff !important;
+      background: transparent !important;
+    }
+    
+    .mat-mdc-select-arrow svg {
+      fill: #fbbf24 !important;
+    }
+  }
+
+  // 🎨 FORZAR BOTONES A CUALQUIER NIVEL
+  button,
+  * button,
+  .mat-mdc-button,
+  * .mat-mdc-button,
+  [mat-button],
+  [mat-raised-button],
+  [mat-outlined-button] {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    border-radius: 16px !important;
+    min-height: 56px !important;
+    
+    &[color="primary"] {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+      color: white !important;
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    &:not([color="primary"]) {
+      background: rgba(30, 41, 59, 0.8) !important;
+      border: 2px solid rgba(251, 191, 36, 0.4) !important;
+      color: white !important;
+    }
+  }
+
+  // ✨ FORZAR ICONOS A CUALQUIER NIVEL
+  mat-icon,
+  * mat-icon,
+  .mat-icon,
+  * .mat-icon,
+  i,
+  * i {
+    &:not(.mat-mdc-select-arrow) {
+      color: #fbbf24 !important;
+    }
+  }
+
+  // 📝 FORZAR CUALQUIER TEXTO RESTANTE
+  p,
+  span,
+  div,
+  * p,
+  * span,
+  * div {
+    &:not(.mat-mdc-button-label):not(.mat-mdc-select-value-text):not(button *) {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+  }
+}
+
+// 🎯 ÚLTIMO RECURSO: SOBRESCRITURA GLOBAL PARA CUALQUIER ELEMENTO NO CUBIERTO
+::ng-deep * {
+  &:is(.calculator-container *, app-calculator *, [data-calculator] *) {
+    &:not(svg):not(path):not(circle):not(rect) {
+      font-family: 'Inter', sans-serif !important;
+      
+      &:not(input):not(textarea):not(button):not(mat-icon):not(.mat-icon) {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// �🔚 FIN DE ARCHIVO - ESTRUCTURA MODULAR COMPLETA CON MÁXIMA FUERZA QUIRÚRGICA
+// ============================================================================

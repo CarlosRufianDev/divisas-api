@@ -1,0 +1,276 @@
+// ============================================================================
+// 🎭 SISTEMA DE ANIMACIONES PARA CALCULADORA
+// Optimizado para mejor experiencia visual en conversiones
+// ============================================================================
+
+// 🎬 ANIMACIONES DE ENTRADA
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// 🎯 ANIMACIONES ESPECÍFICAS PARA CALCULADORA
+@keyframes calculatorPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  }
+}
+
+@keyframes conversionReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes resultHighlight {
+  0% {
+    background-color: rgba(251, 191, 36, 0.1);
+  }
+  50% {
+    background-color: rgba(251, 191, 36, 0.3);
+  }
+  100% {
+    background-color: rgba(251, 191, 36, 0.1);
+  }
+}
+
+@keyframes numberCounter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// 💫 ANIMACIONES DE HOVER Y INTERACCIÓN
+@keyframes buttonHover {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+@keyframes cardFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+// 🎨 CLASES DE ANIMACIÓN REUTILIZABLES
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-calculator-pulse {
+  animation: calculatorPulse 2s ease-in-out infinite;
+}
+
+.animate-conversion-reveal {
+  animation: conversionReveal 0.8s ease-out;
+}
+
+.animate-result-highlight {
+  animation: resultHighlight 1.5s ease-in-out;
+}
+
+.animate-number-counter {
+  animation: numberCounter 0.4s ease-out;
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-button-hover {
+  &:hover {
+    animation: buttonHover 0.2s ease-out forwards;
+  }
+}
+
+.animate-card-float {
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+// 🎬 ANIMACIONES STAGGERED PARA MÚLTIPLES ELEMENTOS
+.stagger-animation {
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
+    &:nth-child(6) { animation-delay: 0.6s; }
+    &:nth-child(7) { animation-delay: 0.7s; }
+    &:nth-child(8) { animation-delay: 0.8s; }
+  }
+}
+
+.stagger-conversion-results {
+  > * {
+    animation: conversionReveal 0.5s ease forwards;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.15s; }
+    &:nth-child(3) { animation-delay: 0.2s; }
+    &:nth-child(4) { animation-delay: 0.25s; }
+    &:nth-child(5) { animation-delay: 0.3s; }
+    &:nth-child(6) { animation-delay: 0.35s; }
+    &:nth-child(7) { animation-delay: 0.4s; }
+    &:nth-child(8) { animation-delay: 0.45s; }
+    &:nth-child(9) { animation-delay: 0.5s; }
+    &:nth-child(10) { animation-delay: 0.55s; }
+  }
+}
+
+// 🔄 ANIMACIONES DE LOADING
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-dots {
+  &::after {
+    content: '';
+    animation: dots 1.5s infinite;
+  }
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '';
+  }
+  40% {
+    content: '.';
+  }
+  60% {
+    content: '..';
+  }
+  80%, 100% {
+    content: '...';
+  }
+}
+
+// 💡 ANIMACIONES DE FEEDBACK
+.success-flash {
+  animation: successFlash 0.6s ease-out;
+}
+
+@keyframes successFlash {
+  0% {
+    background-color: rgba(76, 175, 80, 0);
+  }
+  50% {
+    background-color: rgba(76, 175, 80, 0.2);
+  }
+  100% {
+    background-color: rgba(76, 175, 80, 0);
+  }
+}
+
+.error-shake {
+  animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
