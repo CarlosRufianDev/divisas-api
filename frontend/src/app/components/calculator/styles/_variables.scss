@@ -1,144 +1,160 @@
 // ============================================================================
-// 🎨 SISTEMA DE VARIABLES PARA CALCULATOR
-// Copiado exactamente de favoritos para consistencia visual
+// 🧮 SISTEMA DE VARIABLES PARA CALCULATOR
+// Basado en el patrón del dashboard y alertas con adaptaciones específicas
 // ============================================================================
 
 // 🌈 SISTEMA DE COLORES PRINCIPAL
-$primary-blue: #667eea !default;
-$primary-purple: #764ba2 !default;
-$success-green: #4caf50 !default;
-$warning-orange: #ff9800 !default;
-$warning-yellow: #fbbf24 !default;
-$error-red: #f44336 !default;
-$info-blue: #3b82f6 !default;
+$primary-blue: #667eea;
+$primary-purple: #764ba2;
+$success-green: #4caf50;
+$warning-orange: #ff9800;
+$warning-yellow: #fbbf24;
+$error-red: #f44336;
+$info-blue: #3b82f6;
+
+// 🧮 COLORES ESPECÍFICOS PARA CALCULATOR
+$calculator-primary: #2563eb; // Azul para calculadora
+$calculator-secondary: #059669; // Verde para resultados exitosos
+$calculator-accent: #dc2626; // Rojo para errores/alertas
+$calculator-neutral: #6b7280; // Gris para elementos neutros
+$calculator-gold: #f59e0b; // Dorado para highlights importantes
 
 // 🎯 SISTEMA DE TRANSPARENCIAS DEL AZUL (MEJORADO)
-$info-blue-03: rgba(59, 130, 246, 0.03) !default;
-$info-blue-05: rgba(59, 130, 246, 0.05) !default;
-$info-blue-08: rgba(59, 130, 246, 0.08) !default;
-$info-blue-10: rgba(59, 130, 246, 0.1) !default;
-$info-blue-15: rgba(59, 130, 246, 0.15) !default;
-$info-blue-20: rgba(59, 130, 246, 0.2) !default;
-$info-blue-25: rgba(59, 130, 246, 0.25) !default;
-$info-blue-30: rgba(59, 130, 246, 0.3) !default;
-$info-blue-40: rgba(59, 130, 246, 0.4) !default;
-$info-blue-50: rgba(59, 130, 246, 0.5) !default;
-$info-blue-60: rgba(59, 130, 246, 0.6) !default;
+$info-blue-03: rgba(59, 130, 246, 0.03);
+$info-blue-05: rgba(59, 130, 246, 0.05);
+$info-blue-08: rgba(59, 130, 246, 0.08);
+$info-blue-10: rgba(59, 130, 246, 0.1);
+$info-blue-15: rgba(59, 130, 246, 0.15);
+$info-blue-20: rgba(59, 130, 246, 0.2);
+$info-blue-25: rgba(59, 130, 246, 0.25);
+$info-blue-30: rgba(59, 130, 246, 0.3);
+$info-blue-40: rgba(59, 130, 246, 0.4);
 
 // 🟡 SISTEMA DE TRANSPARENCIAS DEL AMARILLO
-$warning-yellow-03: rgba(251, 191, 36, 0.03) !default;
-$warning-yellow-05: rgba(251, 191, 36, 0.05) !default;
-$warning-yellow-10: rgba(251, 191, 36, 0.1) !default;
-$warning-yellow-15: rgba(251, 191, 36, 0.15) !default;
-$warning-yellow-20: rgba(251, 191, 36, 0.2) !default;
-$warning-yellow-25: rgba(251, 191, 36, 0.25) !default;
-$warning-yellow-30: rgba(251, 191, 36, 0.3) !default;
-$warning-yellow-40: rgba(251, 191, 36, 0.4) !default;
-$warning-yellow-50: rgba(251, 191, 36, 0.5) !default;
+$warning-yellow-03: rgba(251, 191, 36, 0.03);
+$warning-yellow-05: rgba(251, 191, 36, 0.05);
+$warning-yellow-10: rgba(251, 191, 36, 0.1);
+$warning-yellow-15: rgba(251, 191, 36, 0.15);
+$warning-yellow-20: rgba(251, 191, 36, 0.2);
+$warning-yellow-25: rgba(251, 191, 36, 0.25);
+$warning-yellow-30: rgba(251, 191, 36, 0.3);
+$warning-yellow-40: rgba(251, 191, 36, 0.4);
+$warning-yellow-70: rgba(251, 191, 36, 0.7);
 
 // 🟢 SISTEMA DE TRANSPARENCIAS DEL VERDE
-$success-green-10: rgba(76, 175, 80, 0.1) !default;
-$success-green-15: rgba(76, 175, 80, 0.15) !default;
-$success-green-20: rgba(76, 175, 80, 0.2) !default;
-$success-green-30: rgba(76, 175, 80, 0.3) !default;
-$success-green-40: rgba(76, 175, 80, 0.4) !default;
-$success-green-50: rgba(76, 175, 80, 0.5) !default;
+$success-green-10: rgba(76, 175, 80, 0.1);
+$success-green-15: rgba(76, 175, 80, 0.15);
+$success-green-20: rgba(76, 175, 80, 0.2);
+$success-green-30: rgba(76, 175, 80, 0.3);
+$success-green-40: rgba(76, 175, 80, 0.4);
 
 // 🔴 SISTEMA DE TRANSPARENCIAS DEL ROJO
-$error-red-10: rgba(244, 67, 54, 0.1) !default;
-$error-red-15: rgba(244, 67, 54, 0.15) !default;
-$error-red-20: rgba(244, 67, 54, 0.2) !default;
-$error-red-30: rgba(244, 67, 54, 0.3) !default;
-$error-red-40: rgba(244, 67, 54, 0.4) !default;
-$error-red-50: rgba(244, 67, 54, 0.5) !default;
+$error-red-10: rgba(244, 67, 54, 0.1);
+$error-red-15: rgba(244, 67, 54, 0.15);
+$error-red-20: rgba(244, 67, 54, 0.2);
+$error-red-30: rgba(244, 67, 54, 0.3);
+$error-red-40: rgba(244, 67, 54, 0.4);
+
+// 🧮 TRANSPARENCIAS PARA CALCULATOR ESPECÍFICAS
+$calculator-primary-05: rgba(37, 99, 235, 0.05);
+$calculator-primary-10: rgba(37, 99, 235, 0.1);
+$calculator-primary-20: rgba(37, 99, 235, 0.2);
+$calculator-primary-30: rgba(37, 99, 235, 0.3);
+$calculator-secondary-05: rgba(5, 150, 105, 0.05);
+$calculator-secondary-10: rgba(5, 150, 105, 0.1);
+$calculator-secondary-20: rgba(5, 150, 105, 0.2);
+$calculator-gold-05: rgba(245, 158, 11, 0.05);
+$calculator-gold-10: rgba(245, 158, 11, 0.1);
+$calculator-gold-20: rgba(245, 158, 11, 0.2);
 
 // 🌫️ COLORES GLASSMORPHISM
-$glass-white: rgba(255, 255, 255, 0.9) !default;
-$glass-white-light: rgba(255, 255, 255, 0.95) !default;
-$glass-white-medium: rgba(255, 255, 255, 0.85) !default;
-$glass-white-border: rgba(226, 232, 240, 0.6) !default;
-$glass-dark: rgba(30, 41, 59, 0.6) !default;
-$glass-dark-light: rgba(30, 41, 59, 0.4) !default;
+$glass-white: rgba(255, 255, 255, 0.9);
+$glass-white-subtle: rgba(255, 255, 255, 0.1);
+$glass-white-border: rgba(255, 255, 255, 0.2);
+$glass-dark: rgba(30, 41, 59, 0.6);
+$glass-dark-subtle: rgba(30, 41, 59, 0.3);
 
-// 🌈 GRADIENTES PARA HEADERS (SIGUIENDO PATRÓN DASHBOARD)
-$gradient-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%) !default;
-$gradient-secondary: linear-gradient(135deg, $primary-blue 0%, $primary-purple 100%) !default;
-$gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%) !default;
-$gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !default;
-$gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !default;
+// 🎨 GRADIENTES ESPECÍFICOS PARA CALCULATOR
+$gradient-primary: linear-gradient(
+  135deg,
+  #0f172a 0%,
+  #1e293b 25%,
+  #334155 50%,
+  #1e293b 75%,
+  #0f172a 100%
+);
 
-// 📏 SISTEMA DE ESPACIADO
-$spacing-xs: 0.25rem !default;  // 4px
-$spacing-sm: 0.5rem !default;   // 8px
-$spacing-md: 1rem !default;     // 16px
-$spacing-lg: 1.5rem !default;   // 24px
-$spacing-xl: 2rem !default;     // 32px
-$spacing-2xl: 3rem !default;    // 48px
-$spacing-3xl: 4rem !default;    // 64px
-$spacing-4xl: 5rem !default;    // 80px
+$gradient-calculator-primary: linear-gradient(
+  135deg,
+  $calculator-primary 0%,
+  #1d4ed8 100%
+);
 
-// 🎯 SISTEMA DE BORDER RADIUS
-$radius-xs: 4px !default;
-$radius-sm: 8px !default;
-$radius-md: 12px !default;
-$radius-lg: 16px !default;
-$radius-xl: 20px !default;
-$radius-2xl: 24px !default;
-$radius-full: 50% !default;
+$gradient-calculator-secondary: linear-gradient(
+  135deg,
+  $calculator-secondary 0%,
+  #047857 100%
+);
 
-// 🌊 SISTEMA DE SOMBRAS
-$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08) !default;
-$shadow-md: 0 8px 32px rgba(31, 38, 135, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1) !default;
-$shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12) !default;
-$shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15) !default;
+$gradient-card-white: linear-gradient(
+  135deg,
+  rgba(255, 255, 255, 0.95) 0%,
+  rgba(248, 250, 252, 0.9) 100%
+);
+
+$gradient-card-white-hover: linear-gradient(
+  135deg,
+  rgba(255, 255, 255, 1) 0%,
+  rgba(248, 250, 252, 0.98) 100%
+);
+
+// 📐 SISTEMA DE ESPACIADO CONSISTENTE (MÚLTIPLOS DE 4)
+$spacing-xs: 0.25rem; // 4px
+$spacing-sm: 0.5rem;  // 8px
+$spacing-md: 0.75rem; // 12px
+$spacing-lg: 1rem;    // 16px
+$spacing-xl: 1.5rem;  // 24px
+$spacing-2xl: 2rem;   // 32px
+$spacing-3xl: 2.5rem; // 40px
+$spacing-4xl: 3rem;   // 48px
+
+// 🌀 SISTEMA DE BORDER RADIUS
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 24px;
+
+// 🎭 SHADOWS
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
 // ⚡ TRANSICIONES
-$transition-fast: all 0.15s ease !default;
-$transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !default;
-$transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !default;
+$transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+// 🔤 TIPOGRAFÍA
+$font-primary: 'Inter', sans-serif;
+$font-secondary: 'Poppins', sans-serif;
+$font-mono: 'JetBrains Mono', monospace;
 
 // 📱 BREAKPOINTS
-$mobile: 768px !default;
-$tablet: 1024px !default;
-$desktop: 1200px !default;
-$wide: 1400px !default;
+$mobile: 768px;
+$tablet: 1024px;
+$desktop: 1200px;
+$wide: 1400px;
 
-// 🎨 COLORES ESPECÍFICOS PARA CALCULADORA
-$calculator-primary: $info-blue !default;
-$calculator-secondary: $warning-yellow !default;
-$calculator-accent: $success-green !default;
-$calculator-danger: $error-red !default;
+// 🎯 Z-INDEX LAYERS
+$z-base: 1;
+$z-elevated: 10;
+$z-header: 20;
+$z-overlay: 100;
+$z-modal: 1000;
 
-// 🔢 COLORES PARA RESULTADOS DE CONVERSIÓN
-$conversion-positive: $success-green !default;
-$conversion-negative: $error-red !default;
-$conversion-neutral: #6b7280 !default;
-$conversion-highlight: $warning-yellow !default;
-
-// 💰 GRADIENTES PARA CARDS DE RESULTADOS
-$result-card-gradient: linear-gradient(135deg, 
-  rgba(255, 255, 255, 0.9) 0%, 
-  rgba(240, 249, 255, 0.9) 50%, 
-  rgba(219, 234, 254, 0.9) 100%
-) !default;
-
-$multiple-result-gradient: linear-gradient(135deg,
-  rgba(251, 191, 36, 0.1) 0%,
-  rgba(59, 130, 246, 0.1) 50%,
-  rgba(16, 185, 129, 0.1) 100%
-) !default;
-
-// 🎨 GRADIENTE PARA TARJETAS GENERALES
-$gradient-card: linear-gradient(135deg,
-  rgba(251, 191, 36, 0.05) 0%,
-  rgba(59, 130, 246, 0.05) 50%,
-  rgba(16, 185, 129, 0.05) 100%
-) !default;
-
-// 📈 COLORES PARA TENDENCIAS
-$trend-up-color: #10b981 !default;
-$trend-up-bg: rgba(16, 185, 129, 0.1) !default;
-$trend-down-color: #ef4444 !default;
-$trend-down-bg: rgba(239, 68, 68, 0.1) !default;
-$trend-neutral-color: #6b7280 !default;
-$trend-neutral-bg: rgba(107, 114, 128, 0.1) !default;
+// 🎨 COLORES DE TENDENCIAS
+$trend-up-color: #10b981;
+$trend-down-color: #ef4444;
+$trend-neutral-color: #6b7280;

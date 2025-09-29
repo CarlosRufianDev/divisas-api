@@ -1,240 +1,222 @@
 <div class="calculator-container">
   <div class="content-wrapper">
-    <!-- ============================================================================ -->
-    <!-- 📋 HEADER SIMPLIFICADO PARA CALCULADORA MÚLTIPLE -->
-    <!-- ============================================================================ -->
+    <!-- Header con título -->
     <div class="calculator-header">
       <div class="header-content">
         <div class="header-info">
           <div class="header-text">
             <h1>Calculadora Múltiple</h1>
-            <p>Convierte una cantidad a múltiples divisas simultáneamente</p>
+            <p>Convierte una cantidad a múltiples divisas simultáneamente con tasas de cambio en tiempo real</p>
           </div>
         </div>
-        <div class="header-stats" *ngIf="results && results.conversions.length > 0">
+        <div class="header-stats" *ngIf="results?.conversions">
           <div class="stat-item">
-            <span class="stat-number">{{ results.conversions.length }}</span>
+            <span class="stat-number">{{ results?.conversions?.length || 0 }}</span>
             <span class="stat-label">Conversiones</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">{{ results.baseAmount | number:'1.0-0' }}</span>
-            <span class="stat-label">{{ results.baseCurrency }}</span>
+            <span class="stat-number">{{ results?.baseAmount | currency:(results?.baseCurrency || 'USD'):'symbol':'1.2-2' }}</span>
+            <span class="stat-label">Monto Base</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ============================================================================ -->
-    <!-- 🧮 FORMULARIO DE CALCULADORA MÚLTIPLE -->
-    <!-- ============================================================================ -->
+    <!-- Formulario de configuración -->
     <mat-card class="calculator-form-card">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>calculate</mat-icon>
-          Configuración de Conversión
+          Configuración de Cálculo
         </mat-card-title>
+        <mat-card-subtitle>
+          Configura los parámetros para tu conversión múltiple
+        </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <form [formGroup]="calculatorForm" class="calculator-form">
-          <!-- Cantidad a convertir -->
-          <mat-form-field appearance="outline" class="amount-field">
-            <mat-label>Cantidad</mat-label>
-            <input
-              matInput
-              type="number"
-              formControlName="amount"
-              placeholder="Ingresa la cantidad"
-            />
-            <mat-icon matSuffix>attach_money</mat-icon>
-          </mat-form-field>
+          <div class="form-row">
+            <!-- Cantidad -->
+            <mat-form-field appearance="outline" class="amount-field">
+              <mat-label>Cantidad a Convertir</mat-label>
+              <input 
+                matInput 
+                type="number" 
+                formControlName="amount"
+                placeholder="1000"
+                min="0.01"
+                step="0.01"
+              >
+              <mat-icon matSuffix>attach_money</mat-icon>
+              <mat-error *ngIf="calculatorForm.get('amount')?.hasError('required')">
+                La cantidad es requerida
+              </mat-error>
+              <mat-error *ngIf="calculatorForm.get('amount')?.hasError('min')">
+                La cantidad debe ser mayor a 0
+              </mat-error>
+            </mat-form-field>
 
-          <!-- Moneda origen -->
-          <mat-form-field appearance="outline" class="from-currency-field">
-            <mat-label>Moneda Origen</mat-label>
-            <mat-select formControlName="from">
-              <mat-option *ngFor="let currency of availableCurrencies" [value]="currency.code">
-                {{ currency.flag }} {{ currency.code }} - {{ currency.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+            <!-- Moneda base -->
+            <mat-form-field appearance="outline" class="currency-field">
+              <mat-label>Moneda Base</mat-label>
+              <mat-select formControlName="from">
+                <mat-option *ngFor="let currency of availableCurrencies" [value]="currency.code">
+                  <span class="currency-option">
+                    <span class="flag">{{ currency.flag }}</span>
+                    <span class="code">{{ currency.code }}</span>
+                    <span class="name">{{ currency.name }}</span>
+                  </span>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>swap_horiz</mat-icon>
+            </mat-form-field>
+          </div>
 
-          <!-- Monedas destino (múltiple selección) -->
-          <mat-form-field appearance="outline" class="target-currencies-field">
-            <mat-label>Monedas Destino</mat-label>
+          <!-- Monedas destino -->
+          <mat-form-field appearance="outline" class="full-width target-currencies-field">
+            <mat-label>Monedas Destino (Selecciona múltiples)</mat-label>
             <mat-select formControlName="targetCurrencies" multiple>
               <mat-option *ngFor="let currency of getFilteredCurrencies()" [value]="currency.code">
-                {{ currency.flag }} {{ currency.code }} - {{ currency.name }}
+                <span class="currency-option">
+                  <span class="flag">{{ currency.flag }}</span>
+                  <span class="code">{{ currency.code }}</span>
+                  <span class="name">{{ currency.name }}</span>
+                </span>
               </mat-option>
             </mat-select>
-            <mat-hint>Selecciona múltiples monedas para convertir</mat-hint>
+            <mat-icon matSuffix>currency_exchange</mat-icon>
+            <mat-hint>Selecciona las monedas a las que quieres convertir</mat-hint>
           </mat-form-field>
-
-          <!-- Botones de acción -->
-          <div class="form-actions">
-            <button
-              mat-raised-button
-              color="primary"
-              type="button"
-              (click)="calculateMultiple()"
-              [disabled]="loading || calculatorForm.invalid"
-              class="calculate-btn"
-            >
-              <mat-icon>calculate</mat-icon>
-              {{ loading ? 'Calculando...' : 'Calcular Conversiones' }}
-            </button>
-            
-            <button
-              mat-stroked-button
-              type="button"
-              (click)="clearResults()"
-              [disabled]="loading"
-              class="clear-btn"
-            >
-              <mat-icon>clear</mat-icon>
-              Limpiar
-            </button>
-          </div>
         </form>
       </mat-card-content>
+
+      <mat-card-actions class="form-actions">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="calculateMultiple()"
+          [disabled]="!calculatorForm.valid || loading"
+          class="calculate-button"
+        >
+          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+          <mat-icon *ngIf="!loading">calculate</mat-icon>
+          {{ loading ? 'Calculando...' : 'Calcular Conversiones' }}
+        </button>
+
+        <button 
+          mat-button 
+          (click)="clearResults()"
+          [disabled]="!results"
+          class="clear-button"
+        >
+          <mat-icon>clear</mat-icon>
+          Limpiar
+        </button>
+      </mat-card-actions>
     </mat-card>
 
-    <!-- ============================================================================ -->
-    <!-- 📊 RESULTADOS DE LA CALCULADORA MÚLTIPLE -->
-    <!-- ============================================================================ -->
-    <mat-card 
-      class="results-section"
-      *ngIf="!loading && results && results.conversions.length > 0"
-    >
+    <!-- Resultados -->
+    <mat-card *ngIf="results" class="results-card">
       <mat-card-header>
         <mat-card-title>
-          <mat-icon>trending_up</mat-icon>
-          Resultados ({{ results.conversions.length }} conversiones)
+          <mat-icon>assessment</mat-icon>
+          Resultados de Conversión
         </mat-card-title>
-        <button
-          mat-raised-button
-          class="export-btn"
-          (click)="exportResults()"
-        >
-          <mat-icon>download</mat-icon>
-          Exportar
-        </button>
+        <mat-card-subtitle>
+          {{ results.baseAmount | currency:results.baseCurrency:'symbol':'1.2-2' }} 
+          convertido a {{ results.conversions.length }} monedas
+        </mat-card-subtitle>
+        <div class="header-actions">
+          <button mat-icon-button (click)="exportResults()" matTooltip="Exportar resultados">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button (click)="shareResults()" matTooltip="Compartir resultados">
+            <mat-icon>share</mat-icon>
+          </button>
+        </div>
       </mat-card-header>
 
       <mat-card-content>
-        <!-- Resumen de conversión -->
-        <div class="conversion-summary">
-          <div class="summary-info">
-            <span class="base-amount">{{ results.baseAmount | number:'1.2-2' }} {{ results.baseCurrency }}</span>
-            <mat-icon>arrow_forward</mat-icon>
-            <span class="target-count">{{ results.conversions.length }} divisas</span>
-          </div>
-          <div class="timestamp">
-            <small>{{ results.timestamp | date:'medium':'es-ES' }}</small>
-          </div>
-        </div>
-
-        <!-- Grid de resultados -->
         <div class="results-grid">
-          <div
+          <div 
+            class="conversion-result-card" 
             *ngFor="let conversion of results.conversions; trackBy: trackByConversion"
-            class="result-card"
           >
-            <!-- Header de la conversión -->
-            <div class="conversion-header">
+            <div class="result-header">
               <div class="currency-info">
                 <span class="currency-flag">{{ getCurrencyFlag(conversion.to) }}</span>
-                <span class="currency-code">{{ conversion.to }}</span>
+                <div class="currency-details">
+                  <span class="currency-code">{{ conversion.to }}</span>
+                  <span class="currency-name">{{ getCurrencyName(conversion.to) }}</span>
+                </div>
               </div>
-              <div class="currency-name">{{ getCurrencyName(conversion.to) }}</div>
+              <div class="conversion-actions">
+                <button 
+                  mat-icon-button 
+                  (click)="copyToClipboard(conversion)"
+                  matTooltip="Copiar resultado"
+                  class="copy-btn"
+                >
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  (click)="addToFavorites(conversion)"
+                  matTooltip="Añadir a favoritos"
+                  class="favorite-btn"
+                >
+                  <mat-icon>favorite_border</mat-icon>
+                </button>
+              </div>
             </div>
 
-            <!-- Resultado principal -->
-            <div class="conversion-result">
-              <div class="converted-amount">{{ conversion.result | number:'1.2-2' }}</div>
-              <div class="exchange-rate">
-                1 {{ conversion.from }} = {{ conversion.rate | number:'1.4-4' }} {{ conversion.to }}
+            <div class="result-body">
+              <div class="conversion-display">
+                <div class="from-amount">
+                  <span class="amount">{{ conversion.amount | currency:conversion.from:'symbol':'1.2-2' }}</span>
+                </div>
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                <div class="to-amount">
+                  <span class="amount">{{ conversion.result | currency:conversion.to:'symbol':'1.2-2' }}</span>
+                </div>
               </div>
-            </div>
-
-            <!-- Acciones -->
-            <div class="conversion-actions">
-              <button
-                mat-icon-button
-                (click)="copyToClipboard(conversion)"
-                matTooltip="Copiar resultado"
-              >
-                <mat-icon>content_copy</mat-icon>
-              </button>
               
-              <button
-                mat-icon-button
-                (click)="addToFavorites(conversion)"
-                matTooltip="Añadir a favoritos"
-              >
-                <mat-icon>star_border</mat-icon>
-              </button>
+              <div class="rate-info">
+                <span class="rate-label">Tasa:</span>
+                <span class="rate-value">1 {{ conversion.from }} = {{ conversion.rate | number:'1.4-4' }} {{ conversion.to }}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Acciones de resultados -->
-        <div class="results-actions">
-          <button
-            mat-raised-button
-            color="accent"
-            (click)="shareResults()"
-          >
-            <mat-icon>share</mat-icon>
-            Compartir
-          </button>
-
-          <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="recalculate()"
-          >
-            <mat-icon>refresh</mat-icon>
-            Recalcular
-          </button>
+        <div class="results-summary" *ngIf="results.conversions.length > 0">
+          <p class="timestamp">
+            <mat-icon>schedule</mat-icon>
+            Actualizado: {{ results.timestamp | date:'medium' }}
+          </p>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <!-- ============================================================================ -->
-    <!-- 🚫 ESTADO VACÍO -->
-    <!-- ============================================================================ -->
-    <mat-card
-      *ngIf="!loading && (!results || results.conversions.length === 0)"
-      class="empty-state"
-    >
+    <!-- Estado vacío -->
+    <mat-card *ngIf="!results && !loading" class="empty-state">
       <mat-card-content>
-        <div class="no-data-message">
-          <mat-icon class="no-data-icon">calculate</mat-icon>
-          <h3>Calculadora Lista</h3>
-          <p>Configura tu conversión múltiple y obtén resultados instantáneos</p>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="calculateMultiple()"
-            [disabled]="calculatorForm.invalid"
-          >
-            <mat-icon>calculate</mat-icon>
-            Calcular Ahora
-          </button>
+        <div class="empty-content">
+          <mat-icon class="empty-icon">calculate</mat-icon>
+          <h2>¡Comienza a calcular!</h2>
+          <p>
+            Configura una cantidad y selecciona las monedas destino para obtener 
+            conversiones múltiples en tiempo real.
+          </p>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <!-- Loading indicator -->
-    <mat-card *ngIf="loading" class="loading-card">
-      <mat-card-content>
-        <div class="loading-container">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p>Calculando conversiones múltiples...</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>Obteniendo tasas de cambio en tiempo real...</p>
+    </div>
   </div>
 </div>
