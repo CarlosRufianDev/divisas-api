@@ -15,15 +15,10 @@
 @import './dashboard.rates-section.scss';  // Mercado de divisas con análisis técnico
 @import './dashboard.modals.scss';         // Sistema completo de modales
 
-// ============================================================================
-// 💎 DASHBOARD - ARQUITECTURA SCSS MODULAR REFACTORIZADA
-// El componente más complejo dividido en módulos especializados para mejor mantenimiento
-// ============================================================================
+// =========================================================
 
 // ============================================================================
-// 🚨 ANGULAR MATERIAL GLOBAL OVERRIDES - CONFIGURACIÓN BASE GLOBAL
-// Overrides universales para Material Design que afectan todo el dashboard
-// ============================================================================
+// 🌐 ESTILOS GLOBALES PARA TODO EL DASHBOARD
 ::ng-deep {
   .dashboard-container {
     // 🎯 ELIMINAR RECURSIVAMENTE TODOS LOS FONDOS BLANCOS DE MATERIAL
@@ -60,7 +55,7 @@
       fill: vars.$warning-yellow !important;
     }
 
-    // 🃏 CARDS GLOBALES (usando estructura favoritos)
+    // 🃏 CARDS GLOBALES
     .mat-mdc-card,
     mat-card {
       background: rgba(30, 41, 59, 0.6) !important;

@@ -1,0 +1,1061 @@
+// ============================================================================
+// 🎭 DASHBOARD MODALS - GLASSMORPHIC MODAL SYSTEM
+// Sistema completo de modales con estilos glassmórficos consistentes con el dashboard
+// ============================================================================
+
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
+
+// ============================================================================
+// 🌟 ESTILOS BASE PARA TODOS LOS MODALES
+// Overlay de fondo y estructura base
+// ============================================================================
+::ng-deep {
+  .dashboard-container {
+    // 🎭 OVERLAY BASE - FONDO GLASSMÓRFICO
+    .currency-detail-modal {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      background: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(10px) !important;
+      z-index: 9999 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 1rem !important;
+      animation: backdropFadeIn 0.3s ease-out !important;
+      
+      // 🎯 PATRÓN DE FONDO SUTIL
+      &::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: 
+          radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 70%, rgba(251, 191, 36, 0.1) 0%, transparent 50%) !important;
+        pointer-events: none !important;
+        z-index: -1 !important;
+      }
+
+      // 🚨 CONTENEDOR PRINCIPAL DEL MODAL - GLASSMORPHISM EXTREMO
+      .modal-content {
+        position: relative !important;
+        background: linear-gradient(
+          135deg, 
+          rgba(255, 255, 255, 0.15) 0%, 
+          rgba(255, 255, 255, 0.08) 100%
+        ) !important;
+        backdrop-filter: blur(25px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 24px !important;
+        box-shadow: 
+          0 25px 50px rgba(0, 0, 0, 0.25),
+          0 12px 40px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        max-width: 90vw !important;
+        max-height: 90vh !important;
+        width: auto !important;
+        min-width: 320px !important;
+        animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        overflow: hidden !important;
+        
+        // 🎨 OVERLAY INTERIOR PARA MEJOR GLASSMORPHISM
+        &::before {
+          content: '' !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          background: 
+            radial-gradient(circle at 30% 20%, rgba(251, 191, 36, 0.08) 0%, transparent 60%),
+            radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 60%) !important;
+          pointer-events: none !important;
+          z-index: 0 !important;
+        }
+        
+        // 🎯 TODOS LOS ELEMENTOS INTERNOS POR ENCIMA DEL OVERLAY
+        > * {
+          position: relative !important;
+          z-index: 1 !important;
+        }
+      }
+
+      // 🔘 BOTÓN DE CERRAR - ESTILO CONSISTENTE
+      .modal-close-btn {
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        width: 44px !important;
+        height: 44px !important;
+        border: none !important;
+        background: rgba(239, 68, 68, 0.15) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 50% !important;
+        color: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        z-index: 10 !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        
+        &:hover {
+          background: rgba(239, 68, 68, 0.25) !important;
+          transform: scale(1.1) !important;
+          border-color: rgba(239, 68, 68, 0.5) !important;
+        }
+        
+        mat-icon, .mat-icon {
+          font-size: 24px !important;
+          width: 24px !important;
+          height: 24px !important;
+          color: #ffffff !important;
+        }
+      }
+
+      // 🏛️ HEADER BASE PARA TODOS LOS MODALES
+      .modal-header {
+        padding: 2rem 2rem 1.5rem !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: linear-gradient(
+          135deg,
+          rgba(30, 41, 59, 0.3) 0%,
+          rgba(51, 65, 85, 0.2) 100%
+        ) !important;
+        
+        .header-content {
+          display: flex !important;
+          align-items: center !important;
+          gap: 1rem !important;
+          
+          @media (max-width: 768px) {
+            flex-direction: column !important;
+            text-align: center !important;
+          }
+        }
+        
+        h2 {
+          font-family: 'Inter', sans-serif !important;
+          font-size: clamp(1.5rem, 3vw, 2rem) !important;
+          font-weight: 700 !important;
+          color: #ffffff !important;
+          margin: 0 !important;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        p {
+          font-family: 'Inter', sans-serif !important;
+          color: rgba(255, 255, 255, 0.8) !important;
+          margin: 0.5rem 0 0 !important;
+          font-size: 1rem !important;
+        }
+        
+        .currency-flag {
+          font-size: 2.5rem !important;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) !important;
+        }
+        
+        .currency-info {
+          flex: 1 !important;
+          
+          .currency-subtitle {
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-size: 0.9rem !important;
+            font-weight: 400 !important;
+          }
+        }
+        
+        .current-rate {
+          text-align: right !important;
+          
+          @media (max-width: 768px) {
+            text-align: center !important;
+          }
+          
+          .rate-value {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            color: #fbbf24 !important;
+            text-shadow: 0 2px 8px rgba(251, 191, 36, 0.4) !important;
+          }
+          
+          .rate-label {
+            font-size: 0.8rem !important;
+            color: rgba(255, 255, 255, 0.6) !important;
+            margin-top: 0.25rem !important;
+          }
+        }
+      }
+
+      // 📦 BODY BASE PARA TODOS LOS MODALES
+      .modal-body {
+        position: relative !important;
+        z-index: 1 !important;
+        
+        // 🎯 FORZAR COLORES EN TODOS LOS ELEMENTOS MATERIAL
+        *, *::before, *::after {
+          color: #ffffff !important;
+        }
+        
+        // 🚨 OVERRIDES MATERIAL DESIGN
+        .mat-mdc-button,
+        .mat-mdc-raised-button,
+        .mat-mdc-unelevated-button,
+        .mat-mdc-outlined-button {
+          color: #ffffff !important;
+          
+          .mat-mdc-button-touch-target {
+            background: transparent !important;
+          }
+        }
+        
+        mat-icon, .mat-icon {
+          color: #fbbf24 !important;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🔧 MODAL DE ANÁLISIS TÉCNICO (CON SCROLL)
+// Modal detallado para usuarios autenticados
+// ============================================================================
+::ng-deep {
+  .dashboard-container {
+    .technical-analysis-modal {
+      .modal-content {
+        width: min(1200px, 90vw) !important;
+        height: auto !important;
+        max-height: 85vh !important;
+        
+        @media (max-width: 968px) {
+          width: 95vw !important;
+          max-height: 90vh !important;
+        }
+      }
+      
+      .modal-body {
+        padding: 0 !important;
+        overflow-y: auto !important;
+        max-height: calc(85vh - 120px) !important;
+        
+        // 🎨 SCROLLBAR PERSONALIZADA
+        &::-webkit-scrollbar {
+          width: 8px !important;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: rgba(51, 65, 85, 0.3) !important;
+          border-radius: 10px !important;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: rgba(251, 191, 36, 0.5) !important;
+          border-radius: 10px !important;
+          transition: background 0.3s ease !important;
+          
+          &:hover {
+            background: rgba(251, 191, 36, 0.7) !important;
+          }
+        }
+        
+        // 📊 SECCIONES DE ANÁLISIS
+        .analysis-section {
+          padding: 2rem !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+          
+          &:last-child {
+            border-bottom: none !important;
+          }
+          
+          .section-title {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            margin-bottom: 1.5rem !important;
+            
+            mat-icon {
+              color: #fbbf24 !important;
+              font-size: 1.5rem !important;
+            }
+            
+            h3 {
+              font-family: 'Inter', sans-serif !important;
+              font-size: 1.25rem !important;
+              font-weight: 600 !important;
+              color: #ffffff !important;
+              margin: 0 !important;
+            }
+          }
+        }
+        
+        // 📈 GRID DE MÉTRICAS
+        .metrics-grid {
+          display: grid !important;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+          gap: 1.5rem !important;
+          
+          @media (max-width: 768px) {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+          }
+        }
+        
+        // 🎯 TARJETAS DE MÉTRICAS
+        .metric-card {
+          background: linear-gradient(
+            135deg,
+            rgba(30, 41, 59, 0.4) 0%,
+            rgba(51, 65, 85, 0.3) 100%
+          ) !important;
+          backdrop-filter: blur(15px) !important;
+          border: 1px solid rgba(255, 255, 255, 0.15) !important;
+          border-radius: 16px !important;
+          padding: 1.5rem !important;
+          transition: all 0.3s ease !important;
+          
+          &:hover {
+            transform: translateY(-2px) !important;
+            border-color: rgba(251, 191, 36, 0.3) !important;
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15) !important;
+          }
+          
+          .metric-header {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            margin-bottom: 1rem !important;
+            
+            mat-icon {
+              color: #fbbf24 !important;
+            }
+            
+            .metric-title {
+              font-weight: 500 !important;
+              color: rgba(255, 255, 255, 0.9) !important;
+            }
+          }
+          
+          .primary-value {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            margin-bottom: 0.5rem !important;
+            
+            &.strong {
+              color: #22c55e !important;
+            }
+            
+            &.weak {
+              color: #ef4444 !important;
+            }
+          }
+          
+          .secondary-info {
+            font-size: 0.875rem !important;
+            color: rgba(255, 255, 255, 0.7) !important;
+            margin-bottom: 1rem !important;
+          }
+          
+          .trend-indicator {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 12px !important;
+            font-weight: 500 !important;
+            
+            &.trend-up {
+              background: rgba(34, 197, 94, 0.2) !important;
+              color: #22c55e !important;
+              border: 1px solid rgba(34, 197, 94, 0.3) !important;
+            }
+            
+            &.trend-down {
+              background: rgba(239, 68, 68, 0.2) !important;
+              color: #ef4444 !important;
+              border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            }
+            
+            &.trend-neutral {
+              background: rgba(148, 163, 184, 0.2) !important;
+              color: #94a3b8 !important;
+              border: 1px solid rgba(148, 163, 184, 0.3) !important;
+            }
+            
+            mat-icon {
+              font-size: 1.25rem !important;
+            }
+          }
+          
+          .volatility-level {
+            display: inline-block !important;
+            padding: 0.25rem 0.75rem !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            
+            &.baja {
+              background: rgba(34, 197, 94, 0.2) !important;
+              color: #22c55e !important;
+            }
+            
+            &.media {
+              background: rgba(251, 191, 36, 0.2) !important;
+              color: #fbbf24 !important;
+            }
+            
+            &.alta {
+              background: rgba(239, 68, 68, 0.2) !important;
+              color: #ef4444 !important;
+            }
+          }
+          
+          .strength-bar {
+            width: 100% !important;
+            height: 6px !important;
+            background: rgba(51, 65, 85, 0.5) !important;
+            border-radius: 3px !important;
+            overflow: hidden !important;
+            margin-top: 0.5rem !important;
+            
+            .strength-fill {
+              height: 100% !important;
+              background: linear-gradient(90deg, #fbbf24, #f59e0b) !important;
+              transition: width 1s ease !important;
+            }
+          }
+        }
+        
+        // 🎯 INDICADORES TÉCNICOS
+        .indicators-grid {
+          display: grid !important;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+          gap: 1.5rem !important;
+          
+          @media (max-width: 768px) {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        
+        .indicator-card {
+          background: linear-gradient(
+            135deg,
+            rgba(30, 41, 59, 0.4) 0%,
+            rgba(51, 65, 85, 0.3) 100%
+          ) !important;
+          backdrop-filter: blur(15px) !important;
+          border: 1px solid rgba(255, 255, 255, 0.15) !important;
+          border-radius: 16px !important;
+          padding: 1.5rem !important;
+          text-align: center !important;
+          
+          .indicator-header {
+            margin-bottom: 1rem !important;
+            
+            .indicator-name {
+              font-family: 'Inter', sans-serif !important;
+              font-size: 1.1rem !important;
+              font-weight: 600 !important;
+              color: #fbbf24 !important;
+            }
+            
+            .indicator-period {
+              font-size: 0.8rem !important;
+              color: rgba(255, 255, 255, 0.6) !important;
+              margin-left: 0.5rem !important;
+            }
+          }
+          
+          .indicator-value {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            margin-bottom: 0.5rem !important;
+            
+            &.oversold {
+              color: #22c55e !important;
+            }
+            
+            &.overbought {
+              color: #ef4444 !important;
+            }
+            
+            &.normal {
+              color: #fbbf24 !important;
+            }
+          }
+          
+          .indicator-status {
+            font-size: 0.9rem !important;
+            margin-bottom: 1rem !important;
+            
+            .oversold {
+              color: #22c55e !important;
+            }
+            
+            .overbought {
+              color: #ef4444 !important;
+            }
+            
+            .normal {
+              color: #fbbf24 !important;
+            }
+          }
+          
+          .rsi-bar {
+            position: relative !important;
+            width: 100% !important;
+            height: 8px !important;
+            background: rgba(51, 65, 85, 0.5) !important;
+            border-radius: 4px !important;
+            overflow: hidden !important;
+            
+            .rsi-fill {
+              height: 100% !important;
+              background: linear-gradient(90deg, #22c55e, #fbbf24, #ef4444) !important;
+              transition: width 1s ease !important;
+            }
+            
+            .rsi-marker {
+              position: absolute !important;
+              top: -20px !important;
+              font-size: 0.7rem !important;
+              color: rgba(255, 255, 255, 0.6) !important;
+              
+              &.oversold-mark {
+                left: 30% !important;
+              }
+              
+              &.overbought-mark {
+                left: 70% !important;
+              }
+            }
+          }
+        }
+        
+        // 🏆 SECCIÓN DE RECOMENDACIÓN
+        .recommendation-section {
+          padding: 2rem !important;
+          background: linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.1) 0%,
+            rgba(139, 92, 246, 0.1) 100%
+          ) !important;
+          
+          .recommendation-card {
+            background: linear-gradient(
+              135deg,
+              rgba(30, 41, 59, 0.6) 0%,
+              rgba(51, 65, 85, 0.4) 100%
+            ) !important;
+            border: 2px solid rgba(251, 191, 36, 0.3) !important;
+            border-radius: 20px !important;
+            padding: 2rem !important;
+            
+            .recommendation-header {
+              display: flex !important;
+              align-items: center !important;
+              gap: 1rem !important;
+              margin-bottom: 1.5rem !important;
+              
+              @media (max-width: 768px) {
+                flex-direction: column !important;
+                text-align: center !important;
+              }
+              
+              .rec-icon-container {
+                width: 60px !important;
+                height: 60px !important;
+                background: rgba(251, 191, 36, 0.2) !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                
+                .rec-icon {
+                  font-size: 2rem !important;
+                  color: #fbbf24 !important;
+                }
+              }
+              
+              .rec-title {
+                flex: 1 !important;
+                
+                h3 {
+                  font-size: 1.5rem !important;
+                  font-weight: 700 !important;
+                  color: #ffffff !important;
+                  margin: 0 0 0.25rem !important;
+                }
+                
+                .rec-subtitle {
+                  color: rgba(255, 255, 255, 0.7) !important;
+                  font-size: 0.9rem !important;
+                }
+              }
+              
+              .action-badge {
+                padding: 0.5rem 1.5rem !important;
+                border-radius: 25px !important;
+                font-weight: 600 !important;
+                font-size: 0.9rem !important;
+                text-transform: uppercase !important;
+                
+                &.badge-comprar {
+                  background: rgba(34, 197, 94, 0.2) !important;
+                  color: #22c55e !important;
+                  border: 1px solid rgba(34, 197, 94, 0.4) !important;
+                }
+                
+                &.badge-vender {
+                  background: rgba(239, 68, 68, 0.2) !important;
+                  color: #ef4444 !important;
+                  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+                }
+                
+                &.badge-mantener {
+                  background: rgba(251, 191, 36, 0.2) !important;
+                  color: #fbbf24 !important;
+                  border: 1px solid rgba(251, 191, 36, 0.4) !important;
+                }
+              }
+            }
+            
+            .recommendation-content {
+              .rec-message {
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 1rem !important;
+                margin-bottom: 1.5rem !important;
+                
+                mat-icon {
+                  color: #fbbf24 !important;
+                  margin-top: 0.25rem !important;
+                }
+                
+                p {
+                  font-size: 1.1rem !important;
+                  line-height: 1.6 !important;
+                  color: rgba(255, 255, 255, 0.9) !important;
+                  margin: 0 !important;
+                }
+              }
+              
+              .rec-details {
+                .confidence-meter {
+                  margin-bottom: 1.5rem !important;
+                  
+                  .confidence-label {
+                    display: block !important;
+                    font-size: 0.9rem !important;
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    margin-bottom: 0.5rem !important;
+                  }
+                  
+                  .confidence-bar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: 8px !important;
+                    background: rgba(51, 65, 85, 0.5) !important;
+                    border-radius: 4px !important;
+                    overflow: hidden !important;
+                    
+                    .confidence-fill {
+                      height: 100% !important;
+                      background: linear-gradient(90deg, #fbbf24, #22c55e) !important;
+                      transition: width 1s ease !important;
+                    }
+                  }
+                  
+                  .confidence-value {
+                    font-family: 'JetBrains Mono', monospace !important;
+                    font-weight: 600 !important;
+                    color: #fbbf24 !important;
+                    margin-left: 0.5rem !important;
+                  }
+                }
+                
+                .signals-list {
+                  .signals-title {
+                    display: block !important;
+                    font-size: 0.9rem !important;
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    margin-bottom: 0.75rem !important;
+                  }
+                  
+                  .signals-chips {
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    gap: 0.5rem !important;
+                    
+                    .signal-chip {
+                      background: rgba(59, 130, 246, 0.2) !important;
+                      color: #60a5fa !important;
+                      padding: 0.25rem 0.75rem !important;
+                      border-radius: 12px !important;
+                      font-size: 0.8rem !important;
+                      border: 1px solid rgba(59, 130, 246, 0.3) !important;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        // 🚀 SECCIÓN DE ACCIONES
+        .actions-section {
+          padding: 2rem !important;
+          border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+          
+          .quick-actions {
+            display: flex !important;
+            gap: 1rem !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            
+            .action-btn {
+              display: flex !important;
+              align-items: center !important;
+              gap: 0.5rem !important;
+              padding: 0.75rem 1.5rem !important;
+              border-radius: 12px !important;
+              font-weight: 500 !important;
+              transition: all 0.3s ease !important;
+              border: none !important;
+              cursor: pointer !important;
+              
+              &.primary-action {
+                background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+                color: #000000 !important;
+                
+                &:hover {
+                  transform: translateY(-2px) !important;
+                  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4) !important;
+                }
+                
+                mat-icon {
+                  color: #000000 !important;
+                }
+              }
+              
+              &.secondary-action {
+                background: rgba(59, 130, 246, 0.2) !important;
+                color: #60a5fa !important;
+                border: 1px solid rgba(59, 130, 246, 0.3) !important;
+                
+                &:hover {
+                  background: rgba(59, 130, 246, 0.3) !important;
+                  transform: translateY(-2px) !important;
+                }
+                
+                mat-icon {
+                  color: #60a5fa !important;
+                }
+              }
+              
+              &.tertiary-action {
+                background: rgba(148, 163, 184, 0.2) !important;
+                color: #94a3b8 !important;
+                border: 1px solid rgba(148, 163, 184, 0.3) !important;
+                
+                &:hover {
+                  background: rgba(148, 163, 184, 0.3) !important;
+                  transform: translateY(-2px) !important;
+                }
+                
+                mat-icon {
+                  color: #94a3b8 !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🌟 MODAL PREMIUM (SIN SCROLL - TODO VISIBLE)
+// Modal compacto y atractivo para conversión de usuarios
+// ============================================================================
+::ng-deep {
+  .dashboard-container {
+    .premium-modal {
+      .modal-content {
+        width: min(600px, 90vw) !important;
+        height: auto !important;
+        max-height: none !important;
+        
+        @media (max-width: 768px) {
+          width: 95vw !important;
+        }
+      }
+      
+      .modal-header {
+        text-align: center !important;
+        padding: 2rem 2rem 1rem !important;
+        position: relative !important;
+        
+        // 🎨 GRADIENTE PREMIUM ESPECIAL
+        background: linear-gradient(
+          135deg,
+          rgba(139, 92, 246, 0.3) 0%,
+          rgba(59, 130, 246, 0.3) 50%,
+          rgba(251, 191, 36, 0.3) 100%
+        ) !important;
+        
+        .premium-lock-icon {
+          width: 80px !important;
+          height: 80px !important;
+          background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+          border-radius: 50% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 auto 1.5rem !important;
+          box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4) !important;
+          
+          mat-icon {
+            font-size: 2.5rem !important;
+            color: #000000 !important;
+          }
+        }
+        
+        .premium-header-content {
+          h2 {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            font-size: clamp(1.75rem, 4vw, 2.25rem) !important;
+            margin-bottom: 0.75rem !important;
+          }
+          
+          p {
+            font-size: 1.1rem !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            max-width: 400px !important;
+            margin: 0 auto !important;
+            line-height: 1.5 !important;
+          }
+        }
+      }
+      
+      .modal-body {
+        padding: 1.5rem 2rem 2rem !important;
+        overflow: visible !important;
+        
+        .premium-features {
+          display: grid !important;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+          gap: 1rem !important;
+          margin-bottom: 2rem !important;
+          
+          @media (max-width: 768px) {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+          }
+          
+          .feature-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+            padding: 1rem !important;
+            background: linear-gradient(
+              135deg,
+              rgba(30, 41, 59, 0.4) 0%,
+              rgba(51, 65, 85, 0.3) 100%
+            ) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease !important;
+            
+            &:hover {
+              transform: translateX(4px) !important;
+              border-color: rgba(251, 191, 36, 0.4) !important;
+              box-shadow: 0 4px 16px rgba(251, 191, 36, 0.2) !important;
+            }
+            
+            mat-icon {
+              color: #fbbf24 !important;
+              font-size: 1.5rem !important;
+              flex-shrink: 0 !important;
+            }
+            
+            .feature-text {
+              color: rgba(255, 255, 255, 0.9) !important;
+              font-weight: 500 !important;
+              line-height: 1.4 !important;
+            }
+          }
+        }
+        
+        .premium-actions {
+          display: flex !important;
+          gap: 1rem !important;
+          justify-content: center !important;
+          
+          @media (max-width: 768px) {
+            flex-direction: column !important;
+          }
+          
+          .premium-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.75rem !important;
+            padding: 1rem 2rem !important;
+            border-radius: 16px !important;
+            font-weight: 600 !important;
+            font-size: 1.1rem !important;
+            transition: all 0.3s ease !important;
+            border: none !important;
+            cursor: pointer !important;
+            min-width: 200px !important;
+            
+            &:not(.secondary) {
+              background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+              color: #000000 !important;
+              box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3) !important;
+              
+              &:hover {
+                transform: translateY(-3px) !important;
+                box-shadow: 0 8px 24px rgba(251, 191, 36, 0.5) !important;
+              }
+              
+              mat-icon {
+                color: #000000 !important;
+              }
+            }
+            
+            &.secondary {
+              background: rgba(59, 130, 246, 0.2) !important;
+              color: #60a5fa !important;
+              border: 2px solid rgba(59, 130, 246, 0.4) !important;
+              
+              &:hover {
+                background: rgba(59, 130, 246, 0.3) !important;
+                transform: translateY(-2px) !important;
+                border-color: rgba(59, 130, 246, 0.6) !important;
+              }
+              
+              mat-icon {
+                color: #60a5fa !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🎭 ANIMACIONES PARA MODALES
+// ============================================================================
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ============================================================================
+// 🎯 RESPONSIVE OVERRIDES PARA MODALES
+// ============================================================================
+@media (max-width: 768px) {
+  ::ng-deep {
+    .dashboard-container {
+      .currency-detail-modal {
+        padding: 0.5rem !important;
+        
+        .modal-content {
+          max-width: 100vw !important;
+          max-height: 100vh !important;
+          border-radius: 20px !important;
+        }
+        
+        .modal-header {
+          padding: 1.5rem 1rem 1rem !important;
+          
+          .header-content {
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 1rem !important;
+          }
+          
+          .current-rate {
+            text-align: center !important;
+          }
+        }
+        
+        .modal-body {
+          .analysis-section {
+            padding: 1.5rem 1rem !important;
+          }
+          
+          .metrics-grid,
+          .indicators-grid {
+            grid-template-columns: 1fr !important;
+          }
+          
+          .quick-actions {
+            flex-direction: column !important;
+            
+            .action-btn {
+              width: 100% !important;
+              justify-content: center !important;
+            }
+          }
+        }
+      }
+      
+      .premium-modal {
+        .modal-body {
+          padding: 1rem !important;
+          
+          .premium-features {
+            grid-template-columns: 1fr !important;
+          }
+          
+          .premium-actions {
+            flex-direction: column !important;
+            
+            .premium-btn {
+              width: 100% !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
