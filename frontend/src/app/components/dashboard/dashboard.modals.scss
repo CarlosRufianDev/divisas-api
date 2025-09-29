@@ -91,10 +91,10 @@
       // 🔘 BOTÓN DE CERRAR - ESTILO CONSISTENTE
       .modal-close-btn {
         position: absolute !important;
-        top: 1rem !important;
-        right: 1rem !important;
-        width: 44px !important;
-        height: 44px !important;
+        top: 0.5rem !important;
+        right: 0.5rem !important;
+        width: 36px !important;
+        height: 36px !important;
         border: none !important;
         background: rgba(239, 68, 68, 0.15) !important;
         backdrop-filter: blur(10px) !important;
@@ -115,16 +115,16 @@
         }
         
         mat-icon, .mat-icon {
-          font-size: 24px !important;
-          width: 24px !important;
-          height: 24px !important;
+          font-size: 20px !important;
+          width: 20px !important;
+          height: 20px !important;
           color: #ffffff !important;
         }
       }
 
       // 🏛️ HEADER BASE PARA TODOS LOS MODALES
       .modal-header {
-        padding: 2rem 2rem 1.5rem !important;
+        padding: 2rem 3rem 1.5rem 2rem !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
         background: linear-gradient(
           135deg,
@@ -798,18 +798,45 @@
   .dashboard-container {
     .premium-modal {
       .modal-content {
-        width: min(600px, 90vw) !important;
+        width: min(650px, 85vw) !important;
         height: auto !important;
-        max-height: none !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        
+        // 🎨 SCROLLBAR PERSONALIZADA PARA MODAL PREMIUM
+        &::-webkit-scrollbar {
+          width: 6px !important;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: rgba(51, 65, 85, 0.3) !important;
+          border-radius: 8px !important;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: rgba(251, 191, 36, 0.5) !important;
+          border-radius: 8px !important;
+          transition: background 0.3s ease !important;
+          
+          &:hover {
+            background: rgba(251, 191, 36, 0.7) !important;
+          }
+        }
+        
+        @media (max-width: 968px) {
+          width: 90vw !important;
+          max-height: 90vh !important;
+        }
         
         @media (max-width: 768px) {
           width: 95vw !important;
+          max-height: 95vh !important;
         }
       }
       
       .modal-header {
         text-align: center !important;
-        padding: 2rem 2rem 1rem !important;
+        padding: 2rem 2rem 1.25rem !important;
         position: relative !important;
         
         // 🎨 GRADIENTE PREMIUM ESPECIAL
@@ -821,18 +848,18 @@
         ) !important;
         
         .premium-lock-icon {
-          width: 80px !important;
-          height: 80px !important;
+          width: 60px !important;
+          height: 60px !important;
           background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
           border-radius: 50% !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          margin: 0 auto 1.5rem !important;
+          margin: 0 auto 1rem !important;
           box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4) !important;
           
           mat-icon {
-            font-size: 2.5rem !important;
+            font-size: 2rem !important;
             color: #000000 !important;
           }
         }
@@ -843,47 +870,51 @@
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             background-clip: text !important;
-            font-size: clamp(1.75rem, 4vw, 2.25rem) !important;
-            margin-bottom: 0.75rem !important;
+            font-size: clamp(1.5rem, 3.5vw, 1.9rem) !important;
+            margin: 0.25rem 0 0.75rem !important;
+            padding: 0.25rem 0 !important;
+            line-height: 1.3 !important;
+            display: block !important;
           }
           
           p {
-            font-size: 1.1rem !important;
+            font-size: 1rem !important;
             color: rgba(255, 255, 255, 0.9) !important;
-            max-width: 400px !important;
-            margin: 0 auto !important;
+            max-width: 450px !important;
+            margin: 0 auto 0.5rem !important;
             line-height: 1.5 !important;
+            padding: 0.25rem 0 !important;
           }
         }
       }
       
       .modal-body {
-        padding: 1.5rem 2rem 2rem !important;
+        padding: 1rem 1.5rem 1.5rem !important;
         overflow: visible !important;
         
         .premium-features {
           display: grid !important;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-          gap: 1rem !important;
-          margin-bottom: 2rem !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.75rem !important;
+          margin-bottom: 1.5rem !important;
           
           @media (max-width: 768px) {
             grid-template-columns: 1fr !important;
-            gap: 0.75rem !important;
+            gap: 0.5rem !important;
           }
           
           .feature-item {
             display: flex !important;
             align-items: center !important;
-            gap: 1rem !important;
-            padding: 1rem !important;
+            gap: 0.75rem !important;
+            padding: 0.75rem !important;
             background: linear-gradient(
               135deg,
               rgba(30, 41, 59, 0.4) 0%,
               rgba(51, 65, 85, 0.3) 100%
             ) !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             transition: all 0.3s ease !important;
             
             &:hover {
@@ -894,14 +925,15 @@
             
             mat-icon {
               color: #fbbf24 !important;
-              font-size: 1.5rem !important;
+              font-size: 1.25rem !important;
               flex-shrink: 0 !important;
             }
             
             .feature-text {
               color: rgba(255, 255, 255, 0.9) !important;
               font-weight: 500 !important;
-              line-height: 1.4 !important;
+              font-size: 0.9rem !important;
+              line-height: 1.3 !important;
             }
           }
         }
@@ -919,15 +951,15 @@
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.75rem !important;
-            padding: 1rem 2rem !important;
-            border-radius: 16px !important;
+            gap: 0.5rem !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 14px !important;
             font-weight: 600 !important;
-            font-size: 1.1rem !important;
+            font-size: 1rem !important;
             transition: all 0.3s ease !important;
             border: none !important;
             cursor: pointer !important;
-            min-width: 200px !important;
+            min-width: 180px !important;
             
             &:not(.secondary) {
               background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
@@ -1005,7 +1037,7 @@
         }
         
         .modal-header {
-          padding: 1.5rem 1rem 1rem !important;
+          padding: 1.5rem 2.5rem 1rem 1rem !important;
           
           .header-content {
             flex-direction: column !important;
@@ -1015,6 +1047,19 @@
           
           .current-rate {
             text-align: center !important;
+          }
+        }
+        
+        .modal-close-btn {
+          top: 0.25rem !important;
+          right: 0.25rem !important;
+          width: 32px !important;
+          height: 32px !important;
+          
+          mat-icon, .mat-icon {
+            font-size: 18px !important;
+            width: 18px !important;
+            height: 18px !important;
           }
         }
         
