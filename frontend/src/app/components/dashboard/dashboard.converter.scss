@@ -306,15 +306,15 @@
               }
             }
 
-            // Selects (valores en blanco) - CENTRADOS
+            // Selects (valores en blanco) - ALINEADOS A LA IZQUIERDA
             .mat-mdc-select-value,
             .mat-mdc-select-value-text,
             .mat-mdc-select-min-line {
               color: white !important;
               font-family: 'Poppins', sans-serif !important;
               font-weight: 500 !important;
-              text-align: center !important;
-              justify-content: center !important;
+              text-align: left !important;
+              justify-content: flex-start !important;
               display: flex !important;
             }
 
@@ -417,17 +417,16 @@
             width: 100% !important;
           }
 
-          // Centrar el form field dentro de la card
+          // Form field con ancho completo
           .mat-mdc-form-field {
             width: 100% !important;
-            text-align: center !important;
           }
 
-          // Centrar el select value
+          // Alinear el select value a la izquierda
           .mat-mdc-select-value,
           .mat-mdc-select-value-text {
-            text-align: center !important;
-            justify-content: center !important;
+            text-align: left !important;
+            justify-content: flex-start !important;
           }
 
           // Estilo para el nuevo formato de monedas
@@ -436,7 +435,7 @@
             font-family: 'Poppins', sans-serif !important;
             font-weight: 500 !important;
             color: white !important;
-            text-align: center !important;
+            text-align: left !important;
             font-size: 0.95rem !important;
           }
 
@@ -1231,24 +1230,24 @@
       color: #fbbf24 !important;
     }
 
-    // 🎯 VALORES DE SELECT EN BLANCO - FORZADO Y CENTRADO
+    // 🎯 VALORES DE SELECT EN BLANCO - FORZADO Y ALINEADO A LA IZQUIERDA
     .mat-mdc-select-value,
     .mat-mdc-select-value-text,
     .mat-mdc-select-min-line {
       color: white !important;
       font-family: 'Poppins', sans-serif !important;
       font-weight: 500 !important;
-      text-align: center !important;
-      justify-content: center !important;
+      text-align: left !important;
+      justify-content: flex-start !important;
       display: flex !important;
     }
 
-    // Para el texto cuando no hay selección (placeholder) - CENTRADO
+    // Para el texto cuando no hay selección (placeholder) - ALINEADO A LA IZQUIERDA
     .mat-mdc-select-placeholder {
       color: rgba(255, 255, 255, 0.7) !important;
       font-family: 'Poppins', sans-serif !important;
-      text-align: center !important;
-      justify-content: center !important;
+      text-align: left !important;
+      justify-content: flex-start !important;
       display: flex !important;
     }
 
@@ -1358,15 +1357,15 @@
       .mat-mdc-select-value-text,
       .mat-mdc-select-min-line {
         color: white !important;
-        text-align: center !important;
-        justify-content: center !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
         display: flex !important;
       }
 
       .mat-mdc-select-placeholder {
         color: rgba(255, 255, 255, 0.7) !important;
-        text-align: center !important;
-        justify-content: center !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
         display: flex !important;
       }
 

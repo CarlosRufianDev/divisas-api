@@ -12,6 +12,11 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth';
+import { Currency, DivisasService } from '../../services/divisas';
+import {
+  ADDITIONAL_CURRENCIES,
+  CURRENCY_FLAGS,
+} from '../../shared/currency-flags';
 import { MaterialModule } from '../../shared/material.module';
 
 interface MultipleConversion {
@@ -44,46 +49,16 @@ export class Calculator implements OnInit, OnDestroy {
   loading = false;
   results?: MultipleConversionResponse;
 
-  // ✅ MISMA LISTA QUE OTROS COMPONENTES (31 monedas)
-  availableCurrencies = [
-    { code: 'USD', name: 'Dólar Estadounidense', flag: '🇺🇸' },
-    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
-    { code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧' },
-    { code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵' },
-    { code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭' },
-    { code: 'CAD', name: 'Dólar Canadiense', flag: '🇨🇦' },
-    { code: 'AUD', name: 'Dólar Australiano', flag: '🇦🇺' },
-    { code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳' },
-    { code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽' },
-    { code: 'BRL', name: 'Real Brasileño', flag: '🇧🇷' },
-    { code: 'KRW', name: 'Won Surcoreano', flag: '🇰🇷' },
-    { code: 'INR', name: 'Rupia India', flag: '🇮🇳' },
-    { code: 'SEK', name: 'Corona Sueca', flag: '🇸🇪' },
-    { code: 'NOK', name: 'Corona Noruega', flag: '🇳🇴' },
-    { code: 'HKD', name: 'Dólar de Hong Kong', flag: '🇭🇰' },
-    { code: 'SGD', name: 'Dólar de Singapur', flag: '🇸🇬' },
-    { code: 'NZD', name: 'Dólar Neozelandés', flag: '🇳🇿' },
-    { code: 'ZAR', name: 'Rand Sudafricano', flag: '🇿🇦' },
-    { code: 'TRY', name: 'Lira Turca', flag: '🇹🇷' },
-    { code: 'PLN', name: 'Zloty Polaco', flag: '🇵🇱' },
-    // ✅ NUEVAS MONEDAS:
-    { code: 'BGN', name: 'Lev Búlgaro', flag: '🇧🇬' },
-    { code: 'CZK', name: 'Corona Checa', flag: '🇨🇿' },
-    { code: 'DKK', name: 'Corona Danesa', flag: '🇩🇰' },
-    { code: 'HUF', name: 'Florín Húngaro', flag: '🇭🇺' },
-    { code: 'IDR', name: 'Rupia Indonesia', flag: '🇮🇩' },
-    { code: 'ILS', name: 'Shekel Israelí', flag: '🇮🇱' },
-    { code: 'ISK', name: 'Corona Islandesa', flag: '🇮🇸' },
-    { code: 'MYR', name: 'Ringgit Malayo', flag: '🇲🇾' },
-    { code: 'PHP', name: 'Peso Filipino', flag: '🇵🇭' },
-    { code: 'RON', name: 'Leu Rumano', flag: '🇷🇴' },
-    { code: 'THB', name: 'Baht Tailandés', flag: '🇹🇭' },
-  ];
+  // ✅ MISMA ESTRUCTURA QUE DASHBOARD: currencies dinámicas
+  availableCurrencies: Currency[] = [];
+  isLimitedMode = false;
+  limitedCurrencies: Currency[] = [];
 
   // ✅ USAR INJECT() EN LUGAR DE CONSTRUCTOR (Angular 20)
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private divisasService = inject(DivisasService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
@@ -93,11 +68,28 @@ export class Calculator implements OnInit, OnDestroy {
       from: ['USD', Validators.required],
       targetCurrencies: [['EUR', 'GBP', 'JPY', 'CHF'], Validators.required],
     });
+
+    // ✅ LISTENER PARA ACTUALIZAR FORMATO DE DISPLAY
+    this.calculatorForm
+      .get('from')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        setTimeout(() => this.updateCurrencyDisplay(), 100);
+      });
+
+    this.calculatorForm
+      .get('targetCurrencies')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        setTimeout(() => this.updateCurrencyDisplay(), 100);
+      });
   }
 
-  ngOnInit(): void {
-    // Verificar autenticación
-    if (!this.authService.isAuthenticated()) {
+  async ngOnInit(): Promise<void> {
+    // ✅ DETERMINAR MODO DE OPERACIÓN (igual que dashboard)
+    this.isLimitedMode = !this.authService.isAuthenticated();
+
+    if (this.isLimitedMode) {
       this.snackBar
         .open(
           '🔐 Esta funcionalidad es exclusiva para usuarios registrados',
@@ -114,7 +106,101 @@ export class Calculator implements OnInit, OnDestroy {
       return;
     }
 
+    // ✅ CARGAR DIVISAS DINÁMICAMENTE (igual que dashboard)
+    await this.loadCurrencies();
+
+    // ✅ ACTUALIZAR DISPLAY INICIAL
+    setTimeout(() => this.updateCurrencyDisplay(), 500);
+
     console.log('🧮 Componente Calculadora iniciado');
+  }
+
+  /**
+   * ✅ CARGAR DIVISAS DINÁMICAMENTE DESDE FRANKFURTER (igual que dashboard)
+   */
+  private async loadCurrencies(): Promise<void> {
+    try {
+      const currenciesData = await this.divisasService
+        .loadCurrenciesFromFrankfurter()
+        .toPromise();
+
+      if (currenciesData) {
+        // Transformar respuesta de Frankfurter en nuestro formato
+        this.availableCurrencies = Object.keys(currenciesData).map((code) => ({
+          code,
+          name: currenciesData[code],
+          flag: CURRENCY_FLAGS[code] || '🏳️',
+          symbol: code,
+        }));
+
+        // Agregar divisas adicionales (como ARS) que no están en Frankfurter
+        this.availableCurrencies = [
+          ...this.availableCurrencies,
+          ...ADDITIONAL_CURRENCIES,
+        ];
+
+        // Ordenar alfabéticamente por código
+        this.availableCurrencies.sort((a, b) => a.code.localeCompare(b.code));
+
+        console.log(
+          `✅ Cargadas ${this.availableCurrencies.length} divisas para calculadora`
+        );
+      } else {
+        throw new Error('No se recibieron datos de Frankfurter');
+      }
+    } catch (error) {
+      console.error('❌ Error cargando divisas, usando fallback:', error);
+
+      // Fallback: crear lista mínima desde el mapeo de flags
+      this.availableCurrencies = Object.keys(CURRENCY_FLAGS).map((code) => ({
+        code,
+        name: this.getCurrencyNameFallback(code),
+        flag: CURRENCY_FLAGS[code],
+        symbol: code,
+      }));
+
+      this.availableCurrencies.sort((a, b) => a.code.localeCompare(b.code));
+    }
+  }
+
+  /**
+   * ✅ FALLBACK DE NOMBRES DE CURRENCY (igual que dashboard)
+   */
+  private getCurrencyNameFallback(code: string): string {
+    const names: Record<string, string> = {
+      USD: 'US Dollar',
+      EUR: 'Euro',
+      GBP: 'British Pound',
+      JPY: 'Japanese Yen',
+      CHF: 'Swiss Franc',
+      CAD: 'Canadian Dollar',
+      AUD: 'Australian Dollar',
+      CNY: 'Chinese Yuan',
+      MXN: 'Mexican Peso',
+      BRL: 'Brazilian Real',
+      KRW: 'South Korean Won',
+      INR: 'Indian Rupee',
+      SEK: 'Swedish Krona',
+      NOK: 'Norwegian Krone',
+      HKD: 'Hong Kong Dollar',
+      SGD: 'Singapore Dollar',
+      NZD: 'New Zealand Dollar',
+      ZAR: 'South African Rand',
+      TRY: 'Turkish Lira',
+      PLN: 'Polish Złoty',
+      BGN: 'Bulgarian Lev',
+      CZK: 'Czech Koruna',
+      DKK: 'Danish Krone',
+      HUF: 'Hungarian Forint',
+      IDR: 'Indonesian Rupiah',
+      ILS: 'Israeli New Shekel',
+      ISK: 'Icelandic Króna',
+      MYR: 'Malaysian Ringgit',
+      PHP: 'Philippine Peso',
+      RON: 'Romanian Leu',
+      THB: 'Thai Baht',
+    };
+    return names[code] || `${code} Currency`;
   }
 
   ngOnDestroy(): void {
@@ -210,6 +296,44 @@ export class Calculator implements OnInit, OnDestroy {
   getCurrencyName(code: string): string {
     const currency = this.availableCurrencies.find((c) => c.code === code);
     return currency?.name || code;
+  }
+
+  /**
+   * ✅ OBTENER FORMATO COMPLETO DE CURRENCY PARA DISPLAY
+   */
+  getCurrencyDisplay(code: string): string {
+    const currency = this.availableCurrencies.find((c) => c.code === code);
+    return currency ? `${currency.code} - ${currency.name}` : code;
+  }
+
+  /**
+   * ✅ ACTUALIZAR DISPLAY DE CURRENCY EN CAMPOS SELECCIONADOS
+   */
+  private updateCurrencyDisplay(): void {
+    // Actualizar moneda base
+    const fromValue = this.calculatorForm.get('from')?.value;
+    if (fromValue) {
+      const fromElement = document.querySelector(
+        '.currency-field .mat-mdc-select-value-text'
+      );
+      if (fromElement) {
+        fromElement.textContent = this.getCurrencyDisplay(fromValue);
+      }
+    }
+
+    // Actualizar monedas destino
+    const targetValues = this.calculatorForm.get('targetCurrencies')?.value;
+    if (targetValues && Array.isArray(targetValues)) {
+      const targetElement = document.querySelector(
+        '.target-currencies-field .mat-mdc-select-value-text'
+      );
+      if (targetElement) {
+        const displayTexts = targetValues.map((code) =>
+          this.getCurrencyDisplay(code)
+        );
+        targetElement.textContent = displayTexts.join(', ');
+      }
+    }
   }
 
   copyToClipboard(conversion: MultipleConversion): void {
