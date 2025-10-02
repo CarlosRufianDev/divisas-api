@@ -1,26 +1,27 @@
 <div class="calculator-container">
-  <div class="content-wrapper">
-    <!-- Header con título -->
-    <div class="calculator-header">
-      <div class="header-content">
-        <div class="header-info">
-          <div class="header-text">
-            <h1>Calculadora Múltiple</h1>
-            <p>Convierte una cantidad a múltiples divisas simultáneamente con tasas de cambio en tiempo real</p>
-          </div>
+  <!-- Header con título -->
+  <div class="calculator-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="header-text">
+          <h1>Calculadora Múltiple</h1>
+          <p>Convierte una cantidad a múltiples divisas simultáneamente con tasas de cambio en tiempo real</p>
         </div>
-        <div class="header-stats" *ngIf="results?.conversions">
-          <div class="stat-item">
-            <span class="stat-number">{{ results?.conversions?.length || 0 }}</span>
-            <span class="stat-label">Conversiones</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">{{ results?.baseAmount | currency:(results?.baseCurrency || 'USD'):'symbol':'1.2-2' }}</span>
-            <span class="stat-label">Monto Base</span>
-          </div>
+      </div>
+      <div class="header-stats" *ngIf="results?.conversions">
+        <div class="stat-item">
+          <span class="stat-number">{{ results?.conversions?.length || 0 }}</span>
+          <span class="stat-label">Conversiones</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ results?.baseAmount | currency:(results?.baseCurrency || 'USD'):'symbol':'1.2-2' }}</span>
+          <span class="stat-label">Monto Base</span>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="content-wrapper">
 
     <!-- Formulario de configuración -->
     <mat-card class="calculator-form-card">

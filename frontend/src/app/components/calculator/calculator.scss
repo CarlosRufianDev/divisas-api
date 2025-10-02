@@ -13,6 +13,202 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 // ============================================================================
+// 🏛️ CALCULATOR HEADER - EXACTAMENTE IGUAL QUE DASHBOARD Y ALERTAS
+// ============================================================================
+.calculator-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%) !important;
+  color: white !important;
+  padding: 2.5rem 2rem 3rem !important;
+  border-radius: 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+
+  // Patrón de fondo sutil específico para calculadora (tonos amarillos consistentes)
+  &::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 50%) !important;
+    pointer-events: none !important;
+  }
+
+  .header-content {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 2rem !important;
+    position: relative !important;
+    z-index: 20 !important;
+
+    @media (max-width: 768px) {
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
+    }
+  }
+
+  .header-info {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    flex: 1 !important;
+
+    @media (max-width: 768px) {
+      flex-direction: column !important;
+      text-align: center !important;
+      gap: 0.75rem !important;
+    }
+  }
+
+  .header-text {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+
+    h1 {
+      font-family: 'Inter', sans-serif !important;
+      font-size: clamp(2.5rem, 5vw, 4rem) !important;
+      font-weight: 900 !important;
+      line-height: 1.1 !important;
+      letter-spacing: -0.05em !important;
+      margin: 0 !important;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+    }
+
+    p {
+      font-family: 'Inter', sans-serif !important;
+      font-size: clamp(1rem, 2vw, 1.2rem) !important;
+      font-weight: 400 !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      margin: 0 !important;
+      max-width: 500px !important;
+      line-height: 1.6 !important;
+
+      @media (max-width: 768px) {
+        text-align: center !important;
+        padding: 0 0.5rem !important;
+      }
+    }
+  }
+
+  .header-stats {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    align-items: center !important;
+
+    @media (max-width: 768px) {
+      justify-content: center !important;
+      flex-wrap: wrap !important;
+    }
+
+    .stat-item {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
+      padding: 1rem 1.5rem !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(10px) !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      min-width: 100px !important;
+
+      .stat-number {
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+        color: vars.$warning-yellow !important;
+        margin-bottom: 0.25rem !important;
+        line-height: 1 !important;
+      }
+
+      .stat-label {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.8rem !important;
+        font-weight: 500 !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        line-height: 1 !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🏠 CONTENEDOR BASE DE LA CALCULADORA
+// ============================================================================
+.calculator-container {
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  animation: fadeIn 0.6s ease-out;
+  
+  // 🌟 FONDO GLASSMORPHISM BASE
+  background: vars.$gradient-primary;
+  position: relative;
+  
+  // Patrón de fondo sutil
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // 📱 RESPONSIVIDAD MÓVIL
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+// ============================================================================
+// 🎯 CONTENEDOR DE CONTENIDO
+// ============================================================================
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  // Animación escalonada para las secciones
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+  }
+}
+
+// ============================================================================
 // 🚨 ANGULAR MATERIAL GLOBAL OVERRIDES - NG-DEEP (PATRÓN HISTORIAL/ALERTAS)
 // ============================================================================
 ::ng-deep {
@@ -821,6 +1017,31 @@
 @include mix.tablet-only {
   .results-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ============================================================================
+// 🎭 ANIMACIONES LOCALES
+// ============================================================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

@@ -81,13 +81,17 @@ export class Historial implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
 }
 
-// Traditional constructor injection (still widely used)
-constructor(
-  private divisasService: DivisasService,
-  private authService: AuthService,
-  private snackBar: MatSnackBar,
-  public router: Router
-) {}
+// Mixed pattern (most common in codebase)
+export class Dashboard implements OnInit, OnDestroy {
+  // inject() for new services
+  private divisasService = inject(DivisasService);
+  private authService = inject(AuthService);
+
+  // constructor for traditional services
+  constructor() {
+    // Component initialization logic
+  }
+}
 ```
 
 **Functional Guards & Interceptors**: Use new Angular functional approach:
@@ -385,21 +389,22 @@ $spacing-xl: 2rem; // 32px
 // tests/setupMongo.js
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
-
 let mongod;
 
 beforeAll(async () => {
+  process.env.DOTENV_DISABLE_LOG = 'true';
+  process.env.JWT_SECRET = 'testsecret';
   mongod = await MongoMemoryServer.create();
   const uri = mongod.getUri();
   process.env.MONGODB_URI = uri;
   await mongoose.connect(uri);
-});
+}, 30000); // Increased timeout
 
 afterAll(async () => {
   await mongoose.connection.dropDatabase();
   await mongoose.connection.close();
   if (mongod) await mongod.stop();
-});
+}, 30000);
 ```
 
 **Test Command Pattern**:
@@ -487,12 +492,15 @@ Recent route additions:
 
 - `/api/historial` → maps to convert routes for backward compatibility
 - `/api/exchange/currencies` → dynamic currency fetching from Frankfurter
+- `/api/activity-logs` → comprehensive user activity tracking with stats
+- `/api/profile` → user profile management with password changes
 
 ### JWT Token Management
 
 - **Expiration**: 2 hours (configurable in auth controller)
 - **Auto-logout**: Frontend interceptor handles 401 responses automatically
 - **Storage**: localStorage in frontend, sent as `Bearer ${token}` header
+- **Optional Auth**: Many routes work both authenticated and non-authenticated
 
 ### Activity Logging Pattern
 
@@ -503,11 +511,20 @@ const { logConversion } = require('../middleware/activityLogger');
 router.post('/convert', requireAuth, logConversion, controller.method);
 ```
 
+**Advanced Activity Tracking**:
+
+- 20+ activity types tracked automatically
+- Middleware extracts details (IP, user agent, response times)
+- Static methods on ActivityLog model: `ActivityLog.createLog(userId, action, details)`
+- Comprehensive stats endpoints with categorized actions
+
 ### Angular Functional Architecture
 
 - **Guards**: Use `CanActivateFn` functional guards instead of class-based
 - **Interceptors**: Use `HttpInterceptorFn` functional interceptors
 - **Locale**: Spanish (`es-ES`) configured globally
+- **App Config**: Uses `ApplicationConfig` with functional providers
+- **Standalone Components**: All components use `standalone: true` with explicit imports
 
 ### Database Performance
 
