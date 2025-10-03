@@ -1,0 +1,916 @@
+// ============================================================================
+// 👤 PROFILE - ARQUITECTURA SCSS MODULAR COMPLETA
+// Siguiendo el patrón del dashboard, alertas y favoritos
+// ============================================================================
+
+// 📦 IMPORTS MODULARES
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
+
+// 🎨 FUENTES TIPOGRÁFICAS ESTÁNDAR
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+// ============================================================================
+// � OVERRIDE NUCLEAR - FORZAR ANCHO COMPLETO
+// ============================================================================
+:host {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+// ============================================================================
+// �🚨 ANGULAR MATERIAL GLOBAL OVERRIDES - FORZADO AGRESIVO
+// Configuración específica para el componente profile
+// ============================================================================
+::ng-deep {
+  // 🔥 FORZAR ANCHO COMPLETO EN TODOS LOS ELEMENTOS
+  .profile-container,
+  .profile-container *,
+  .profile-container .mat-mdc-card,
+  .profile-container .mat-mdc-card-header,
+  .profile-container .mat-mdc-card-content,
+  .profile-container .profile-info,
+  .profile-container .form-section,
+  .profile-container .danger-zone {
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+  // 🎴 MAT-CARD OVERRIDES
+  .profile-container {
+    .mat-mdc-card {
+      background: vars.$glass-dark !important;
+      backdrop-filter: blur(15px) !important;
+      border-radius: vars.$radius-xl !important;
+      box-shadow: vars.$shadow-lg !important;
+      border: 1px solid vars.$glass-white-subtle !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      transition: vars.$transition-normal !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
+
+    .mat-mdc-card-header {
+      background: vars.$gradient-primary !important;
+      backdrop-filter: blur(20px) !important;
+      border-radius: vars.$radius-2xl !important;
+      box-shadow: vars.$shadow-profile-header !important;
+      border: 1px solid vars.$glass-white-subtle !important;
+      position: relative !important;
+      overflow: hidden !important;
+      padding: vars.$spacing-2xl vars.$spacing-xl !important;
+      margin: 0 !important;
+      color: vars.$text-white !important;
+
+      // Background pattern con radial gradients
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(102, 126, 234, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(118, 75, 162, 0.15) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+
+      .mat-mdc-card-header-text {
+        margin: 0 !important;
+        width: 100%;
+      }
+    }
+
+    .mat-mdc-card-title {
+      @include mix.flex-row(vars.$spacing-md);
+      @include mix.heading-primary();
+      color: vars.$text-white !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-weight: vars.$font-weight-bold !important;
+      letter-spacing: -0.025em !important;
+
+      .mat-icon {
+        font-size: clamp(2rem, 4vw, 2.5rem) !important;
+        width: auto !important;
+        height: auto !important;
+        color: vars.$text-white !important;
+        filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.2));
+      }
+    }
+
+    .mat-mdc-card-content {
+      padding: vars.$spacing-2xl !important;
+      background: transparent !important;
+
+      @include mix.mobile-only {
+        padding: vars.$spacing-lg !important;
+      }
+    }
+  }
+
+  // � FORZAR ESTILOS GLOBALES DE MATERIAL (estilo calculator)
+  .profile-container {
+    // Forzar colores en selects y labels
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text, 
+    .mat-mdc-select-min-line {
+      color: white !important;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+    }
+    
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: vars.$info-blue !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 600 !important;
+    }
+
+    // Iconos en azul
+    .mat-mdc-form-field-icon-suffix,
+    .mat-icon,
+    mat-icon {
+      color: vars.$info-blue !important;
+    }
+
+    // Flechas de select en azul
+    .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow,
+    .mat-mdc-select-arrow svg,
+    .mat-mdc-select-arrow svg path {
+      color: vars.$info-blue !important;
+      fill: vars.$info-blue !important;
+    }
+  }
+
+  // �📝 MAT-FORM-FIELD OVERRIDES (ESTILO GLASSMORPHISM)
+  .profile-container {
+
+    // 🎯 OVERRIDES ULTRA-ESPECÍFICOS PARA FORM-SECTION (estilo calculator)
+    .form-section {
+      mat-form-field {
+        width: 100% !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 500 !important;
+
+        // Wrapper principal con glassmorfismo amarillo (estilo calculator)
+        .mat-mdc-text-field-wrapper {
+          background: rgba(255, 255, 255, 0.08) !important;
+          backdrop-filter: blur(10px) !important;
+          -webkit-backdrop-filter: blur(10px) !important;
+          border-radius: 12px !important;
+          border: 2px solid rgba(59, 130, 246, 0.4) !important;
+          transition: all 0.3s ease !important;
+          box-shadow: 
+            0 2px 8px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        }
+
+        // Label en azul brillante (equivalente al amarillo de calculator)
+        .mat-mdc-floating-label,
+        .mdc-floating-label,
+        .mat-mdc-form-field-label,
+        mat-label {
+          color: vars.$info-blue !important;
+          font-family: 'Inter', sans-serif !important;
+          font-weight: 600 !important;
+          font-size: 0.95rem !important;
+        }
+
+        // Label cuando está flotando
+        .mdc-floating-label--float-above {
+          color: vars.$info-blue !important;
+          font-weight: 700 !important;
+        }
+
+        // Input de texto en blanco con fuente monospace para datos
+        .mdc-text-field__input,
+        input.mat-mdc-input-element {
+          color: white !important;
+          font-family: 'JetBrains Mono', monospace !important;
+          font-weight: 600 !important;
+          font-size: 1.1rem !important;
+          caret-color: vars.$info-blue !important;
+          
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-style: italic !important;
+          }
+        }
+
+        // Iconos en azul brillante con sombra
+        .mat-mdc-form-field-icon-suffix,
+        .mat-icon,
+        mat-icon {
+          color: vars.$info-blue !important;
+          filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+          transition: all 0.3s ease !important;
+        }
+
+        // Notched outline con borde azul
+        .mdc-notched-outline {
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            border-width: 2px !important;
+            transition: all 0.3s ease !important;
+          }
+        }
+
+        // Estado hover (mismo efecto que calculator)
+        &:hover:not(.mat-form-field-disabled) {
+          .mat-mdc-text-field-wrapper {
+            background: rgba(255, 255, 255, 0.12) !important;
+            border-color: rgba(59, 130, 246, 0.6) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+          }
+
+          .mdc-notched-outline {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: rgba(59, 130, 246, 0.6) !important;
+            }
+          }
+
+          .mat-icon {
+            color: #5b73e8 !important;
+            transform: scale(1.05) !important;
+          }
+        }
+
+        // Estado focus (activo) - ring azul como calculator
+        &.mat-focused {
+          .mat-mdc-text-field-wrapper {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: vars.$info-blue !important;
+            border-width: 2px !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+          }
+
+          .mdc-notched-outline {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: vars.$info-blue !important;
+              border-width: 2px !important;
+            }
+          }
+
+          .mat-mdc-floating-label {
+            color: vars.$info-blue !important;
+          }
+
+          .mat-icon {
+            color: vars.$info-blue !important;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.5));
+          }
+        }
+
+        // Mensajes de error con fondo oscuro
+        .mat-mdc-form-field-error {
+          color: #fca5a5 !important;
+          font-weight: 600 !important;
+          font-family: 'Inter', sans-serif !important;
+          background: rgba(220, 38, 38, 0.15);
+          padding: vars.$spacing-xs vars.$spacing-sm;
+          border-radius: vars.$radius-sm;
+          border-left: 3px solid #ef4444;
+          margin-top: vars.$spacing-xs;
+        }
+
+        // Estado de error
+        &.mat-form-field-invalid {
+          .mat-mdc-text-field-wrapper {
+            border-color: #ef4444 !important;
+            background: rgba(220, 38, 38, 0.15) !important;
+            box-shadow: 
+              0 2px 8px rgba(220, 38, 38, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+          }
+
+          .mdc-notched-outline {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: #ef4444 !important;
+            }
+          }
+
+          .mat-mdc-floating-label {
+            color: #fca5a5 !important;
+          }
+
+          .mat-icon {
+            color: #ef4444 !important;
+          }
+        }
+
+        // Estado disabled
+        &.mat-form-field-disabled {
+          .mat-mdc-text-field-wrapper {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            background: rgba(100, 116, 139, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+          }
+
+          input {
+            cursor: not-allowed !important;
+          }
+        }
+      }
+    }
+  }
+
+  // 🔲 MAT-BUTTON OVERRIDES
+  .profile-container {
+    // Botón primario (raised)
+    button.mat-mdc-raised-button {
+      @include mix.button-base();
+      text-transform: none !important;
+      letter-spacing: 0.025em !important;
+      box-shadow: vars.$shadow-sm !important;
+
+      &.mat-primary {
+        @include mix.button-profile-primary();
+      }
+
+      &.mat-warn {
+        @include mix.button-profile-danger();
+      }
+
+      .mat-icon {
+        font-size: 1.25rem !important;
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+        margin-right: vars.$spacing-xs !important;
+      }
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px) !important;
+        box-shadow: vars.$shadow-lg !important;
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0) !important;
+      }
+
+      &:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        background: vars.$text-tertiary !important;
+      }
+    }
+
+    // Botones de iconos (visibility toggle)
+    button.mat-mdc-icon-button {
+      transition: all vars.$transition-normal !important;
+
+      &:hover {
+        background: vars.$info-blue-10 !important;
+      }
+
+      .mat-icon {
+        transition: color vars.$transition-normal !important;
+      }
+    }
+  }
+
+  // 🔀 MAT-DIVIDER OVERRIDES
+  .profile-container {
+    .mat-divider {
+      margin: vars.$spacing-2xl 0 !important;
+      border-top-color: vars.$glass-white-20 !important;
+      border-top-width: 1px !important;
+      opacity: 0.6 !important;
+    }
+  }
+
+  // 🔔 MAT-ICON OVERRIDES
+  .profile-container {
+    .mat-icon {
+      font-family: 'Material Icons' !important;
+      user-select: none !important;
+      transition: all vars.$transition-normal !important;
+    }
+  }
+}
+
+// ============================================================================
+// 🏠 CONTENEDOR PRINCIPAL - FORZADO MÁXIMO
+// ============================================================================
+.profile-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: vars.$spacing-2xl !important;
+  background: vars.$gradient-primary !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: vars.$spacing-2xl !important;
+  margin: 0 !important;
+  animation: fadeIn 0.5s ease-out;
+  box-sizing: border-box !important;
+
+  // Aplicar animaciones de entrada escalonadas
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+
+  @include mix.mobile-only {
+    padding: vars.$spacing-lg;
+  }
+
+  @include mix.tablet-up {
+    padding: vars.$spacing-2xl vars.$spacing-xl;
+  }
+
+  @include mix.desktop-up {
+    padding: vars.$spacing-2xl vars.$spacing-3xl;
+  }
+}
+
+// ============================================================================
+// 📋 INFORMACIÓN DEL PERFIL
+// ============================================================================
+.profile-container .profile-info {
+  padding: vars.$spacing-xl !important;
+  border-radius: vars.$radius-lg !important;
+  background: vars.$info-blue-05 !important;
+  border-left: 4px solid vars.$info-blue !important;
+  margin-bottom: vars.$spacing-xl !important;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+
+  h3 {
+    @include mix.flex-row(vars.$spacing-md);
+    @include mix.heading-secondary();
+    color: vars.$info-blue !important;
+    margin: 0 0 vars.$spacing-lg 0 !important;
+    font-weight: vars.$font-weight-bold !important;
+
+    .mat-icon {
+      color: vars.$info-blue !important;
+      font-size: 1.75rem !important;
+      width: 1.75rem !important;
+      height: 1.75rem !important;
+    }
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: vars.$spacing-lg;
+    margin-top: vars.$spacing-lg;
+
+    @include mix.mobile-only {
+      grid-template-columns: 1fr;
+      gap: vars.$spacing-md;
+    }
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-xs;
+    padding: vars.$spacing-md !important;
+    background: vars.$glass-white !important;
+    border-radius: vars.$radius-md !important;
+    border: 1px solid vars.$info-blue-10 !important;
+    transition: all vars.$transition-normal !important;
+
+    &:hover {
+      background: vars.$bg-card !important;
+      border-color: vars.$info-blue-20 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: vars.$shadow-md !important;
+    }
+
+    strong {
+      font-family: vars.$font-family-primary;
+      font-size: vars.$font-size-sm;
+      font-weight: vars.$font-weight-semibold;
+      color: vars.$text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    span {
+      @include mix.mono-text();
+      color: vars.$text-primary;
+      word-break: break-all;
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      background: vars.$info-blue-05;
+      border-radius: vars.$radius-sm;
+      border-left: 3px solid vars.$info-blue;
+    }
+  }
+}
+
+// ============================================================================
+// 📝 SECCIONES DE FORMULARIOS - GLASSMORFISMO OSCURO ESTILO ALERTAS
+// ============================================================================
+.profile-container .form-section {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-lg;
+  padding: vars.$spacing-2xl !important;
+  
+  // 🎨 GLASSMORFISMO OSCURO con múltiples capas (mismo estilo que alertas)
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.85) 0%,
+    rgba(51, 65, 85, 0.8) 25%,
+    rgba(75, 85, 99, 0.75) 50%,
+    rgba(55, 65, 81, 0.8) 75%,
+    rgba(31, 41, 55, 0.85) 100%
+  ) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  
+  border-radius: vars.$radius-lg !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all vars.$transition-normal !important;
+  animation: fadeInUp 0.6s ease-out backwards;
+  position: relative;
+  overflow: hidden;
+
+  // Patrón de fondo sutil con gradientes radiales
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // Asegurar que el contenido esté por encima del patrón
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+  &:nth-child(6) {
+    animation-delay: 0.3s;
+  }
+  &:nth-child(8) {
+    animation-delay: 0.4s;
+  }
+  &:nth-child(10) {
+    animation-delay: 0.5s;
+  }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.9) 0%,
+      rgba(51, 65, 85, 0.85) 25%,
+      rgba(75, 85, 99, 0.8) 50%,
+      rgba(55, 65, 81, 0.85) 75%,
+      rgba(31, 41, 55, 0.9) 100%
+    ) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.35),
+      0 6px 20px rgba(59, 130, 246, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  }
+
+  h3 {
+    @include mix.flex-row(vars.$spacing-md);
+    @include mix.heading-secondary();
+    color: white !important;
+    margin: 0 0 vars.$spacing-lg 0 !important;
+    font-weight: vars.$font-weight-bold !important;
+    font-size: 1.3rem !important;
+    display: flex;
+    align-items: center;
+    padding-bottom: vars.$spacing-md;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+
+    // Barra lateral decorativa
+    &::before {
+      content: '';
+      width: 4px;
+      height: 28px;
+      background: linear-gradient(180deg, vars.$info-blue 0%, vars.$success-green 100%);
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-right: vars.$spacing-sm;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    .mat-icon {
+      color: vars.$info-blue !important;
+      font-size: 1.75rem !important;
+      width: 1.75rem !important;
+      height: 1.75rem !important;
+      filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+    }
+  }
+
+  form {
+    @include mix.flex-column(vars.$spacing-lg);
+    width: 100%;
+  }
+
+  .full-width {
+    width: 100% !important;
+  }
+
+  .action-button {
+    align-self: flex-start;
+    margin-top: vars.$spacing-lg;
+
+    // Botón estilo alertas con gradiente
+    @include mix.button-base();
+    background: linear-gradient(135deg, vars.$info-blue 0%, #5b73e8 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    padding: vars.$spacing-md vars.$spacing-2xl !important;
+    border-radius: vars.$radius-md !important;
+    box-shadow: 
+      0 4px 14px rgba(59, 130, 246, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-transform: none !important;
+    letter-spacing: 0.025em;
+    
+    .mat-icon {
+      margin-right: vars.$spacing-sm;
+      font-size: 1.25rem !important;
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+      color: white !important;
+      filter: none;
+    }
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.02) !important;
+      box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.3) !important;
+      background: linear-gradient(135deg, #5b73e8 0%, vars.$info-blue 100%) !important;
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0) scale(0.98) !important;
+    }
+    
+    &:disabled {
+      opacity: 0.5 !important;
+      cursor: not-allowed !important;
+      background: rgba(100, 116, 139, 0.6) !important;
+      box-shadow: none !important;
+    }
+
+    @include mix.mobile-only {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// ============================================================================
+// 🚨 ZONA DE PELIGRO (DELETE ACCOUNT)
+// ============================================================================
+.profile-container .danger-zone {
+  padding: vars.$spacing-xl !important;
+  border-radius: vars.$radius-lg !important;
+  background: vars.$danger-red-10 !important;
+  border-left: 4px solid vars.$danger-red !important;
+  margin-top: vars.$spacing-2xl !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: vars.$shadow-sm !important;
+  animation: fadeInUp 0.6s ease-out 0.5s backwards;
+
+  &:hover {
+    background: vars.$danger-red-15 !important;
+    border-color: vars.$danger-red !important;
+    box-shadow: 0 4px 20px vars.$danger-red-20 !important;
+  }
+
+  h3 {
+    color: vars.$danger-red !important;
+
+    .mat-icon {
+      color: vars.$danger-red !important;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  }
+
+  .warning-text {
+    display: flex;
+    flex-direction: row;
+    gap: vars.$spacing-sm;
+    align-items: center;
+    font-family: vars.$font-family-primary;
+    font-size: vars.$font-size-base;
+    line-height: 1.6;
+    padding: vars.$spacing-md !important;
+    background: vars.$glass-white !important;
+    border-radius: vars.$radius-md !important;
+    border-left: 3px solid vars.$warning-yellow !important;
+    color: vars.$text-primary;
+    margin: 0 0 vars.$spacing-lg 0;
+    font-weight: vars.$font-weight-medium;
+
+    .mat-icon {
+      color: vars.$warning-yellow !important;
+      font-size: 1.5rem !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      flex-shrink: 0;
+    }
+  }
+
+  .delete-button {
+    background: vars.$gradient-danger !important;
+    color: vars.$text-white !important;
+
+    &:hover:not(:disabled) {
+      animation: warningShake 0.5s ease-in-out;
+      box-shadow: 0 8px 24px vars.$danger-red-40 !important;
+    }
+  }
+}
+
+// ============================================================================
+// 🎨 ESTADOS Y EFECTOS ESPECIALES
+// ============================================================================
+
+// Loading state
+.profile-container.loading {
+  pointer-events: none;
+  opacity: 0.6;
+
+  .profile-card {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+      );
+      animation: shimmer 2s infinite;
+    }
+  }
+}
+
+// Success state (cuando se actualiza algo)
+.profile-success {
+  .form-section {
+    animation: successPulse 1s ease-out;
+  }
+}
+
+// Error state
+.profile-error {
+  .form-section {
+    animation: warningShake 0.5s ease-in-out;
+  }
+}
+
+// ============================================================================
+// 📱 RESPONSIVE DESIGN
+// ============================================================================
+
+@include mix.mobile-only {
+  .profile-container {
+    padding: vars.$spacing-md;
+  }
+
+  .profile-info {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-section {
+    padding: vars.$spacing-lg;
+
+    h3 {
+      font-size: vars.$font-size-lg !important;
+
+      .mat-icon {
+        font-size: 1.5rem !important;
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+      }
+    }
+
+    .action-button {
+      width: 100%;
+    }
+  }
+}
+
+@include mix.tablet-up {
+  .profile-container {
+    padding: vars.$spacing-xl;
+  }
+}
+
+@include mix.desktop-up {
+  .profile-container {
+    max-width: 1000px;
+    padding: vars.$spacing-2xl vars.$spacing-xl;
+  }
+
+  .profile-info {
+    .info-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+// ============================================================================
+// 🎯 UTILIDADES Y HELPERS
+// ============================================================================
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: vars.$text-tertiary;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+.mt-1 {
+  margin-top: vars.$spacing-sm !important;
+}
+.mb-1 {
+  margin-bottom: vars.$spacing-sm !important;
+}
+.mt-2 {
+  margin-top: vars.$spacing-md !important;
+}
+.mb-2 {
+  margin-bottom: vars.$spacing-md !important;
+}
+.mt-3 {
+  margin-top: vars.$spacing-lg !important;
+}
+.mb-3 {
+  margin-bottom: vars.$spacing-lg !important;
+}

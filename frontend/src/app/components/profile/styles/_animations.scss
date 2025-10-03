@@ -1,0 +1,284 @@
+// ============================================================================
+// 🎭 SISTEMA DE ANIMACIONES PARA PROFILE
+// Animaciones fluidas y profesionales siguiendo el patrón establecido
+// ============================================================================
+
+@use 'variables' as vars;
+
+// ============================================================================
+// 🎬 KEYFRAMES PRINCIPALES
+// ============================================================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes profileIconPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 6px 12px rgba(102, 126, 234, 0.5));
+    transform: scale(1.05);
+  }
+}
+
+@keyframes cardFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes successPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes dangerPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes warningShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+// ============================================================================
+// 🎨 CLASES DE ANIMACIÓN UTILITARIAS
+// ============================================================================
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-profile-icon-pulse {
+  animation: profileIconPulse 2s ease-in-out infinite;
+}
+
+.animate-card-float {
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+}
+
+.animate-success-pulse {
+  animation: successPulse 1.5s ease-out;
+}
+
+.animate-danger-pulse {
+  animation: dangerPulse 1.5s ease-out;
+}
+
+.animate-warning-shake {
+  animation: warningShake 0.5s ease-in-out;
+}
+
+// ============================================================================
+// 📱 ANIMACIONES ESCALONADAS (STAGGER)
+// ============================================================================
+
+.stagger-animation {
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 👤 ANIMACIONES ESPECÍFICAS PARA PROFILE
+// ============================================================================
+
+.profile-icon-animate {
+  animation: profileIconPulse 2s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+.profile-card-enter {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+.profile-form-section {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.profile-success-state {
+  animation: successPulse 1s ease-out;
+}
+
+.profile-danger-state {
+  animation: dangerPulse 1s ease-out;
+}
+
+// ============================================================================
+// 🎯 ANIMACIONES DE ESTADOS
+// ============================================================================
+
+.loading-state {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+.hover-lift-animation {
+  transition: all vars.$transition-normal;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: vars.$shadow-xl;
+  }
+}
+
+.button-press-animation {
+  transition: all vars.$transition-fast;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

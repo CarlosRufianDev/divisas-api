@@ -1,560 +1,1414 @@
-// ===============================
-// 🎨 PERFIL - DivisasPro
-// ===============================
+// ============================================================================
+// 👤 PROFILE - ARQUITECTURA SCSS MODULAR REFACTORIZADA
+// Versión optimizada sin duplicados, siguiendo patrón dashboard/alertas
+// ============================================================================
 
-@use '../../../styles/shared' as shared;
+// 📦 IMPORTS MODULARES
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
 
-// Contenedor principal con el mismo estilo del dashboard
-.profile-container {
-  min-height: 100vh;
-  @include shared.background-gradient;
-  @include shared.particle-background;
-  padding: shared.$spacing-xl;
-  position: relative;
-  overflow: hidden;
-  max-width: shared.$large-desktop;
-  margin: 0 auto;
+// 🎨 FUENTES TIPOGRÁFICAS ESTÁNDAR
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-  // Contenido por encima del fondo
-  > * {
-    position: relative;
-    z-index: 1;
-  }
+// ============================================================================
+// 🌐 OVERRIDE NUCLEAR - FORZAR ANCHO COMPLETO
+// ============================================================================
+:host {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-// Header premium mejorado
-.profile-header {
-  text-align: center;
-  margin-bottom: shared.$spacing-2xl;
-  
-  .premium-badge {
-    @include shared.premium-badge;
-    font-size: 0.9rem;
-    
-    mat-icon {
-      color: #333;
-      font-size: 1.2rem;
+// ============================================================================
+// 🚨 ANGULAR MATERIAL GLOBAL OVERRIDES - BLOQUE ÚNICO CONSOLIDADO
+// Todos los overrides de Material en un único lugar para evitar duplicados
+// ============================================================================
+::ng-deep {
+  // 🔥 FORZAR ANCHO COMPLETO Y ELIMINAR FONDOS BLANCOS EN TODOS LOS ELEMENTOS
+  .profile-container,
+  .profile-container *,
+  .profile-container .mat-mdc-card,
+  .profile-container .mat-mdc-card-header,
+  .profile-container .mat-mdc-card-content,
+  .profile-container .profile-info,
+  .profile-container .form-section,
+  .profile-container .danger-zone {
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+  // 🚨 FORZAR ELIMINACIÓN TOTAL DE FONDOS BLANCOS (MÁXIMA ESPECIFICIDAD)
+  .profile-container {
+    *,
+    *::before,
+    *::after {
+      background: transparent !important;
+      background-color: transparent !important;
     }
-  }
 
-  h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 0 0 12px 0;
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 2.8rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
-    mat-icon {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 2.8rem;
-      width: 2.8rem;
-      height: 2.8rem;
+    // 🔥 FORZAR CON MÁXIMA ESPECIFICIDAD - TODOS LOS ELEMENTOS DE MATERIAL
+    input,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    .mat-mdc-input-element,
+    .mdc-text-field__input,
+    button.mat-mdc-icon-button,
+    button.mat-mdc-icon-button:hover,
+    button.mat-mdc-icon-button:focus,
+    .mat-icon,
+    mat-icon,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    .mdc-notched-outline,
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing,
+    .mat-mdc-form-field-icon-suffix,
+    .mat-mdc-form-field-icon-prefix,
+    .mat-mdc-text-field-wrapper,
+    .mat-mdc-form-field,
+    // 🚨 ELEMENTOS ESPECÍFICOS DEL TEXTO PREDEFINIDO
+    .mat-mdc-input-value,
+    .mdc-text-field__input::placeholder,
+    input::placeholder,
+    input::-webkit-input-placeholder,
+    input::-moz-placeholder,
+    input:-ms-input-placeholder,
+    input:-moz-placeholder,
+    // Elementos de texto interno de Material
+    .mat-input-element,
+    .mat-form-field-infix,
+    .mat-mdc-form-field-infix,
+    .mdc-text-field__affix,
+    .mdc-text-field__affix--prefix,
+    .mdc-text-field__affix--suffix {
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
     }
-  }
 
-  p {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.2rem;
-    margin: 0;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-}
+    // 🚨 FORZAR POSICIONAMIENTO DE ÍCONOS CON MÁXIMA ESPECIFICIDAD
+    .mat-mdc-form-field-icon-suffix,
+    mat-form-field .mat-mdc-form-field-icon-suffix,
+    .mat-mdc-form-field .mat-mdc-form-field-icon-suffix {
+      position: relative !important;
+      right: 20px !important; // Mover MÁS hacia la izquierda
+      margin-right: -8px !important;
+      margin-left: -16px !important;
+      background: transparent !important;
+      background-color: transparent !important;
+    }
 
-// Tarjeta principal con glassmorphism
-.profile-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 25px;
-  animation: slideInUp 0.6s ease-out;
-  
-  mat-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px 20px 0 0;
-    margin: 0;
-    padding: 25px;
+    // 🚨 BOTONES DE VISIBILIDAD CON FUERZA MÁXIMA
+    button.mat-mdc-icon-button,
+    .mat-mdc-form-field button.mat-mdc-icon-button,
+    mat-form-field button.mat-mdc-icon-button {
+      position: relative !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      border: none !important;
+      transform: translateX(42px) !important;
 
-    mat-card-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 0;
+      &:hover,
+      &:focus,
+      &:active {
+        background: rgba(251, 191, 36, 0.1) !important;
+        background-color: rgba(251, 191, 36, 0.1) !important;
+      }
 
+      .mat-icon,
       mat-icon {
-        font-size: 1.8rem;
-        width: 1.8rem;
-        height: 1.8rem;
+        background: transparent !important;
+        background-color: transparent !important;
       }
     }
   }
-  
-  mat-card-content {
-    padding: 25px;
+
+  // ============================================================================
+  // 🎯 BLOQUE ÚNICO DE OVERRIDES PARA .profile-container
+  // ============================================================================
+  .profile-container {
+    
+    // 🎴 MAT-CARD OVERRIDES
+    .mat-mdc-card {
+      background: vars.$glass-dark !important;
+      backdrop-filter: blur(15px) !important;
+      border-radius: vars.$radius-xl !important;
+      box-shadow: vars.$shadow-lg !important;
+      border: 1px solid vars.$glass-white-subtle !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      transition: vars.$transition-normal !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
+
+    .mat-mdc-card-header {
+      background: vars.$gradient-primary !important;
+      backdrop-filter: blur(20px) !important;
+      border-radius: vars.$radius-2xl !important;
+      box-shadow: vars.$shadow-profile-header !important;
+      border: 1px solid vars.$glass-white-subtle !important;
+      position: relative !important;
+      overflow: hidden !important;
+      padding: vars.$spacing-2xl vars.$spacing-xl !important;
+      margin: 0 !important;
+      color: vars.$text-white !important;
+
+      // Background pattern con radial gradients
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(102, 126, 234, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(118, 75, 162, 0.15) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+
+      .mat-mdc-card-header-text {
+        margin: 0 !important;
+        width: 100%;
+      }
+    }
+
+    .mat-mdc-card-title {
+      @include mix.flex-row(vars.$spacing-md);
+      @include mix.heading-primary();
+      color: vars.$text-white !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-weight: vars.$font-weight-bold !important;
+      letter-spacing: -0.025em !important;
+
+      .mat-icon {
+        font-size: clamp(2rem, 4vw, 2.5rem) !important;
+        width: auto !important;
+        height: auto !important;
+        color: vars.$text-white !important;
+        filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.2));
+      }
+    }
+
+    .mat-mdc-card-content {
+      padding: vars.$spacing-2xl !important;
+      background: transparent !important;
+
+      @include mix.mobile-only {
+        padding: vars.$spacing-lg !important;
+      }
+    }
+
+    // 🎨 ESTILOS GLOBALES DE MATERIAL (colores y fuentes)
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text, 
+    .mat-mdc-select-min-line {
+      color: white !important;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+    }
+    
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: #fbbf24 !important;
+    }
+
+    // 🎯 ÍCONOS EN AMARILLO - TODOS LOS ÍCONOS DE LOS FILTROS
+    .mat-mdc-form-field-icon-suffix,
+    .mat-icon,
+    mat-icon {
+      color: #fbbf24 !important;
+    }
+
+    // Íconos específicos de select (flechas dropdown)
+    .mat-mdc-select-arrow,
+    .mat-mdc-select-arrow svg {
+      color: #fbbf24 !important;
+      fill: #fbbf24 !important;
+    }
+
+    // 📝 MAT-FORM-FIELD OVERRIDES - SIN BORDES DE MATERIAL
+    mat-form-field,
+    .mat-mdc-form-field {
+      width: 100%;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 0.95rem !important;
+      overflow: visible !important; // Para que los íconos no se corten
+
+      .mat-mdc-text-field-wrapper {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: none !important; // Eliminar todos los bordes
+        border-radius: 12px !important;
+        transition: all 0.3s ease !important;
+        backdrop-filter: blur(10px) !important;
+        outline: none !important; // Eliminar outline
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12) !important;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+        }
+
+        &.mdc-text-field--focused {
+          background: rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+          transform: translateY(-2px);
+          outline: none !important; // Forzar sin outline en focus
+        }
+
+        // 🚨 MANTENER OUTLINE PERO SIN BORDES PARA LOS LABELS
+        .mdc-notched-outline {
+          border: none !important;
+          outline: none !important;
+          background: transparent !important;
+          // NO eliminar display para mantener los labels
+        }
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border: none !important;
+          background: transparent !important;
+          // NO eliminar display para mantener los labels
+        }
+
+        .mdc-line-ripple {
+          display: none !important;
+        }
+
+        // 🚨 ELIMINAR FONDOS BLANCOS EN TODOS LOS ELEMENTOS INTERNOS
+        .mdc-text-field__input,
+        input,
+        .mat-mdc-input-element {
+          background: transparent !important;
+        }
+
+        // Elementos internos específicos que pueden tener fondo blanco
+        .mdc-floating-label,
+        .mat-mdc-floating-label,
+        .mdc-text-field__resizer {
+          background: transparent !important;
+        }
+      }
+
+      // 🚨 FORZAR SIN OUTLINE EN TODOS LOS ESTADOS
+      &.mat-focused .mat-mdc-text-field-wrapper {
+        outline: none !important;
+        border: none !important;
+      }
+    }
+
+
+
+    // 🎯 LABELS EN AMARILLO - REGLAS ESPECÍFICAS PARA ANGULAR MATERIAL (ESTILO HISTORIAL)
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: #fbbf24 !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      display: block !important; // Forzar visualización
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    // Estados específicos del label
+    .mat-mdc-form-field-label.mdc-floating-label--float-above,
+    .mdc-floating-label--float-above,
+    .mat-mdc-floating-label.mdc-floating-label--float-above {
+      color: #fbbf24 !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    // Para asegurar que el mat-label dentro también sea amarillo y visible
+    .mat-mdc-form-field mat-label {
+      color: #fbbf24 !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+
+
+    input {
+      color: white !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-weight: 500 !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-style: italic;
+      }
+    }
+
+    // 🎨 ÍCONOS AMARILLOS CON POSICIONAMIENTO CORRECTO
+    .mat-mdc-form-field-icon-suffix {
+      color: #fbbf24 !important;
+      overflow: visible !important;
+      z-index: 10 !important;
+      position: relative !important;
+      margin-right: 4px !important; // Menos margen, más hacia la izquierda
+      margin-left: -4px !important; // Mover hacia la izquierda
+    }
+
+    // 🚨 FORZAR ÍCONOS CON MÚLTIPLES NIVELES DE ::ng-deep (MÁXIMA FUERZA)
+    ::ng-deep {
+      // 🔥 NIVEL 1 - ÍCONOS BÁSICOS
+      .mat-mdc-form-field-icon-suffix,
+      .mat-icon,
+      mat-icon {
+        color: #fbbf24 !important;
+        overflow: visible !important;
+        z-index: 10 !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        position: relative !important;
+        right: 20px !important; // MÁS hacia la izquierda
+        margin-right: -8px !important;
+        margin-left: -16px !important;
+      }
+
+      // 🔥 NIVEL 2 - BOTONES DE VISIBILIDAD (MÁXIMA FUERZA)
+      button.mat-mdc-icon-button,
+      .mat-mdc-form-field button.mat-mdc-icon-button,
+      mat-form-field button.mat-mdc-icon-button {
+        color: #fbbf24 !important;
+        overflow: visible !important;
+        z-index: 10 !important;
+        position: relative !important;
+        right: 24px !important; // MUCHO MÁS hacia la izquierda
+        margin-right: -12px !important;
+        margin-left: -20px !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        
+        .mat-icon,
+        mat-icon {
+          color: #fbbf24 !important;
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+
+        &:hover {
+          background: rgba(251, 191, 36, 0.1) !important;
+          background-color: rgba(251, 191, 36, 0.1) !important;
+        }
+
+        &:focus,
+        &:active {
+          background: transparent !important;
+          background-color: transparent !important;
+          outline: none !important;
+        }
+      }
+
+      // 🔥 NIVEL 3 - ELEMENTOS INTERNOS DE MATERIAL (FUERZA NUCLEAR)
+      .mat-mdc-text-field-wrapper,
+      .mdc-text-field__input,
+      .mat-mdc-input-element,
+      input {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+
+      // 🚨 FUERZA NUCLEAR - TEXTO PREDEFINIDO SIN FONDO BLANCO
+      input[type="email"],
+      input[type="text"], 
+      input[type="password"],
+      .mat-mdc-input-element,
+      .mdc-text-field__input,
+      .mat-input-element {
+        background: transparent !important;
+        background-color: transparent !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        
+        &::placeholder,
+        &::-webkit-input-placeholder,
+        &::-moz-placeholder,
+        &:-ms-input-placeholder {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+        
+        &:focus,
+        &:active,
+        &:hover {
+          background: transparent !important;
+          background-color: transparent !important;
+          -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+        }
+      }
+
+      // 🚨 SIMPLIFICAR LABELS - DEJAR QUE MATERIAL MANEJE LA POSICIÓN
+      .mat-mdc-form-field {
+        .mat-mdc-floating-label,
+        .mdc-floating-label {
+          color: #fbbf24 !important;
+          font-family: 'Inter', sans-serif !important;
+          font-weight: 500 !important;
+        }
+      }
+
+      // Flecha específica del select
+      .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow,
+      .mat-mdc-select-arrow svg,
+      .mat-mdc-select-arrow svg path {
+        color: #fbbf24 !important;
+        fill: #fbbf24 !important;
+      }
+    }
+
+    // 🚨 REGLAS ADICIONALES CON ESPECIFICIDAD EXTREMA
+    ::ng-deep ::ng-deep {
+      .profile-container {
+        * {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+
+        button.mat-mdc-icon-button {
+          position: relative !important;
+          right: 24px !important; // MUCHO MÁS hacia la izquierda
+          margin-left: -20px !important;
+          background: transparent !important;
+        }
+      }
+    }
+
+    // 🎯 TEXTO "TODAS LAS DIVISAS" EN BLANCO - FORZADO
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: white !important;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+    }
+
+    // Para el texto cuando no hay selección (placeholder)
+    .mat-mdc-select-placeholder {
+      color: rgba(255, 255, 255, 0.7) !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+
+    // 🚨 FORZAR USANDO ::ng-deep PARA MAYOR ESPECIFICIDAD
+    ::ng-deep {
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-min-line {
+        color: white !important;
+      }
+    }
+
+    // Flecha de select
+    .mat-mdc-select-arrow-wrapper {
+      .mat-mdc-select-arrow,
+      .mat-mdc-select-arrow svg,
+      .mat-mdc-select-arrow svg path {
+        color: vars.$info-blue !important;
+        fill: vars.$info-blue !important;
+      }
+    }
+
+    // 🚨 MENSAJES DE ERROR
+    .mat-mdc-form-field-error {
+      color: #fca5a5 !important;
+      font-weight: 600 !important;
+      font-family: 'Inter', sans-serif !important;
+      background: rgba(220, 38, 38, 0.15);
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      border-radius: vars.$radius-sm;
+      border-left: 3px solid #ef4444;
+      margin-top: vars.$spacing-xs;
+    }
+
+    // ⚠️ ESTADO DE ERROR EN FORM FIELD
+    .mat-form-field-invalid {
+      .mat-mdc-text-field-wrapper {
+        border-color: #ef4444 !important;
+        background: rgba(220, 38, 38, 0.15) !important;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+      }
+
+      .mat-mdc-floating-label {
+        color: #fca5a5 !important;
+      }
+
+      .mat-icon {
+        color: #ef4444 !important;
+      }
+    }
+
+    // 🚫 ESTADO DISABLED
+    .mat-form-field-disabled {
+      .mat-mdc-text-field-wrapper {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        background: rgba(100, 116, 139, 0.2) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      input {
+        cursor: not-allowed !important;
+      }
+    }
+
+    // 🔲 MAT-BUTTON OVERRIDES
+    button.mat-mdc-raised-button {
+      @include mix.button-base();
+      text-transform: none !important;
+      letter-spacing: 0.025em !important;
+      box-shadow: vars.$shadow-sm !important;
+
+      &.mat-primary {
+        @include mix.button-profile-primary();
+      }
+
+      &.mat-warn {
+        @include mix.button-profile-danger();
+      }
+
+      .mat-icon {
+        font-size: 1.25rem !important;
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+        margin-right: vars.$spacing-xs !important;
+      }
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px) !important;
+        box-shadow: vars.$shadow-lg !important;
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0) !important;
+      }
+
+      &:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        background: vars.$text-tertiary !important;
+      }
+    }
+
+    button.mat-mdc-icon-button {
+      transition: all vars.$transition-normal !important;
+
+      &:hover {
+        background: vars.$info-blue-10 !important;
+      }
+
+      .mat-icon {
+        transition: color vars.$transition-normal !important;
+      }
+    }
+
+    // 🔀 MAT-DIVIDER OVERRIDES
+    .mat-divider {
+      margin: vars.$spacing-2xl 0 !important;
+      border-top-color: vars.$glass-white-20 !important;
+      border-top-width: 1px !important;
+      opacity: 0.6 !important;
+    }
+  }
+
+  // ============================================================================
+  // 🎯 SELECT PANELS (DROPDOWNS) - Estilo Calculator
+  // ============================================================================
+  .mat-mdc-select-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(59, 130, 246, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    
+    .mat-mdc-option {
+      color: #1f2937 !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      transition: all 0.2s ease !important;
+      padding: 12px 16px !important;
+      
+      &:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(99, 102, 241, 0.1) 100%) !important;
+        transform: translateX(4px) !important;
+      }
+      
+      &.mdc-list-item--selected {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%) !important;
+        color: #1e40af !important;
+        font-weight: 600 !important;
+      }
+
+      .mat-pseudo-checkbox {
+        border-color: vars.$info-blue !important;
+
+        &.mat-pseudo-checkbox-checked {
+          background-color: vars.$info-blue !important;
+        }
+      }
+    }
   }
 }
 
-// Información del perfil
-.profile-info {
-  margin-bottom: 32px;
+// ============================================================================
+// 🚨 REGLAS DE FUERZA NUCLEAR - ESPECIFICIDAD MÁXIMA
+// ============================================================================
+::ng-deep .profile-container {
+  // 🔥 FORZAR TODOS LOS INPUTS SIN FONDO BLANCO
+  input[type="text"],
+  input[type="email"], 
+  input[type="password"],
+  input[matInput],
+  .mat-mdc-input-element,
+  .mdc-text-field__input {
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+  }
+
+  // 🔥 FORZAR TODOS LOS BOTONES DE ÍCONOS
+  button[mat-icon-button],
+  button.mat-mdc-icon-button,
+  .mat-mdc-icon-button {
+    position: relative !important;
+    right: 26px !important; // EXTREMO hacia la izquierda
+    margin-left: -22px !important;
+    margin-right: -10px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    
+    &[type="button"],
+    &:not(:disabled) {
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+  }
+
+  // 🔥 FORZAR ÍCONOS NORMALES
+  .mat-mdc-form-field-icon-suffix[matSuffix],
+  [matSuffix].mat-icon,
+  mat-icon[matSuffix] {
+    position: relative !important;
+    right: 22px !important; // MÁS hacia la izquierda
+    margin-left: -18px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+// 🚨 REGLAS CON SELECTORES DE ATRIBUTO (ESPECIFICIDAD EXTREMA)
+::ng-deep .profile-container mat-form-field[appearance="outline"] {
+  .mat-mdc-text-field-wrapper {
+    background: rgba(255, 255, 255, 0.08) !important;
+    
+    * {
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+  }
+
+  button[mat-icon-button][type="button"] {
+    position: relative !important;
+    right: 28px !important; // MÁXIMO hacia la izquierda
+    margin-left: -24px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+// 🚨 FUERZA NUCLEAR - ELIMINAR AUTOCOMPLETADO Y FONDOS DEL NAVEGADOR
+::ng-deep .profile-container {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+    -webkit-text-fill-color: white !important;
+    background-color: transparent !important;
+    background: transparent !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+  }
+
+  // Firefox autofill
+  input:-moz-autofill,
+  input:-moz-autofill:hover,
+  input:-moz-autofill:focus {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  // Edge/IE autofill  
+  input:-ms-input-placeholder {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  // Elementos específicos que pueden crear fondo blanco
+  .mat-mdc-form-field-infix,
+  .mat-form-field-infix,
+  .mdc-text-field__affix,
+  .mdc-text-field__resizer {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+// ============================================================================
+// 🏠 CONTENEDOR PRINCIPAL
+// ============================================================================
+.profile-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: vars.$spacing-2xl !important;
+  background: vars.$gradient-primary !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: vars.$spacing-2xl !important;
+  margin: 0 !important;
+  animation: fadeIn 0.5s ease-out;
+  box-sizing: border-box !important;
+
+  // Animaciones de entrada escalonadas
+  > * {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+
+  @include mix.mobile-only {
+    padding: vars.$spacing-lg;
+  }
+
+  @include mix.tablet-up {
+    padding: vars.$spacing-2xl vars.$spacing-xl;
+  }
+
+  @include mix.desktop-up {
+    padding: vars.$spacing-2xl vars.$spacing-3xl;
+  }
+}
+
+// ============================================================================
+// 📋 INFORMACIÓN DEL PERFIL
+// ============================================================================
+.profile-container .profile-info {
+  padding: vars.$spacing-xl !important;
+  border-radius: vars.$radius-lg !important;
+  background: vars.$info-blue-05 !important;
+  border-left: 4px solid vars.$info-blue !important;
+  margin-bottom: vars.$spacing-xl !important;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
 
   h3 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    @include mix.flex-row(vars.$spacing-md);
+    @include mix.heading-secondary();
+    color: vars.$info-blue !important;
+    margin: 0 0 vars.$spacing-lg 0 !important;
+    font-weight: vars.$font-weight-bold !important;
 
-    mat-icon {
-      color: #667eea;
-      font-size: 1.5rem;
-      width: 1.5rem;
-      height: 1.5rem;
+    .mat-icon {
+      color: vars.$info-blue !important;
+      font-size: 1.75rem !important;
+      width: 1.75rem !important;
+      height: 1.75rem !important;
     }
   }
 
   .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: vars.$spacing-lg;
+    margin-top: vars.$spacing-lg;
+
+    @include mix.mobile-only {
+      grid-template-columns: 1fr;
+      gap: vars.$spacing-md;
+    }
   }
 
   .info-item {
-    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
-    padding: 20px;
-    border-radius: 16px;
-    border-left: 4px solid #667eea;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-xs;
+    padding: vars.$spacing-md !important;
+    background: vars.$glass-white !important;
+    border-radius: vars.$radius-md !important;
+    border: 1px solid vars.$info-blue-10 !important;
+    transition: all vars.$transition-normal !important;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      background: vars.$bg-card !important;
+      border-color: vars.$info-blue-20 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: vars.$shadow-md !important;
     }
 
     strong {
-      display: block;
-      color: #495057;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-family: vars.$font-family-primary;
+      font-size: vars.$font-size-sm;
+      font-weight: vars.$font-weight-semibold;
+      color: vars.$text-secondary;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.05em;
     }
 
     span {
-      color: #333;
-      font-size: 1.1rem;
-      font-weight: 500;
+      @include mix.mono-text();
+      color: vars.$text-primary;
       word-break: break-all;
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      background: vars.$info-blue-05;
+      border-radius: vars.$radius-sm;
+      border-left: 3px solid vars.$info-blue;
     }
   }
 }
 
-// Secciones de formulario mejoradas
-.form-section {
-  margin: 32px 0;
-  padding: 25px;
-  background: rgba(248, 249, 250, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  animation: slideInUp 0.6s ease-out;
-
-  h3 {
-    color: #333;
-    margin-bottom: 25px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    mat-icon {
-      color: #667eea;
-      font-size: 1.5rem;
-      width: 1.5rem;
-      height: 1.5rem;
-      background: rgba(102, 126, 234, 0.1);
-      border-radius: 50%;
-      padding: 0.3rem;
-    }
-  }
-
-  .full-width {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-
-  .action-button {
-    margin-top: 12px;
-    padding: 0 30px;
-    height: 48px;
-    font-weight: 600;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-
-    &:hover:not([disabled]) {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
-      background: linear-gradient(135deg, #5a6fd8, #6c5ce7);
-    }
-
-    &:active {
-      transform: translateY(-1px);
-    }
-
-    &[disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    mat-icon {
-      margin-right: 8px;
-      font-size: 1.2rem;
-      width: 1.2rem;
-      height: 1.2rem;
-    }
-  }
-}
-
-// Zona de peligro mejorada
-.danger-zone {
-  border: 2px solid #dc3545 !important;
-  background: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%) !important;
+// ============================================================================
+// 📝 SECCIONES DE FORMULARIOS - GLASSMORFISMO OSCURO
+// ============================================================================
+.profile-container .form-section {
+  display: flex;
+  flex-direction: column;
+  gap: vars.$spacing-lg;
+  padding: vars.$spacing-2xl !important;
+  
+  // Glassmorfismo oscuro con múltiples capas
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.85) 0%,
+    rgba(51, 65, 85, 0.8) 25%,
+    rgba(75, 85, 99, 0.75) 50%,
+    rgba(55, 65, 81, 0.8) 75%,
+    rgba(31, 41, 55, 0.85) 100%
+  ) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  
+  border-radius: vars.$radius-lg !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  transition: all vars.$transition-normal !important;
+  animation: fadeInUp 0.6s ease-out backwards;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.2) !important;
 
+  // Patrón de fondo sutil
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #dc3545, #e74c3c, #f44336);
-    animation: gradientShift 3s ease-in-out infinite;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:nth-child(4) { animation-delay: 0.2s; }
+  &:nth-child(6) { animation-delay: 0.3s; }
+  &:nth-child(8) { animation-delay: 0.4s; }
+  &:nth-child(10) { animation-delay: 0.5s; }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.9) 0%,
+      rgba(51, 65, 85, 0.85) 25%,
+      rgba(75, 85, 99, 0.8) 50%,
+      rgba(55, 65, 81, 0.85) 75%,
+      rgba(31, 41, 55, 0.9) 100%
+    ) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.35),
+      0 6px 20px rgba(59, 130, 246, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
   }
 
   h3 {
-    color: #dc3545 !important;
+    @include mix.flex-row(vars.$spacing-md);
+    @include mix.heading-secondary();
+    color: white !important;
+    margin: 0 0 vars.$spacing-lg 0 !important;
+    font-weight: vars.$font-weight-bold !important;
+    font-size: 1.3rem !important;
+    display: flex;
+    align-items: center;
+    padding-bottom: vars.$spacing-md;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.2);
 
-    mat-icon {
-      color: #dc3545 !important;
-      background: rgba(220, 53, 69, 0.1) !important;
+    &::before {
+      content: '';
+      width: 4px;
+      height: 28px;
+      background: linear-gradient(180deg, vars.$info-blue 0%, vars.$success-green 100%);
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-right: vars.$spacing-sm;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    .mat-icon {
+      color: vars.$info-blue !important;
+      font-size: 1.75rem !important;
+      width: 1.75rem !important;
+      height: 1.75rem !important;
+      filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+    }
+  }
+
+  form {
+    @include mix.flex-column(vars.$spacing-lg);
+    width: 100%;
+  }
+
+  .full-width {
+    width: 100% !important;
+  }
+
+  .action-button {
+    align-self: flex-start;
+    margin-top: vars.$spacing-lg;
+
+    @include mix.button-base();
+    background: linear-gradient(135deg, vars.$info-blue 0%, #5b73e8 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    padding: vars.$spacing-md vars.$spacing-2xl !important;
+    border-radius: vars.$radius-md !important;
+    box-shadow: 
+      0 4px 14px rgba(59, 130, 246, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-transform: none !important;
+    letter-spacing: 0.025em;
+    
+    .mat-icon {
+      margin-right: vars.$spacing-sm;
+      margin-left: -4px !important; // Mover ícono hacia la izquierda
+      font-size: 1.25rem !important;
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+      color: white !important;
+      filter: none;
+      position: relative !important;
+      left: -2px !important; // Ajuste adicional hacia la izquierda
+    }
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.02) !important;
+      box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.3) !important;
+      background: linear-gradient(135deg, #5b73e8 0%, vars.$info-blue 100%) !important;
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0) scale(0.98) !important;
+    }
+    
+    &:disabled {
+      opacity: 0.5 !important;
+      cursor: not-allowed !important;
+      background: rgba(100, 116, 139, 0.6) !important;
+      box-shadow: none !important;
+    }
+
+    @include mix.mobile-only {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  // 🎯 FORZAR AMARILLO EN TODOS LOS LABELS (REGLA GLOBAL EXACTA DEL HISTORIAL)
+  mat-label,
+  .mat-mdc-form-field-label,
+  .mdc-floating-label,
+  .mat-mdc-floating-label {
+    color: #fbbf24 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+  }
+
+  .filter-field {
+    .mat-mdc-form-field {
+      width: 100%;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 0.95rem !important;
+      overflow: visible !important; // Para que los íconos no se corten
+    }
+
+    .mat-mdc-text-field-wrapper {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: none !important; // Sin bordes
+      border-radius: 12px !important;
+      transition: all 0.3s ease !important;
+      backdrop-filter: blur(10px) !important;
+      outline: none !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.12) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+      }
+
+      &.mdc-text-field--focused {
+        background: rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+        transform: translateY(-2px);
+        outline: none !important;
+      }
+
+      // 🚨 MANTENER OUTLINE SIN BORDES PARA LOS LABELS  
+      .mdc-notched-outline {
+        border: none !important;
+        background: transparent !important;
+        // NO eliminar display para mantener los labels
+      }
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border: none !important;
+        background: transparent !important;
+        // NO eliminar display para mantener los labels
+      }
+
+      .mdc-line-ripple {
+        display: none !important;
+      }
+    }
+
+    // 🎯 LABELS EN AMARILLO - REGLAS ESPECÍFICAS PARA ANGULAR MATERIAL
+    .mat-mdc-form-field-label,
+    .mdc-floating-label,
+    .mat-mdc-floating-label,
+    mat-label {
+      color: #fbbf24 !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+    }
+
+    // Estados específicos del label
+    .mat-mdc-form-field-label.mdc-floating-label--float-above,
+    .mdc-floating-label--float-above,
+    .mat-mdc-floating-label.mdc-floating-label--float-above {
+      color: #fbbf24 !important;
+    }
+
+    // Para asegurar que el mat-label dentro también sea amarillo
+    .mat-mdc-form-field mat-label {
+      color: #fbbf24 !important;
+    }
+
+    input {
+      color: white !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-weight: 500 !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-style: italic;
+      }
+    }
+
+    // 🎯 TEXTO "TODAS LAS DIVISAS" EN BLANCO - FORZADO
+    .mat-mdc-select-value,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: white !important;
+      font-family: 'Poppins', sans-serif !important;
+      font-weight: 500 !important;
+    }
+
+    // Para el texto cuando no hay selección (placeholder)
+    .mat-mdc-select-placeholder {
+      color: rgba(255, 255, 255, 0.7) !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+
+    // 🚨 FORZAR USANDO ::ng-deep PARA MAYOR ESPECIFICIDAD
+    ::ng-deep {
+      .mat-mdc-select-value,
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-min-line {
+        color: white !important;
+      }
+    }
+
+    // 🎨 ÍCONOS AMARILLOS CON POSICIONAMIENTO MEJORADO
+    .mat-mdc-form-field-icon-suffix {
+      color: #fbbf24 !important;
+      overflow: visible !important;
+      z-index: 10 !important;
+      margin-right: 4px !important;
+      margin-left: -4px !important; // Mover hacia la izquierda
+    }
+
+    // 🚨 FORZAR ÍCONOS CON ::ng-deep
+    ::ng-deep {
+      .mat-mdc-form-field-icon-suffix,
+      .mat-icon,
+      mat-icon {
+        color: #fbbf24 !important;
+        overflow: visible !important;
+        z-index: 10 !important;
+        background: transparent !important; // Sin fondo blanco
+      }
+
+      // Botones de íconos
+      button.mat-mdc-icon-button {
+        color: #fbbf24 !important;
+        overflow: visible !important;
+        margin-right: 2px !important;
+        margin-left: -6px !important; // Mover más hacia la izquierda
+        background: transparent !important; // Sin fondo blanco
+        
+        .mat-icon {
+          color: #fbbf24 !important;
+          background: transparent !important;
+        }
+
+        &:hover {
+          background: rgba(251, 191, 36, 0.1) !important;
+        }
+      }
+
+      // Flecha específica del select
+      .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow,
+      .mat-mdc-select-arrow svg,
+      .mat-mdc-select-arrow svg path {
+        color: #fbbf24 !important;
+        fill: #fbbf24 !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🚨 ZONA DE PELIGRO (DELETE ACCOUNT)
+// ============================================================================
+.profile-container .danger-zone {
+  padding: vars.$spacing-xl !important;
+  border-radius: vars.$radius-lg !important;
+  background: vars.$danger-red-10 !important;
+  border-left: 4px solid vars.$danger-red !important;
+  margin-top: vars.$spacing-2xl !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: vars.$shadow-sm !important;
+  animation: fadeInUp 0.6s ease-out 0.5s backwards;
+
+  &:hover {
+    background: vars.$danger-red-15 !important;
+    border-color: vars.$danger-red !important;
+    box-shadow: 0 4px 20px vars.$danger-red-20 !important;
+  }
+
+  h3 {
+    color: vars.$danger-red !important;
+
+    .mat-icon {
+      color: vars.$danger-red !important;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
   }
 
   .warning-text {
-    color: #dc3545;
     display: flex;
+    flex-direction: row;
+    gap: vars.$spacing-sm;
     align-items: center;
-    gap: 12px;
-    margin: 20px 0;
-    padding: 16px 20px;
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-    border-radius: 12px;
-    border: 2px solid rgba(220, 53, 69, 0.2);
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+    font-family: vars.$font-family-primary;
+    font-size: vars.$font-size-base;
+    line-height: 1.6;
+    padding: vars.$spacing-md !important;
+    background: vars.$glass-white !important;
+    border-radius: vars.$radius-md !important;
+    border-left: 3px solid vars.$warning-yellow !important;
+    color: vars.$text-primary;
+    margin: 0 0 vars.$spacing-lg 0;
+    font-weight: vars.$font-weight-medium;
 
-    mat-icon {
-      color: #721c24;
-      font-size: 1.5rem;
-      width: 1.5rem;
-      height: 1.5rem;
-      background: rgba(114, 28, 36, 0.1);
-      border-radius: 50%;
-      padding: 0.3rem;
+    .mat-icon {
+      color: vars.$warning-yellow !important;
+      font-size: 1.5rem !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      flex-shrink: 0;
+      margin-left: 12px !important; // Mover ícono 2px hacia la izquierda
     }
   }
 
   .delete-button {
-    background: linear-gradient(135deg, #dc3545, #c82333) !important;
-    color: white !important;
-    margin-top: 12px;
-    padding: 0 30px;
-    height: 48px;
-    font-weight: 700;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    background: vars.$gradient-danger !important;
+    color: vars.$text-white !important;
 
-    &:hover:not([disabled]) {
-      background: linear-gradient(135deg, #c82333, #b21f2d) !important;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(220, 53, 69, 0.5);
+    .mat-icon {
+      margin-left: -4px !important; // Mover ícono hacia la izquierda
+      position: relative !important;
+      left: -2px !important; // Ajuste adicional hacia la izquierda
     }
 
-    &:active {
-      transform: translateY(-1px);
-    }
-
-    &[disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    mat-icon {
-      margin-right: 8px;
-      font-size: 1.2rem;
-      width: 1.2rem;
-      height: 1.2rem;
+    &:hover:not(:disabled) {
+      animation: warningShake 0.5s ease-in-out;
+      box-shadow: 0 8px 24px vars.$danger-red-40 !important;
     }
   }
 }
 
-// Divisores mejorados
-mat-divider {
-  margin: 40px 0;
-  border-color: rgba(226, 232, 240, 0.6);
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
-}
-
-// Form fields mejorados (mismo estilo que dashboard)
-mat-form-field {
-  .mat-mdc-text-field-wrapper {
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.8);
-    transition: all 0.3s ease;
-  }
-  
-  &.mat-focused {
-    .mat-mdc-form-field-outline-thick {
-      color: #667eea;
-    }
-    
-    .mat-mdc-text-field-wrapper {
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-  }
-  
-  &:hover:not(.mat-focused) {
-    .mat-mdc-text-field-wrapper {
-      background: rgba(255, 255, 255, 0.9);
-      
-      .mdc-notched-outline__leading,
-      .mdc-notched-outline__notch,
-      .mdc-notched-outline__trailing {
-        border-color: #667eea;
-      }
-    }
-  }
-
-  input[type="password"],
-  input[type="email"],
-  input[type="text"] {
-    font-weight: 500;
-    font-size: 1rem;
-  }
-}
-
-// Estilos para snackbars
-::ng-deep {
-  .success-snackbar {
-    background: linear-gradient(135deg, #28a745, #20c997) !important;
-    color: white !important;
-    font-weight: 600 !important;
-  }
-
-  .error-snackbar {
-    background: linear-gradient(135deg, #dc3545, #e74c3c) !important;
-    color: white !important;
-    font-weight: 600 !important;
-  }
-}
-
-// Animaciones
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-// Efectos de entrada escalonados
-.profile-card {
-  animation: slideInUp 0.6s ease-out;
-}
-
-.form-section {
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.3s; }
-  &:nth-child(4) { animation-delay: 0.4s; }
-  &:nth-child(5) { animation-delay: 0.5s; }
-}
-
-// Responsive mejorado
-@media (max-width: 1024px) {
-  .profile-container {
-    padding: 15px;
-  }
-  
-  .info-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .profile-container {
-    padding: 12px;
-  }
-
-  .profile-header {
-    margin-bottom: 20px;
-    
-    h1 {
-      font-size: 2.2rem;
-      flex-direction: column;
-      gap: 10px;
-      
-      mat-icon {
-        font-size: 2.2rem;
-        width: 2.2rem;
-        height: 2.2rem;
-      }
-    }
-    
-    p {
-      font-size: 1rem;
-    }
-  }
+// ============================================================================
+// 🎨 ESTADOS Y EFECTOS ESPECIALES
+// ============================================================================
+.profile-container.loading {
+  pointer-events: none;
+  opacity: 0.6;
 
   .profile-card {
-    mat-card-header {
-      padding: 20px;
+    position: relative;
 
-      mat-card-title {
-        font-size: 1.3rem;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+      );
+      animation: shimmer 2s infinite;
+    }
+  }
+}
+
+.profile-success {
+  .form-section {
+    animation: successPulse 1s ease-out;
+  }
+}
+
+.profile-error {
+  .form-section {
+    animation: warningShake 0.5s ease-in-out;
+  }
+}
+
+// ============================================================================
+// 📱 RESPONSIVE DESIGN
+// ============================================================================
+@include mix.mobile-only {
+  .profile-container {
+    padding: vars.$spacing-md;
+  }
+
+  .profile-info {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-section {
+    padding: vars.$spacing-lg;
+
+    h3 {
+      font-size: vars.$font-size-lg !important;
+
+      .mat-icon {
+        font-size: 1.5rem !important;
+        width: 1.5rem !important;
+        height: 1.5rem !important;
       }
     }
 
-    mat-card-content {
-      padding: 20px;
-    }
-  }
-
-  .form-section {
-    padding: 20px;
-    margin: 24px 0;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .info-item {
-    padding: 16px;
-    
-    span {
-      font-size: 1rem;
+    .action-button {
+      width: 100%;
     }
   }
 }
 
-@media (max-width: 480px) {
+@include mix.tablet-up {
   .profile-container {
-    padding: 8px;
+    padding: vars.$spacing-xl;
+  }
+}
+
+@include mix.desktop-up {
+  .profile-container {
+    max-width: 1000px;
+    padding: vars.$spacing-2xl vars.$spacing-xl;
   }
 
-  .profile-header {
-    .premium-badge {
-      padding: 8px 16px;
-      font-size: 0.8rem;
+  .profile-info {
+    .info-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
-    
-    h1 {
-      font-size: 1.8rem;
-    }
-  }
-
-  .form-section {
-    padding: 16px;
-  }
-
-  .action-button,
-  .delete-button {
-    width: 100%;
-    margin-top: 12px;
-    height: 52px;
-    font-size: 0.9rem;
   }
 }
 
-// Mejoras adicionales para accesibilidad
-.form-section {
-  &:focus-within {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
-  }
-}
-
-// Tooltips mejorados
-.mat-mdc-tooltip {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-size: 0.85rem;
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
-}
-
-// Estados de carga mejorados
-.loading-overlay {
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(2px);
-    border-radius: 12px;
-    z-index: 10;
-  }
-}
+// ============================================================================
+// 🎯 UTILIDADES Y HELPERS
+// ============================================================================
+.text-center { text-align: center; }
+.text-muted { color: vars.$text-tertiary; }
+.mt-0 { margin-top: 0 !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mt-1 { margin-top: vars.$spacing-sm !important; }
+.mb-1 { margin-bottom: vars.$spacing-sm !important; }
+.mt-2 { margin-top: vars.$spacing-md !important; }
+.mb-2 { margin-bottom: vars.$spacing-md !important; }
+.mt-3 { margin-top: vars.$spacing-lg !important; }
+.mb-3 { margin-bottom: vars.$spacing-lg !important; }

@@ -1,0 +1,178 @@
+// ============================================================================
+// 👤 SISTEMA DE VARIABLES PARA PROFILE
+// Basado en el patrón del dashboard y alertas con adaptaciones específicas
+// ============================================================================
+
+// 🌈 SISTEMA DE COLORES PRINCIPAL
+$primary-blue: #667eea;
+$primary-purple: #764ba2;
+$success-green: #4caf50;
+$warning-orange: #ff9800;
+$warning-yellow: #fbbf24;
+$error-red: #f44336;
+$danger-red: #dc2626;
+$info-blue: #3b82f6;
+
+// 👤 COLORES ESPECÍFICOS PARA PROFILE
+$profile-primary: #4c8bf5; // Azul para perfil
+$profile-success: #10b981; // Verde para cambios exitosos
+$profile-danger: #ef4444; // Rojo para zona peligrosa
+$profile-warning: #f59e0b; // Amarillo para advertencias
+$profile-neutral: #6b7280; // Gris para información
+
+// 🎯 SISTEMA DE TRANSPARENCIAS DEL AZUL (MEJORADO)
+$info-blue-03: rgba(59, 130, 246, 0.03);
+$info-blue-05: rgba(59, 130, 246, 0.05);
+$info-blue-08: rgba(59, 130, 246, 0.08);
+$info-blue-10: rgba(59, 130, 246, 0.1);
+$info-blue-15: rgba(59, 130, 246, 0.15);
+$info-blue-20: rgba(59, 130, 246, 0.2);
+$info-blue-25: rgba(59, 130, 246, 0.25);
+$info-blue-30: rgba(59, 130, 246, 0.3);
+$info-blue-40: rgba(59, 130, 246, 0.4);
+$info-blue-50: rgba(59, 130, 246, 0.5);
+$info-blue-60: rgba(59, 130, 246, 0.6);
+
+// 🟢 SISTEMA DE TRANSPARENCIAS DEL VERDE
+$success-green-10: rgba(16, 185, 129, 0.1);
+$success-green-15: rgba(16, 185, 129, 0.15);
+$success-green-20: rgba(16, 185, 129, 0.2);
+$success-green-30: rgba(16, 185, 129, 0.3);
+$success-green-40: rgba(16, 185, 129, 0.4);
+$success-green-50: rgba(16, 185, 129, 0.5);
+
+// 🔴 SISTEMA DE TRANSPARENCIAS DEL ROJO (DANGER ZONE)
+$danger-red-10: rgba(239, 68, 68, 0.1);
+$danger-red-15: rgba(239, 68, 68, 0.15);
+$danger-red-20: rgba(239, 68, 68, 0.2);
+$danger-red-30: rgba(239, 68, 68, 0.3);
+$danger-red-40: rgba(239, 68, 68, 0.4);
+$danger-red-50: rgba(239, 68, 68, 0.5);
+$danger-red-60: rgba(239, 68, 68, 0.6);
+
+// 🟡 SISTEMA DE TRANSPARENCIAS DEL AMARILLO
+$warning-yellow-03: rgba(251, 191, 36, 0.03);
+$warning-yellow-05: rgba(251, 191, 36, 0.05);
+$warning-yellow-10: rgba(251, 191, 36, 0.1);
+$warning-yellow-15: rgba(251, 191, 36, 0.15);
+$warning-yellow-20: rgba(251, 191, 36, 0.2);
+$warning-yellow-25: rgba(251, 191, 36, 0.25);
+$warning-yellow-30: rgba(251, 191, 36, 0.3);
+$warning-yellow-40: rgba(251, 191, 36, 0.4);
+
+// 🌫️ COLORES GLASSMORPHISM
+$glass-white: rgba(255, 255, 255, 0.9);
+$glass-white-subtle: rgba(255, 255, 255, 0.1);
+$glass-white-15: rgba(255, 255, 255, 0.15);
+$glass-white-20: rgba(255, 255, 255, 0.2);
+$glass-dark: rgba(30, 41, 59, 0.6);
+$glass-dark-light: rgba(51, 65, 85, 0.5);
+$glass-dark-medium: rgba(75, 85, 99, 0.4);
+
+// 🎨 COLORES DE FONDO
+$bg-primary: #0f172a;
+$bg-secondary: #1e293b;
+$bg-tertiary: #334155;
+$bg-light: #f8fafc;
+$bg-card: #ffffff;
+
+// 📝 COLORES DE TEXTO
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$text-tertiary: #94a3b8;
+$text-light: #cbd5e1;
+$text-white: #ffffff;
+$text-muted: #6b7280;
+
+// 🎯 GRADIENTES
+$gradient-primary: linear-gradient(
+  135deg,
+  #0f172a 0%,
+  #1e293b 25%,
+  #334155 50%,
+  #1e293b 75%,
+  #0f172a 100%
+);
+
+$gradient-profile: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+$gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+$gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+
+// 📏 SISTEMA DE ESPACIADO
+$spacing-xs: 0.25rem; // 4px
+$spacing-sm: 0.5rem; // 8px
+$spacing-md: 1rem; // 16px
+$spacing-lg: 1.5rem; // 24px
+$spacing-xl: 2rem; // 32px
+$spacing-2xl: 2.5rem; // 40px
+$spacing-3xl: 3rem; // 48px
+$spacing-4xl: 4rem; // 64px
+
+// 🔲 BORDER RADIUS
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 24px;
+$radius-full: 9999px;
+
+// 🎭 SOMBRAS
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.15);
+$shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.25), 0 12px 32px rgba(0, 0, 0, 0.2);
+
+// Sombras específicas para profile
+$shadow-profile-card: 0 8px 32px rgba(31, 38, 135, 0.2),
+  0 4px 16px rgba(0, 0, 0, 0.1);
+$shadow-profile-header: 0 20px 40px rgba(0, 0, 0, 0.15),
+  0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+// ⏱️ TRANSICIONES
+$transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+// 📱 BREAKPOINTS
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1280px;
+$breakpoint-wide: 1536px;
+
+// 🔤 TIPOGRAFÍA
+$font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  sans-serif;
+$font-family-secondary: 'Poppins', -apple-system, BlinkMacSystemFont,
+  'Segoe UI', sans-serif;
+$font-family-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+// Tamaños de fuente
+$font-size-xs: 0.75rem; // 12px
+$font-size-sm: 0.875rem; // 14px
+$font-size-base: 1rem; // 16px
+$font-size-lg: 1.125rem; // 18px
+$font-size-xl: 1.25rem; // 20px
+$font-size-2xl: 1.5rem; // 24px
+$font-size-3xl: 1.875rem; // 30px
+$font-size-4xl: 2.25rem; // 36px
+$font-size-5xl: 3rem; // 48px
+
+// Pesos de fuente
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+$font-weight-black: 900;
+
+// 🎨 Z-INDEX
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
