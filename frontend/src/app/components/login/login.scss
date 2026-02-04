@@ -1,108 +1,145 @@
-// ===============================
-// 🎨 LOGIN - DivisasPro
-// ===============================
+// ============================================================================
+// 🎨 LOGIN - ARQUITECTURA SCSS MODULAR COMPLETA
+// Siguiendo el patrón del dashboard y favoritos
+// ============================================================================
 
-@use '../../../styles/shared' as shared;
+// 📦 IMPORTS MODULARES
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
 
-// Contenedor principal con el mismo estilo del dashboard
+// 🎨 FUENTES TIPOGRÁFICAS ESTÁNDAR
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+// ============================================================================
+// 🏠 CONTENEDOR PRINCIPAL
+// ============================================================================
 .login-container {
   min-height: 100vh;
-  @include shared.background-gradient;
-  @include shared.particle-background;
-  @include shared.center-content;
-  padding: shared.$spacing-xl;
+  @include mix.background-gradient;
+  @include mix.particle-background;
+  @include mix.flex-center;
+  padding: vars.$spacing-xl;
+  position: relative;
+  z-index: 1;
 }
 
+// ============================================================================
+// 💳 TARJETA DE LOGIN
+// ============================================================================
 .login-card {
-  @include shared.glassmorphism-card;
-  padding: shared.$spacing-3xl;
+  @include mix.glassmorphism-card;
+  padding: vars.$spacing-3xl;
   width: 100%;
   max-width: 450px;
   position: relative;
-  z-index: 1;
-  @include shared.slide-up;
+  z-index: 2;
+  @include mix.slide-up;
+  @include mix.hover-lift;
 }
 
-// Header del login mejorado
+// ============================================================================
+// 📋 HEADER DEL LOGIN
+// ============================================================================
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: vars.$spacing-2xl;
   
   .logo {
-    font-size: 4rem;
-    margin-bottom: 15px;
+    font-size: vars.$font-size-4xl;
+    margin-bottom: vars.$spacing-lg;
     display: block;
     animation: bounce 2s infinite;
   }
   
   .mat-mdc-card-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: vars.$font-size-3xl;
+    font-weight: 900;
+    background: vars.$primary-gradient;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
+    margin-bottom: vars.$spacing-md;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: -0.02em;
   }
   
   .mat-mdc-card-subtitle {
     color: #666;
-    font-size: 1.1rem;
+    font-size: vars.$font-size-lg;
     margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
   }
 }
 
-// Contenido de la tarjeta
+// ============================================================================
+// 📝 CONTENIDO DEL FORMULARIO
+// ============================================================================
 .mat-mdc-card-content {
   padding: 0;
   
   form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: vars.$spacing-lg;
   }
 }
 
-// Form fields mejorados
+// ============================================================================
+// 🎯 FORM FIELDS
+// ============================================================================
 .full-width {
   width: 100%;
   
   .mat-mdc-form-field {
     width: 100%;
+    font-family: 'Inter', sans-serif;
     
     .mat-mdc-text-field-wrapper {
-      border-radius: 12px;
+      border-radius: vars.$radius-md;
     }
     
     .mat-mdc-form-field-subscript-wrapper {
-      margin-top: 8px;
+      margin-top: vars.$spacing-sm;
     }
-  }
-  
-  // Estilos para el estado focused
-  &.mat-focused {
-    .mat-mdc-form-field-outline-thick {
-      color: #667eea;
+    
+    &.mat-focused {
+      .mat-mdc-form-field-outline-thick {
+        color: #667eea;
+      }
+    }
+    
+    // Estado inválido
+    &.mat-form-field-invalid {
+      .mat-mdc-form-field-outline-thick {
+        color: vars.$color-error;
+      }
     }
   }
 }
 
-// Botón de login mejorado
+// ============================================================================
+// 🔘 BOTÓN DE LOGIN
+// ============================================================================
 .login-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
+  @include mix.button-gradient;
   padding: 15px 30px;
-  border-radius: 12px !important;
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-top: 10px;
+  border-radius: vars.$radius-md !important;
+  font-weight: 700;
+  font-size: vars.$font-size-lg;
+  margin-top: vars.$spacing-md;
   height: 48px;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  font-family: 'Poppins', sans-serif;
   
+  // Efecto shimmer en hover
   &::before {
     content: '';
     position: absolute;
@@ -110,19 +147,20 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
     transition: left 0.5s;
   }
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
-    
-    &::before {
-      left: 100%;
-    }
+  &:hover:not(:disabled)::before {
+    left: 100%;
   }
   
+  // Estado deshabilitado
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
@@ -130,118 +168,170 @@
     box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
   }
   
-  // Loading state
-  .mat-mdc-button-base {
-    height: 100%;
+  // Estado de carga
+  mat-progress-spinner {
+    display: inline-block;
+    margin-right: vars.$spacing-sm;
   }
 }
 
-// Iconos mejorados
+// ============================================================================
+// 🎨 ICONOS
+// ============================================================================
 mat-icon {
   color: #667eea;
-  transition: color 0.3s ease;
-}
-
-// Estados de error
-.mat-mdc-form-field.mat-form-field-invalid {
-  .mat-mdc-text-field-wrapper {
-    .mat-mdc-form-field-outline-thick {
-      color: #f44336;
-    }
-  }
-}
-
-// Loading spinner personalizado
-mat-progress-spinner {
-  margin: 0 auto;
+  transition: color vars.$transition-normal;
+  font-family: 'Material Icons';
   
-  circle {
-    stroke: #667eea;
+  &:hover {
+    color: #764ba2;
   }
 }
 
-// Responsive design
-@media (max-width: 768px) {
+// ============================================================================
+// 📱 RESPONSIVE DESIGN
+// ============================================================================
+@include mix.mobile-only {
   .login-container {
-    padding: 15px;
+    padding: vars.$spacing-md;
   }
   
   .login-card {
     padding: 30px 25px;
     max-width: 100%;
-    margin: 20px 0;
+    margin: vars.$spacing-lg 0;
+    border-radius: vars.$radius-lg;
   }
   
   .login-header {
+    margin-bottom: vars.$spacing-lg;
+    
     .logo {
       font-size: 3rem;
+      margin-bottom: vars.$spacing-md;
     }
     
     .mat-mdc-card-title {
       font-size: 2rem;
     }
+    
+    .mat-mdc-card-subtitle {
+      font-size: vars.$font-size-base;
+    }
+  }
+  
+  .mat-mdc-card-content {
+    form {
+      gap: vars.$spacing-md;
+    }
+  }
+  
+  .login-button {
+    height: 44px;
+    padding: 12px 24px;
+    font-size: vars.$font-size-base;
   }
 }
 
 @media (max-width: 480px) {
   .login-card {
     padding: 25px 20px;
-    border-radius: 15px;
+    border-radius: vars.$radius-md;
   }
   
   .login-header {
-    margin-bottom: 25px;
+    margin-bottom: vars.$spacing-lg;
     
     .logo {
       font-size: 2.5rem;
     }
+    
+    .mat-mdc-card-title {
+      font-size: 1.75rem;
+    }
   }
 }
 
-// Animaciones
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+// ============================================================================
+// 🎭 SNACKBAR STYLES
+// ============================================================================
+::ng-deep {
+  .success-snackbar {
+    background: vars.$color-success !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .error-snackbar {
+    background: vars.$color-error !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .warning-snackbar {
+    background: vars.$color-warning !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif;
   }
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
+// ============================================================================
+// 🎯 ESTADOS DE FORMULARIO
+// ============================================================================
+.form-field-valid {
+  .mat-mdc-form-field-outline-thick {
+    color: vars.$color-success !important;
   }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
+  
+  mat-icon {
+    color: vars.$color-success !important;
   }
 }
 
-// Efectos de hover para campos
+.form-field-error {
+  .mat-mdc-form-field-outline-thick {
+    color: vars.$color-error !important;
+  }
+  
+  mat-icon {
+    color: vars.$color-error !important;
+  }
+}
+
+// ============================================================================
+// 🔄 PROGRESS SPINNER PERSONALIZADO
+// ============================================================================
+mat-progress-spinner {
+  margin: 0 auto;
+  
+  circle {
+    stroke: #667eea !important;
+  }
+}
+
+// ============================================================================
+// 🌟 EFECTOS FINALES
+// ============================================================================
+
+// Efecto hover para campos
 .mat-mdc-form-field:hover {
   .mat-mdc-text-field-wrapper {
     .mdc-notched-outline__leading,
     .mdc-notched-outline__notch,
     .mdc-notched-outline__trailing {
       border-color: #667eea;
+      transition: border-color vars.$transition-normal;
     }
   }
 }
 
-// Estilos para snackbar (mensajes de error/éxito)
-::ng-deep {
-  .success-snackbar {
-    background: #4caf50 !important;
-    color: white !important;
-  }
-  
-  .error-snackbar {
-    background: #f44336 !important;
-    color: white !important;
+// Foco en campos
+.mat-mdc-form-field.mat-focused {
+  .mat-mdc-text-field-wrapper {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #667eea;
+    }
   }
 }

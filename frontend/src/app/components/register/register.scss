@@ -1,16 +1,395 @@
-// ===============================
-// 🎨 REGISTER - DivisasPro
-// ===============================
+// ============================================================================
+// 🎨 REGISTER - ARQUITECTURA SCSS MODULAR COMPLETA
+// Siguiendo el patrón del dashboard, login y favoritos
+// ============================================================================
 
-@use '../../../styles/shared' as shared;
+// 📦 IMPORTS MODULARES
+@use './styles/variables' as vars;
+@use './styles/mixins' as mix;
+@use './styles/animations' as anim;
 
-// Contenedor principal igual que login
+// 🎨 FUENTES TIPOGRÁFICAS ESTÁNDAR
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+// ============================================================================
+// 🏠 CONTENEDOR PRINCIPAL
+// ============================================================================
 .register-container {
   min-height: 100vh;
-  @include shared.background-gradient;
-  @include shared.particle-background;
-  @include shared.center-content;
-  padding: shared.$spacing-xl;
+  @include mix.background-gradient;
+  @include mix.particle-background;
+  @include mix.flex-center;
+  padding: vars.$spacing-xl;
+  position: relative;
+  z-index: 1;
+}
+
+// ============================================================================
+// 💳 TARJETA DE REGISTRO
+// ============================================================================
+.register-card {
+  @include mix.glassmorphism-card;
+  padding: vars.$spacing-3xl;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  z-index: 2;
+  @include mix.slide-up;
+  @include mix.hover-lift;
+}
+
+// ============================================================================
+// 📋 HEADER DEL REGISTRO
+// ============================================================================
+.register-header {
+  text-align: center;
+  margin-bottom: vars.$spacing-2xl;
+  
+  .logo {
+    font-size: vars.$font-size-4xl;
+    margin-bottom: vars.$spacing-lg;
+    display: block;
+    animation: bounce 2s infinite;
+  }
+  
+  .mat-mdc-card-title {
+    font-size: vars.$font-size-2-2rem;
+    font-weight: 900;
+    background: vars.$primary-gradient;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: vars.$spacing-md;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  
+  .mat-mdc-card-subtitle {
+    color: #666;
+    font-size: vars.$font-size-base;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+}
+
+// ============================================================================
+// 📝 CONTENIDO DEL FORMULARIO
+// ============================================================================
+.mat-mdc-card-content {
+  padding: 0;
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$spacing-lg;
+  }
+}
+
+// ============================================================================
+// 🎯 FORM FIELDS
+// ============================================================================
+.full-width {
+  width: 100%;
+  
+  .mat-mdc-form-field {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    
+    .mat-mdc-text-field-wrapper {
+      border-radius: vars.$radius-md;
+    }
+    
+    .mat-mdc-form-field-subscript-wrapper {
+      margin-top: vars.$spacing-sm;
+    }
+    
+    &.mat-focused {
+      .mat-mdc-form-field-outline-thick {
+        color: #667eea;
+      }
+    }
+    
+    // Estado inválido
+    &.mat-form-field-invalid {
+      .mat-mdc-form-field-outline-thick {
+        color: vars.$color-error;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// 🔘 BOTONES
+// ============================================================================
+.register-button {
+  @include mix.button-gradient;
+  padding: 15px 30px;
+  border-radius: vars.$radius-md !important;
+  font-weight: 700;
+  font-size: vars.$font-size-lg;
+  margin-top: vars.$spacing-lg;
+  height: 48px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  font-family: 'Poppins', sans-serif;
+  
+  // Efecto shimmer en hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+  
+  &:hover:not(:disabled)::before {
+    left: 100%;
+  }
+  
+  // Estado deshabilitado
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+  }
+}
+
+// Botón secundario (volver al login)
+.secondary-button {
+  background: transparent !important;
+  color: #667eea !important;
+  border: 2px solid #667eea !important;
+  padding: 12px 30px;
+  border-radius: vars.$radius-md !important;
+  font-weight: 600;
+  margin-top: vars.$spacing-md;
+  height: 44px;
+  transition: all vars.$transition-normal;
+  font-family: 'Poppins', sans-serif;
+  
+  &:hover {
+    background: #667eea !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// ============================================================================
+// 🎨 ICONOS
+// ============================================================================
+mat-icon {
+  color: #667eea;
+  transition: color vars.$transition-normal;
+  font-family: 'Material Icons';
+  
+  &:hover {
+    color: #764ba2;
+  }
+}
+
+// ============================================================================
+// 📊 PROGRESS INDICATORS
+// ============================================================================
+.progress-container {
+  margin: vars.$spacing-lg 0;
+  
+  .progress-bar {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: width vars.$transition-normal;
+    }
+  }
+  
+  .progress-text {
+    font-size: vars.$font-size-sm;
+    color: #666;
+    text-align: center;
+    margin-top: vars.$spacing-sm;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+// ============================================================================
+// 📱 RESPONSIVE DESIGN
+// ============================================================================
+@include mix.mobile-only {
+  .register-container {
+    padding: vars.$spacing-md;
+  }
+  
+  .register-card {
+    padding: 30px 25px;
+    max-width: 100%;
+    margin: vars.$spacing-lg 0;
+    border-radius: vars.$radius-lg;
+  }
+  
+  .register-header {
+    margin-bottom: vars.$spacing-lg;
+    
+    .logo {
+      font-size: 3rem;
+      margin-bottom: vars.$spacing-md;
+    }
+    
+    .mat-mdc-card-title {
+      font-size: 1.8rem;
+    }
+    
+    .mat-mdc-card-subtitle {
+      font-size: vars.$font-size-sm;
+    }
+  }
+  
+  .mat-mdc-card-content {
+    form {
+      gap: vars.$spacing-md;
+    }
+  }
+  
+  .register-button {
+    height: 44px;
+    padding: 12px 24px;
+    font-size: vars.$font-size-base;
+  }
+  
+  .secondary-button {
+    height: 40px;
+    padding: 10px 20px;
+    font-size: vars.$font-size-sm;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 25px 20px;
+    border-radius: vars.$radius-md;
+  }
+  
+  .register-header {
+    margin-bottom: vars.$spacing-lg;
+    
+    .logo {
+      font-size: 2.5rem;
+    }
+    
+    .mat-mdc-card-title {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// ============================================================================
+// 🎭 SNACKBAR STYLES
+// ============================================================================
+::ng-deep {
+  .success-snackbar {
+    background: vars.$color-success !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .error-snackbar {
+    background: vars.$color-error !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .warning-snackbar {
+    background: vars.$color-warning !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+// ============================================================================
+// 🎯 ESTADOS DE FORMULARIO
+// ============================================================================
+.field-valid {
+  .mat-mdc-form-field-outline-thick {
+    color: vars.$color-success !important;
+  }
+  
+  mat-icon {
+    color: vars.$color-success !important;
+  }
+}
+
+.field-invalid {
+  .mat-mdc-form-field-outline-thick {
+    color: vars.$color-error !important;
+  }
+  
+  mat-icon {
+    color: vars.$color-error !important;
+  }
+}
+
+// ============================================================================
+// 🔄 PROGRESS SPINNER PERSONALIZADO
+// ============================================================================
+mat-progress-spinner {
+  margin: 0 auto;
+  
+  circle {
+    stroke: #667eea !important;
+  }
+}
+
+// ============================================================================
+// 🌟 EFECTOS FINALES
+// ============================================================================
+
+// Efecto hover para campos
+.mat-mdc-form-field:hover {
+  .mat-mdc-text-field-wrapper {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #667eea;
+      transition: border-color vars.$transition-normal;
+    }
+  }
+}
+
+// Foco en campos
+.mat-mdc-form-field.mat-focused {
+  .mat-mdc-text-field-wrapper {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #667eea;
+    }
+  }
 }
 
 .register-card {
